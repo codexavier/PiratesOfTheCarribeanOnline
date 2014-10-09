@@ -1,5 +1,3 @@
-# File: S (Python 2.4)
-
 from pandac.PandaModules import *
 from direct.showbase import DirectObject
 from direct.gui.DirectGui import *
@@ -19,6 +17,13 @@ from pirates.battle.EnemySkills import *
 from pirates.inventory import ItemGlobals
 from pirates.minigame import PotionGlobals
 from pirates.minigame import PotionRecipeData
+
+
+def safeSubstitute(text, dict):
+    for key in dict.keys():
+        text = text.replace('$'+key, str(dict[key]))
+    return text
+
 SkillEffectDescriptions = {
     WeaponGlobals.C_POISON: [
         PLocalizer.PoisonDesc,
@@ -103,11 +108,11 @@ SkillEffectDescriptions = {
     WeaponGlobals.C_HASTEN_LVL3: PotionRecipeData.PotionRecipeList[23]['desc'],
     WeaponGlobals.C_REP_BONUS_LVL1: PotionRecipeData.PotionRecipeList[24]['desc'],
     WeaponGlobals.C_REP_BONUS_LVL2: PotionRecipeData.PotionRecipeList[25]['desc'],
-    WeaponGlobals.C_REP_BONUS_LVL3: PLocalizer.PotionDescs[InventoryType.RepBonusLvl1].safe_substitute({
+    WeaponGlobals.C_REP_BONUS_LVL3: safeSubstitute(PLocalizer.PotionDescs[InventoryType.RepBonusLvl1], {
         'pot': int(PotionGlobals.getPotionPotency(WeaponGlobals.getSkillEffectFlag(InventoryType.RepBonusLvl1)) * 100),
         'dur': int(PotionGlobals.getPotionBuffDuration(WeaponGlobals.getSkillEffectFlag(InventoryType.RepBonusLvl1))) / 3600,
         'unit': 'hour' }),
-    WeaponGlobals.C_REP_BONUS_LVLCOMP: PLocalizer.PotionDescs[InventoryType.RepBonusLvlComp].safe_substitute({
+    WeaponGlobals.C_REP_BONUS_LVLCOMP: safeSubstitute(PLocalizer.PotionDescs[InventoryType.RepBonusLvlComp], {
         'pot': int(PotionGlobals.getPotionPotency(WeaponGlobals.getSkillEffectFlag(InventoryType.RepBonusLvlComp)) * 100),
         'dur': int(PotionGlobals.getPotionBuffDuration(WeaponGlobals.getSkillEffectFlag(InventoryType.RepBonusLvlComp))) / 3600,
         'unit': 'hour' }),
@@ -121,12 +126,12 @@ SkillEffectDescriptions = {
     WeaponGlobals.C_REGEN_LVL4: PotionRecipeData.PotionRecipeList[38]['desc'],
     WeaponGlobals.C_BURP: PotionRecipeData.PotionRecipeList[0]['desc'],
     WeaponGlobals.C_FART: PotionRecipeData.PotionRecipeList[1]['desc'],
-    WeaponGlobals.C_FART_LVL2: PLocalizer.PotionDescs[InventoryType.FartLvl2].safe_substitute({
+    WeaponGlobals.C_FART_LVL2: safeSubstitute(PLocalizer.PotionDescs[InventoryType.FartLvl2], {
         'pot': 0,
         'dur': 0,
         'unit': 0 }),
     WeaponGlobals.C_VOMIT: PotionRecipeData.PotionRecipeList[2]['desc'],
-    WeaponGlobals.C_HEAD_GROW: PLocalizer.PotionDescs[InventoryType.HeadGrow].safe_substitute({
+    WeaponGlobals.C_HEAD_GROW: safeSubstitute(PLocalizer.PotionDescs[InventoryType.HeadGrow], {
         'pot': 0,
         'dur': 0,
         'unit': 0 }),

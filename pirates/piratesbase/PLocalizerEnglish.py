@@ -11494,7 +11494,7 @@ PotionGui = {
     'MaxedOutTitle': 'Potions Maxed Out',
     'MaxedOutText': 'You already have the maximum number of this potion. Continue anyway?' }
 PotionDescs = {
-    InventoryType.CannonDamageLvl1: 'Increases Cannon Damage by %s for %s %s',
+    InventoryType.CannonDamageLvl1: 'Increases Cannon Damage by $pot%  for $dur $unit',
     InventoryType.CannonDamageLvl2: 'Increases Cannon Damage by $pot% for $dur $unit',
     InventoryType.CannonDamageLvl3: 'Increases Cannon Damage by $pot% for $dur $unit',
     InventoryType.PistolDamageLvl1: 'Increases Pistol Damage by $pot% for $dur $unit',
