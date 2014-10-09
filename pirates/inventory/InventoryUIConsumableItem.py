@@ -14,7 +14,7 @@ from pirates.minigame import PotionGlobals
 from pirates.inventory import InventoryUIStackItem
 
 class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
-    
+
     def __init__(self, manager, itemTuple, imageScaleFactor = 1.0, showMax = 1):
         InventoryUIStackItem.InventoryUIStackItem.__init__(self, manager, itemTuple, imageScaleFactor = imageScaleFactor, showMax = showMax, update = False)
         self.initialiseoptions(InventoryUIConsumableItem)
@@ -46,63 +46,63 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
         self.accept('aspectRatioChanged', self.createBuffer)
         self.accept('close_main_window', self.destroyBuffer)
 
-    
+
     def destroy(self):
         if self.helpFrame:
             self.helpFrame.destroy()
             self.helpFrame = None
-        
+
         self.destroyBuffer()
         if self.itemCard:
             self.itemCard.removeNode()
             del self.itemCard
             self.itemCard = None
-        
+
         if self.realItem:
             self.realItem.removeNode()
             del self.realItem
             self.realItem = None
-        
+
         if self.iconLabel:
             self.iconLabel.destroy()
             self.realItem = None
-        
+
         if self.portraitSceneGraph:
             self.portraitSceneGraph.removeNode()
             del self.portraitSceneGraph
             self.portraitSceneGraph = None
-        
+
         InventoryUIStackItem.InventoryUIStackItem.destroy(self)
 
-    
+
     def getName(self):
         return PLocalizer.getItemName(self.getId())
 
-    
+
     def updateAmount(self, caller = None):
         if not self.localStore:
             import pdb as pdb
             pdb.set_trace()
-        
+
         amount = localAvatar.getInventory().getItemQuantity(self.getCategory(), self.getId())
         self.amount = amount
         self.updateAmountText()
 
-    
+
     def getAmount(self):
         return localAvatar.getInventory().getItemQuantity(self.getCategory(), self.getId())
 
-    
+
     def getLimit(self):
         return localAvatar.getInventory().getItemLimit(self.getCategory(), self.getId())
 
-    
+
     def showDetails(self, cell, detailsPos, detailsHeight, event = None):
         self.notify.debug('Item showDetails')
         if self.manager.heldItem and self.manager.locked and cell.isEmpty() and self.isEmpty() or not (self.itemTuple):
             self.notify.debug(' early exit')
             return None
-        
+
         itemId = self.getId()
         self.helpFrame = DirectFrame(parent = self.manager, relief = None, state = DGG.DISABLED, sortOrder = 1)
         self.helpFrame.setBin('gui-popup', -5)
@@ -121,7 +121,7 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
         if cell:
             cellSizeX = cell.cellSizeX
             cellSizeZ = cell.cellSizeZ
-        
+
         textScale = PiratesGuiGlobals.TextScaleMed
         titleScale = PiratesGuiGlobals.TextScaleTitleSmall
         if len(self.getName()) >= 30:
@@ -148,7 +148,7 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
             titleColor = PiratesGuiGlobals.TextFG4
         elif rarity == ItemGlobals.FAMED:
             titleColor = PiratesGuiGlobals.TextFG5
-        
+
         titleLabel = DirectLabel(parent = self, relief = None, text = self.getName(), text_scale = titleNameScale, text_fg = titleColor, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
         self.bg.setColor(titleColor)
         tHeight = 0.070000000000000007
@@ -156,7 +156,7 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
         runningVertPosition -= tHeight
         runningSize += tHeight
         labels.append(titleLabel)
-        subtitleLabel = DirectLabel(parent = self, relief = None, text = '\x1slant\x1%s %s\x2' % (rarityText, subtypeText), text_scale = subtitleScale, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
+        subtitleLabel = DirectLabel(parent = self, relief = None, text = 'slant%s %s' % (rarityText, subtypeText), text_scale = subtitleScale, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
         subtHeight = 0.050000000000000003
         subtitleLabel.setZ(subtHeight * 0.5 + runningVertPosition)
         runningVertPosition -= subtHeight
@@ -172,7 +172,7 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
             self.realItem = loader.loadModel('models/inventory/' + model, okMissing = True)
             if not self.realItem:
                 self.realItem = loader.loadModel('models/handheld/' + model)
-            
+
             if self.realItem:
                 posHpr = ItemGlobals.getModelPosHpr(model)
                 if posHpr:
@@ -182,8 +182,8 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
                     self.realItem.setPos(0.0, 2.5, -0.40000000000000002)
                     self.realItem.setHpr(45, 0, 0)
                 self.realItem.reparentTo(self.portraitSceneGraph)
-            
-        
+
+
         iHeight = 0.17999999999999999
         self.createBuffer()
         self.itemCard.setZ(runningVertPosition - 0.059999999999999998)
@@ -222,7 +222,7 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
             runningVertPosition -= dHeight
             runningSize += dHeight
             labels.append(descriptionLabel)
-        
+
         if not Freebooter.getPaidStatus(localAvatar.getDoId()):
             if rarity != ItemGlobals.CRUDE:
                 unlimitedLabel = DirectLabel(parent = self, relief = None, text = PLocalizer.UnlimitedAccessRequirement, text_scale = textScale, text_wordwrap = halfWidth * 2.0 * (1.5 / titleScale), text_fg = PiratesGuiGlobals.TextFG6, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
@@ -230,8 +230,8 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
                 runningVertPosition -= uHeight
                 runningSize += uHeight
                 labels.append(unlimitedLabel)
-            
-        
+
+
         runningVertPosition -= 0.02
         runningSize += 0.02
         useLabel = DirectLabel(parent = self, relief = None, text = PLocalizer.RightClickPotion, text_scale = textScale, text_wordwrap = halfWidth * 2.0 * (1.5 / titleScale), text_fg = PiratesGuiGlobals.TextFG6, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
@@ -256,7 +256,7 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
         currentHeight = runningVertPosition
         if detailsHeight:
             currentHeight = -detailsHeight
-        
+
         while currentHeight < heightMax:
             middlePanel = panels.attachNewNode('middlePanel%s' % 1)
             detailGui.find('**/middle_panel').copyTo(middlePanel)
@@ -291,7 +291,7 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
         totalHeight = self.helpFrame.getHeight() - 0.10000000000000001
         for label in labels:
             label.reparentTo(self.helpFrame)
-        
+
         if basePosX > 0.0:
             newPosX = basePosX - halfWidth + cellSizeX * 0.45000000000000001
         else:
@@ -302,24 +302,24 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
             newPosZ = basePosZ + totalHeight - cellSizeZ * 0.75
         if detailsPos:
             (newPosX, newPosZ) = detailsPos
-        
+
         self.helpFrame.setPos(newPosX, 0, newPosZ)
 
-    
+
     def hideDetails(self, event = None):
         if self.helpFrame:
             self.helpFrame.destroy()
             self.helpFrame = None
-        
+
         self.destroyBuffer()
         if self.realItem:
             self.realItem.removeNode()
-        
+
         if self.iconLabel:
             self.iconLabel.destroy()
-        
 
-    
+
+
     def createBuffer(self):
         self.destroyBuffer()
         self.buffer = base.win.makeTextureBuffer('par', 256, 256)
@@ -331,15 +331,15 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
         self.glow.reparentTo(self.cam)
         if self.itemCard:
             self.itemCard.removeNode()
-        
+
         tex = self.buffer.getTexture()
         self.itemCard = NodePath(self.cm.generate())
         self.itemCard.setTexture(tex, 1)
         if self.helpFrame:
             self.itemCard.reparentTo(self.helpFrame)
-        
 
-    
+
+
     def destroyBuffer(self):
         if self.buffer:
             base.graphicsEngine.removeWindow(self.buffer)
@@ -348,6 +348,6 @@ class InventoryUIConsumableItem(InventoryUIStackItem.InventoryUIStackItem):
             self.glow.detachNode()
             self.cam.removeNode()
             self.cam = None
-        
+
 
 

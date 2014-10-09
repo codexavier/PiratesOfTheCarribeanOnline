@@ -13,7 +13,7 @@ from pirates.inventory import InventoryUIItem
 from pirates.inventory import ItemConstants
 
 class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
-    
+
     def __init__(self, manager, itemTuple, imageScaleFactor = 1.0):
         InventoryUIItem.InventoryUIItem.__init__(self, manager, itemTuple, imageScaleFactor = imageScaleFactor)
         self.initialiseoptions(InventoryUIJewelryItem)
@@ -51,34 +51,34 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
         self.displayHuman = self.manager.getDisplayHuman()
         self.masterHuman = self.manager.getMasterHuman()
 
-    
+
     def destroy(self):
         self.displayHuman = None
         self.masterHuman = None
         if self.helpFrame:
             self.helpFrame.destroy()
             self.helpFrame = None
-        
+
         self.destroyBuffer()
         if self.itemCard:
             self.itemCard.removeNode()
-        
+
         if self.realItem:
             self.realItem.removeNode()
-        
+
         InventoryUIItem.InventoryUIItem.destroy(self)
 
-    
+
     def getName(self):
         return PLocalizer.getItemName(self.itemTuple[1])
 
-    
+
     def showDetails(self, cell, detailsPos, detailsHeight, event = None):
         self.notify.debug('Item showDetails')
         if self.manager.heldItem and self.manager.locked and cell.isEmpty() or not (self.itemTuple):
             self.notify.debug(' early exit')
             return None
-        
+
         itemId = self.getId()
         self.helpFrame = DirectFrame(parent = self.manager, relief = None, state = DGG.DISABLED, sortOrder = 1)
         self.helpFrame.setBin('gui-popup', -5)
@@ -94,7 +94,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
         if cell:
             cellSizeX = cell.cellSizeX
             cellSizeZ = cell.cellSizeZ
-        
+
         textScale = PiratesGuiGlobals.TextScaleMed
         titleScale = PiratesGuiGlobals.TextScaleTitleSmall
         if len(self.getName()) >= 30:
@@ -121,7 +121,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
             titleColor = PiratesGuiGlobals.TextFG4
         elif rarity == ItemGlobals.FAMED:
             titleColor = PiratesGuiGlobals.TextFG5
-        
+
         titleLabel = DirectLabel(parent = self, relief = None, text = self.getName(), text_scale = titleNameScale, text_fg = titleColor, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
         self.bg.setColor(titleColor)
         tHeight = 0.070000000000000007
@@ -129,7 +129,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
         runningVertPosition -= tHeight
         runningSize += tHeight
         labels.append(titleLabel)
-        subtitleLabel = DirectLabel(parent = self, relief = None, text = '\x1slant\x1%s %s\x2' % (rarityText, typeText), text_scale = subtitleScale, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
+        subtitleLabel = DirectLabel(parent = self, relief = None, text = 'slant%s %s\x2' % (rarityText, typeText), text_scale = subtitleScale, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
         subtHeight = 0.050000000000000003
         subtitleLabel.setZ(subtHeight * 0.5 + runningVertPosition)
         runningVertPosition -= subtHeight
@@ -160,7 +160,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 noseOffset = 0.45000000000000001
                 mouthOffset = 0.65000000000000002
                 handOffset = 0.29999999999999999
-            
+
         elif bodyShape == 1:
             bodyOffset = 0.5
             if gender == 'm':
@@ -175,7 +175,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 noseOffset = 0.40000000000000002
                 mouthOffset = 0.5
                 handOffset = 0.20000000000000001
-            
+
         elif bodyShape == 2:
             bodyOffset = 0.5
             if gender == 'm':
@@ -190,7 +190,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 noseOffset = -0.20000000000000001
                 mouthOffset = -0.10000000000000001
                 handOffset = -0.10000000000000001
-            
+
         elif bodyShape == 3:
             bodyOffset = 0.5
             if gender == 'm':
@@ -205,7 +205,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 noseOffset = -0.45000000000000001
                 mouthOffset = -0.29999999999999999
                 handOffset = -0.20000000000000001
-            
+
         elif bodyShape == 4:
             bodyOffset = 0.5
             if gender == 'm':
@@ -220,7 +220,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 noseOffset = 0.0
                 mouthOffset = 0.10000000000000001
                 handOffset = 0.0
-            
+
         elif bodyShape == 5:
             bodyOffset = 0.5
             if gender == 'm':
@@ -235,7 +235,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 noseOffset = -0.14999999999999999
                 mouthOffset = -0.050000000000000003
                 handOffset = -0.10000000000000001
-            
+
         elif bodyShape == 6:
             bodyOffset = 0.5
             if gender == 'm':
@@ -250,7 +250,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 noseOffset = 0.25
                 mouthOffset = 0.40000000000000002
                 handOffset = 0.10000000000000001
-            
+
         elif bodyShape == 7:
             bodyOffset = 0.5
             if gender == 'm':
@@ -265,7 +265,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 noseOffset = -0.10000000000000001
                 mouthOffset = 0.0
                 handOffset = -0.050000000000000003
-            
+
         elif bodyShape == 8:
             bodyOffset = 0.5
             if gender == 'm':
@@ -280,7 +280,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 noseOffset = -0.25
                 mouthOffset = -0.14999999999999999
                 handOffset = -0.10000000000000001
-            
+
         elif bodyShape == 9:
             bodyOffset = 0.5
             if gender == 'm':
@@ -295,8 +295,8 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 noseOffset = -0.45000000000000001
                 mouthOffset = -0.34999999999999998
                 handOffset = -0.20000000000000001
-            
-        
+
+
         m = Mat4(Mat4.identMat())
         itemType = ItemGlobals.getType(itemId)
         if itemType == ItemGlobals.BROW:
@@ -309,7 +309,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
             jewelType = JewelryGlobals.MOUTH
         elif itemType == ItemGlobals.HAND:
             jewelType = JewelryGlobals.LHAND
-        
+
         primaryColor = ItemGlobals.getPrimaryColor(itemId)
         secondaryColor = ItemGlobals.getSecondaryColor(itemId)
         if localAvatar.style.gender == 'm':
@@ -344,7 +344,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
             dna.setJewelryZone6(jewelId, primaryColor, secondaryColor)
         elif jewelType == JewelryGlobals.LHAND:
             dna.setJewelryZone7(jewelId, primaryColor, secondaryColor)
-        
+
         dna.setClothesHat(0, 0)
         self.displayHuman.setDNAString(dna)
         self.displayHuman.generateHuman(gender, self.masterHuman)
@@ -449,8 +449,8 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
                 runningVertPosition -= uHeight
                 runningSize += uHeight
                 labels.append(unlimitedLabel)
-            
-        
+
+
         runningVertPosition -= 0.02
         runningSize += 0.02
         panels = self.helpFrame.attachNewNode('panels')
@@ -468,7 +468,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
         currentHeight = runningVertPosition
         if detailsHeight:
             currentHeight = -detailsHeight
-        
+
         while currentHeight < heightMax:
             middlePanel = panels.attachNewNode('middlePanel%s' % 1)
             detailGui.find('**/middle_panel').copyTo(middlePanel)
@@ -503,7 +503,7 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
         totalHeight = self.helpFrame.getHeight() - 0.10000000000000001
         for label in labels:
             label.reparentTo(self.helpFrame)
-        
+
         if basePosX > 0.0:
             newPosX = basePosX - halfWidth + cellSizeX * 0.45000000000000001
         else:
@@ -514,25 +514,25 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
             newPosZ = basePosZ + totalHeight - cellSizeZ * 0.75
         if detailsPos:
             (newPosX, newPosZ) = detailsPos
-        
+
         self.helpFrame.setPos(newPosX, 0, newPosZ)
 
-    
+
     def hideDetails(self, event = None):
         InventoryUIItem.InventoryUIItem.hideDetails(self, event)
         if self.helpFrame:
             self.helpFrame.destroy()
             self.helpFrame = None
-        
+
         self.destroyBuffer()
         if self.realItem:
             self.realItem.removeNode()
-        
+
         if self.displayHuman:
             self.displayHuman.detachNode()
-        
 
-    
+
+
     def createBuffer(self):
         self.destroyBuffer()
         self.buffer = base.win.makeTextureBuffer('par', 256, 256)
@@ -544,15 +544,15 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
         self.glow.reparentTo(self.cam)
         if self.itemCard:
             self.itemCard.removeNode()
-        
+
         tex = self.buffer.getTexture()
         self.itemCard = NodePath(self.cm.generate())
         self.itemCard.setTexture(tex, 1)
         if self.helpFrame:
             self.itemCard.reparentTo(self.helpFrame)
-        
 
-    
+
+
     def destroyBuffer(self):
         if self.buffer:
             base.graphicsEngine.removeWindow(self.buffer)
@@ -561,6 +561,6 @@ class InventoryUIJewelryItem(InventoryUIItem.InventoryUIItem):
             self.glow.detachNode()
             self.cam.removeNode()
             self.cam = None
-        
+
 
 

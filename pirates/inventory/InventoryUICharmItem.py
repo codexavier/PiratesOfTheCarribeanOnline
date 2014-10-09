@@ -18,14 +18,14 @@ from pirates.inventory import InventoryUIItem
 
 class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
     notify = directNotify.newCategory('InventoryUICharmItem')
-    
+
     def __init__(self, manager, itemTuple, imageScaleFactor = 1.0):
         InventoryUIItem.InventoryUIItem.__init__(self, manager, itemTuple, imageScaleFactor = imageScaleFactor)
         charmIcons = loader.loadModel('models/gui/gui_icons_inventory')
         itemType = ItemGlobals.getType(itemTuple[1])
         if ItemGlobals.getIcon(itemTuple[1]):
             self['image'] = charmIcons.find('**/%s' % ItemGlobals.getIcon(itemTuple[1]))
-        
+
         self['image_scale'] = 0.10000000000000001 * imageScaleFactor
         self.helpFrame = None
         self.cm = CardMaker('itemCard')
@@ -50,35 +50,35 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
         self.accept('aspectRatioChanged', self.createBuffer)
         self.accept('close_main_window', self.destroyBuffer)
 
-    
+
     def destroy(self):
         if self.helpFrame:
             self.helpFrame.destroy()
             self.helpFrame = None
-        
+
         self.destroyBuffer()
         if self.itemCard:
             self.itemCard.removeNode()
             del self.itemCard
             self.itemCard = None
-        
+
         if self.realItem:
             self.realItem.removeNode()
             del self.realItem
             self.realItem = None
-        
+
         if self.portraitSceneGraph:
             self.portraitSceneGraph.removeNode()
             del self.portraitSceneGraph
             self.portraitSceneGraph = None
-        
+
         InventoryUIItem.InventoryUIItem.destroy(self)
 
-    
+
     def getName(self):
         return PLocalizer.getItemName(self.itemTuple[1])
 
-    
+
     def getPlunderName(self):
         nameText = self.getName()
         titleColor = PiratesGuiGlobals.TextFG6
@@ -91,20 +91,20 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
             titleColor = PiratesGuiGlobals.TextFG4
         elif rarity == ItemGlobals.FAMED:
             titleColor = PiratesGuiGlobals.TextFG5
-        
+
         return (nameText, titleColor)
 
-    
+
     def showDetails(self, cell, detailsPos, detailsHeight, event = None):
         self.notify.debug('Item showDetails')
         if self.manager.heldItem and self.manager.locked and cell.isEmpty() and self.isEmpty() or not (self.itemTuple):
             self.notify.debug(' early exit')
             return None
-        
+
         inv = localAvatar.getInventory()
         if not inv:
             return None
-        
+
         itemId = self.getId()
         self.helpFrame = DirectFrame(parent = self.manager, relief = None, state = DGG.DISABLED, sortOrder = 1)
         self.helpFrame.setBin('gui-popup', -5)
@@ -123,7 +123,7 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
         if cell:
             cellSizeX = cell.cellSizeX
             cellSizeZ = cell.cellSizeZ
-        
+
         textScale = PiratesGuiGlobals.TextScaleMed
         titleScale = PiratesGuiGlobals.TextScaleTitleSmall
         if len(self.getName()) >= 30:
@@ -150,7 +150,7 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
             titleColor = PiratesGuiGlobals.TextFG4
         elif rarity == ItemGlobals.FAMED:
             titleColor = PiratesGuiGlobals.TextFG5
-        
+
         titleLabel = DirectLabel(parent = self, relief = None, text = self.getName(), text_scale = titleNameScale, text_fg = titleColor, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
         self.bg.setColor(titleColor)
         tHeight = 0.070000000000000007
@@ -158,7 +158,7 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
         runningVertPosition -= tHeight
         runningSize += tHeight
         labels.append(titleLabel)
-        subtitleLabel = DirectLabel(parent = self, relief = None, text = '\x1slant\x1%s %s\x2' % (rarityText, subtypeText), text_scale = subtitleScale, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
+        subtitleLabel = DirectLabel(parent = self, relief = None, text = 'slant%s %s' % (rarityText, subtypeText), text_scale = subtitleScale, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
         subtHeight = 0.050000000000000003
         subtitleLabel.setZ(subtHeight * 0.5 + runningVertPosition)
         runningVertPosition -= subtHeight
@@ -181,8 +181,8 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
                     self.realItem.setPos(0.0, 1.5, -0.059999999999999998)
                     self.realItem.setHpr(0, 90, 0)
                 self.realItem.reparentTo(self.portraitSceneGraph)
-            
-        
+
+
         iHeight = 0.17999999999999999
         self.createBuffer()
         self.itemCard.setZ(runningVertPosition - 0.059999999999999998)
@@ -214,13 +214,13 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
             labels.append(specialAttackRankLabel)
             labels.append(specialAttackTypeLabel)
             labels.append(specialAttackDescriptionLabel)
-        
+
         attributes = ItemGlobals.getAttributes(itemId)
         for i in range(0, len(attributes)):
             attributeIcon = self.SkillIcons.find('**/%s' % ItemGlobals.getAttributeIcon(attributes[i][0]))
             if not attributeIcon:
                 attributeIcon = self.BuffIcons.find('**/%s' % ItemGlobals.getAttributeIcon(attributes[i][0]))
-            
+
             attributeNameLabel = DirectLabel(parent = self, relief = None, image = border, image_scale = 0.050000000000000003, geom = attributeIcon, geom_scale = 0.050000000000000003, image_pos = (-0.070000000000000007, 0.0, -0.029999999999999999), geom_pos = (-0.070000000000000007, 0.0, -0.029999999999999999), text = PLocalizer.getItemAttributeName(attributes[i][0]), text_scale = textScale, text_wordwrap = halfWidth * 2.0 * (0.90000000000000002 / titleScale), text_align = TextNode.ALeft, text_fg = titleColor, text_font = PiratesGlobals.getInterfaceOutlineFont(), pos = (-halfWidth + 0.12 + textScale * 0.5, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
             attributeRankLabel = DirectLabel(parent = self, relief = None, text = PLocalizer.ItemRank % attributes[i][1], text_scale = textScale, text_wordwrap = halfWidth * 2.0 * (0.90000000000000002 / titleScale), text_align = TextNode.ARight, pos = (halfWidth - textScale * 0.5, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
             if attributeNameLabel.getHeight() > 0.074999999999999997:
@@ -234,7 +234,7 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
             labels.append(attributeNameLabel)
             labels.append(attributeRankLabel)
             labels.append(attributeDescriptionLabel)
-        
+
         skillBoosts = ItemGlobals.getSkillBoosts(itemId)
         for i in range(0, len(skillBoosts)):
             boostIcon = self.SkillIcons.find('**/%s' % WeaponGlobals.getSkillIcon(skillBoosts[i][0]))
@@ -245,7 +245,7 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
             runningSize += bHeight + splitHeight
             labels.append(boostNameLabel)
             labels.append(boostRankLabel)
-        
+
         description = PLocalizer.getItemFlavorText(itemId)
         if description != '':
             descriptionLabel = DirectLabel(parent = self, relief = None, text = description, text_scale = textScale, text_wordwrap = halfWidth * 2.0 * (0.94999999999999996 / textScale), text_align = TextNode.ALeft, pos = (-halfWidth + textScale * 0.5, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
@@ -253,7 +253,7 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
             runningVertPosition -= dHeight
             runningSize += dHeight
             labels.append(descriptionLabel)
-        
+
         weaponLevel = 0
         weaponRepId = WeaponGlobals.getRepId(itemId)
         weaponRep = inv.getReputation(weaponRepId)
@@ -272,14 +272,14 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
             if trainingAmt == 0:
                 weaponColor = PiratesGuiGlobals.TextFG6
                 weaponText = PLocalizer.ItemTrainingRequirement % PLocalizer.getItemTypeName(itemType)
-            
+
         if weaponText:
             weaponReqLabel = DirectLabel(parent = self, relief = None, text = weaponText, text_scale = textScale, text_wordwrap = halfWidth * 2.0 * (1.5 / titleScale), text_fg = weaponColor, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
             wHeight = weaponReqLabel.getHeight()
             runningVertPosition -= wHeight
             runningSize += wHeight
             labels.append(weaponReqLabel)
-        
+
         if not Freebooter.getPaidStatus(localAvatar.getDoId()):
             if rarity != ItemGlobals.CRUDE:
                 unlimitedLabel = DirectLabel(parent = self, relief = None, text = PLocalizer.UnlimitedAccessRequirement, text_scale = textScale, text_wordwrap = halfWidth * 2.0 * (1.5 / titleScale), text_fg = PiratesGuiGlobals.TextFG6, text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ACenter, pos = (0.0, 0.0, runningVertPosition), text_pos = (0.0, -textScale))
@@ -287,8 +287,8 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
                 runningVertPosition -= uHeight
                 runningSize += uHeight
                 labels.append(unlimitedLabel)
-            
-        
+
+
         runningVertPosition -= 0.02
         runningSize += 0.02
         panels = self.helpFrame.attachNewNode('panels')
@@ -338,7 +338,7 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
         totalHeight = self.helpFrame.getHeight() - 0.10000000000000001
         for label in labels:
             label.reparentTo(self.helpFrame)
-        
+
         if basePosX > 0.0:
             newPosX = basePosX - halfWidth + cellSizeX * 0.45000000000000001
         else:
@@ -349,21 +349,21 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
             newPosZ = basePosZ + totalHeight - cellSizeZ * 0.75
         if detailsPos:
             (newPosX, newPosZ) = detailsPos
-        
+
         self.helpFrame.setPos(newPosX, 0, newPosZ)
 
-    
+
     def hideDetails(self, event = None):
         if self.helpFrame:
             self.helpFrame.destroy()
             self.helpFrame = None
-        
+
         self.destroyBuffer()
         if self.realItem:
             self.realItem.removeNode()
-        
 
-    
+
+
     def createBuffer(self):
         self.destroyBuffer()
         self.buffer = base.win.makeTextureBuffer('par', 256, 256)
@@ -375,15 +375,15 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
         self.glow.reparentTo(self.cam)
         if self.itemCard:
             self.itemCard.removeNode()
-        
+
         tex = self.buffer.getTexture()
         self.itemCard = NodePath(self.cm.generate())
         self.itemCard.setTexture(tex, 1)
         if self.helpFrame:
             self.itemCard.reparentTo(self.helpFrame)
-        
 
-    
+
+
     def destroyBuffer(self):
         if self.buffer:
             base.graphicsEngine.removeWindow(self.buffer)
@@ -392,6 +392,6 @@ class InventoryUICharmItem(InventoryUIItem.InventoryUIItem):
             self.glow.detachNode()
             self.cam.removeNode()
             self.cam = None
-        
+
 
 
