@@ -1352,7 +1352,6 @@ class DistributedIsland(DistributedGameArea.DistributedGameArea, DistributedCart
 
 
     def startLavaFlow(self):
-        return None
         self.stopLavaFlow()
         lavaGeom = self.geom.find('**/lava')
         if not lavaGeom.isEmpty():
@@ -1371,7 +1370,6 @@ class DistributedIsland(DistributedGameArea.DistributedGameArea, DistributedCart
 
 
             tsSet = lavaGeom.findAllTextureStages()
-            continue
             tsSet = [ tsSet[x] for x in range(tsSet.getNumTextureStages()) ]
             tsSet.sort(key = lambda x: x.getSort())
             if not tsSet:
