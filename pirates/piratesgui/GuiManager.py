@@ -9,7 +9,11 @@ from direct.showbase import DirectObject
 from direct.directnotify import DirectNotifyGlobal
 from direct.fsm import FSM
 from otp.otpbase import OTPGlobals
-from libotp import Nametag, NametagGlobals, NametagGroup, WhisperPopup, NametagFloat2d
+from otp.nametag.Nametag import Nametag
+from otp.nametag import NametagGlobals
+from otp.nametag.NametagGroup import NametagGroup
+from otp.margins.WhisperPopup import WhisperPopup
+from otp.nametag.NametagFloat2d import NametagFloat2d
 from pirates.piratesbase import PiratesGlobals
 from pirates.piratesbase import PLocalizer
 from pirates.battle import WeaponGlobals
@@ -127,7 +131,7 @@ class GuiManager(FSM.FSM):
     GMgrey.setGlyphScale(0.90000000000000002)
     tpMgr.setProperties('GMgrey', GMgrey)
     del tpMgr
-    
+
     def __init__(self, av):
         FSM.FSM.__init__(self, 'GuiManager')
         self.av = av
@@ -227,18 +231,18 @@ class GuiManager(FSM.FSM):
         scale = 1.0
         if base.options:
             scale = base.options.getGUIScale()
-        
+
         if self.WantClothingPage:
             self.clothingPage = ClothingPage.ClothingPage()
             self.chestPanel.addPage(self.clothingPage)
-        
+
         self.mapPage = MapPage.MapPage()
         self.chestPanel.addPage(self.mapPage)
         self.titlesPage = None
         if self.WantTitlesPage:
             self.titlesPage = TitlesPage.TitlesPage()
             self.chestPanel.addPage(self.titlesPage)
-        
+
         self.weaponPage = WeaponPage.WeaponPage()
         self.chestPanel.addPage(self.weaponPage)
         self.shipPage = ShipPage.ShipPage()
@@ -263,7 +267,7 @@ class GuiManager(FSM.FSM):
         self.moneyDisplay.hide()
         if self.av.getInventory():
             skills = self.av.getInventory().getSkills(self.av.currentWeaponId)
-        
+
         self.combatTray.hideSkills()
         self.accept('localAvatarQuestComplete', self.showQuestCompleteText, extraArgs = [
             PLocalizer.ChatPanelQuestCompletedMsg])
@@ -341,7 +345,7 @@ class GuiManager(FSM.FSM):
         self.trackedQuestLabel = DirectLabel(parent = base.a2dTopRight, relief = None, image = gui.find('**/icon_objective_grey'), image_color = Vec4(1, 1, 0, 1), image_scale = 0.14000000000000001, image_pos = (-0.029999999999999999, 0, 0.012), text = '', text_fg = PiratesGuiGlobals.TextFG2, text_scale = PiratesGuiGlobals.TextScaleLarge, text_align = TextNode.ALeft, text_shadow = PiratesGuiGlobals.TextShadow, text_wordwrap = 12, pos = (-0.90000000000000002, 0, -0.050000000000000003))
         if base.downloadWatcher:
             self.trackedQuestLabel.setPos(-0.90000000000000002, 0, -0.20000000000000001)
-        
+
         self.trackedQuestLabel.hide()
         self.questStatusText = ''
         self.questHintText = ''
@@ -360,10 +364,10 @@ class GuiManager(FSM.FSM):
         self.accept('guiMgrToggleWeapons', self.showWeaponPanel)
         if self.WantClothingPage:
             self.accept('guiMgrToggleClothing', self.showClothingPanel)
-        
+
         if self.WantTitlesPage:
             self.accept('guiMgrToggleTitles', self.showTitlesPanel)
-        
+
         self.accept('guiMgrToggleShips', self.showShipPanel)
         self.accept('guiMgrToggleTreasures', self.showTreasurePanel)
         self.accept(PiratesGlobals.TreasureHotkey, self.showTreasurePanel)
@@ -456,15 +460,15 @@ class GuiManager(FSM.FSM):
         self.instructionMessageIcon = DirectLabel(parent = self.instructionMessageText)
         base.ibt = self.instructionMessageBoxText
 
-    
+
     def setTutorialStatus(self):
         self.tutorialStatus = self.av.style.getTutorial()
 
-    
+
     def delete(self):
         if self.mainMenu:
             self.mainMenu.destroy()
-        
+
         self.trackedQuestLabel.destroy()
         self.hidePVPInstructions()
         self.removePVPStatus()
@@ -477,7 +481,7 @@ class GuiManager(FSM.FSM):
         self.ignoreAll()
         if self.pirateCode:
             self.pirateCode.destroy()
-        
+
         self.chestPanel.destroy()
         self.gameGui.destroy()
         self.radarGui.destroy()
@@ -493,21 +497,21 @@ class GuiManager(FSM.FSM):
         if self.filmOffsetLerp:
             self.filmOffsetLerp.pause()
             self.filmOffsetLerp = None
-        
+
         if self.nonPayerPanel:
             self.nonPayerPanel.destroy()
             self.nonPayerPanel = None
-        
+
         if self.stayTunedPanel:
             self.stayTunedPanel.destroy()
             self.stayTunedPanel = None
-        
+
         self.chatPanel = None
         if self.lookoutPage:
             self.lookoutPage.ignore(self.lookoutPopup.getUniqueId())
             self.lookoutPage.destroy()
             self.lookoutPage = None
-        
+
         self.titler.destroy()
         self.secondarytitler.destroy()
         self.subtitler.destroy()
@@ -515,7 +519,7 @@ class GuiManager(FSM.FSM):
         self.interactionalSubtitler.destroy()
         if self.interactionalFrame:
             self.interactionalFrame.destroy()
-        
+
         self.bossMeter.destroy()
         self.warningMsg.destroy()
         self.progressMsg.destroy()
@@ -535,208 +539,208 @@ class GuiManager(FSM.FSM):
         taskMgr.remove('guiMgrChangeQuestStatus')
         if self.oceanIval:
             del self.oceanIval
-        
+
         if self.timer:
             self.timer.destroy()
             self.timer = None
-        
+
         if self.timerHourglass:
             self.timerHourglass.destroy()
             self.timerHourglass = None
-        
+
         if hasattr(self, '_dlBlocker'):
             self._dlBlocker.destroy()
             del self._dlBlocker
-        
+
         if self.tradeInviter:
             self.tradeInviter.destroy()
             del self.tradeInviter
-        
+
         if self.tradePanel:
             self.tradePanel.destroy()
             del self.tradePanel
-        
+
         if self.guildInviter:
             self.guildInviter.destroy()
             del self.guildInviter
-        
+
         if self.guildMember:
             self.guildMember.destroy()
             del self.guildMember
-        
+
         if self.guildInvitee:
             self.guildInvitee.destroy()
             del self.guildInvitee
-        
+
         if self.friendInviter:
             self.friendInviter.destroy()
             del self.friendInviter
-        
+
         if self.friendInvitee:
             self.friendInvitee.destroy()
             del self.friendInvitee
-        
+
         if self.pvpInviter:
             self.pvpInviter.destroy()
             del self.pvpInviter
-        
+
         if self.pvpInvitee:
             self.pvpInvitee.destroy()
             del self.pvpInvitee
-        
+
         if self.crewInviter:
             self.crewInviter.destroy()
             del self.crewInviter
-        
+
         if self.crewInvitee:
             self.crewInvitee.destroy()
             del self.crewInvitee
-        
+
         if self.crewRejoin:
             self.crewRejoin.destroy()
             del self.crewRejoin
-        
+
         if self.crewBoot:
             self.crewBoot.destroy()
             del self.crewBoot
-        
+
         if self.leaveCrewWarning:
             self.leaveCrewWarning.destroy()
             del self.leaveCrewWarning
-        
+
         if self.ignoreConfirm:
             self.ignoreConfirm.destroy()
             del self.ignoreConfirm
-        
+
         if self.reportAPlayer:
             self.reportAPlayer.destroy()
             del self.reportAPlayer
-        
+
         if self.workMeter:
             self.workMeter.destroy()
             del self.workMeter
-        
+
         if self.crewHUD:
             self.crewHUD.destroy()
             del self.crewHUD
-        
+
         if self.profilePage:
             self.profilePage.destroy()
             del self.profilePage
-        
+
         if self.contextTutPanel:
             self.contextTutPanel.destroy()
             del self.contextTutPanel
-        
+
         if self.minimap:
             del self.minimap
-        
+
         if self.bodySelectButton:
             self.bodySelectButton.destroy()
-        
+
         self.killInstructionMessageQueue()
         if self.instructionMessageText:
             self.instructionMessageText.destroy()
             self.instructionMessageText = None
-        
+
         if self.instructionMessageBoxText:
             self.instructionMessageBoxText.destroy()
             self.instructionMessageBoxText = None
-        
+
         NametagGlobals.setMasterNametagsActive(0)
         if self.offscreenHitEffects:
             for effect in self.offscreenHitEffects:
                 effect.removeNode()
-            
-        
+
+
         del self.offscreenHitEffects
         if self.offscreenHitIvals:
             for ival in self.offscreenHitIvals:
                 ival.pause()
-            
-        
+
+
         del self.offscreenHitIvals
         del self.av
         if self.injuredTrack:
             self.injuredTrack.pause()
             self.injuredTrack = None
-        
+
         if self.injuredEffects:
             for effect in self.injuredEffects:
                 effect.removeNode()
-            
+
             self.injuredBlackoutGeom.removeNode()
-        
+
         self.deleteLookoutPopup()
         for currEffectIval in self.effectIvals:
             currEffectIval.pause()
-        
+
         self.effectIvals = []
         if self.instructionMessageSoundIval:
             self.instructionMessageSoundIval.finish()
             self.instructionMessageSoundIval = None
-        
+
         if self.progressText:
             self.showProgressIval.pause()
             self.showProgressIval = None
             self.progressText.destroy()
             self.progressText = None
-        
+
         if self.messageStack:
             self.messageStack.destroy()
             self.messageStack = None
             self.messageStackParent.destroy()
             self.messageStackParent = None
-        
+
         if self.tmButtonQuick:
             self.tmButtonQuick.destroy()
             self.tmButtonQuick = None
-        
+
         if self.tmButtonSearch:
             self.tmButtonSearch.destroy()
             self.tmButtonSearch = None
-        
+
         if self.dowsingButton:
             self.dowsingButton.destroy()
             self.dowsingButton = None
-        
+
         if self.checkPortraitButton:
             self.checkPortraitButton.destroy()
             self.checkPortraitButton = None
-        
+
         if self.clubheartsPortrait:
             self.clubheartsPortrait.destroy()
             self.clubheartsPortrait = None
-        
 
-    
+
+
     def queueInstructionMessage(self, messageText, messageSoundList = [], messageGraphic = None, graphicScale = 1.0, messageCategory = MessageGlobals.MSG_CAT_DEFAULT):
         lastMessage = None
         if self.instructionMessageQueue:
             lastMessage = self.instructionMessageQueue[len(self.instructionMessageQueue) - 1]
-        
+
         if messageCategory and self.currentInstructionMessage and messageCategory == self.currentInstructionMessage[4]:
             return None
-        
+
         if messageCategory and lastMessage and messageCategory == lastMessage[4]:
             return None
-        
+
         message = (messageText, messageSoundList, messageGraphic, graphicScale, messageCategory)
         if self.instructionMessageLockObj:
             return None
-        
+
         self.instructionMessageQueue.append(message)
         if self.instructionMessageActive:
             pass
         1
         self.doInstructionMessageQueue()
 
-    
+
     def queueInstructionMessageFront(self, messageText, messageSoundList = [], messageGraphic = None, graphicScale = 1.0, messageCategory = MessageGlobals.MSG_CAT_DEFAULT):
         message = (messageText, messageSoundList, messageGraphic, graphicScale, messageCategory)
         if self.instructionMessageLockObj:
             return None
-        
+
         self.instructionMessageQueue.insert(0, message)
         if self.currentInstructionMessage:
             if self.currentInstructionTime and message[4] and message[4] == self.currentInstructionMessage[4]:
@@ -747,11 +751,11 @@ class GuiManager(FSM.FSM):
             else:
                 self.currentInstructionMessage = None
                 self.currentInstructionTime = None
-        
+
         taskMgr.remove('doInstructionMessageQueue')
         self.doInstructionMessageQueue()
 
-    
+
     def doInstructionMessageQueue(self, task = None):
         if self.instructionMessageActive:
             pass
@@ -777,11 +781,11 @@ class GuiManager(FSM.FSM):
             messageSoundList = newMessage[1]
             if self.instructionMessageSoundIval:
                 self.instructionMessageSoundIval.finish()
-            
+
             self.instructionMessageSoundIval = Sequence()
             for sound in messageSoundList:
                 self.instructionMessageSoundIval.append(SoundInterval(loadSfx(sound), seamlessLoop = False))
-            
+
             self.instructionMessageSoundIval.start()
             messageImage = newMessage[2]
             messageImageScale = newMessage[3]
@@ -820,9 +824,9 @@ class GuiManager(FSM.FSM):
             taskMgr.remove('hideLockedMessage')
         if task:
             return task.done
-        
 
-    
+
+
     def lockInstructionMessage(self, lockingObj, messageText, messageSoundList = [], messageGraphic = None, graphicScale = 1.0, messageCategory = MessageGlobals.MSG_CAT_DEFAULT):
         newMessage = (messageText, messageSoundList, messageGraphic, graphicScale, messageCategory)
         if lockingObj and self.instructionMessageLockObj == None:
@@ -868,17 +872,17 @@ class GuiManager(FSM.FSM):
         messageSoundList = newMessage[1]
         if self.instructionMessageSoundIval:
             self.instructionMessageSoundIval.finish()
-        
+
         self.instructionMessageSoundIval = Sequence()
         for sound in messageSoundList:
             self.instructionMessageSoundIval.append(SoundInterval(loadSfx(sound), seamlessLoop = False))
-        
+
         self.instructionMessageSoundIval.start()
         self.lastlockingInstructionMessageTime = globalClockDelta.getFrameNetworkTime()
         self.lastlockingInstructionMessageCat = messageCategory
         return True
 
-    
+
     def unlockInstructionMessage(self, lockingObj):
         if lockingObj and self.instructionMessageLockObj == lockingObj:
             self.instructionMessageLockObj = None
@@ -888,9 +892,9 @@ class GuiManager(FSM.FSM):
                 taskMgr.doMethodLater(residualTime, self.hideLockedMessage, 'hideLockedMessage')
             else:
                 self.hideLockedMessage()
-        
 
-    
+
+
     def forceUnlockInstructionMessage(self):
         self.instructionMessageLockObj = None
         msgCatInfo = MessageGlobals.MessageOptions[self.lastlockingInstructionMessageCat]
@@ -900,12 +904,12 @@ class GuiManager(FSM.FSM):
         else:
             self.hideLockedMessage()
 
-    
+
     def hideLockedMessage(self, task = None):
         self.instructionMessageBoxText.hide()
         self.instructionMessageText.hide()
 
-    
+
     def killInstructionMessageQueue(self, task = None):
         taskMgr.remove('doInstructionMessageQueue')
         taskMgr.remove('hideLockedMessage')
@@ -917,29 +921,29 @@ class GuiManager(FSM.FSM):
         self.instructionMessageBoxText.hide()
         if task:
             return task.done
-        
 
-    
+
+
     def handleBodySelect(self):
         if not base.config.GetBool('want-body-prompt', 0):
             return None
-        
+
         gender = localAvatar.getStyle().gender
         oldShape = localAvatar.getStyle().getBodyShape()
         if not base.config.GetBool('want-body-prompt-all', 0):
             if gender == 'f':
                 if oldShape in BodyDefs.BodyChoicesFemale:
                     return None
-                
+
             elif gender == 'm':
                 if oldShape in BodyDefs.BodyChoicesMale:
                     return None
-                
-            
-        
+
+
+
         if self.bodySelectButton:
             return None
-        
+
         topGui = loader.loadModel('models/gui/toplevel_gui')
         gui2 = loader.loadModel('models/textureCards/basic_unlimited')
         norm_geom = gui2.find('**/but_nav')
@@ -949,27 +953,27 @@ class GuiManager(FSM.FSM):
         self.bodySelectGui = DirectFrame(parent = base.a2dTopRight, relief = None, pos = (-0.20000000000000001, 0, -0.45000000000000001))
         self.bodySelectButton = DirectButton(parent = self.bodySelectGui, relief = None, geom = (norm_geom, down_geom, over_geom), pos = (0.0, 0, -0.080000000000000002), scale = 0.65000000000000002, command = self.askForBodySelect, text = PLocalizer.BodyChangeButton, text_fg = PiratesGuiGlobals.TextFG2, text_font = PiratesGlobals.getPirateBoldOutlineFont(), text_scale = 0.070000000000000007, text_wordwrap = 9, text_pos = (0, -0.02))
 
-    
+
     def askForBodySelect(self):
         if localAvatar.getGameState() not in ('LandRoam', 'Battle'):
             return None
-        
+
         BodyShapeChanger = BodyShapeChanger
         import pirates.makeapirate
         if not self.bodyChanger:
             self.bodyChanger = BodyShapeChanger.BodyShapeChanger()
-        
+
         if self.bodyChanger:
             self.bodyChanger.show()
-        
 
-    
+
+
     def showInjuredGui(self):
         self.chestTray.hide()
         if self.filmOffsetLerp:
             self.filmOffsetLerp.pause()
             self.filmOffsetLerp = None
-        
+
         self.setFilmOffsetX(0.0)
         self.setFilmOffsetY(0.0)
         self.combatTray.hide()
@@ -993,46 +997,46 @@ class GuiManager(FSM.FSM):
         self.injuredHeartbeat.play()
         self.startInjuredEffect()
 
-    
+
     def askForJail(self):
         messenger.send('asked_for_jail', [])
 
-    
+
     def hideInjuredGui(self):
         self.chestTray.show()
         self.combatTray.show()
         if self.injuredGui:
             self.injuredGui.hide()
-        
+
         self.finishInjuredEffect()
         self.injuredHeartbeat.stop()
 
-    
+
     def toggleBossMeter(self):
         if self.bossMeter.isHidden():
             self.bossMeter.show()
         else:
             self.bossMeter.hide()
 
-    
+
     def updateBossMeter(self, hp, maxHp):
         self.bossMeter.update(hp, maxHp)
 
-    
+
     def showBossMeter(self):
         if self.bossMeter:
             self.bossMeter.show()
-        
 
-    
+
+
     def hideBossMeter(self):
         if self.bossMeter:
             self.bossMeter.hide()
-        
 
-    
+
+
     def initQuestPage(self):
-        
+
         def inventoryReceived(inventory):
             if inventory:
                 self.questPage = QuestPage.QuestPage()
@@ -1049,53 +1053,53 @@ class GuiManager(FSM.FSM):
                         else:
                             statusText = quest.getStatusText()
                         self.setQuestStatusText(statusText)
-                    
-                
-            
+
+
+
 
         if not self.questPage:
             DistributedInventoryBase.DistributedInventoryBase.getInventory(localAvatar.getInventoryId(), inventoryReceived)
-        
 
-    
+
+
     def toggleShipPageVis(self):
         self.shipPage.toggleVis()
 
-    
+
     def updateUnspent(self, category, value):
         if self.skillPage:
             self.skillPage.updateUnspent(category, value)
-        
+
         if localAvatar.isWeaponDrawn:
             self.combatTray.initCombatTray(WeaponGlobals.getRepId(localAvatar.currentWeaponId))
-        
 
-    
+
+
     def updateSkillUnlock(self, skillId, amt):
         if self.skillPage:
             self.skillPage.updateSkillUnlock(skillId)
-        
+
         if localAvatar.isWeaponDrawn:
             self.combatTray.initCombatTray(WeaponGlobals.getRepId(localAvatar.currentWeaponId))
-        
 
-    
+
+
     def updateTonic(self, tonicId):
         self.combatTray.updateBestTonic()
 
-    
+
     def updateShipRepairKit(self, kitId):
         self.combatTray.updateShipRepairKits()
 
-    
+
     def registerReputationHandler(self, handler):
         self.repHandlers.append(handler)
 
-    
+
     def unregisterReputationHandler(self, handler):
         self.repHandlers.remove(handler)
 
-    
+
     def updateReputation(self, category, value):
         totalReputation = 0
         inv = self.av.getInventory()
@@ -1106,17 +1110,17 @@ class GuiManager(FSM.FSM):
         self.gameGui.repMeter.update(totalReputation, updateLocal = 1)
         if self.skillPage.getRep() == category:
             self.skillPage.repMeter.update(value)
-        
+
         weaponPanel = self.weaponPage.weaponPanels.get(category)
         if weaponPanel and weaponPanel.repMeter:
             weaponPanel.repMeter.update(value)
-        
+
         if category == InventoryType.FishingRep and self.weaponPage.fishingRepMeter:
             self.weaponPage.fishingRepMeter.update(value)
-        
+
         if category == InventoryType.PotionsRep and self.weaponPage.potionRepMeter:
             self.weaponPage.potionRepMeter.update(value)
-        
+
         self.combatTray.updateWeaponRep(category, value)
         self.barSelection.updateRep(category, value)
         oldValue = self._GuiManager__repValues.get(category, None)
@@ -1126,35 +1130,35 @@ class GuiManager(FSM.FSM):
             vtCost = inv.getStackQuantity(InventoryType.Vitae_Cost)
             vtLeft = inv.getStackQuantity(InventoryType.Vitae_Left)
             self.gameGui.updateVitae(vtLevel, vtCost, vtLeft)
-        
+
         for handler in self.repHandlers:
             handler(category, value)
-        
 
-    
+
+
     def setEquippedWeapons(self, equippedWeapons):
         if equippedWeapons:
             if self.combatTray:
                 self.combatTray.setEquippedWeapons(equippedWeapons)
-            
-        
 
-    
+
+
+
     def cleanupEquippedWeapons(self):
         if self.combatTray:
             self.combatTray.cleanupEquippedWeapons()
-        
 
-    
+
+
     def setCurrentWeapon(self, currentWeapon, isWeaponDrawn, slotId):
         if self.combatTray:
             self.combatTray.setCurrentWeapon(currentWeapon, isWeaponDrawn, slotId)
-        
+
         if self.skillPage and not self.skillPage.isHidden():
             self.skillPage.update()
-        
 
-    
+
+
     def refreshInventoryWeapons(self, newWeaponId = None):
         equipped = []
         if self.combatTray.slotDisplay:
@@ -1164,38 +1168,38 @@ class GuiManager(FSM.FSM):
                         localAvatar.guiMgr.combatTray.slotDisplay.cellList[i].hotlink.getId(),
                         localAvatar.guiMgr.combatTray.slotDisplay.slotList[i]])
                     continue
-            
-        
+
+
         self.barSelection.update(equipped)
         currentWeapon = localAvatar.guiMgr.combatTray.weaponId
         if currentWeapon and currentWeapon not in equipped:
             skillCategory = getSkillCategory(currentWeapon)
-        
+
         self.weaponPage.refreshList()
 
-    
+
     def listenMoney(self, coins):
         self.setMoney(coins)
 
-    
+
     def deleteLevelUpText(self):
         if not self.levelUpIval:
             return None
-        
+
         if self.levelUpIval:
             self.levelUpIval.pause()
             self.levelUpIval = None
-        
+
         self.levelUpLabel.destroy()
         self.levelUpCategoryLabel.destroy()
         self.levelUpText.removeNode()
         del self.levelUpSfx
 
-    
+
     def createLevelUpText(self):
         if self.levelUpIval:
             return None
-        
+
         self.levelUpSfx = loadSfx(SoundGlobals.SFX_GUI_LEVELUP)
         self.levelUpSfx.setVolume(0.5)
         self.levelUpText = NodePath('levelUpText')
@@ -1203,30 +1207,30 @@ class GuiManager(FSM.FSM):
         self.levelUpCategoryLabel = DirectLabel(parent = self.levelUpText, relief = None, text = '', text_font = PiratesGlobals.getPirateOutlineFont(), text_fg = (0.10000000000000001, 0.69999999999999996, 0.10000000000000001, 1), scale = 0.125, pos = (0, 0, -0.125))
         self.levelUpIval = Sequence(Func(self.levelUpSfx.play), Func(self.levelUpText.reparentTo, aspect2d), Parallel(LerpPosInterval(self.levelUpText, 5, pos = Point3(0, 0, 0.29999999999999999), startPos = Point3(0, 0, -0.29999999999999999)), Sequence(LerpColorScaleInterval(self.levelUpText, 0.5, colorScale = VBase4(1, 1, 1, 1), startColorScale = VBase4(1, 1, 1, 0)), Wait(4), LerpColorScaleInterval(self.levelUpText, 0.5, colorScale = VBase4(1, 1, 1, 0), startColorScale = VBase4(1, 1, 1, 1)))), Func(self.levelUpText.detachNode))
 
-    
+
     def bufferLevelUpText(self, category, level):
         catLevel = self.levelUpBufferDict.get(category)
         if level > catLevel:
             self.levelUpBufferDict[category] = level
-        
+
         taskMgr.doMethodLater(0.10000000000000001, self.processLevelUpBuffer, 'processLevelUpBuffer')
 
-    
+
     def processLevelUpBuffer(self, task = None):
         for categoryKey in self.levelUpBufferDict:
             level = self.levelUpBufferDict[categoryKey]
             self.showLevelUpText(categoryKey, level)
-        
+
         self.levelUpBufferDict = { }
         if task:
             return task.done
-        
 
-    
+
+
     def showLevelUpText(self, category, level):
         if self.pageOpen(self.skillPage):
             self.togglePage(self.skillPage)
-        
+
         self.skillPage.update(category)
         self.createLevelUpText()
         self.levelUpLabel['text'] = PLocalizer.LevelUp
@@ -1254,114 +1258,114 @@ class GuiManager(FSM.FSM):
         stats = RepChart.getLevelUpStats(category)
         if stats[0] > 0:
             levelUpReward += PLocalizer.LevelUpHPIncrease % stats[0]
-        
+
         if stats[1] > 0:
             levelUpReward += PLocalizer.LevelUpVoodooIncrease % stats[1]
-        
+
         skills = RepChart.getLevelUpSkills(category, level)
         for skillId in skills[0]:
             pointName = PLocalizer.getInventoryTypeName(skillId)
             levelUpReward += PLocalizer.LevelUpSkillPoint % pointName
-        
+
         for skillId in skills[1]:
             skillName = PLocalizer.getInventoryTypeName(skillId)
             levelUpReward += PLocalizer.LevelUpSkillUnlock % skillName
-        
+
         if levelUpReward:
             levelUpReward = PLocalizer.ChatPanelLevelUpMsg % (categoryName, level) + '\n' + levelUpReward
             self.messageStack.addTextMessage(levelUpReward, icon = ('reputation', category))
-        
+
         if self.skillPage.tabBar:
             self.skillPage.tabBar.stash()
-        
 
-    
+
+
     def showQuestItemNotifyText(self, quest, item, note):
         if self.tutorialStatus < PiratesGlobals.TUT_GOT_SEACHEST:
             return None
-        
+
         msg = PLocalizer.QuestItemNotifications[note]
         (msg, color) = quest.getProgressMsg()
         if msg:
             self.createProgressMsg(msg, color)
-        
 
-    
+
+
     def showQuestAddedText(self, quest):
         self.av.queueStoryQuest(quest)
         if self.tutorialStatus < PiratesGlobals.TUT_GOT_SEACHEST:
             return None
-        
+
         inv = self.av.getInventory()
         UserFunnel.logSubmit(0, 'quest_assigned_%s' % quest.questId)
         UserFunnel.logSubmit(1, 'quest_assigned_%s' % quest.questId)
 
-    
+
     def showQuestNotifyText(self, message, quest):
         if self.tutorialStatus < PiratesGlobals.TUT_GOT_SEACHEST:
             return None
-        
+
         (msg, color) = quest.getProgressMsg()
         if msg:
             self.createProgressMsg(msg, color)
-        
 
-    
+
+
     def showQuestCompleteText(self, message, quest):
         if self.tutorialStatus < PiratesGlobals.TUT_GOT_SEACHEST:
             return None
-        
+
         duration = 5.0
         if isinstance(quest.getTasks()[0], MaroonNPCTaskDNA):
             duration = 12.0
-        
+
         (msg, color) = quest.getProgressMsg()
         if msg:
             self.createProgressMsg(msg, color, duration)
-        
 
-    
+
+
     def handleTopTen(self, stuff):
         self.topTen = DirectFrame(parent = aspect2d, relief = DGG.FLAT, frameSize = (-0.80000000000000004, 0.80000000000000004, -0.69999999999999996, 0.59999999999999998), frameColor = PiratesGuiGlobals.FrameColor, pos = (0, 0, 0), text = 'Reputation Top Ten', text_align = TextNode.ACenter, text_scale = 0.040000000000000001, text_fg = (0.90000000000000002, 1, 0.90000000000000002, 1), text_pos = (0, 0.5, 0))
         count = len(stuff)
         for person in stuff:
             slot = DirectFrame(parent = self.topTen, relief = DGG.FLAT, frameSize = (-0.5, 0.5, -0.035000000000000003, 0.044999999999999998), frameColor = (1, 1, 1, 1), pos = (0, 0, 0.5 + -0.10000000000000001 * count), text = '%10d    %s' % (person[2], person[1]), text_scale = 0.040000000000000001)
             count -= 1
-        
+
         taskMgr.doMethodLater(15.0, self.dismissTopTen, 'clearTopTen')
 
-    
+
     def dismissTopTen(self, task):
         self.topTen.hide()
         self.topTen.destroy()
 
-    
+
     def handleClickedNametag(self, avatar):
         if avatar.isGhost >= 3:
             return None
-        
+
         if avatar.isConfused:
             self.handleContextTutorial(InventoryType.ChatPreferences, 0, 0, avatar.wlEnabled)
         else:
             return self.handleAvatarDetails(avatar.getDoId())
 
-    
+
     def handleIgnoreGuildInvites(self):
         self.ignoreGuildInvites = 1
 
-    
+
     def ignoreInvitesPlayer(self, pId):
         if pId not in self.ignoreInvitesPlayerList:
             self.ignoreInvitesPlayerList.append(pId)
-        
 
-    
+
+
     def ignoreInvitesAvatar(self, avId):
         if avId not in self.ignoreInvitesAvatarList:
             self.ignoreInvitesAvatarList.append(avId)
-        
 
-    
+
+
     def handleAvatarDetails(self, avId, avName = None):
         messenger.send('avatarDetailsOpened')
         self.profilePage.showProfile(avId, avName)
@@ -1370,181 +1374,181 @@ class GuiManager(FSM.FSM):
             base.localAvatar.removeContext(InventoryType.PlayerInvites)
             base.localAvatar.removeContext(InventoryType.DockCrewCommands)
             base.localAvatar.removeContext(InventoryType.TeleportToFriends)
-        
 
-    
+
+
     def hideAvatarDetails(self):
         self.profilePage.hide()
 
-    
+
     def handlePlayerDetails(self, playerId, playerName = None):
         self.profilePage.showPlayerProfile(playerId, playerName)
 
-    
+
     def hidePlayerDetails(self):
         self.profilePage.hide()
 
-    
+
     def handleGotoAvatar(self, avId, avName = None):
         if not launcher.canLeaveFirstIsland():
             base.cr.centralLogger.writeClientEvent('Player encountered phase 4 blocker trying to teleport to another pirate')
             self.showDownloadBlocker(DownloadBlockerPanel.Reasons.TELEPORT)
             return None
-        
+
         base.cr.teleportMgr.queryAvatarForTeleport(avId)
 
-    
+
     def handleRelationships(self, avId, avName, playerId = None):
         if self.relationshipChooser:
             self.relationshipChooser.destroy()
-        
+
         self.relationshipChooser = RelationshipChooser.RelationshipChooser(avId, avName, playerId)
         self.relationshipChooser.setPos(-0.75, 0, -0.29499999999999998)
 
-    
+
     def handleAvatarFriendInvite(self, avId, avName):
         if self.friendInviter:
             self.friendInviter.destroy()
-        
+
         av = base.cr.doId2do.get(avId)
         if av:
             avName = av.getName()
-        
+
         self.friendInviter = FriendInviter.FriendInviter(avId, avName, False, False)
 
-    
+
     def handlePlayerFriendInvite(self, avId, avName, pId = None):
         pInfo = base.cr.playerFriendsManager.findPlayerInfoFromAvId(avId)
         if pInfo:
             avName = pInfo.playerName
-        
+
         if self.friendInviter:
             self.friendInviter.destroy()
-        
+
         self.friendInviter = FriendInviter.FriendInviter(avId, avName, True, False, pId)
 
-    
+
     def handleAvatarFriendInvitation(self, avId, avName = 'Unknown'):
         if self.friendInvitee:
             self.friendInvitee.destroy()
-        
+
         self.friendInvitee = FriendInvitee.FriendInvitee(avId, avName, False)
 
-    
+
     def handlePlayerFriendInvitation(self, avId, avName = 'Unknown'):
         if self.friendInvitee:
             self.friendInvitee.destroy()
-        
+
         self.friendInvitee = FriendInvitee.FriendInvitee(avId, avName, True)
 
-    
+
     def handleGuildInviteAccept(self, avid):
         if not self.guildInviter:
             return None
-        
+
         self.guildInviter.guildAcceptInvite(avid)
 
-    
+
     def handleGuildInviteReject(self, avid, reason):
         if not self.guildInviter:
             return None
-        
+
         self.guildInviter.guildRejectInvite(avid, reason)
 
-    
+
     def handleGuildInvite(self, avId, avName):
         if self.guildInviter:
             self.guildInviter.destroy()
-        
+
         self.guildInviter = GuildInviter.GuildInviter(avId, avName)
 
-    
+
     def handleGuildMember(self, avId, avName, guildId, canpromote, candemote, cankick):
         if self.guildMember:
             self.guildMember.destroy()
-        
+
         self.guildMember = GuildMember.GuildMember(avId, avName, guildId, canpromote, candemote, cankick)
 
-    
+
     def handleGuildInvitation(self, avId, avName, guildId, guildName):
         if self.guildInvitee:
             self.guildInvitee.destroy()
-        
+
         self.guildInvitee = GuildInvitee.GuildInvitee(avId, avName, guildId, guildName)
 
-    
+
     def handleCrewInvite(self, avId, avName):
         if self.crewInviter:
             self.crewInviter.destroy()
-        
+
         self.crewInviter = CrewInviter.CrewInviter()
         self.crewInviter.inviteAvatar(avId, avName)
 
-    
+
     def handleCrewLeave(self):
         if self.crewInviter:
             self.crewInviter.destroy()
-        
+
         self.crewInviter = CrewInviter.CrewInviter(self.av.doId, self.av.getName())
 
-    
+
     def handleCrewInvitation(self, avId, avName = 'Unknown'):
         if self.crewInvitee:
             self.crewInvitee.destroy()
-        
+
         self.crewInvitee = CrewInvitee.CrewInvitee(avId, avName)
 
-    
+
     def handleCrewRejoin(self, avId, isManager = 0, isPvp = 0):
         if self.crewRejoin:
             self.crewRejoin.destroy()
-        
+
         self.crewRejoin = CrewRejoin.CrewRejoin(avId, isManager, isPvp)
 
-    
+
     def handleCrewBoot(self, avId, avName = 'Unknown'):
         if self.crewBoot:
             self.crewBoot.destroy()
-        
+
         self.crewBoot = CrewBoot.CrewBoot(avId, avName)
 
-    
+
     def handleLeaveCrewWarning(self, shardId):
         if self.leaveCrewWarning:
             self.leaveCrewWarning.destroy()
-        
+
         self.leaveCrewWarning = LeaveCrewWarning.LeaveCrewWarning(shardId)
 
-    
+
     def handleTradeInvite(self, avId, avName):
         if self.tradeInviter:
             self.tradeInviter.destroy()
-        
+
         self.tradeInviter = TradeInviter.TradeInviter(avId, avName)
 
-    
+
     def handleTradeInvitation(self, trade):
         if self.tradePanel:
             self.tradePanel.destroy()
-        
+
         self.tradePanel = TradePanel.TradePanel(trade)
         self.tradePanel.setPos(base.a2dLeft, 0, -0.14999999999999999)
 
-    
+
     def handlePVPInvite(self, avId, avName):
         if self.pvpInviter:
             self.pvpInviter.destroy()
-        
+
         self.pvpInviter = PVPInviter.PVPInviter(avId, avName)
 
-    
+
     def handlePVPInvitation(self, avId, avName = 'Unknown'):
         if self.pvpInvitee:
             self.pvpInvitee.destroy()
-        
+
         self.pvpInvitee = PVPInvitee.PVPInvitee(avId, avName)
 
-    
+
     def handlePVPAccepted(self, avId, avName = 'Unknown'):
         if self.pvpInvitee:
             self.pvpInvitee.destroy()
@@ -1552,27 +1556,27 @@ class GuiManager(FSM.FSM):
         elif self.pvpInviter:
             self.pvpInviter.destroy()
             self.pvpInviter = None
-        
 
-    
+
+
     def handleIgnore(self, avId, avName):
         if self.ignoreConfirm:
             self.ignoreConfirm.destroy()
-        
+
         self.ignoreConfirm = IgnoreConfirm.IgnoreConfirm(avId, avName)
 
-    
+
     def handleReport(self, playerId, avId, avName):
         if self.reportAPlayer:
             self.reportAPlayer.destroy()
-        
+
         self.reportAPlayer = ReportAPlayer.ReportAPlayer(playerId, avId, avName)
 
-    
+
     def handleWhisperIncoming(self, senderId, msgText):
         if base.cr.avatarFriendsManager.checkIgnored(senderId):
             return None
-        
+
         sender = base.cr.identifyAvatar(senderId)
         if sender:
             senderName = sender.getName()
@@ -1583,214 +1587,214 @@ class GuiManager(FSM.FSM):
         base.talkAssistant.receiveAvatarWhisperTypedChat(msgText, senderId)
         if self.soundWhisper:
             base.playSfx(self.soundWhisper)
-        
 
-    
+
+
     def handleContextTutorial(self, contextId, number, type, part):
         if self.isTutEnabled == False:
             return None
-        
+
         result = self.contextTutPanel.setPanel(contextId, number, type, part)
         if result and self.seaChestAllowed:
             self.contextTutPanel.show()
-        
 
-    
+
+
     def showTMUI(self, tm):
         if self.tmObjectiveList == None:
             self.createObjectiveList(tm)
-        
+
         self.tmObjectiveList.show()
         if self.crewPage:
             self.crewPage.determineOptionsButtonsState()
-        
 
-    
+
+
     def hideTMUI(self):
         if self.tmObjectiveList:
             self.tmObjectiveList.cleanup()
             self.tmObjectiveList.hide()
             del self.tmObjectiveList
             self.tmObjectiveList = None
-        
+
         if self.crewPage:
             self.crewPage.determineOptionsButtonsState()
-        
 
-    
+
+
     def createObjectiveList(self, tm):
         self.tmObjectiveList = ObjectivesPanel('Treasure Map Objectives', tm)
         self.tmObjectiveList.setPos(base.a2dLeft, 0, 0.45000000000000001)
 
-    
+
     def showTMCompleteUI(self, tm, results):
         return None
         if self.tmCompleteUI == None:
             self.createTMCompleteUI(tm, results)
-        
+
         self.tmCompleteUI.setAlphaScale(0)
         self.tmCompleteUI.show()
         if self.showTMCompleteLerp:
             self.showTMCompleteLerp.pause()
-        
+
         self.showTMCompleteLerp = LerpColorScaleInterval(self.tmCompleteUI, 1, Vec4(1, 1, 1, 1))
         self.showTMCompleteLerp.start()
 
-    
+
     def hideTMCompleteUI(self):
         if self.showTMCompleteLerp:
             self.showTMCompleteLerp.pause()
             self.showTMCompleteLerp = None
-        
+
         if self.tmCompleteUI:
             self.tmCompleteUI.hide()
-        
 
-    
+
+
     def createTMCompleteUI(self, tm, results):
         self.tmCompleteUI = TreasureMapCompletePanel('Treasure Map Complete', tm, results)
         self.tmCompleteUI.setPos(-1.25, 0, -0.81999999999999995)
 
-    
+
     def showPVPInstructions(self, title, instructions):
         if not self.gameRulesPanel:
             self.gameRulesPanel = PVPRulesPanel('PVPRulesPanel', title, instructions)
-        
 
-    
+
+
     def hidePVPInstructions(self):
         if self.gameRulesPanel:
             self.gameRulesPanel.destroy()
             self.gameRulesPanel = None
-        
 
-    
+
+
     def createPVPStatus(self, holder):
         if self.pvpStatus is None:
             self.pvpStatus = PVPBoard(holder)
             self.pvpStatus.hide()
-        
 
-    
+
+
     def showPVPStatus(self):
         if self.pvpStatus != None:
             self.pvpStatus.show()
-        
 
-    
+
+
     def hidePVPStatus(self):
         if self.pvpStatus:
             self.pvpStatus.hide()
-        
 
-    
+
+
     def removePVPStatus(self):
         if self.pvpStatus:
             self.pvpStatus.destroy()
             self.pvpStatus = None
-        
 
-    
+
+
     def removeScoreboard(self):
         if self.scoreboard:
             self.scoreboard.hide()
             self.scoreboard.destroy()
             self.scoreboard = None
-        
 
-    
+
+
     def removeInvasionScoreboard(self):
         if self.invasionScoreboard:
             self.invasionScoreboard.hide()
             self.invasionScoreboard.destroy()
             self.invasionScoreboard = None
-        
 
-    
+
+
     def createSiegeStatus(self, holder):
         if self.siegeStatus is None:
             self.siegeStatus = SiegeBoard(holder)
-        
 
-    
+
+
     def showSiegeStatus(self):
         if self.siegeStatus != None:
             self.siegeStatus.show()
-        
 
-    
+
+
     def hideSiegeStatus(self):
         if self.siegeStatus:
             self.siegeStatus.hide()
-        
 
-    
+
+
     def removeSiegeStatus(self):
         if self.siegeStatus:
             self.siegeStatus.destroy()
             self.siegeStatus = None
-        
 
-    
+
+
     def showPVPTimer(self, pvpInstance):
         if pvpInstance.hasTimeLimit():
             timeRemaining = pvpInstance.getTimeLimit() - globalClock.getRealTime() - pvpInstance.gameStartTime
             self.setTimer(timeRemaining, alarmTime = 10)
             self._oldTimerPos = self.timer.getPos()
             self.timer.setPos(0.435, 0, 1.3999999999999999)
-        
 
-    
+
+
     def createPVPUI(self, holder):
         if self.pvpPanel is None:
             self.pvpPanel = PVPPanel.PVPPanel(PLocalizer.PVPPanelTitle, holder)
             self.pvpPanel.reparentTo(base.a2dLeftCenter)
             self.pvpPanel.setPos(0.050000000000000003, 0, 0.25)
             self.pvpPanel.hide()
-        
 
-    
+
+
     def showPVPUI(self, team):
         if self.pvpPanel != None:
             self.pvpPanel.show(team)
-        
 
-    
+
+
     def hidePVPUI(self):
         if self.pvpPanel != None:
             self.pvpPanel.hide()
-        
 
-    
+
+
     def removePVPUI(self):
         if self.pvpPanel:
             if self.timer:
                 self.timer.setPos(self._oldTimerPos)
-            
+
             self.timerExpired()
             self.pvpPanel.cleanup()
             self.pvpPanel.destroy()
             self.pvpPanel = None
-        
 
-    
+
+
     def createPVPCompleteUI(self, pvpInstance):
         if self.pvpCompleteUI is None:
             self.pvpCompleteUI = PVPCompletePanel(PLocalizer.PVPCompleteTitle, pvpInstance)
             self.pvpCompleteUI.setPos(-1.25, 0, -0.81999999999999995)
-        
 
-    
+
+
     def showPVPCompleteUI(self):
         self.pvpCompleteUI.setAlphaScale(0)
         self.pvpCompleteUI.show()
         if self.showPVPCompleteLerp:
             self.showPVPCompleteLerp.pause()
-        
+
         self.showPVPCompleteLerp = LerpColorScaleInterval(self.pvpCompleteUI, 1, Vec4(1, 1, 1, 1))
         self.showPVPCompleteLerp.start()
 
-    
+
     def setPVPResult(self, type, rank, teams, tie):
         if teams == 2:
             if tie:
@@ -1805,32 +1809,32 @@ class GuiManager(FSM.FSM):
                     self.pvpCompleteUI.setOutcome(PLocalizer.PVPTeamWon % localAvatar.getPVPTeam())
                 else:
                     self.pvpCompleteUI.setOutcome(PLocalizer.PVPTeamWon % (3 - localAvatar.getPVPTeam()))
-            
+
         elif type == 'player':
             self.pvpCompleteUI.setOutcome('%s%s' % (PLocalizer.PVPYourRank, rank))
         elif type == 'team':
             self.pvpCompleteUI.setOutcome('%s%s' % (PLocalizer.PVPYourTeamRank, rank))
-        
 
-    
+
+
     def hidePVPCompleteUI(self):
         if self.showPVPCompleteLerp:
             self.showPVPCompleteLerp.pause()
             self.showPVPCompleteLerp = None
-        
+
         if self.pvpCompleteUI:
             self.pvpCompleteUI.hide()
-        
 
-    
+
+
     def removePVPCompleteUI(self):
         if self.pvpCompleteUI:
             self.pvpCompleteUI.hide()
             self.pvpCompleteUI.destroy()
             self.pvpCompleteUI = None
-        
 
-    
+
+
     def hideTrays(self):
         self.removeInvasionScoreboard()
         self.combatTray.hide()
@@ -1839,19 +1843,19 @@ class GuiManager(FSM.FSM):
         if self.filmOffsetLerp:
             self.filmOffsetLerp.pause()
             self.filmOffsetLerp = None
-        
+
         self.setFilmOffsetX(0.0)
         self.setFilmOffsetY(0.0)
         if self.mainMenu:
             self.mainMenu.abruptHide()
-        
+
         self.setSeaChestAllowed(False, close = True)
         self.radarGui.hide()
         self.targetStatusTray.hide()
         if not self.socialPanel.isHidden():
             self.socialPanel.hide()
             self._putBackSocialPanel = 1
-        
+
         self.socialPanel.hide()
         self.chatPanel.hide()
         self.av.chatMgr.stop()
@@ -1862,30 +1866,30 @@ class GuiManager(FSM.FSM):
         if self.av.getCrewShip():
             self.av.getCrewShip().hideStatusDisplay()
             self.av.getCrewShip().hideTargets()
-        
+
         if self.prevTag:
             self.prevTag.hide()
-        
+
         if self.tmButtonQuick:
             self.tmButtonQuick.hide()
-        
+
         if self.tmButtonSearch:
             self.tmButtonSearch.hide()
-        
+
         self.hideTrackedQuestInfo()
         if self.crewHUD.hudOn:
             self.crewHUD.setHUDOff()
             self.crewHUDTurnedOff = True
-        
+
         self.hideMinimap()
         self.profilePage.hide()
 
-    
+
     def showTrays(self):
         if self.filmOffsetLerp:
             self.filmOffsetLerp.pause()
             self.filmOffsetLerp = None
-        
+
         self.setFilmOffsetX(0.0)
         self.setFilmOffsetY(0.0)
         self.setTutorialStatus()
@@ -1894,7 +1898,7 @@ class GuiManager(FSM.FSM):
         self.setIgnoreAllButLookoutHotKey(False)
         if self.mainMenu:
             self.mainMenu.abruptHide()
-        
+
         if self.tutorialStatus >= PiratesGlobals.TUT_GOT_SEACHEST:
             self.chestTray.show()
             self.setSeaChestAllowed(True)
@@ -1905,57 +1909,57 @@ class GuiManager(FSM.FSM):
             self.av.startChat()
             if self.contextTutPanel.isFilled() and self.isTutEnabled:
                 self.contextTutPanel.show()
-            
+
             self.setChatAllowed(True)
             if self.tutorialStatus >= PiratesGlobals.TUT_MET_JOLLY_ROGER:
                 self.socialPanelAllowed = True
-            
+
             if self._putBackSocialPanel:
                 if hasattr(base, 'localAvatar') and not (base.localAvatar.inPvp):
                     self.socialPanel.show()
-                
+
                 self._putBackSocialPanel = 0
-            
+
             if self.av.getCrewShip() and self.av.getCrewShip() == self.av.getShip():
                 self.av.getCrewShip().showStatusDisplay()
                 self.av.getCrewShip().showTargets()
-            
+
             if self.prevTag and not (Freebooter.AllAccessHoliday):
                 self.prevTag.show()
-            
-        
+
+
         if self.tutorialStatus >= PiratesGlobals.TUT_GOT_COMPASS:
             self.accept('guiMgrToggleRadar', self.radarGui.toggle)
             self.radarGui.show()
             if self.tmButtonQuick and base.cr.teleportMgr and base.cr.teleportMgr.inInstanceType != PiratesGlobals.INSTANCE_TM:
                 self.tmButtonQuick.show()
-            
+
             if self.tmButtonSearch and base.cr.teleportMgr and base.cr.teleportMgr.inInstanceType != PiratesGlobals.INSTANCE_TM:
                 self.tmButtonSearch.show()
-            
+
             if self.trackedQuestLabel['text']:
                 pass
             if len(self.av.activeQuestId):
                 self.showTrackedQuestInfo()
-            
-        
+
+
         if self.crewHUDTurnedOff:
             if self.tutorialStatus >= PiratesGlobals.TUT_MET_JOLLY_ROGER and self.forceLookout or self.crewHUD.crew:
                 self.crewHUD.setHUDOn()
                 self.crewHUDTurnedOff = False
-            
 
-    
+
+
     def getTray(self, gearId):
         categoryType = InventoryId.getCategory(gearId)
         gearRepId = WeaponGlobals.getRepId(gearId)
         if categoryType == ReputationGlobals.WEAPON_CATEGORY:
             if gearRepId == InventoryType.CannonRep:
                 pass
-            
-        
 
-    
+
+
+
     def setTimer(self, time, showMinutes = 1, mode = None, titleText = '', titleFg = None, infoText = '', cancelText = '', cancelCallback = None, timerExpiredCallback = None, alarmTime = 5):
         self.timerExpired()
         self.timer = PiratesTimer.PiratesTimer(showMinutes = showMinutes, mode = mode, titleText = titleText, titleFg = titleFg, infoText = infoText, cancelText = cancelText, cancelCallback = cancelCallback, alarmTime = alarmTime)
@@ -1967,20 +1971,20 @@ class GuiManager(FSM.FSM):
         else:
             self.timer.countdown(time, self.timerExpired)
 
-    
+
     def timerExpired(self):
         if self.timer:
             self.timer.destroy()
             self.timer = None
-        
 
-    
+
+
     def cancelTimer(self, mode):
         if self.timer and self.timer.mode == mode:
             self.timerExpired()
-        
 
-    
+
+
     def setHourglassTimer(self, time, showMinutes = 1, mode = None, titleText = '', titleFg = None, infoText = '', cancelText = '', cancelCallback = None, timerExpiredCallback = None):
         self.hourglassTimerExpired()
         timer = PiratesTimerHourglass.PiratesTimerHourglass(showMinutes = showMinutes, mode = mode, titleText = titleText, titleFg = titleFg, infoText = infoText, cancelText = cancelText, cancelCallback = cancelCallback)
@@ -1994,30 +1998,30 @@ class GuiManager(FSM.FSM):
         else:
             timer.countdown(time, self.hourglassTimerExpired)
 
-    
+
     def hourglassTimerExpired(self):
         if self.timerHourglass:
             self.timerHourglass.destroy()
             self.timerHourglass = None
-        
 
-    
+
+
     def cancelHourglassTimer(self, mode):
         if self.timerHourglass and self.timerHourglass.mode == mode:
             self.hourglassTimerExpired()
-        
 
-    
+
+
     def createSubtitle(self, text, color = None):
         self.subtitler.showText(text, color)
         taskMgr.remove('clearSubtitle')
-        
+
         def clearSubtitle(event):
             self.subtitler.clearText()
 
         taskMgr.doMethodLater(2.0, clearSubtitle, 'clearSubtitle')
 
-    
+
     def createTitle(self, text, color = None):
         self.titler.fadeInText(text, color)
         taskMgr.remove('clearTitle')
@@ -2026,13 +2030,13 @@ class GuiManager(FSM.FSM):
         self.titler.text['text_shadow'] = PiratesGuiGlobals.TextShadow
         position = Vec3(0.0, 0.0, 0.0)
         self.titler.text.setPos(position)
-        
+
         def clearTitle(event):
             self.titler.fadeOutText()
 
         taskMgr.doMethodLater(3.0, clearTitle, 'clearTitle')
 
-    
+
     def createSecondaryTitle(self, text, color = None):
         self.secondarytitler.fadeInText(text, color)
         taskMgr.remove('clearSecondaryTitle')
@@ -2041,34 +2045,34 @@ class GuiManager(FSM.FSM):
         self.secondarytitler.text['text_shadow'] = PiratesGuiGlobals.TextShadow
         position = Vec3(0.0, 0.0, -0.10000000000000001)
         self.secondarytitler.text.setPos(position)
-        
+
         def clearSecondaryTitle(event):
             self.secondarytitler.fadeOutText()
 
         taskMgr.doMethodLater(3.0, clearSecondaryTitle, 'clearSecondaryTitle')
 
-    
+
     def createWarning(self, text, color = PiratesGuiGlobals.TextFG6, duration = 2.0):
         self.warningMsg.showText(text, color)
         taskMgr.remove('clearWarning')
-        
+
         def clearWarningMsg(event):
             self.warningMsg.clearText()
 
         taskMgr.doMethodLater(duration, clearWarningMsg, 'clearWarning')
 
-    
+
     def createProgressMsg(self, text, color = None, duration = 5.0):
         self.progressMsg.text.setPos(0, 0, PiratesGuiGlobals.ProgressMsgOffset)
         self.progressMsg.showText(text, color)
         taskMgr.remove('clearProgress')
-        
+
         def clearProgressMsg(event):
             self.progressMsg.clearText()
 
         taskMgr.doMethodLater(duration, clearProgressMsg, 'clearProgress')
 
-    
+
     def createInteractionalSubtitle(self, text, avatar, audio = None, color = None):
         if self.interactionalFrame == None:
             self.interactionalFrame = DirectFrame(parent = aspect2d, relief = DGG.FLAT, state = DGG.DISABLED, frameSize = (-0.80000000000000004, 0.80000000000000004, -0.10000000000000001, 0.10000000000000001), frameColor = (0, 0, 0, 0), pos = (0.125, 0, 0.79000000000000004))
@@ -2084,70 +2088,70 @@ class GuiManager(FSM.FSM):
             self.interactionalSubtitler.text.reparentTo(self.interactionalFrame)
             self.interactionalSubtitler.text.setScale(1)
             self.interactionalSubtitler.text['text_wordwrap'] = 28
-        
+
         self.interactionalSubtitler.showText(text, color)
         textBounds = self.interactionalSubtitler.text.component('text0').textNode.getFrameActual()
         self.interactionalSubtitler.text.setPos(0, 0, (-(textBounds[3] + textBounds[2]) / 2) * self.interactionalSubtitler.text['text_scale'][1])
         avatar.playCurrentDialogue(audio, 0)
 
-    
+
     def clearInteractionalSubtitle(self):
         self.interactionalSubtitler.showText('')
         if self.interactionalFrame:
             self.interactionalFrame.hide()
-        
 
-    
+
+
     def createNewQuestIndicator(self, quest):
         if self.tutorialStatus < PiratesGlobals.TUT_GOT_SEACHEST:
             return None
-        
+
         if self.journalButton:
             self.journalButton.addNewQuest()
             self.journalButton['extraArgs'] = [
                 quest]
             return None
-        
+
         self.journalButton = JournalButton.JournalButton(parent = base.a2dBottomRight, command = self.viewJournal, pos = (-0.12, 0, 0.27000000000000002), scale = 0.90000000000000002, extraArgs = [
             quest])
         self.journalButton.addNewQuest()
 
-    
+
     def viewJournal(self, quest):
         self.showQuestPanel()
         self.questPage.titleList.select(quest.getQuestId())
 
-    
+
     def removeNewQuestIndicator(self):
         if self.journalButton:
             self.journalButton.removeNewQuest()
             if self.journalButton.questCounter <= 0:
                 self.journalButton.destroy()
                 self.journalButton = None
-            
-        
 
-    
+
+
+
     def createHighSeasScoreboard(self, portName, missionData, playerData, ship):
         if self.scoreboard:
             self.removeScoreboard()
-        
+
         self.scoreboard = HighSeasScoreboard.HighSeasScoreboard(portName, missionData, playerData, ship)
         self.scoreboard.setPos(-(self.scoreboard.width) / 2.0, 0, -0.94999999999999996)
 
-    
+
     def createInvasionScoreboard(self, holidayId, wonInvasion, repEarned, enemiesKilled, barricadesSaved, wavesCleared):
         if self.invasionScoreboard:
             self.removeInvasionScoreboard()
-        
+
         self.invasionScoreboard = InvasionScoreboard.InvasionScoreboard(holidayId, wonInvasion, repEarned, enemiesKilled, barricadesSaved, wavesCleared)
         self.invasionScoreboard.setPos(-(self.invasionScoreboard.width) / 2.0 - 0.20000000000000001, 0, self.invasionScoreboard.height / 2.0 + 0.10000000000000001)
 
-    
+
     def loadOffscreenHitEffects(self):
         if self.offscreenHitEffects:
             return None
-        
+
         onColor = Vec4(1, 0, 0, 0.69999999999999996)
         offColor = Vec4(1, 0, 0, 0)
         left = loader.loadModel('models/textureCards/offscreenFlash')
@@ -2197,11 +2201,11 @@ class GuiManager(FSM.FSM):
             flashRight,
             flashTop]
 
-    
+
     def setupInjuredEffect(self):
         if self.injuredEffects:
             return None
-        
+
         onColor = Vec4(0, 0, 0, 0.69999999999999996)
         offColor = Vec4(0, 0, 0, 0)
         left = loader.loadModel('models/textureCards/offscreenFlash')
@@ -2245,7 +2249,7 @@ class GuiManager(FSM.FSM):
         self.injuredBlackoutGeom.setTransparency(TransparencyAttrib.MAlpha)
         self.injuredBlackoutGeom.setScale(screenSizeX, screenSizeZ, 1.0)
 
-    
+
     def regenInjuredTrack(self, timeStart):
         blackoutTime = PiratesGlobals.REVIVE_TIME_OUT
         blackoutPropStart = timeStart / blackoutTime
@@ -2262,11 +2266,11 @@ class GuiManager(FSM.FSM):
         darkColor = 0.5 + blackColor
         if darkColor > 1.0:
             darkColor = 1.0
-        
+
         alteredProp = blackoutPropEnd - 0.0
         if alteredProp < 0.0:
             alteredProp = 0.0
-        
+
         darkMildColor = (darkColor + blackColor) * 0.5
         blackMildColor = darkMildColor * alteredProp + blackColor * (1 - alteredProp)
         onColor = Vec4(0, 0, 0, darkColor)
@@ -2287,7 +2291,7 @@ class GuiManager(FSM.FSM):
         newTime = timeStart + timeCycle * 2.0
         self.injuredTrack = Parallel(Sequence(LerpColorScaleInterval(self.injuredBlackoutGeom, timeCycle * 0.5, darkOutColor), LerpColorScaleInterval(self.injuredBlackoutGeom, timeCycle * 0.5, blackOutColor)), Sequence(LerpColorInterval(self.injuredEffects[0], time1I, onColor), LerpColorInterval(self.injuredEffects[0], time1, offColor), LerpColorInterval(self.injuredEffects[0], time2, onColor), LerpColorInterval(self.injuredEffects[0], time2I, offColor)), Sequence(LerpColorInterval(self.injuredEffects[2], time3, onColor), LerpColorInterval(self.injuredEffects[2], time3I, offColor), LerpColorInterval(self.injuredEffects[2], time4I, onColor), LerpColorInterval(self.injuredEffects[2], time4, offColor)), Sequence(LerpColorInterval(self.injuredEffects[1], time2I, onColor), LerpColorInterval(self.injuredEffects[1], time2, offColor), LerpColorInterval(self.injuredEffects[1], time1, onColor), LerpColorInterval(self.injuredEffects[1], time1I, offColor)), Sequence(LerpColorInterval(self.injuredEffects[3], time4, onColor), LerpColorInterval(self.injuredEffects[3], time4I, offColor), LerpColorInterval(self.injuredEffects[3], time3I, onColor), LerpColorInterval(self.injuredEffects[3], time3, offColor), Func(self.playInjuredEffect, newTime)))
 
-    
+
     def finishInjuredEffect(self):
         finishColor = Vec4(0, 0, 0, 0)
         finishTime = 1.0
@@ -2297,19 +2301,19 @@ class GuiManager(FSM.FSM):
             self.injuredTrack.pause()
             self.injuredTrack = Parallel(LerpColorScaleInterval(self.injuredBlackoutGeom, finishTime, finishColor), LerpScaleInterval(self.injuredEffects[0], duration = finishTime, scale = vScale), LerpScaleInterval(self.injuredEffects[2], duration = finishTime, scale = vScale), LerpScaleInterval(self.injuredEffects[1], duration = finishTime, scale = hScale), LerpScaleInterval(self.injuredEffects[3], duration = finishTime, scale = hScale), Sequence(LerpColorInterval(self.injuredEffects[0], finishTime, finishColor)), Sequence(LerpColorInterval(self.injuredEffects[2], finishTime, finishColor)), Sequence(LerpColorInterval(self.injuredEffects[1], finishTime, finishColor)), Sequence(LerpColorInterval(self.injuredEffects[3], finishTime, finishColor), Func(self.stopInjuredEffect)))
             self.injuredTrack.start()
-        
 
-    
+
+
     def startInjuredEffect(self):
         self.setupInjuredEffect()
         for effect in self.injuredEffects:
             effect.show()
-        
+
         self.injuredBlackoutGeom.setColorScale(Vec4(0.0, 0.0, 0.0, 0.0))
         self.injuredBlackoutGeom.show()
         self.playInjuredEffect()
 
-    
+
     def playInjuredEffect(self, time = 0):
         screenSizeX = base.a2dLeft - base.a2dRight
         screenSizeZ = base.a2dBottom - base.a2dTop
@@ -2317,13 +2321,13 @@ class GuiManager(FSM.FSM):
         self.regenInjuredTrack(time)
         self.injuredTrack.start()
 
-    
+
     def stopInjuredEffect(self):
         self.injuredTrack.pause()
         for effect in self.injuredEffects:
             effect.setColor(0, 0, 0)
             effect.hide()
-        
+
         self.injuredEffects[0].setScale(4, 0, 9)
         self.injuredEffects[2].setScale(4, 0, 9)
         self.injuredEffects[1].setScale(4, 0, 12)
@@ -2331,7 +2335,7 @@ class GuiManager(FSM.FSM):
         self.injuredBlackoutGeom.hide()
         self.injuredTrack = None
 
-    
+
     def hitFromOffscreen(self, attacker):
         self.loadOffscreenHitEffects()
         pos = attacker.getPos(self.av)
@@ -2347,10 +2351,10 @@ class GuiManager(FSM.FSM):
                     self.offscreenHitIvals[2].start()
                 elif self.av.gameFSM.state == 'Cannon' or self.av.gameFSM.state == 'ShipPilot':
                     self.offscreenHitIvals[3].start()
-                
-            
 
-    
+
+
+
     def createLookoutPopup(self):
         self.lookoutPopup = NametagGroup()
         self.lookoutPopup.setColorCode(NametagGroup.CCToonBuilding)
@@ -2367,7 +2371,7 @@ class GuiManager(FSM.FSM):
         self.lookoutPopup.setActive(True)
         self.lookoutPage.accept(self.lookoutPopup.getUniqueId(), self.lookoutPage.msgClick)
 
-    
+
     def deleteLookoutPopup(self):
         self.lookoutPopup.unmanage(base.marginManager)
         self.lookoutPopup.removeNametag(self.lookoutPopup2D)
@@ -2375,20 +2379,20 @@ class GuiManager(FSM.FSM):
         del self.lookoutPopup2D
         del self.lookoutPopup2DNode
 
-    
+
     def moveLookoutPopup(self, chestOpen = True):
         if self.lookoutPopup2DNode:
             if chestOpen:
                 self.lookoutPopup2DNode.setPos(-1.7, 0, 0.17999999999999999)
             else:
                 self.lookoutPopup2DNode.setPos(-0.59999999999999998, 0, 0.17999999999999999)
-        
 
-    
+
+
     def loadPirateCode(self):
         if self.pirateCode:
             return None
-        
+
         self.pirateCode = BorderFrame(parent = base.a2dLeftCenter, frameSize = (0, 1.0, 0, 0.29999999999999999), pos = (0.25, 0, 0), scale = 0.75)
         self.pirateCode.setName(self.pirateCode.uniqueName('PirateCodeBorderFrame'))
         codeMessage1 = DirectLabel(parent = self.pirateCode, relief = None, text = PLocalizer.PirateCodeWarning1, text_fg = (1, 1, 1, 1), text_shadow = (0, 0, 0, 1), pos = (0.5, 0, 0.17999999999999999), text_scale = 0.080000000000000002)
@@ -2396,95 +2400,95 @@ class GuiManager(FSM.FSM):
         self.pirateCode.hide()
         self.pirateCodeDialog = loadSfx(SoundGlobals.WTD_CODE)
 
-    
+
     def showPirateCode(self):
         if not self.pirateCode:
             self.loadPirateCode()
-        
+
         if not self.codeShown:
             self.codeShown = 1
             self.pirateCode.show()
             base.playSfx(self.pirateCodeDialog)
             taskMgr.remove('hidePirateCode')
             taskMgr.doMethodLater(5.0, self.hidePirateCode, 'hidePirateCode')
-        
 
-    
+
+
     def hidePirateCode(self, task = None):
         if not self.pirateCode:
             return None
-        
+
         self.pirateCode.hide()
         self.pirateCodeDialog.stop()
 
-    
+
     def toggleSocialPanel(self, args = None):
         if self.ignoreAllKeys and not (self.seaChestAllowed) or not (self.socialPanelAllowed):
             return None
-        
+
         if self.socialPanel.isHidden():
             self.socialPanel.show()
             if self.seaChestActive:
                 localAvatar.guiMgr.hideSeaChest()
-            
+
             if hasattr(base, 'localAvatar'):
                 base.localAvatar.removeContext(InventoryType.NewFriend)
                 base.localAvatar.removeContext(InventoryType.NewGuild)
-            
+
         else:
             self.socialPanel.hide()
 
-    
+
     def showInventoryBagPanel(self, args = None):
         self.togglePage(self.inventoryBagPage, args)
 
-    
+
     def showTreasurePanel(self, args = None):
         if self.togglePage(self.inventoryBagPage, args):
             self.inventoryBagPage.openTreasures()
-        
 
-    
+
+
     def showWeaponPanel(self, args = None):
         self.chestPanel.beenOpen = 1
         self.chestPanel.setTitleName(PLocalizer.SeaChestTitleWeapons)
         self.togglePage(self.weaponPage, args)
 
-    
+
     def showSubCollection(self, args = None, setKey = None):
         self.collectionMain.hide(False)
         self.collectionPage.refreshList(setKey)
         self.collectionPage.show()
 
-    
+
     def showCollectionMain(self, args = None):
         self.collectionPage.hide()
         self.collectionMain.show()
 
-    
+
     def showCollectionPanel(self, args = None):
         self.togglePage(self.collectionPage, args)
 
-    
+
     def showClothingPanel(self, args = None):
         self.togglePage(self.clothingPage, args)
 
-    
+
     def showTitlesPanel(self, args = None):
         self.chestPanel.beenOpen = 1
         self.chestPanel.setTitleName(PLocalizer.SeaChestTitleBadges)
         if self.titlesPage:
             self.titlesPage.refresh()
-        
+
         self.togglePage(self.titlesPage, args)
 
-    
+
     def showShipPanel(self, args = None):
         self.chestPanel.beenOpen = 1
         self.chestPanel.setTitleName(PLocalizer.SeaChestTitleShips)
         self.togglePage(self.shipPage, args)
 
-    
+
     def showQuestPanel(self, args = None):
         self.chestPanel.beenOpen = 1
         self.chestPanel.setTitleName(PLocalizer.SeaChestTitleQuests)
@@ -2494,14 +2498,14 @@ class GuiManager(FSM.FSM):
                 messenger.send('questPageOpened')
             else:
                 messenger.send('questPageClosed')
-        
+
         self.removeNewQuestIndicator()
         if hasattr(base, 'localAvatar'):
             base.localAvatar.removeContext(InventoryType.QuestJournal)
             base.localAvatar.removeContext(InventoryType.ChangeQuestTracking)
-        
 
-    
+
+
     def showLookoutPanel(self, args = None):
         if not launcher.canLeaveFirstIsland():
             base.cr.centralLogger.writeClientEvent('Player encountered phase 4 blocker using the lookout system')
@@ -2517,14 +2521,14 @@ class GuiManager(FSM.FSM):
             self.togglePage(self.lookoutPage, args)
             if hasattr(base, 'localAvatar'):
                 base.localAvatar.removeContext(InventoryType.DockCommands)
-            
 
-    
+
+
     def disableLookoutPanel(self, disable):
         if disable:
             if self.pageOpen(self.lookoutPage):
                 self.showLookoutPanel()
-            
+
             self.chestTray.lookoutButton['state'] = DGG.DISABLED
             self.chestTray.lookoutButton.ignoreHotkeys()
             self.chestPanel.setPage(self.mapPage)
@@ -2536,34 +2540,34 @@ class GuiManager(FSM.FSM):
             self.chestTray.lookoutButton['image3_color'] = VBase4(0.59999999999999998, 0.59999999999999998, 0.59999999999999998, 1)
             self.chestTray.lookoutButtonImage.setColorScale(1, 1, 1, 1)
 
-    
+
     def showDownloadBlocker(self, reason = None):
         if hasattr(self, '_dlBlocker'):
             self._dlBlocker.destroy()
-        
+
         self._dlBlocker = DownloadBlockerPanel(reason)
         self._dlBlocker.setPos(0.10000000000000001, 0, -0.40000000000000002)
         self._dlBlocker.show()
 
-    
+
     def showTeleportBlocker(self):
         if hasattr(self, '_tpBlocker'):
             self._tpBlocker.destroy()
-        
+
         self._tpBlocker = TeleportBlockerPanel()
         self._tpBlocker.setPos(0.10000000000000001, 0, -0.40000000000000002)
         self._tpBlocker.show()
 
-    
+
     def showMapPage(self, args = None):
         self.chestPanel.beenOpen = 1
         self.chestPanel.setTitleName(PLocalizer.SeaChestTitleMap)
         self.togglePage(self.mapPage, args)
         if hasattr(base, 'localAvatar'):
             base.localAvatar.removeContext(InventoryType.IslandTeleport)
-        
 
-    
+
+
     def showSkillPage(self, args = None):
         self.chestPanel.beenOpen = 1
         self.chestPanel.setTitleName(PLocalizer.SeaChestTitleSkills)
@@ -2572,11 +2576,11 @@ class GuiManager(FSM.FSM):
             messenger.send('skillPanelOpened')
             if hasattr(base, 'localAvatar'):
                 base.localAvatar.removeContext(InventoryType.NewSkillPoint)
-            
+
         else:
             messenger.send('skillPanelClosed')
 
-    
+
     def toggleSkillPageDemo(self, value):
         self.chestPanel.setTitleName(PLocalizer.SeaChestTitleSkills)
         if value:
@@ -2586,20 +2590,20 @@ class GuiManager(FSM.FSM):
             self.hideSeaChest()
             self.skillPage.removeDemo()
 
-    
+
     def togglePage(self, page, args = None):
         if self.ignoreAllKeys:
             return False
-        
+
         if self.tutorialStatus < PiratesGlobals.TUT_MET_JOLLY_ROGER and page == self.lookoutPage:
             return False
-        
+
         if self.ignoreAllButSkillHotKey and page != self.skillPage:
             return False
-        
+
         if self.ignoreAllButLookoutHotKey and page != self.lookoutPage:
             return False
-        
+
         self.hideMinimap()
         if self.pageOpen(page):
             self.hideSeaChest()
@@ -2608,23 +2612,23 @@ class GuiManager(FSM.FSM):
             self.showSeaChest(page)
             if hasattr(base, 'localAvatar') and page == self.collectionMain:
                 base.localAvatar.removeContext(InventoryType.QuestJournal)
-            
+
             return True
         else:
             return False
 
-    
+
     def pageOpen(self, page):
         if self.chestPanel.getCurPage() == page and self.chestPanel.isActive():
             return 1
         else:
             return 0
 
-    
+
     def setMoney(self, money):
         self.moneyDisplay['text'] = '\x1white\x1%s\x2' % money
 
-    
+
     def setUIScale(self, scale):
         base.a2dTopCenter.setScale(scale)
         base.a2dBottomCenter.setScale(scale)
@@ -2635,7 +2639,7 @@ class GuiManager(FSM.FSM):
         base.a2dBottomLeft.setScale(scale)
         base.a2dBottomRight.setScale(scale)
 
-    
+
     def setChatAllowed(self, allowed, close = False):
         self.chatAllowed = allowed
         if self.chatAllowed:
@@ -2645,7 +2649,7 @@ class GuiManager(FSM.FSM):
             pass
         1
 
-    
+
     def setSeaChestAllowed(self, allowed, close = False, priority = 0, reset = False):
         if priority >= self.chestLock:
             self.chestLock = priority
@@ -2656,41 +2660,41 @@ class GuiManager(FSM.FSM):
                 self.ignore(PiratesGlobals.SeaChestHotkey)
                 if close:
                     self.hideSeaChest()
-                
-        
+
+
         if reset:
             self.chestLock = 0
-        
 
-    
+
+
     def isSeaChestAllowed(self):
         if self.mainMenu and not self.mainMenu.isHidden():
             return False
-        
+
         return self.seaChestAllowed
 
-    
+
     def _showCursor(self):
         wp = WindowProperties()
         wp.setCursorHidden(0)
         base.win.requestProperties(wp)
         base.graphicsEngine.openWindows()
 
-    
+
     def _showMouse(self):
         localAvatar.cameraFSM.disableMouseControl()
         self.combatTray.disableMouseDrawsWeapon()
         self._showCursor()
         base.win.movePointer(0, self.mouseX, self.mouseY)
 
-    
+
     def _hideCursor(self):
         wp = WindowProperties()
         wp.setCursorHidden(1)
         base.win.requestProperties(wp)
         base.graphicsEngine.openWindows()
 
-    
+
     def _hideMouse(self, moveToCenter = True):
         localAvatar.cameraFSM.enableMouseControl()
         self.combatTray.enableMouseDrawsWeapon()
@@ -2699,13 +2703,13 @@ class GuiManager(FSM.FSM):
             self.mouseX = base.win.getPointer(0).getX()
             self.mouseY = base.win.getPointer(0).getY()
             base.win.movePointer(0, base.win.getXSize() / 2, base.win.getYSize() / 2)
-        
 
-    
+
+
     def showSeaChest(self, page = None):
         if page:
             self.chestPanel.setPage(page)
-        
+
         if not self.seaChestActive:
             self.seaChestActive = True
             self.chestPanel.slideOpen()
@@ -2715,31 +2719,31 @@ class GuiManager(FSM.FSM):
             self.filmOffsetLerp = Parallel(LerpFunctionInterval(self.setFilmOffsetX, fromData = FILM_NEUTRAL_OFFSET, toData = hOffSet, duration = 0.25, blendType = 'noBlend', name = 'film Offset'), LerpFunctionInterval(self.setFilmOffsetY, fromData = 0.0, toData = CHEST_FILM_Y, duration = 0.25, blendType = 'noBlend', name = 'film OffsetY'))
             if not self.chestTray.isHidden() and localAvatar.getGameState() != 'ParlorGame':
                 self.filmOffsetLerp.start()
-            
+
             self.filmShouldOffset = 1
             self.hideStickySeaChestIcons()
             messenger.send('seachestOpened')
             self.removeNewQuestIndicator()
             self.hidePrevPanel()
-        
+
         if not self.socialPanel.isHidden():
             self.socialPanel.hide()
             self.socialPanelReturn = True
-        
 
-    
+
+
     def setFilmOffsetX(self, offX):
         offY = base.camLens.getFilmOffset()[1]
         base.camLens.setFilmOffset(offX, offY)
         messenger.send('FilmOffset_Change')
 
-    
+
     def setFilmOffsetY(self, offY):
         offX = base.camLens.getFilmOffset()[0]
         base.camLens.setFilmOffset(offX, offY)
         messenger.send('FilmOffset_Change')
 
-    
+
     def hideSeaChest(self):
         if self.seaChestActive:
             self.seaChestActive = False
@@ -2750,67 +2754,67 @@ class GuiManager(FSM.FSM):
             self.filmOffsetLerp = Parallel(LerpFunctionInterval(self.setFilmOffsetX, fromData = hOffSet, toData = FILM_NEUTRAL_OFFSET, duration = 0.25, blendType = 'noBlend', name = 'film Offset'), LerpFunctionInterval(self.setFilmOffsetY, fromData = CHEST_FILM_Y, toData = 0.0, duration = 0.25, blendType = 'noBlend', name = 'film OffsetY'))
             if not self.chestTray.isHidden() and localAvatar.getGameState() != 'ParlorGame':
                 self.filmOffsetLerp.start()
-            
+
             self.filmShouldOffset = 0
             self.showStickySeaChestIcons()
             self.showPrevPanel()
             messenger.send('seachestClosed')
-        
+
         if self.socialPanelReturn:
             self.socialPanel.show()
             self.socialPanelReturn = False
-        
 
-    
+
+
     def enterWorldMode(self):
         self.enterMouseLook()
 
-    
+
     def enterMouseLook(self):
         self.setTutorialStatus()
         if self.tutorialStatus >= PiratesGlobals.TUT_GOT_COMPASS:
             self.setChatAllowed(True)
-        
+
         if self.tutorialStatus >= PiratesGlobals.TUT_GOT_SEACHEST:
             self.setSeaChestAllowed(True)
-        
+
         messenger.send('GuiManagerWorldMode')
         if self.mainMenu:
             self.mainMenu.abruptHide()
             self.profilePage.createBuffer()
-        
+
         self.hideMinimap()
 
-    
+
     def filterWorldMode(self, request, args):
         return self.filterMouseLook(request, args)
 
-    
+
     def filterMouseLook(self, request, args):
         return self.defaultFilter(request, args)
 
-    
+
     def exitWorldMode(self):
         self.exitMouseLook()
 
-    
+
     def exitMouseLook(self):
         pass
 
-    
+
     def enterPopup(self):
         self.setChatAllowed(False)
         self.setSeaChestAllowed(False)
 
-    
+
     def filterPopup(self, request, args):
         return self.defaultFilter(request, args)
 
-    
+
     def exitPopup(self):
         pass
 
-    
+
     def enterInterface(self, extraArgs = [
         True,
         True]):
@@ -2819,15 +2823,15 @@ class GuiManager(FSM.FSM):
         self.setChatAllowed(allowChat, close = not allowChat)
         self.setSeaChestAllowed(allowSeaChest, close = not allowChat)
 
-    
+
     def filterInterface(self, request, args):
         return self.defaultFilter(request, args)
 
-    
+
     def exitInterface(self):
         pass
 
-    
+
     def enterInteraction(self, extraArgs = [
         True,
         True]):
@@ -2840,59 +2844,59 @@ class GuiManager(FSM.FSM):
         if self.filmOffsetLerp:
             self.filmOffsetLerp.pause()
             self.filmOffsetLerp = None
-        
+
         self.setFilmOffsetX(0.0)
         self.setFilmOffsetY(0.0)
 
-    
+
     def filterInteraction(self, request, args):
         return self.defaultFilter(request, args)
 
-    
+
     def exitInteraction(self):
         self.combatTray.show()
         self.chestTray.show()
 
-    
+
     def enterCutscene(self):
         self.hideTrays()
         self.setIgnoreEscapeHotKey(True)
 
-    
+
     def filterCutscene(self, request, args):
         return self.defaultFilter(request, args)
 
-    
+
     def exitCutscene(self):
         self.showTrays()
         self.setIgnoreEscapeHotKey(False)
 
-    
+
     def toggleSeaChest(self):
         self.hideMinimap()
         if self.seaChestActive:
             self.hideSeaChest()
         elif self.isSeaChestAllowed():
             self.showSeaChest()
-        
 
-    
+
+
     def hideStickySeaChestIcons(self):
         for currIcon in self.stickySeaChestIcons:
             currIcon.hide()
-        
 
-    
+
+
     def showStickySeaChestIcons(self):
         for currIcon in self.stickySeaChestIcons:
             currIcon.show()
-        
 
-    
+
+
     def addStickySeaChestIcon(self, iconType):
         pass
 
-    
+
     def createReceiveEffect(self, uiItem, explain = False):
         displayIval = Sequence()
         if explain:
@@ -2918,39 +2922,39 @@ class GuiManager(FSM.FSM):
         displayIval.start()
         self.addEffectIval(displayIval)
 
-    
+
     def addEffectIval(self, ival):
         self.effectIvals.append(ival)
 
-    
+
     def clearIvals(self):
         for currEffectIval in self.effectIvals:
             currEffectIval.finish()
-        
+
         self.effectIvals = []
 
-    
+
     def toggleMainMenu(self, args = None):
         if self.disableMainMenu:
             return None
-        
+
         if self.ignoreMainMenuHotKey:
             return None
-        
+
         if args:
             if args == 'escape' or args == 'Esc':
                 if self.ignoreEscapeHotKey or self.av.gameFSM.state in ('Battle', 'Cutscene', 'Cannon', 'Dialog', 'NPCInteract', 'ShipPilot', 'DinghyInteract', 'MakeAPirate', 'Fishing'):
                     return None
-                
+
         if self.av.gameFSM.state in ('TeleportIn', 'TeleportOut', 'EnterTunnel', 'Digging', 'Searching', 'ShipRepair', 'BenchRepair', 'DoorKicking'):
             return None
-        
+
         if self.mainMenu and self.mainMenu.gameOptions and not self.mainMenu.gameOptions.isHidden():
             return None
-        
+
         if self.mainMenu and self.mainMenu.popupDialog:
             return None
-        
+
         self.hideSeaChest()
         if not self.mainMenu:
             if base.config.GetBool('want-custom-keys', 0):
@@ -2962,7 +2966,7 @@ class GuiManager(FSM.FSM):
             y = -height / 2
             self.mainMenu = MainMenu('Main Menu', x, y, width, height)
             self.mainMenu.hide()
-        
+
         if self.mainMenu.isHidden():
             self.socialPanel.hide()
             self.chatPanel.hide()
@@ -2979,22 +2983,22 @@ class GuiManager(FSM.FSM):
             self.av.startChat()
             self.setSeaChestAllowed(True)
             self.av.motionFSM.onIfMoveLock()
-        
+
         self.mainMenu.hideMenu()
         self.profilePage.createBuffer()
 
-    
+
     def addMinimap(self, minimap):
         minimap.getScreenNode().reparentTo(self.minimapRoot)
 
-    
+
     def removeMinimap(self, minimap):
         if minimap:
             self.clearMinimap(minimap)
             minimap.getScreenNode().detachNode()
-        
 
-    
+
+
     def setMinimap(self, minimap):
         self.hideMinimap()
         if self.minimap is not minimap:
@@ -3007,44 +3011,44 @@ class GuiManager(FSM.FSM):
             self.minimap = minimap
             self.hideMinimap()
             self.radarGui.setMinimap(minimap)
-        
 
-    
+
+
     def transferMinimapObject(self, obj):
         if self.oldMap:
             self.oldMap.removeObject(obj)
-        
+
         if self.newMap:
             self.newMap.addObject(obj)
-        
 
-    
+
+
     def getMinimap(self):
         return self.minimap
 
-    
+
     def clearMinimap(self, minimap):
         if self.minimap is minimap:
             self.setMinimap(None)
-        
 
-    
+
+
     def hideMinimap(self):
         if self.minimap:
             self.minimap.request('Off')
-        
 
-    
+
+
     def nextMinimap(self):
         if self.minimap:
             self.minimap.request('next')
             if hasattr(base, 'localAvatar'):
                 base.localAvatar.removeContext(InventoryType.IslandMap)
-            
+
         else:
             self.createWarning(PLocalizer.MinimapNotAvailable, duration = 3)
 
-    
+
     def handleMinimapKeyDown(self):
         if base.config.GetBool('want-momentary-minimap', 1):
             if self.minimap and self.minimap.allowOnScreen():
@@ -3054,36 +3058,36 @@ class GuiManager(FSM.FSM):
         else:
             self.nextMinimap()
 
-    
+
     def handleMinimapKeyUp(self):
         if base.config.GetBool('want-momentary-minimap', 1):
             if self.minimap:
                 self.minimap.request('Off')
-            
-        
 
-    
+
+
+
     def showDirtPanel(self):
         if not self.dirtPanel:
             self.createDirtPanel()
-        
+
         if self.dirtFader:
             self.dirtFader.pause()
             self.dirtFader = None
-        
+
         self.dirtPanel.setAlphaScale(1.0)
         self.dirtPanel.show()
 
-    
+
     def hideDirtPanel(self):
         if self.dirtPanel is None:
             return None
-        
+
         fadeOut = LerpFunctionInterval(self.dirtPanel.setAlphaScale, fromData = self.dirtPanel.getColorScale()[3], toData = 0, duration = 0.29999999999999999)
         self.dirtFader = Sequence(fadeOut, Func(self.dirtPanel.hide))
         self.dirtFader.start()
 
-    
+
     def createSmokePanel(self):
         card = loader.loadModel('models/effects/blinders')
         smokeTex = card.find('**/effectSmokeBlind')
@@ -3092,7 +3096,7 @@ class GuiManager(FSM.FSM):
         self.smokePanel = DirectFrame(parent = aspect2d, relief = None, frameSize = (-4, 4, -4.0, 4.0), frameColor = (0.5, 0.5, 0.5, 0.84999999999999998), sortOrder = 25, pos = (0, 0, 0.25), image = smokeTex, image_scale = 4.0, suppressMouse = 0, suppressKeys = 0)
         self.smokePanel.hide()
 
-    
+
     def createDirtPanel(self):
         card = loader.loadModel('models/effects/blinders')
         dirtTex = card.find('**/effectDirtBlind')
@@ -3101,40 +3105,40 @@ class GuiManager(FSM.FSM):
         self.dirtPanel = DirectFrame(parent = aspect2d, relief = None, frameSize = (-4, 4, -4.0, 4.0), frameColor = (0.5, 0.5, 0.5, 0.84999999999999998), sortOrder = 25, pos = (0, 0, 0.25), image = dirtTex, image_scale = 4.0, suppressMouse = 0, suppressKeys = 0)
         self.dirtPanel.hide()
 
-    
+
     def showSmokePanel(self):
         if not self.smokePanel:
             self.createSmokePanel()
-        
+
         if self.smokeFader:
             self.smokeFader.pause()
             self.smokeFader = None
-        
+
         self.smokePanel.setAlphaScale(1.0)
         self.smokePanel.show()
 
-    
+
     def hideSmokePanel(self):
         if self.smokePanel is None:
             return None
-        
+
         fadeOut = LerpFunctionInterval(self.smokePanel.setAlphaScale, fromData = self.smokePanel.getColorScale()[3], toData = 0, duration = 0.29999999999999999)
         self.smokeFader = Sequence(fadeOut, Func(self.smokePanel.hide))
         self.smokeFader.start()
 
-    
+
     def showQuestProgress(self, questProgress):
         if not self.progressText:
             self.progressText = DirectLabel(parent = base.a2dBottomCenter, relief = None, text = '', text_pos = (0, 0.059999999999999998), text_scale = PiratesGuiGlobals.TextScaleLarge, text_align = TextNode.ACenter, text_fg = PiratesGuiGlobals.TextFG1, text_shadow = PiratesGuiGlobals.TextShadow, textMayChange = 1, pos = (0, 0, 0.10000000000000001))
             self.showProgressIval = Sequence(Func(self.progressText.clearColorScale), Func(self.progressText.show), Wait(4.0), LerpColorScaleInterval(self.progressText, 1.0, colorScale = Vec4(1, 1, 1, 0), startColorScale = Vec4(1, 1, 1, 1)), Func(self.progressText.hide))
-        
+
         if not questProgress:
             progressText = PLocalizer.DidNotFindQuestItem
             self.progressText['text'] = progressText
             self.showProgressIval.start()
-        
 
-    
+
+
     def toggleGuiForNpcInteraction(self, state):
         self.setTutorialStatus()
         if state == 0:
@@ -3149,20 +3153,20 @@ class GuiManager(FSM.FSM):
             if not self.socialPanel.isHidden():
                 self.socialPanel.hide()
                 self._putBackSocialPanel = 1
-            
+
             if self.tmButtonQuick:
                 self.tmButtonQuick.hide()
-            
+
             if self.tmButtonSearch:
                 self.tmButtonSearch.hide()
-            
+
             if self.questPage:
                 self.hideTrackedQuestInfo()
-            
+
             if self.crewHUD.hudOn:
                 self.crewHUD.setHUDOff()
                 self.crewHUDTurnedOff = True
-            
+
             self.hideMinimap()
             self.profilePage.hide()
         else:
@@ -3173,59 +3177,59 @@ class GuiManager(FSM.FSM):
             self.chestTray.showChestButton()
             if self.contextTutPanel.isFilled():
                 self.contextTutPanel.show()
-            
+
             if self._putBackSocialPanel:
                 self.socialPanel.show()
                 self._putBackSocialPanel = 0
-            
+
         state == 0
         if self.tutorialStatus >= PiratesGlobals.TUT_GOT_COMPASS:
             self.radarGui.show()
             if self.tmButtonQuick:
                 self.tmButtonQuick.show()
-            
+
             if self.tmButtonSearch:
                 self.tmButtonSearch.show()
-            
+
             if self.trackedQuestLabel['text']:
                 pass
             if len(self.av.activeQuestId):
                 self.showTrackedQuestInfo()
-            
-        
+
+
         if self.crewHUDTurnedOff:
             if self.tutorialStatus >= PiratesGlobals.TUT_MET_JOLLY_ROGER and self.forceLookout or self.crewHUD.crew:
                 self.crewHUD.setHUDOn()
                 self.crewHUDTurnedOff = False
-            
 
-    
+
+
     def showStayTuned(self, quest = None, focus = None):
         if not self.stayTunedPanel:
             self.stayTunedPanel = StayTunedPanel.StayTunedPanel()
-        
+
         if focus is not None:
             self.stayTunedPanel.setPicFocus(focus)
-        
+
         if quest is not None:
             self.stayTunedPanel.show(quest)
         else:
             self.stayTunedPanel.show()
 
-    
+
     def showNonPayer(self, quest = None, focus = None):
         if not __dev__ and localAvatar.isPaid:
             return None
-        
+
         if not self.nonPayerPanel:
             self.nonPayerPanel = TrialNonPayerPanel.TrialNonPayerPanel(trial = False)
-        
+
         if quest is not None:
             self.nonPayerPanel.show(quest)
         else:
             self.nonPayerPanel.show()
 
-    
+
     def flashOceanMsg(self, oceanZoneName):
         self.oceanMsg.show()
         self.oceanMsg['text'] = PLocalizer.EnterOceanZone % oceanZoneName
@@ -3233,15 +3237,15 @@ class GuiManager(FSM.FSM):
         self.oceanIval = Sequence(LerpScaleInterval(self.oceanMsg, duration = 2.0, scale = Point3(0.45000000000000001, 0.45000000000000001, 0.45000000000000001), blendType = 'easeOut'), LerpScaleInterval(self.oceanMsg, duration = 3.0, scale = Point3(0.10000000000000001, 0.10000000000000001, 0.10000000000000001), blendType = 'easeOut'), Func(self.oceanMsg.hide))
         self.oceanIval.start()
 
-    
+
     def createPreviewTag(self):
         return None
         if Freebooter.AllAccessHoliday:
             return None
-        
+
         if launcher.getValue('GAME_SHOW_ADDS') == 'NO':
             return None
-        
+
         self.prevTag = DirectFrame(parent = base.a2dTopRight, relief = None, pos = (-0.25, 0, -0.63), scale = 0.80000000000000004, sortOrder = 0)
         gui2 = loader.loadModel('models/textureCards/basic_unlimited')
         self.imageOne = DirectFrame(parent = self.prevTag, relief = None, image = gui2.find('**/but_message_panel_border'), image_scale = (1, 1, 0.94999999999999996), scale = 0.40000000000000002)
@@ -3255,27 +3259,27 @@ class GuiManager(FSM.FSM):
             launcher.getValue('GAME_INGAME_UPGRADE'),
             True], text = PLocalizer.FirstAddUpgrade, text_fg = PiratesGuiGlobals.TextFG1, text_font = PiratesGlobals.getInterfaceFont(), text_shadow = PiratesGuiGlobals.TextShadow, text_scale = 0.050000000000000003, text_wordwrap = 9, text_pos = (0, 0.01))
 
-    
+
     def showPrevPanel(self):
         if self.prevTag and not (Freebooter.AllAccessHoliday):
             self.prevTag.show()
-        
 
-    
+
+
     def hidePrevPanel(self):
         if self.prevTag:
             self.prevTag.hide()
-        
 
-    
+
+
     def stashPrevPanel(self):
         if self.prevTag:
             self.prevTag.stash()
-        
 
-    
+
+
     def showBlackPearlButtonsForTest(self):
-        
+
         def inventoryReceived(inventory):
             if inventory:
                 self.invRequest = None
@@ -3286,12 +3290,12 @@ class GuiManager(FSM.FSM):
                         self.addTreasureMapButtons(currTm)
                         break
                         continue
-                
-            
+
+
 
         DistributedInventoryBase.DistributedInventoryBase.getInventory(localAvatar.getInventoryId(), inventoryReceived)
 
-    
+
     def addTreasureMapButtons(self, tm):
         if launcher.getValue('GAME_ENVIRONMENT', 'LIVE') in [
             'QA',
@@ -3304,69 +3308,69 @@ class GuiManager(FSM.FSM):
                 False], pos = (-0.65000000000000002, 0, -0.33000000000000002), helpText = PLocalizer.PlayTMLookoutHelp, helpPos = helpPos)
             self.tmButtonQuick.setColorScale(1, 1, 1, 0.75)
             self.tmButtonSearch.setColorScale(1, 1, 1, 0.75)
-        
 
-    
+
+
     def addDowsingButton(self):
         if not self.dowsingButton:
             self.dowsingButton = GuiButton(parent = base.a2dTopRight, text = PLocalizer.Dowse, text_align = TextNode.ACenter, text_scale = PiratesGuiGlobals.TextScaleLarge, text_pos = (0.0, -0.01), text_fg = PiratesGuiGlobals.TextFG1, text_shadow = PiratesGuiGlobals.TextShadow, text_wordwrap = 40, image_scale = (0.45000000000000001, 1, 0.25), command = localAvatar.d_useDowsingRod, pos = (-0.65000000000000002, 0, -0.23000000000000001))
-        
 
-    
+
+
     def removeDowsingButton(self):
         if self.dowsingButton:
             self.dowsingButton.destroy()
             self.dowsingButton = None
-        
 
-    
+
+
     def addCheckPortraitButton(self):
         if not self.checkPortraitButton:
             self.checkPortraitButton = GuiButton(parent = base.a2dTopRight, text = PLocalizer.CheckPortrait, text_align = TextNode.ACenter, text_scale = PiratesGuiGlobals.TextScaleLarge, text_pos = (0.0, -0.01), text_fg = PiratesGuiGlobals.TextFG1, text_shadow = PiratesGuiGlobals.TextShadow, text_wordwrap = 40, textMayChange = 1, image_scale = (0.45000000000000001, 1, 0.25), command = self.checkPortrait, pos = (-0.65000000000000002, 0, -0.23000000000000001))
-        
 
-    
+
+
     def removeCheckPortraitButton(self):
         if self.checkPortraitButton:
             self.checkPortraitButton.destroy()
             self.checkPortraitButton = None
-        
+
         if self.clubheartsPortrait:
             self.clubheartsPortrait.destroy()
             self.clubheartsPortrait = None
-        
 
-    
+
+
     def checkPortrait(self):
         if self.clubheartsPortrait:
             self.clubheartsPortrait.destroy()
             self.clubheartsPortrait = None
             if self.checkPortraitButton:
                 self.checkPortraitButton['text'] = PLocalizer.CheckPortrait
-            
+
         else:
             self.clubheartsPortrait = ClubheartsPortrait.ClubheartsPortrait()
             if self.checkPortraitButton:
                 self.checkPortraitButton['text'] = PLocalizer.RemovePortrait
-            
 
-    
+
+
     def setSocialPanelAllowed(self, value):
         self.socialPanelAllowed = value
 
-    
+
     def setIgnoreAllKeys(self, ignore):
         self.ignoreAllKeys = ignore
 
-    
+
     def setIgnoreAllButSkillHotKey(self, ignore):
         self.ignoreAllButSkillHotKey = ignore
 
-    
+
     def setIgnoreAllButLookoutHotKey(self, ignore):
         self.ignoreAllButLookoutHotKey = ignore
 
-    
+
     def setIgnoreMainMenuHotKey(self, ignore):
         if ignore:
             taskMgr.remove('removeIgnoreMainMenu')
@@ -3375,11 +3379,11 @@ class GuiManager(FSM.FSM):
             taskMgr.doMethodLater(2, self.delayedSetIgnoreMainMenuHotKey, 'removeIgnoreMainMenu', [
                 ignore])
 
-    
+
     def delayedSetIgnoreMainMenuHotKey(self, ignore):
         self.ignoreMainMenuHotKey = ignore
 
-    
+
     def setIgnoreEscapeHotKey(self, ignore):
         if ignore:
             taskMgr.remove('removeIgnoreEscape')
@@ -3388,49 +3392,49 @@ class GuiManager(FSM.FSM):
             taskMgr.doMethodLater(2, self.delayedSetIgnoreEscapeHotKey, 'removeIgnoreEscape', [
                 ignore])
 
-    
+
     def delayedSetIgnoreEscapeHotKey(self, ignore):
         self.ignoreEscapeHotKey = ignore
 
-    
+
     def isSkillPanelOpen(self):
         if self.chestPanel.getCurPage() == self.skillPage:
             return True
-        
+
         return False
 
-    
+
     def hideChestTray(self):
         self.chestTray.hide()
         if self.filmOffsetLerp:
             self.filmOffsetLerp.pause()
             self.filmOffsetLerp = None
-        
+
         self.setFilmOffsetX(0.0)
         self.setFilmOffsetY(0.0)
 
-    
+
     def showChestTray(self):
         self.chestTray.show()
         if self.filmShouldOffset:
             self.setFilmOffsetX(0.14999999999999999)
             self.setFilmOffsetY(-0.050000000000000003)
-        
 
-    
+
+
     def allowSkillPageOnly(self):
         self.setSeaChestAllowed(True)
         self.setIgnoreAllButSkillHotKey(True)
         self.chestPanel.setCurPage(0)
 
-    
+
     def allowLookoutPageOnly(self):
         self.setSeaChestAllowed(True)
         self.setSocialPanelAllowed(False)
         self.setIgnoreAllButLookoutHotKey(True)
         self.chestPanel.setCurPage(0)
 
-    
+
     def updateTrackedQuestLabel(self):
         text = self.questStatusText + self.questHintText
         self.removeDowsingButton()
@@ -3441,55 +3445,55 @@ class GuiManager(FSM.FSM):
                 if quest.questDNA.getTimeLimit():
                     if not self.questTimerText:
                         self.questTimerText = quest.getTimerText()
-                    
+
                     text = text + '\n' + self.questTimerText
-                
+
                 questTasks = quest.questDNA.getTasks()
                 for currQuestTask in questTasks:
                     if isinstance(currQuestTask, DowsingRodTaskDNA) and not quest.isComplete():
                         self.addDowsingButton()
                         break
                         continue
-                
+
                 if quest.getQuestId() == 'rc.ghosts.clubhearts.disguise' and not quest.isComplete():
                     self.addCheckPortraitButton()
-                
-            
-        
+
+
+
         if text and not self.gameGui.isHidden():
             self.showTrackedQuestInfo()
         elif not text:
             self.hideTrackedQuestInfo()
-        
+
         self.trackedQuestLabel['text'] = text
 
-    
+
     def hideTrackedQuestInfo(self):
         self.trackedQuestLabel.hide()
         if self.dowsingButton:
             self.dowsingButton.hide()
-        
+
         if self.checkPortraitButton:
             self.checkPortraitButton.hide()
             if self.clubheartsPortrait:
                 self.clubheartsPortrait.destroy()
                 self.checkPortraitButton['text'] = PLocalizer.CheckPortrait
-            
-        
 
-    
+
+
+
     def showTrackedQuestInfo(self):
         self.trackedQuestLabel.show()
         if self.dowsingButton:
             self.dowsingButton.show()
-        
+
         if self.checkPortraitButton:
             self.checkPortraitButton.show()
-        
 
-    
+
+
     def updateQuestStatusText(self, questId):
-        
+
         def changeQuestStatus(task):
             quest = localAvatar.getQuestById(questId)
             if quest:
@@ -3507,22 +3511,22 @@ class GuiManager(FSM.FSM):
         taskMgr.remove('guiMgrChangeQuestStatus')
         taskMgr.doMethodLater(0, changeQuestStatus, 'guiMgrChangeQuestStatus')
 
-    
+
     def setQuestStatusText(self, text = ''):
         self.questStatusText = text
         self.updateTrackedQuestLabel()
 
-    
+
     def setQuestHintText(self, text = ''):
         self.questHintText = text
         self.updateTrackedQuestLabel()
 
-    
+
     def setQuestTimerText(self, text = ''):
         self.questTimerText = text
         self.updateTrackedQuestLabel()
 
-    
+
     def systemWarning(self, warningText = 'Bad things'):
         ChatWarningBox = ChatWarningBox
         import pirates.chat
@@ -3530,14 +3534,14 @@ class GuiManager(FSM.FSM):
         self.chatWarningBox.reparentTo(aspect2d)
         self.chatWarningBox.setZ(0.25)
 
-    
+
     def closeSystemWarning(self):
         if self.chatWarningBox:
             self.chatWarningBox.close()
-        
+
         self.chatWarningBox = None
 
-    
+
     def gameGuiPressed(self):
         self.handleAvatarDetails(localAvatar.getDoId())
 

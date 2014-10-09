@@ -19,8 +19,8 @@ from direct.gui.OnscreenText import OnscreenText
 from direct.gui.DirectGui import DirectWaitBar, DGG
 from direct.gui.DirectGui import *
 from direct.fsm.StatePush import FunctionCall, StateVar
-from libotp import NametagGroup
-from libotp import CFSpeech, CFQuicktalker, CFTimeout
+from otp.nametag.NametagGroup import NametagGroup
+from otp.nametag.NametagConstants import CFSpeech, CFQuicktalker, CFTimeout
 from otp.avatar.DistributedPlayer import DistributedPlayer
 from otp.otpbase import OTPLocalizer
 from otp.otpbase import OTPGlobals
