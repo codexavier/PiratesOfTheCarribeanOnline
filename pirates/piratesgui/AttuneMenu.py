@@ -21,7 +21,7 @@ class AvatarInfoButton(GuiButton):
     OnlineTextColor = (1, 1, 1, 1)
     WIDTH = 0.38
     HEIGHT = 0.035000000000000003
-    
+
     def __init__(self, owner, avId):
         self.owner = owner
         self.avId = avId
@@ -31,24 +31,24 @@ class AvatarInfoButton(GuiButton):
         self.initialiseoptions(AvatarInfoButton)
         self.hpMeter = DirectWaitBar(parent = self, relief = DGG.RAISED, borderWidth = (0.0040000000000000001, 0.0040000000000000001), range = 50, value = 20, frameColor = (0.050000000000000003, 0.34999999999999998, 0.050000000000000003, 1), barColor = (0.10000000000000001, 0.69999999999999996, 0.10000000000000001, 1), pos = (0.014999999999999999, 0, 0.059999999999999998), frameSize = (0, 0.25, 0, 0.017999999999999999), text = '%s/%s' % (self.hp, self.maxHp), text_align = TextNode.ALeft, text_scale = PiratesGuiGlobals.TextScaleMicro, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_pos = (0.25600000000000001, 0, 0.0050000000000000001), textMayChange = 1)
 
-    
+
     def destroy(self):
         GuiButton.destroy(self)
 
-    
+
     def updateItem(self, avatar):
         self.avatar = avatar
         if self.avatar:
             color = base.cr.battleMgr.getExperienceColor(base.localAvatar, avatar)
-            
+
             try:
                 avType = self.avatar.getAvatarType()
                 if avType.isA(AvatarTypes.JollyRoger):
-                    name = '%s\x2  %s\x1smallCaps\x1%s%s\x2\x2' % (avatar.getShortName(), color, PLocalizer.Lv, PLocalizer.InvasionLv)
+                    name = '%s  %ssmallCaps%s%s' % (avatar.getShortName(), color, PLocalizer.Lv, PLocalizer.InvasionLv)
                 elif self.avatar.isInInvasion():
                     name = '%s' % avatar.getShortName()
                 else:
-                    name = '%s\x2  %s\x1smallCaps\x1%s%s\x2\x2' % (avatar.getShortName(), color, PLocalizer.Lv, avatar.level)
+                    name = '%s  %ssmallCaps%s%s' % (avatar.getShortName(), color, PLocalizer.Lv, avatar.level)
             except StandardError:
                 e = None
                 self.notify.error('updateItem(%s, %s)' % (str(avatar), str(e)))
@@ -72,7 +72,7 @@ class AvatarInfoButton(GuiButton):
             self.setColorScale(Vec4(1, 1, 1, 1))
             self.hpMeter.hide()
 
-    
+
     def select(self):
         self.owner.select(self.avId)
 
@@ -82,7 +82,7 @@ class AttuneMenu(DirectFrame):
     notify = DirectNotifyGlobal.directNotify.newCategory('AttuneMenu')
     WIDTH = 0.45000000000000001
     HEIGHT = 0.089999999999999997
-    
+
     def __init__(self, parent = base.a2dRightCenter, command = None, draggable = 0, **kw):
         optiondefs = (('relief', None, None), ('state', DGG.DISABLED, None), ('frameSize', (0, self.WIDTH, 0, self.HEIGHT), None))
         self.defineoptions(kw, optiondefs)
@@ -97,7 +97,7 @@ class AttuneMenu(DirectFrame):
         self.updateButton(0)
         self.hide()
 
-    
+
     def updateButton(self, avId):
         av = base.cr.doId2do.get(avId)
         button = self.buttons.get(avId)
@@ -111,7 +111,7 @@ class AttuneMenu(DirectFrame):
             self.buttons[avId] = button
             self.updateSize()
 
-    
+
     def removeButton(self, avId):
         button = self.buttons.get(avId)
         if button:
@@ -123,28 +123,28 @@ class AttuneMenu(DirectFrame):
                 if b.getZ() > y:
                     b.setZ(b.getZ() - self.HEIGHT)
                     continue
-            
-            self.updateSize()
-        
 
-    
+            self.updateSize()
+
+
+
     def updateSize(self):
         self['frameSize'] = (0, self.WIDTH, 0, self.HEIGHT * len(self.buttons) + 0.089999999999999997)
         self.titleLabel.setZ(self.HEIGHT * len(self.buttons) + 0.02)
 
-    
+
     def update(self):
         for avId in localAvatar.stickyTargets:
             self.updateButton(avId)
             self.buttons[avId].show()
-        
+
         for avId in self.buttons.keys():
             if avId > 0 and localAvatar.stickyTargets.count(avId) < 1:
                 self.removeButton(avId)
                 continue
-        
 
-    
+
+
     def select(self, avId):
         if avId < 0:
             pass
@@ -155,20 +155,20 @@ class AttuneMenu(DirectFrame):
             localAvatar.sendRequestRemoveStickyTargets([
                 avId])
 
-    
+
     def destroy(self):
         if hasattr(self, 'destroyed'):
             return None
-        
+
         self.destroyed = 1
         for button in self.buttons.values():
             button.destroy()
             button = None
-        
+
         self.buttons = { }
         DirectFrame.destroy(self)
 
-    
+
     def unattuneAll(self):
         localAvatar.sendRequestRemoveStickyTargets(self.buttons.keys())
 

@@ -11,7 +11,7 @@ from pirates.band import BandConstance
 from pirates.piratesgui.RequestButton import RequestButton
 
 class CrewMatchInviteeButton(RequestButton):
-    
+
     def __init__(self, text, command):
         RequestButton.__init__(self, text, command)
         self.initialiseoptions(CrewMatchInviteeButton)
@@ -20,7 +20,7 @@ class CrewMatchInviteeButton(RequestButton):
 
 class CrewMatchInvitee(DirectFrame):
     notify = DirectNotifyGlobal.directNotify.newCategory('CrewMatchInvitee')
-    
+
     def __init__(self, avId, avName, location, initialRequest = False, crewType = 1):
         guiMain = loader.loadModel('models/gui/gui_main')
         DirectFrame.__init__(self, relief = None, pos = (-0.59999999999999998, 0, 0.46999999999999997), image = guiMain.find('**/general_frame_e'), image_pos = (0.25, 0, 0.27500000000000002), image_scale = 0.25)
@@ -31,13 +31,13 @@ class CrewMatchInvitee(DirectFrame):
         self.location = location
         self.crewType = crewType
         self.title = DirectLabel(parent = self, relief = None, text = PLocalizer.CrewMatchCrewLookout, text_scale = PiratesGuiGlobals.TextScaleExtraLarge, text_align = TextNode.ACenter, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_font = PiratesGlobals.getPirateOutlineFont(), pos = (0.25, 0, 0.41999999999999998), image = None, image_scale = 0.25)
-        nameArray = ('\x1CPOrangeHEAD\x1' + self.avName + '\x2', '\x1CPOrangeHEAD\x1' + self.avName + '\x2', '\x1CPOrangeOVER\x1' + self.avName + '\x2', '\x1CPOrangeHEAD\x1' + self.avName + '\x2')
+        nameArray = ('CPOrangeHEAD' + self.avName + '', 'CPOrangeHEAD' + self.avName + '', 'CPOrangeOVER' + self.avName + '', 'CPOrangeHEAD' + self.avName + '')
         nameButton = DirectButton(parent = NodePath(), relief = None, text = nameArray, text_align = TextNode.ALeft, text_shadow = PiratesGuiGlobals.TextShadow, textMayChange = 0, command = self.handleAvatarPress, extraArgs = [
             avId,
             avName])
         (left, right, bottom, top) = nameButton.getBounds()
         nameGFX = TextGraphic(nameButton, left, right, 0, 1)
-        buttonName = '\x5' + self.avName + '\x5'
+        buttonName = '' + self.avName + ''
         if location != '':
             buttonText = PLocalizer.CrewMatchInviteeInvitation % (buttonName, self.location)
         else:
@@ -66,16 +66,16 @@ class CrewMatchInvitee(DirectFrame):
         self.accept('clientLogout', self.destroy)
         self.accept('destroyCrewMatchInvite', self.destroy)
 
-    
+
     def destroy(self):
         if hasattr(self, 'destroyed'):
             return None
-        
+
         self.destroyed = 1
         self.ignore('Esc')
         DirectFrame.destroy(self)
 
-    
+
     def _CrewMatchInvitee__handleOk(self):
         if self.initialRequest:
             base.cr.crewMatchManager.acceptInitialInviteGUI()
@@ -84,7 +84,7 @@ class CrewMatchInvitee(DirectFrame):
             base.cr.crewMatchManager.offerCurrentlyOnScreen = False
         self.destroy()
 
-    
+
     def _CrewMatchInvitee__handleNo(self):
         if self.initialRequest:
             base.cr.crewMatchManager.initialAvatarAddResponse(2)
@@ -93,14 +93,14 @@ class CrewMatchInvitee(DirectFrame):
             base.cr.crewMatchManager.checkOfferCache()
         self.destroy()
 
-    
+
     def _CrewMatchInvitee__handleCancelFromAbove(self):
         self.destroy()
 
-    
+
     def handleAvatarPress(self, avId, avName):
         if hasattr(base, 'localAvatar') and base.localAvatar.guiMgr:
             base.localAvatar.guiMgr.handleAvatarDetails(avId, avName)
-        
+
 
 

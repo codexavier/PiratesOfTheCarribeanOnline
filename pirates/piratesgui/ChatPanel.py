@@ -27,7 +27,7 @@ class ChatPanel(DirectFrame, FSM):
     TextFadeTime = 5
     widthBase = 21.25
     widthVarience = 12.0
-    
+
     def __init__(self, chatManager, whiteListEntry):
         optiondefs = (('relief', None, None), ('state', DGG.NORMAL, self.setState), ('frameSize', (0, 0.90000000000000002, 0, 0.59999999999999998), None), ('frameColor', (1, 0, 1, 0.20000000000000001), None))
         self.defineoptions({ }, optiondefs)
@@ -61,7 +61,7 @@ class ChatPanel(DirectFrame, FSM):
                 0,
                 1,
                 2])
-        
+
         self.lineDict = { }
         self.renderedLineDict = { }
         self.renderedLines = []
@@ -94,11 +94,11 @@ class ChatPanel(DirectFrame, FSM):
         self.accept('GUIHidden', self._ChatPanel__handleGlobalGuiHide)
         self.accept('GUIShown', self._ChatPanel__handleGlobalGuiShow)
 
-    
+
     def setChatStyle(self, value):
         pass
 
-    
+
     def setBoxWidth(self, scale):
         self.currentWordWrap = self.widthBase + scale * self.widthVarience
         wordWrapWithBias = self.widthBase + 1.22 * scale * self.widthVarience
@@ -116,21 +116,21 @@ class ChatPanel(DirectFrame, FSM):
             taskMgr.remove(self.resizeDelayTaskName)
         task = taskMgr.doMethodLater(0.5, self.regenAfterResize, self.resizeDelayTaskName)
 
-    
+
     def regenAfterResize(self, task):
         self.regenText()
         return task.done
 
-    
+
     def toggleFontSize(self):
         if self.wantSmallFont == 0:
             self.wantSmallFont = 1
         elif self.wantSmallFont == 1:
             self.wantSmallFont = 0
-        
+
         self.setFontSize(self.wantSmallFont)
 
-    
+
     def setFontSize(self, size):
         self.wantSmallFont = size
         if self.wantSmallFont == 1:
@@ -139,19 +139,19 @@ class ChatPanel(DirectFrame, FSM):
         elif self.wantSmallFont == 0:
             self.currentFontSize = self.TextScale
             self.currentWordWrap = self.WrapWidth
-        
+
         self.wordWrapper.setWordwrap(self.currentWordWrap)
         self.chatDisplayNP.setScale(self.currentFontSize)
         self.regenText()
         self.request('Standby')
         self.request(self.preferredMode)
 
-    
+
     def setupGui(self):
         self.cleanupGui()
         if hasattr(self, 'chatBar'):
             self.chatBar.detachNode()
-        
+
         self.removeChildren()
         guib = loader.loadModel('models/gui/chat_frame_b')
         guic = loader.loadModel('models/gui/chat_frame_c')
@@ -235,28 +235,28 @@ class ChatPanel(DirectFrame, FSM):
         self.slider.setName('chatPanel.slider')
         if hasattr(self, 'chatBar'):
             self.chatBar.reparentTo(self)
-        
+
         self.request('Standby')
         self.updateDisplay()
 
-    
+
     def cleanupGui(self):
         if self.sCloseButton:
             self.sCloseButton.detachNode()
             self.sCloseButton.destroy()
-        
+
         if self.tCloseButton:
             self.tCloseButton.detachNode()
             self.tCloseButton.destroy()
-        
+
         if self.minButton:
             self.minButton.detachNode()
             self.minButton.destroy()
-        
+
         if self.maxButton:
             self.maxButton.detachNode()
             self.maxButton.destroy()
-        
+
         self.wrappedText = []
         self.lineDict = { }
         self.renderedLineDict = { }
@@ -273,7 +273,7 @@ class ChatPanel(DirectFrame, FSM):
         self.chatDisplayNP = None
         self.slider = None
 
-    
+
     def destroy(self):
         self.chatFont = None
         self.nameFont = None
@@ -288,42 +288,42 @@ class ChatPanel(DirectFrame, FSM):
         self.chatManager = None
         base.chatPanel = None
 
-    
+
     def activateAllChat(self):
         self.requestPreferredMode()
         self.chatBar.request('All')
 
-    
+
     def activateCrewChat(self):
         self.requestPreferredMode()
         self.chatBar.request('Crew')
 
-    
+
     def activateGuildChat(self):
         self.requestPreferredMode()
         self.chatBar.request('Guild')
 
-    
+
     def activateShipPVPChat(self):
         self.requestPreferredMode()
         self.chatBar.request('ShipPVP')
 
-    
+
     def activateWhisperChat(self, whisperId, toPlayer = False):
         self.requestPreferredMode()
         name = base.talkAssistant.findName(whisperId, toPlayer)
         self.chatBar.request('Whisper', name, whisperId)
 
-    
+
     def deactivateChat(self):
         self.request('Standby')
         self.chatBar.request('Hidden')
 
-    
+
     def updateState(self, state):
         self['state'] = state
 
-    
+
     def setState(self):
         DirectFrame.setState(self)
         if hasattr(self, 'sCloseButton'):
@@ -332,28 +332,28 @@ class ChatPanel(DirectFrame, FSM):
             self.tCloseButton['state'] = self['state']
             self.minButton['state'] = self['state']
             self.slider['state'] = self['state']
-        
 
-    
+
+
     def startFadeInIval(self):
         self.stopFadeIval()
         self.fadeIval = Parallel(Func(self.updateState, DGG.NORMAL), Func(self.hideNode.show), self.shortBg.colorScaleInterval(self.FadeTime, Vec4(1, 1, 1, 0.75), blendType = 'easeOut'), self.shortBorder.colorScaleInterval(self.FadeTime, Vec4(1, 1, 1, 1), blendType = 'easeOut'), self.tallBg.colorScaleInterval(self.FadeTime, Vec4(1, 1, 1, 0.75), blendType = 'easeOut'), self.tallBorder.colorScaleInterval(self.FadeTime, Vec4(1, 1, 1, 1), blendType = 'easeOut'), self.slider.colorScaleInterval(self.FadeTime, Vec4(1, 1, 1, 1), blendType = 'easeOut'))
         self.fadeIval.start()
 
-    
+
     def startFadeOutIval(self):
         self.stopFadeIval()
         self.fadeIval = Parallel(Func(self.updateState, DGG.DISABLED), self.shortBg.colorScaleInterval(self.FadeTime, Vec4(1, 1, 1, 0), blendType = 'easeIn'), self.shortBorder.colorScaleInterval(self.FadeTime, Vec4(1, 1, 1, 0), blendType = 'easeIn'), self.tallBg.colorScaleInterval(self.FadeTime, Vec4(1, 1, 1, 0), blendType = 'easeIn'), self.tallBorder.colorScaleInterval(self.FadeTime, Vec4(1, 1, 1, 0), blendType = 'easeIn'), self.slider.colorScaleInterval(self.FadeTime, Vec4(1, 1, 1, 0), blendType = 'easeIn'), Sequence(Wait(self.FadeTime), Func(self.hideNode.hide)))
         self.fadeIval.start()
 
-    
+
     def stopFadeIval(self):
         if self.fadeIval:
             self.fadeIval.pause()
-        
+
         self.fadeIval = None
 
-    
+
     def startFadeTextIval(self):
         self.stopFadeTextIval()
         self.fadeTextIval = Sequence()
@@ -361,40 +361,40 @@ class ChatPanel(DirectFrame, FSM):
         self.fadeTextIval.append(Func(self._ChatPanel__hideLines))
         self.fadeTextIval.start()
 
-    
+
     def stopFadeTextIval(self):
         if self.fadeTextIval:
             self.fadeTextIval.pause()
-        
+
         self.fadeTextIval = None
 
-    
+
     def unfadeText(self):
         self.stopFadeTextIval()
         self.chatDisplayNP.setColorScale(1, 1, 1, 1)
         self._ChatPanel__showLines()
 
-    
+
     def startFadeTextTimer(self):
         self.stopFadeTextTimer()
         taskMgr.doMethodLater(self.TextFadeDelay, self.startFadeTextIval, 'ChatPanel-fadeText', [])
 
-    
+
     def stopFadeTextTimer(self):
         taskMgr.remove('ChatPanel-fadeText')
 
-    
+
     def requestPreferredMode(self):
         self.request(self.preferredMode)
 
-    
+
     def defaultFilter(self, request, args):
         if self.getCurrentOrNextState() == request:
             return None
         else:
             return FSM.defaultFilter(self, request, args)
 
-    
+
     def enterStandby(self):
         messenger.send('chatPanelClose')
         self.startFadeOutIval()
@@ -405,14 +405,14 @@ class ChatPanel(DirectFrame, FSM):
         self.slider['value'] = self.index
         self.updateDisplay()
 
-    
+
     def exitStandby(self):
         messenger.send('chatPanelOpen')
         self.startFadeInIval()
         self.stopFadeTextTimer()
         self.unfadeText()
 
-    
+
     def enterShort(self):
         messenger.send('chatPanelMin')
         self.slider.hide()
@@ -427,11 +427,11 @@ class ChatPanel(DirectFrame, FSM):
         self.slider['value'] = self.index
         self.updateDisplay()
 
-    
+
     def exitShort(self):
         pass
 
-    
+
     def enterTall(self):
         messenger.send('chatPanelMax')
         self.tallBg.show()
@@ -447,11 +447,11 @@ class ChatPanel(DirectFrame, FSM):
         self.updateDisplay()
         localAvatar.guiMgr.messageStackParent.setPos(0, 0, 0.75)
 
-    
+
     def exitTall(self):
         localAvatar.guiMgr.messageStackParent.setPos(0, 0, 0.0)
 
-    
+
     def getMessageTagText(self, message, wantReceiver = False):
         chatString = ''
         plainName = ''
@@ -463,19 +463,19 @@ class ChatPanel(DirectFrame, FSM):
         isAnnounce = 0
         if message.getExtraInfo():
             extraInfo = message.getExtraInfo()
-        
+
         if wantReceiver and message.getReceiverAvatarName():
             plainName = message.getReceiverAvatarName()
         elif message.getSenderAvatarName():
             plainName = message.getSenderAvatarName()
         elif message.getSenderAccountName():
             plainName = message.getSenderAccountName()
-        
+
         if message.getTalkType() in (INFO_SYSTEM, INFO_GAME, UPDATE_FRIEND, CANNON_DEFENSE, INFO_GUILD):
             if wantReceiver:
                 useName = plainName
             else:
-                useName = '\x1Super\x1.\x2 ' + plainName
+                useName = 'Super. ' + plainName
         elif message.getTalkType() == INFO_OPEN:
             if message.getSenderAvatarId() == localAvatar.doId:
                 useName = ''
@@ -494,39 +494,39 @@ class ChatPanel(DirectFrame, FSM):
                     plainName = OTPLocalizer.WhisperToFormatName % message.getReceiverAccountName()
                 else:
                     plainName = OTPLocalizer.WhisperFromFormatName % message.getSenderAccountName()
-            
+
             if message.getTalkType() == AVATAR_THOUGHT:
                 if message.getSenderAvatarId() == localAvatar.doId:
                     plainName = OTPLocalizer.ThoughtSelfFormatName
                 else:
                     plainName = OTPLocalizer.ThoughtOtherFormatName % message.getSenderAvatarName()
-            
+
             useName = plainName + divider
         elif message.getTalkType() == TALK_GM:
             useName = '[' + PLocalizer.TalkGMLabel + '] ' + plainName + divider
         elif message.getTalkType() == TALK_GUILD:
             useName = '[' + PLocalizer.TalkGuildLabel + '] ' + plainName + divider
         elif message.getTalkType() == UPDATE_GUILD:
-            useName = '\x1Super\x1.\x2 [' + PLocalizer.TalkGuildLabel + '] ' + plainName
+            useName = 'Super. [' + PLocalizer.TalkGuildLabel + '] ' + plainName
         elif message.getTalkType() == TALK_PARTY:
             useName = '[' + PLocalizer.TalkCrewLabel + '] ' + plainName + divider
         elif message.getTalkType() == UPDATE_PARTY:
-            useName = '\x1Super\x1.\x2 [' + PLocalizer.TalkCrewLabel + '] ' + plainName
+            useName = 'Super. [' + PLocalizer.TalkCrewLabel + '] ' + plainName
         elif message.getTalkType() == TALK_PVP:
             useName = '[' + extraInfo + '] ' + plainName + divider
         elif message.getTalkType() == UPDATE_PVP:
-            useName = '\x1Super\x1.\x2 [' + extraInfo + '] ' + plainName
-        
+            useName = 'Super. [' + extraInfo + '] ' + plainName
+
         return useName
 
-    
+
     def decodeOpenMessage(self, message):
         nameButton = None
         extraInfo = message.getExtraInfo()
         useName = self.getMessageTagText(message)
         if message.getTalkType() == INFO_GUILD:
             useName2 = self.getMessageTagText(message, wantReceiver = True)
-        
+
         tpMgr = TextPropertiesManager.getGlobalPtr()
         buttonCommand = None
         buttonArgs = None
@@ -564,7 +564,7 @@ class ChatPanel(DirectFrame, FSM):
             buttonArgs = [
                 message.getSenderAccountId(),
                 useName]
-        
+
         if message.getTalkType() == INFO_GUILD and message.getReceiverAvatarId():
             wantTwoNames = True
         else:
@@ -574,28 +574,28 @@ class ChatPanel(DirectFrame, FSM):
             buttonArgs2 = [
                 message.getReceiverAvatarId(),
                 useName2]
-        
-        nameArray = ('\x1' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '\x1' + useName + '\x2', '\x1' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '\x1' + useName + '\x2', '\x1' + MESSAGE_OVER_TABLE[message.getTalkType()][self.fontColorStyle] + '\x1' + useName + '\x2', '\x1' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '\x1' + useName + '\x2')
+
+        nameArray = ('' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '' + useName + '', '' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '' + useName + '', '' + MESSAGE_OVER_TABLE[message.getTalkType()][self.fontColorStyle] + '' + useName + '', '' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '' + useName + '')
         nameButton = DirectButton(parent = NodePath(), relief = None, text = nameArray, text_align = TextNode.ALeft, text_pos = (0.0, 0.0), text_shadow = self.shadowColor, text_shadowOffset = self.shadowOffset, text_font = self.nameFont, textMayChange = 0, command = buttonCommand, extraArgs = buttonArgs)
         (left, right, bottom, top) = nameButton.getBounds()
         nameGFX = TextGraphic(nameButton, left, right, 0, 1)
         buttonName = '%s%s' % (message.getTalkType(), useName)
         tpMgr.setGraphic(buttonName, nameGFX)
         if wantTwoNames:
-            nameArray2 = ('\x1' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '\x1' + useName2 + '\x2', '\x1' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '\x1' + useName2 + '\x2', '\x1' + MESSAGE_OVER_TABLE[message.getTalkType()][self.fontColorStyle] + '\x1' + useName2 + '\x2', '\x1' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '\x1' + useName2 + '\x2')
+            nameArray2 = ('' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '' + useName2 + '', '' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '' + useName2 + '', '' + MESSAGE_OVER_TABLE[message.getTalkType()][self.fontColorStyle] + '' + useName2 + '', '' + MESSAGE_COLOR_TABLE[message.getTalkType()][self.fontColorStyle] + '' + useName2 + '')
             nameButton2 = DirectButton(parent = NodePath(), relief = None, text = nameArray2, text_align = TextNode.ALeft, text_pos = (0.0, 0.0), text_shadow = self.shadowColor, text_shadowOffset = self.shadowOffset, text_font = self.nameFont, textMayChange = 0, command = buttonCommand2, extraArgs = buttonArgs2)
             (left, right, bottom, top) = nameButton2.getBounds()
             nameGFX2 = TextGraphic(nameButton2, left, right, 0, 1)
             buttonName2 = '%s%s' % (message.getTalkType(), useName2)
             tpMgr.setGraphic(buttonName2, nameGFX2)
-        
+
         del tpMgr
         self.lineDict[message.getMessageId()] = (message, nameButton, buttonName)
         if nameButton:
-            messageName = '\x5' + buttonName + '\x5'
+            messageName = '' + buttonName + ''
             if wantTwoNames:
-                messageName2 = '\x5' + buttonName2 + '\x5'
-            
+                messageName2 = '' + buttonName2 + ''
+
         else:
             messageName = message.getSenderAvatarName() + ': '
         messageBody = message.getBody()
@@ -621,38 +621,38 @@ class ChatPanel(DirectFrame, FSM):
         for i in range(len(wrappedText)):
             if i == 0:
                 if chatCode:
-                    wrappedText[i] = '\x1' + chatCode + '\x1' + wrappedText[i] + '\x2'
-                
+                    wrappedText[i] = '' + chatCode + '' + wrappedText[i] + ''
+
             elif i > 0:
-                wrappedText[i] = '    ' + '\x1' + chatCode + '\x1' + wrappedText[i] + '\x2'
-            
+                wrappedText[i] = '    ' + '' + chatCode + '' + wrappedText[i] + ''
+
             if i < len(wrappedText) - 1:
                 wrappedText[i] += '\n'
                 continue
-        
+
         for text in wrappedText:
             chatString += text
-        
+
         return chatString
 
-    
+
     def clearText(self):
         tpMgr = TextPropertiesManager.getGlobalPtr()
         for key in self.lineDict:
             (message, nameButton, buttonName) = self.lineDict[key]
             nameButton.destroy()
             tpMgr.clearGraphic(buttonName)
-        
+
         self.renderedLineDict = { }
         self.lineDict = { }
         del tpMgr
 
-    
+
     def regenText(self):
         self.clearText()
         self.updateDisplay()
 
-    
+
     def regenLineCountList(self):
         self.runningLineCount = 0
         self.runningLineCountLastId = -1
@@ -664,14 +664,14 @@ class ChatPanel(DirectFrame, FSM):
             wrappedText = self.wordWrapper.getWordwrappedText()
             if message.getMessageId() > self.runningLineCountLastId:
                 self.runningLineCountLastId = message.getMessageId()
-            
+
             for mline in wrappedText.split('\n'):
                 self.lineCountList.append(message.getMessageId())
                 self.runningLineCount += 1
-            
-        
 
-    
+
+
+
     def putText(self, startLine, numLines):
         startMessage = self.lineCountList[startLine]
         messageList = base.talkAssistant.getCompleteTextFromRecent(self.NumVisible, startMessage)
@@ -683,7 +683,7 @@ class ChatPanel(DirectFrame, FSM):
         for message in messageList:
             if base.cr.avatarFriendsManager.checkIgnored(message.getSenderAvatarId()):
                 continue
-            
+
             messageIdList.append(message.getMessageId())
             if not self.renderedLineDict.get(message):
                 msg = self.decodeOpenMessage(message)
@@ -693,13 +693,13 @@ class ChatPanel(DirectFrame, FSM):
                     self.chatTextRender.setText(mline)
                     newLine = self.chatTextRender.generate()
                     messageRenderedLines.append(newLine)
-                
-            
+
+
             self.renderedLines = self.renderedLineDict[message] + self.renderedLines
             if len(self.renderedLines) >= self.NumVisible:
                 break
                 continue
-        
+
         removeIds = []
         removeRendered = []
         for key in self.lineDict:
@@ -710,13 +710,13 @@ class ChatPanel(DirectFrame, FSM):
                 removeIds.append(key)
                 removeRendered.append(message)
                 continue
-        
+
         for message in removeRendered:
             self.renderedLineDict.pop(message)
-        
+
         for key in removeIds:
             self.lineDict.pop(key)
-        
+
         self.renderedLines = self.renderedLines[-(self.NumVisible):]
         self.chatDisplayNP.getChildren().detach()
         z = -lineHeight * (self.NumVisible - len(self.renderedLines))
@@ -724,11 +724,11 @@ class ChatPanel(DirectFrame, FSM):
             np = self.chatDisplayNP.attachNewNode(rline)
             np.setZ(z)
             z -= lineHeight
-        
+
         del tpMgr
         self.updateRange()
 
-    
+
     def _ChatPanel__handleOpenMessage(self, message):
         self.index = 0
         if message.getMessageId() > self.runningLineCountLastId:
@@ -738,27 +738,27 @@ class ChatPanel(DirectFrame, FSM):
             for mline in wrappedText.split('\n'):
                 self.lineCountList.append(message.getMessageId())
                 self.runningLineCount += 1
-            
-        
+
+
         self.updateDisplay()
         self.unfadeText()
         if self.getCurrentOrNextState() == 'Standby':
             self.startFadeTextTimer()
-        
 
-    
+
+
     def _ChatPanel__handleGlobalGuiShow(self):
         if self._ChatPanel__showLines:
             self.chatDisplayNP.showThrough()
-        
 
-    
+
+
     def _ChatPanel__handleGlobalGuiHide(self):
         if self.linesShown:
             self.chatDisplayNP.show()
-        
 
-    
+
+
     def _ChatPanel__showLines(self):
         self.linesShown = True
         if base.showGui:
@@ -766,30 +766,30 @@ class ChatPanel(DirectFrame, FSM):
         else:
             self.chatDisplayNP.show()
 
-    
+
     def _ChatPanel__hideLines(self):
         self.linesShown = False
         self.chatDisplayNP.hide()
 
-    
+
     def updateDisplay(self):
         if hasattr(base, 'talkAssistant'):
             self.putText(self.index, self.NumVisible)
-        
 
-    
+
+
     def updateRange(self):
         numLines = self.runningLineCount
         if self.getCurrentOrNextState() != 'Tall':
             self.index = 0
             return None
-        
+
         maxRange = self.runningLineCount - int(self.NumVisible * 0.66000000000000003)
         maxRange = max(maxRange, 0)
         if maxRange:
             if self.getCurrentOrNextState() == 'Tall':
                 self.slider.show()
-            
+
             self.slider['range'] = (0, maxRange)
             self.index = min(self.index, self.slider['range'][1])
             self.index = max(self.index, self.slider['range'][0])
@@ -797,76 +797,76 @@ class ChatPanel(DirectFrame, FSM):
             self.slider.hide()
             self.index = 0
 
-    
+
     def scrollList(self):
         index = int(self.slider.getValue())
         if self.index != index:
             self.index = index
             self.updateDisplay()
-        
 
-    
+
+
     def enableCrewChat(self):
         self.chatBar.refreshTabStates()
 
-    
+
     def disableCrewChat(self):
         self.chatBar.refreshTabStates()
 
-    
+
     def enableGuildChat(self):
         self.chatBar.refreshTabStates()
 
-    
+
     def disableGuildChat(self):
         self.chatBar.refreshTabStates()
 
-    
+
     def disableShipPVPChat(self):
         self.chatBar.refreshTabStates()
 
-    
+
     def enableShipPVPChat(self):
         self.chatBar.refreshTabStates()
 
-    
+
     def enableWhiteListChat(self):
         self.chatBar.enableWhiteListChat()
 
-    
+
     def disableWhiteListChat(self):
         self.chatBar.disableWhiteListChat()
 
-    
+
     def checkEmotes(self):
         for id in PLocalizer.EmoteCommands.values():
             if type(id) == type((0,)):
                 continue
-        
 
-    
+
+
     def hide(self):
         self.holdLinesShown = self.linesShown
         NodePath.hide(self)
         self._ChatPanel__hideLines()
 
-    
+
     def show(self):
         DirectFrame.show(self)
         if self.holdLinesShown:
             self._ChatPanel__showLines()
-        
 
-    
+
+
     def handleAvatarPress(self, avId, avName):
         if hasattr(base, 'localAvatar') and base.localAvatar.guiMgr:
             base.localAvatar.guiMgr.handleAvatarDetails(avId, avName)
-        
 
-    
+
+
     def handlePlayerPress(self, pId, pName):
         if hasattr(base, 'localAvatar') and base.localAvatar.guiMgr:
             base.localAvatar.guiMgr.handlePlayerDetails(pId, pName)
-        
+
 
 

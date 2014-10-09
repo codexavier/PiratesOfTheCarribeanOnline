@@ -10,7 +10,7 @@ from pirates.piratesbase import PiratesGlobals
 from pirates.piratesgui.RequestButton import RequestButton
 
 class GuildInviteeButton(RequestButton):
-    
+
     def __init__(self, text, command):
         RequestButton.__init__(self, text, command)
         self.initialiseoptions(GuildInviteeButton)
@@ -19,7 +19,7 @@ class GuildInviteeButton(RequestButton):
 
 class GuildInvitee(DirectFrame):
     notify = DirectNotifyGlobal.directNotify.newCategory('GuildInvitee')
-    
+
     def __init__(self, avId, avName, guildId, guildName):
         guiMain = loader.loadModel('models/gui/gui_main')
         DirectFrame.__init__(self, relief = None, pos = (-0.59999999999999998, 0, 0.46999999999999997), image = guiMain.find('**/general_frame_e'), image_pos = (0.25, 0, 0.27500000000000002), image_scale = (0.28000000000000003, 1, 0.28000000000000003))
@@ -30,18 +30,18 @@ class GuildInvitee(DirectFrame):
         if base.cr.avatarFriendsManager.checkIgnored(self.avId):
             self._GuildInvitee__handleNo()
             return None
-        
+
         if guildName == 0 and guildName == '' or guildName == '0':
             self.guildName = PLocalizer.GuildDefaultName % self.guildId
         else:
             self.guildName = guildName
-        nameArray = ('\x1CPOrangeHEAD\x1' + self.avName + '\x2', '\x1CPOrangeHEAD\x1' + self.avName + '\x2', '\x1CPOrangeOVER\x1' + self.avName + '\x2', '\x1CPOrangeHEAD\x1' + self.avName + '\x2')
+        nameArray = ('CPOrangeHEAD' + self.avName + '', 'CPOrangeHEAD' + self.avName + '', 'CPOrangeOVER' + self.avName + '', 'CPOrangeHEAD' + self.avName + '')
         nameButton = DirectButton(parent = NodePath(), relief = None, text = nameArray, text_align = TextNode.ALeft, text_shadow = PiratesGuiGlobals.TextShadow, textMayChange = 0, command = self.handleAvatarPress, extraArgs = [
             avId,
             avName])
         (left, right, bottom, top) = nameButton.getBounds()
         nameGFX = TextGraphic(nameButton, left, right, 0, 1)
-        buttonName = '\x5' + self.avName + '\x5'
+        buttonName = '' + self.avName + ''
         buttonText = PLocalizer.CrewInviteeInvitation % buttonName
         tpMgr = TextPropertiesManager.getGlobalPtr()
         tpMgr.setGraphic(self.avName, nameGFX)
@@ -66,50 +66,50 @@ class GuildInvitee(DirectFrame):
             if not base.localAvatar.isPopulated():
                 self._GuildInvitee__handleNo()
                 return None
-            
-        
+
+
         self.accept('declineGuildInvitation', self._GuildInvitee__handleNo)
         self.accept('cancelGuildInvitation', self._GuildInvitee__handleCancelFromAbove)
         if hasattr(base, 'localAvatar') and base.localAvatar.guiMgr:
             if base.localAvatar.guiMgr.ignoreGuildInvites:
                 self._GuildInvitee__handleNo()
-            
-        
 
-    
+
+
+
     def destroy(self):
         if hasattr(self, 'destroyed'):
             return None
-        
+
         self.destroyed = 1
         self.ignore('cancelGuildInvitation')
         DirectFrame.destroy(self)
 
-    
+
     def _GuildInvitee__handleOk(self):
         base.cr.guildManager.sendAcceptInvite()
         self.destroy()
 
-    
+
     def _GuildInvitee__handleNo(self):
         base.cr.guildManager.sendDeclineInvite()
         self.destroy()
 
-    
+
     def _GuildInvitee__handleIgnore(self):
         if hasattr(base, 'localAvatar') and base.localAvatar.guiMgr:
             base.localAvatar.guiMgr.handleIgnoreGuildInvites()
-        
+
         self.destroy()
 
-    
+
     def _GuildInvitee__handleCancelFromAbove(self):
         self.destroy()
 
-    
+
     def handleAvatarPress(self, avId, avName):
         if hasattr(base, 'localAvatar') and base.localAvatar.guiMgr:
             base.localAvatar.guiMgr.handleAvatarDetails(avId, avName)
-        
+
 
 

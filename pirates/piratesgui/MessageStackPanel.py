@@ -36,7 +36,7 @@ class StackMessage(BorderFrame):
     HatTex = None
     TattooTex = None
     CircleTex = None
-    
+
     def __init__(self, parent = None, **kwargs):
         self.loadModels()
         self.cornerGeom = None
@@ -48,7 +48,7 @@ class StackMessage(BorderFrame):
             StackMessage.popupSfx = loadSfx(SoundGlobals.SFX_GUI_STACK_POPUP)
             StackMessage.lootSfx = loadSfx(SoundGlobals.SFX_GUI_LOOT)
             StackMessage.lootSfx.setVolume(0.75)
-        
+
         optiondefs = (('relief', None, None), ('frameSize', (0, 0.80000000000000004, -0.17999999999999999, 0), None), ('state', DGG.DISABLED, None), ('time', 7, None), ('priority', 0, None), ('modelName', 'general_frame_b', None), ('borderScale', 0.69999999999999996, None), ('icon', (), self.setIcon), ('buttonStyle', None, None), ('noCallback', None, None), ('yesCallback', None, None), ('cancelCallback', None, None))
         self.defineoptions(kwargs, optiondefs, dynamicGroups = ())
         BorderFrame.__init__(self, parent, **None)
@@ -60,32 +60,32 @@ class StackMessage(BorderFrame):
         self.cornerGeom.setColorScale(*PiratesGuiGlobals.TextFG1)
         self.setTransparency(True)
 
-    
+
     def __cmp__(self, other):
         if other:
             return cmp(other['priority'], self['priority'])
         else:
             return -1
 
-    
+
     def __hash__(self):
         return id(self)
 
-    
+
     def destroy(self, autoDestroy = 1):
         if self.ival:
             self.ival.pause()
             self.ival = None
-        
+
         if autoDestroy:
             BorderFrame.destroy(self)
-        
 
-    
+
+
     def loadModels(self):
         if StackMessage.guiLoaded:
             return None
-        
+
         StackMessage.TopLevel = loader.loadModel('models/gui/toplevel_gui')
         gui = loader.loadModel('models/gui/toplevel_gui')
         StackMessage.corner = gui.find('**/topgui_general_corner')
@@ -117,30 +117,30 @@ class StackMessage(BorderFrame):
         jollyGui = loader.loadModel('models/effects/effectCards')
         StackMessage.JollyTex = jollyGui.find('**/effectJolly')
 
-    
+
     def setText(self):
         BorderFrame.setText(self)
         lines = self.component('text0').textNode.getHeight()
         textSpace = (0.034799999999999998 * lines - 0.0276) * self['text_scale'][1] / 0.035000000000000003
         if textSpace > 100:
             textSpace = 0.0
-        
+
         self['frameSize'] = (0, 0.80000000000000004, -0.028000000000000001 - 0.043999999999999997 - 0.043999999999999997 - max(0.042000000000000003, textSpace), 0)
 
-    
+
     def setIcon(self):
         if self.circle:
             self.circle.destroy()
             self.circle = None
-        
+
         if self.icon:
             self.icon.destroy()
             self.icon = None
-        
+
         if self.icon2:
             self.icon2.destroy()
             self.icon2 = None
-        
+
         icon = self['icon']
         if icon:
             (category, detail) = icon
@@ -212,7 +212,7 @@ class StackMessage(BorderFrame):
                     image = StackMessage.RoyalChestTex
                 elif detail == ItemId.GOLD:
                     pass
-                
+
                 imageScale = 0.34999999999999998
                 command = localAvatar.guiMgr.showShipPanel
             elif category == 'admin':
@@ -248,20 +248,20 @@ class StackMessage(BorderFrame):
                 image = StackMessage.JollyTex
                 imageScale = 0.12
                 command = None
-            
+
             self.circle = DirectButton(parent = self, relief = None, image = StackMessage.CircleTex, image_scale = 0.5, pos = imagePos, command = command, extraArgs = extraArgs)
             if category == 'friends':
                 self.icon = OnscreenImage(parent = self.circle, image = image, scale = imageScale, pos = (0.028000000000000001, 0, 0))
                 self.icon2 = OnscreenImage(parent = self.circle, image = image, scale = imageScale, pos = (-0.028000000000000001, 0, 0))
             else:
                 self.icon = OnscreenImage(parent = self.circle, image = image, scale = imageScale)
-        
 
-    
+
+
     def getIval(self):
         return self.ival
 
-    
+
     def createIval(self, fadeTime, doneFunc = None):
         if not self.ival:
             baseColor = Vec4(1)
@@ -269,22 +269,22 @@ class StackMessage(BorderFrame):
             self.ival = Sequence(LerpColorScaleInterval(self, fadeTime, baseColor, startColorScale = baseTransp, blendType = 'easeIn'), Wait(max(0.0, self['time'] - 2 * fadeTime)), LerpColorScaleInterval(self, fadeTime, baseTransp))
             if doneFunc:
                 self.ival.append(Func(doneFunc))
-            
-        
+
+
         return self.ival
 
-    
+
     def getHeight(self):
         frameSize = self['frameSize']
         if not frameSize:
             frameSize = self.guiItem.getFrame()
-        
+
         return frameSize[3] - frameSize[2]
 
 
 
 class ModalStackMessage(StackMessage):
-    
+
     def __init__(self, parent = None, **kwargs):
         StackMessage.__init__(self, parent, **None)
         self.initialiseoptions(ModalStackMessage)
@@ -292,7 +292,7 @@ class ModalStackMessage(StackMessage):
         self.fadeTime = 0
         self.setupButtons()
 
-    
+
     def destroy(self, autoDestroy = 1):
         self.doneFunc = None
         if self['buttonStyle'] == OTPDialog.YesNo:
@@ -303,10 +303,10 @@ class ModalStackMessage(StackMessage):
         elif self['buttonStyle'] == OTPDialog.TwoChoice:
             self.boardButton.destroy()
             self.cancelButton.destroy()
-        
+
         StackMessage.destroy(self, autoDestroy)
 
-    
+
     def setupButtons(self):
         if self['buttonStyle'] == OTPDialog.YesNo:
             self.yesButton = GuiButton(parent = self, image_scale = (0.22, 0.22, 0.14999999999999999), pos = (0.27500000000000002, 0, -0.10000000000000001), text = PLocalizer.DialogYes, command = self.handleYes)
@@ -321,9 +321,9 @@ class ModalStackMessage(StackMessage):
             self.cancelButton = DirectButton(parent = self, relief = None, image = (lookoutUI.find('**/lookout_close_window'), lookoutUI.find('**/lookout_close_window_down'), lookoutUI.find('**/lookout_close_window_over'), lookoutUI.find('**/lookout_close_window_disabled')), pos = (0.75, 0, -0.050000000000000003), scale = 0.12, command = self.handleCancel)
             self['frameSize'] = (self['frameSize'][0], self['frameSize'][1], self['frameSize'][2] + 0.01, self['frameSize'][3])
             self.adjustFrameForButtons()
-        
 
-    
+
+
     def adjustFrameForButtons(self):
         zOffset = self['frameSize'][2]
         self['frameSize'] = (self['frameSize'][0], self['frameSize'][1], zOffset - 0.059999999999999998, self['frameSize'][3])
@@ -332,25 +332,25 @@ class ModalStackMessage(StackMessage):
             self.noButton.setZ(zOffset)
         elif self['buttonStyle'] == OTPDialog.TwoChoice:
             self.boardButton.setZ(zOffset)
-        
 
-    
+
+
     def _ModalStackMessage__removeIval(self):
         self.ival.pause()
         self.ival = None
 
-    
+
     def createIval(self, fadeTime, doneFunc = None):
         StackMessage.createIval(self, fadeTime, doneFunc)
         self.fadeTime = fadeTime
         self.doneFunc = doneFunc
         return self.ival
 
-    
+
     def messageDone(self, quick = False):
         if self.ival:
             self.ival.pause()
-        
+
         if quick:
             fadeTime = 0
         else:
@@ -360,34 +360,34 @@ class ModalStackMessage(StackMessage):
         self.ival = Sequence(LerpColorScaleInterval(self, fadeTime, baseTransp))
         if self.doneFunc:
             self.ival.append(Func(self.doneFunc))
-        
 
-    
+
+
     def handleNo(self):
         if self['noCallback']:
             self['noCallback']()
-        
+
         self.messageDone()
 
-    
+
     def handleYes(self):
         if self['yesCallback']:
             self['yesCallback']()
-        
+
         self.messageDone()
 
-    
+
     def handleCancel(self):
         if self['cancelCallback']:
             self['cancelCallback']()
-        
+
         self.messageDone()
 
 
 
 class MessageStackPanel(DirectFrame):
     popupSfx = None
-    
+
     def __init__(self, parent = None, **kwargs):
         optiondefs = (('relief', None, None), ('state', DGG.DISABLED, None), ('maxMessages', 3, self.setMaxMessages), ('messageBorder', 0.0050000000000000001, self.setMessageBorder), ('posLerpTime', 0.25, self.setPosLerpTime), ('fadeLerpTime', 0.25, self.setFadeLerpTime))
         self.defineoptions(kwargs, optiondefs, dynamicGroups = ('posLerpTime', 'fadeLerpTime', 'messageBorder'))
@@ -395,7 +395,7 @@ class MessageStackPanel(DirectFrame):
         self.initialiseoptions(MessageStackPanel)
         if not MessageStackPanel.popupSfx:
             MessageStackPanel.popupSfx = loadSfx(SoundGlobals.SFX_GUI_STACK_POPUP)
-        
+
         self.setTransparency(True)
         self.msgStack = []
         self.msgIvals = { }
@@ -407,88 +407,88 @@ class MessageStackPanel(DirectFrame):
         self.setPos(self._getSlidePos())
         self.hide()
 
-    
+
     def destroy(self):
         self.clearMessages()
         DirectFrame.destroy(self)
 
-    
+
     def clearMessages(self):
         for msg in self.msgStack[:]:
             self.removeMessage(msg)
-        
+
         if self.slideIval:
             self.slideIval.pause()
             self.slideIval = None
-        
+
         self._stopMessageTask()
 
-    
+
     def setMaxMessages(self):
         self.maxMessages = self['maxMessages']
 
-    
+
     def setPosLerpTime(self):
         self.posLerpTime = self['posLerpTime']
 
-    
+
     def getPosLerpTime(self):
         return self['posLerpTime']
 
-    
+
     def setFadeLerpTime(self):
         self.fadeLerpTime = self['fadeLerpTime']
 
-    
+
     def getFadeLerpTime(self):
         return self['fadeLerpTime']
 
-    
+
     def setMessageBorder(self):
         self.messageBorder = self['messageBorder']
 
-    
+
     def getMessageBorder(self):
         return self['messageBorder']
 
-    
+
     def _getSlotPos(self, slot):
         pos = Point3(0, 0, -self['messageBorder'])
         for msg in self.msgStack[:slot]:
             z = pos[2] - msg.getHeight() - 2 * self['messageBorder']
             pos.setZ(z)
-        
+
         if slot >= self['maxMessages']:
             z = pos[2] - 10
             pos.setZ(z)
-        
+
         return pos
 
-    
+
     def _getSlidePos(self):
         pos = Point3(self.startPos)
         pos.setZ(pos[2] + self['messageBorder'])
         for msg in self.msgStack[0:self.maxMessages]:
             z = pos[2] + msg.getHeight() + 2 * self['messageBorder']
             pos.setZ(z)
-        
+
         return pos
 
-    
+
     def _getMessageIndex(self, msg):
         for (index, m) in enumerate(self.msgStack):
             if msg is m:
                 return index
                 continue
-        
+
         raise ValueError('%s not in list' % msg)
 
-    
+
     def _startMessageTask(self):
         self._stopMessageTask()
         self.task = taskMgr.add(self._messageTask, self.uniqueName('MessageStack'))
 
-    
+
     def _messageTask(self, task):
         for (x, msg) in enumerate(self.msgStack):
             ival = msg.getIval()
@@ -496,61 +496,61 @@ class MessageStackPanel(DirectFrame):
                 if x < self.maxMessages:
                     if not ival.isPlaying():
                         ival.resume()
-                    
+
                 else:
                     ival.pause()
             x < self.maxMessages
-        
+
         return task.cont
 
-    
+
     def _stopMessageTask(self):
         if self.task:
             taskMgr.remove(self.task)
-        
 
-    
+
+
     def _startMsgSlideIval(self, msg, slot):
         self._removeMsgIval(msg)
         ival = Sequence(LerpPosInterval(msg, self['posLerpTime'], self._getSlotPos(slot)), Func(self._removeMsgIval, msg))
         self.msgIvals[msg] = ival
         ival.start()
 
-    
+
     def _removeMsgIval(self, msg):
         ival = self.msgIvals.pop(msg, None)
         if ival:
             ival.pause()
-        
 
-    
+
+
     def _adjustStack(self, fromIndex):
         unstable = self.msgStack[fromIndex:]
         for msg in unstable:
             index = self._getMessageIndex(msg)
             self._startMsgSlideIval(msg, index)
-        
 
-    
+
+
     def _startSlideIval(self):
         numMessages = len(self.msgStack)
         if self.slideIval:
             self.slideIval.pause()
-        
+
         ival = Sequence()
         if numMessages:
             ival.append(Func(self._startMessageTask))
             ival.append(Func(self.show))
-        
+
         ival.append(LerpPosInterval(self, self['posLerpTime'], self._getSlidePos()))
         if not numMessages:
             ival.append(Func(self._stopMessageTask))
             ival.append(Func(self.hide))
-        
+
         self.slideIval = ival
         self.slideIval.start()
 
-    
+
     def addMessage(self, message, autoDestroy = 1):
         self.msgStack.append(message)
         self.msgStack.sort()
@@ -561,17 +561,17 @@ class MessageStackPanel(DirectFrame):
         self._startSlideIval()
         self.popupSfx.play()
 
-    
+
     def removeMessage(self, message, autoDestroy = 1):
-        
+
         try:
             text = message['text']
             if self.lastMessage == text:
                 self.lastMessage = None
-            
+
             if self.shipMessage == message:
                 self.shipMessage = None
-            
+
             index = self._getMessageIndex(message)
             self.msgStack.pop(index)
             self._adjustStack(index)
@@ -581,14 +581,14 @@ class MessageStackPanel(DirectFrame):
 
         message.destroy(autoDestroy)
 
-    
+
     def removeShipMessage(self):
         if self.shipMessage:
             self.removeMessage(self.shipMessage)
             self.shipMessage = None
-        
 
-    
+
+
     def showLoot(self, plunder = [], gold = 0, collect = 0, card = 0, cloth = 0, color = 0, jewel = None, tattoo = None, weapon = None, bounty = 0):
         LootPopupPanel = LootPopupPanel
         import pirates.piratesgui.LootPopupPanel
@@ -597,7 +597,7 @@ class MessageStackPanel(DirectFrame):
         msg.showLoot(plunder, gold, collect, card, cloth, color, jewel, tattoo, weapon, bounty)
         self.addMessage(msg)
 
-    
+
     def addTextMessage(self, text, seconds = 7, priority = 0, color = (0, 0, 0, 1), icon = (), modelName = 'general_frame_b', name = None, avId = None, playerName = None):
         if name and playerName:
             t2 = text % (playerName, name)
@@ -609,7 +609,7 @@ class MessageStackPanel(DirectFrame):
             t2 = text
         if self.lastMessage == t2:
             return None
-        
+
         msg = StackMessage(parent = self, text = t2, text_wordwrap = 15.5, text_align = TextNode.ALeft, text_scale = 0.035000000000000003, text_fg = color, text_pos = (0.17000000000000001, -0.071999999999999995, 0), textMayChange = 1, time = seconds, priority = priority, icon = icon, modelName = modelName)
         if name and playerName:
             buttonText = text % playerName
@@ -618,9 +618,9 @@ class MessageStackPanel(DirectFrame):
         if name or playerName:
             msg['text_fg'] = (0, 0, 0, 0)
             if name:
-                nameArray = ('\x1CPOrangeHEAD\x1' + name + '\x2', '\x1CPOrangeHEAD\x1' + name + '\x2', '\x1CPOrangeOVER\x1' + name + '\x2', '\x1CPOrangeHEAD\x1' + name + '\x2')
+                nameArray = ('CPOrangeHEAD' + name + '', 'CPOrangeHEAD' + name + '', 'CPOrangeOVER' + name + '', 'CPOrangeHEAD' + name + '')
             else:
-                nameArray = ('\x1CPOrangeHEAD\x1' + playerName + '\x2', '\x1CPOrangeHEAD\x1' + playerName + '\x2', '\x1CPOrangeOVER\x1' + playerName + '\x2', '\x1CPOrangeHEAD\x1' + playerName + '\x2')
+                nameArray = ('CPOrangeHEAD' + playerName + '', 'CPOrangeHEAD' + playerName + '', 'CPOrangeOVER' + playerName + '', 'CPOrangeHEAD' + playerName + '')
             if name:
                 nameButton = DirectButton(parent = NodePath(), relief = None, text = nameArray, text_align = TextNode.ALeft, text_shadow = PiratesGuiGlobals.TextShadow, textMayChange = 0, command = self.handleAvatarTextPress, extraArgs = [
                     avId,
@@ -632,9 +632,9 @@ class MessageStackPanel(DirectFrame):
             (left, right, bottom, top) = nameButton.getBounds()
             nameGFX = TextGraphic(nameButton, left, right, 0, 1)
             if name:
-                buttonName = '\x5' + name + '\x5'
+                buttonName = '' + name + ''
             else:
-                buttonName = '\x5' + playerName + '\x5'
+                buttonName = '' + playerName + ''
             buttonText = buttonText % buttonName
             tpMgr = TextPropertiesManager.getGlobalPtr()
             if name:
@@ -653,12 +653,12 @@ class MessageStackPanel(DirectFrame):
             x = msg.attachNewNode(textRender.generate())
             x.setScale(0.035000000000000003)
             x.setPos(0.16700000000000001, 0, -0.072999999999999995)
-        
+
         self.addMessage(msg)
         self.lastMessage = t2
         return msg
 
-    
+
     def addModalTextMessage(self, text, buttonStyle = OTPDialog.CancelOnly, noCallback = None, yesCallback = None, cancelCallback = None, seconds = 120, priority = 0, color = (1, 1, 1, 1), icon = (), modelName = 'general_frame_f', name = None, avId = None):
         if name:
             t2 = text % name
@@ -666,17 +666,17 @@ class MessageStackPanel(DirectFrame):
             t2 = text
         if self.lastMessage == text:
             return None
-        
+
         msg = ModalStackMessage(parent = self, buttonStyle = buttonStyle, noCallback = noCallback, yesCallback = yesCallback, cancelCallback = cancelCallback, text = text, text_wordwrap = 15.5, text_align = TextNode.ALeft, text_scale = 0.035000000000000003, text_fg = color, text_pos = (0.17000000000000001, -0.071999999999999995, 0), textMayChange = 1, time = seconds, priority = priority, icon = icon, modelName = modelName)
         if name:
             msg['text_fg'] = (0, 0, 0, 0)
-            nameArray = ('\x1CPOrangeHEAD\x1' + name + '\x2', '\x1CPOrangeHEAD\x1' + name + '\x2', '\x1CPOrangeOVER\x1' + name + '\x2', '\x1CPOrangeHEAD\x1' + name + '\x2')
+            nameArray = ('CPOrangeHEAD' + name + '', 'CPOrangeHEAD' + name + '', 'CPOrangeOVER' + name + '', 'CPOrangeHEAD' + name + '')
             nameButton = DirectButton(parent = NodePath(), relief = None, text = nameArray, text_align = TextNode.ALeft, text_shadow = PiratesGuiGlobals.TextShadow, textMayChange = 0, command = self.handleAvatarModalPress, extraArgs = [
                 avId,
                 name])
             (left, right, bottom, top) = nameButton.getBounds()
             nameGFX = TextGraphic(nameButton, left, right, 0, 1)
-            buttonName = '\x5' + name + '\x5'
+            buttonName = '' + name + ''
             buttonText = text % buttonName
             tpMgr = TextPropertiesManager.getGlobalPtr()
             tpMgr.setGraphic(name, nameGFX)
@@ -692,30 +692,30 @@ class MessageStackPanel(DirectFrame):
             x = msg.attachNewNode(textRender.generate())
             x.setScale(0.034500000000000003, 1.0, 0.035000000000000003)
             x.setPos(0.16700000000000001, 0, -0.072999999999999995)
-        
+
         self.addMessage(msg)
         self.lastMessage = text
         if icon and icon[0] == 'ship':
             self.shipMessage = msg
-        
+
         return msg
 
-    
+
     def handleAvatarTextPress(self, avId, avName):
         if hasattr(base, 'localAvatar') and base.localAvatar.guiMgr:
             base.localAvatar.guiMgr.handleAvatarDetails(avId, avName)
-        
 
-    
+
+
     def handlePlayerTextPress(self, pId, pName):
         if hasattr(base, 'localAvatar') and base.localAvatar.guiMgr:
             base.localAvatar.guiMgr.handlePlayerDetails(pId, pName)
-        
 
-    
+
+
     def handleAvatarModalPress(self, avId, avName):
         if hasattr(base, 'localAvatar') and base.localAvatar.guiMgr:
             base.localAvatar.guiMgr.handleAvatarDetails(avId, avName)
-        
+
 
 

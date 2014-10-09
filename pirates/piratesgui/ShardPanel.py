@@ -308,9 +308,9 @@ class ShardPanel(DirectFrame):
         if hasattr(self, 'currentShardLabel'):
             district = base.cr.doId2do.get(self['preferredShard'])
             if district:
-                self.currentShardLabel['text'] = '\x1gold\x1' + PLocalizer.ShardPreferredWorld + ' :\x2\n%s %s' % (district.getName(), PLocalizer.Ocean)
+                self.currentShardLabel['text'] = 'gold' + PLocalizer.ShardPreferredWorld + ' :\n%s %s' % (district.getName(), PLocalizer.Ocean)
             else:
-                self.currentShardLabel['text'] = '\x1gold\x1' + PLocalizer.ShardPreferredWorld + ' :\x2\n%s' % PLocalizer.ShardNone
+                self.currentShardLabel['text'] = 'gold' + PLocalizer.ShardPreferredWorld + ' :\n%s' % PLocalizer.ShardNone
 
 
 
