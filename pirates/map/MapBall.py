@@ -6,7 +6,7 @@ from pirates.map.ArcBall import ArcBall
 import math
 
 class MapBall(ArcBall):
-    
+
     def __init__(self, name, worldMap, maxTilt = math.pi / 4, mapSize = 2.0, *args, **kwargs):
         ArcBall.__init__(self, name, *args, **args)
         self.worldMap = worldMap
@@ -18,7 +18,7 @@ class MapBall(ArcBall):
         self._worldNorth = Point3(0, 1, 0)
         self._loadModels()
 
-    
+
     def mapPosToSpherePt(self, mapPos):
         pt = self.tsMat.xformPoint(Point2(mapPos[0], mapPos[1]))
         theta = math.acos(2 / Vec3(pt[0], pt[1], 2).length())
@@ -27,23 +27,21 @@ class MapBall(ArcBall):
         coef = (z + 1) / 2.0
         return Vec3(pt[0] * coef, pt[1] * coef, z)
 
-    
+
     def spherePtToMapPos(self, spherePt):
         t = 2 / (spherePt[2] - 1)
         pt = Point2(spherePt[0], spherePt[1]) * t
         return self.tsMatInv.xformPoint(pt)
 
-    
+
     def rotateMapPosToCenter(self, mapPos):
         spherePt = self.mapPosToSpherePt(mapPos)
         self.rotateSpherePtToCenter(spherePt)
 
-    
+
     def _loadModels(self):
         self._modelInfo = {
             'globe': 'models/worldmap/world_map_globe' }
-        self._models = dict(zip(self._modelInfo, lambda [outmost-iterable]: for name in [outmost-iterable]:
-loader.loadModel(self._modelInfo[name])(self._modelInfo)))
         self.attachForRotation(self._models['globe'])
         self._models['globe'].setBin('background', 0)
         self._models['globe'].setDepthWrite(0)

@@ -10,7 +10,7 @@ from pirates.map.MapConfig import MapConfig
 import math
 
 class WorldMap(DirectFrame):
-    
+
     def __init__(self, parent, **kwargs):
         cm = CardMaker('Portrait')
         cm.setFrame(Vec4(-1, 1, -1, 1))
@@ -30,7 +30,6 @@ class WorldMap(DirectFrame):
         self.camY = [
             -0.29999999999999999,
             0.25]
-        continue
         self.tiltLimit = [ x * math.pi / 180 for x in (27, 33) ]
         self.mapBall = DecoratedMapBall('WorldMapArcBall', self, self.tiltLimit[1], mapSize = 242000, radius = self.radius, scrollFactor = 0.125, camera = b.camera, keepUpright = 1, mouseDownEvent = self.getMouseDownEvent(), mouseUpEvent = self.getMouseUpEvent())
         self.render = b.getSceneRoot()
@@ -48,21 +47,21 @@ class WorldMap(DirectFrame):
         self._fleets = []
         self._enabled = False
 
-    
+
     def disable(self):
         self._enabled = False
         if self._hasLocalShip:
             self.stopLocalAvShipPosHprTask()
-        
+
         for fleetDoId in self._fleets:
             self.stopFleetPosTask(fleetDoId)
-        
+
         self.stopLocalAvPosTask()
         self.ignoreAll()
         self.mapBall.disable()
         self.buffer.disable()
 
-    
+
     def destroy(self):
         self.disable()
         self.buffer.destroy()
@@ -74,15 +73,15 @@ class WorldMap(DirectFrame):
         del self.worldRoot
         DirectFrame.destroy(self)
 
-    
+
     def getMouseDownEvent(self):
         return self.getName() + '-worldMap-mouseDown'
 
-    
+
     def getMouseUpEvent(self):
         return self.getName() + '-worldMap-mouseUp'
 
-    
+
     def enable(self):
         self.resetArcBall()
         self.accept('press-mouse1-%s' % self.guiId, self.mouseDown)
@@ -97,39 +96,39 @@ class WorldMap(DirectFrame):
         self.startLocalAvPosTask()
         if self._hasLocalShip:
             self.startLocalAvShipPosHprTask()
-        
+
         for fleetDoId in self._fleets:
             self.startFleetPosTask(fleetDoId)
-        
+
         self._enabled = True
 
     enable = report(types = [
         'frameCount',
         'args'], dConfigParam = 'map')(enable)
-    
+
     def rotateAvatarToCenter(self):
         self.mapBall.rotateAvatarToCenter()
 
-    
+
     def mouseDown(self, *args, **kwargs):
         self.resetArcBall()
         messenger.send(self.getMouseDownEvent())
 
-    
+
     def mouseUp(self, *args, **kwargs):
         messenger.send(self.getMouseUpEvent())
 
-    
+
     def setScale(self, *args, **kwargs):
         DirectFrame.setScale(self, *args, **args)
         self.resetArcBall()
 
-    
+
     def setPos(self, *args, **kwargs):
         DirectFrame.setPos(self, *args, **args)
         self.resetArcBall()
 
-    
+
     def resetArcBall(self):
         if hasattr(self, 'mapBall'):
             frameSize = Vec4(-1, 1, -1, 1)
@@ -141,53 +140,53 @@ class WorldMap(DirectFrame):
             botLeft = ts.getMat().xformPoint(botLeft)
             topRight = ts.getMat().xformPoint(topRight)
             self.mapBall.setFrame(Vec4(botLeft[0], topRight[0], botLeft[1], topRight[1]))
-        
 
-    
+
+
     def setZoom(self, zoom):
         self._zoom = clampScalar(0.0, 0.75, zoom)
         self.buffer.camera.setY(lerp(self.camY[0], self.camY[1], self._zoom))
         self.mapBall._setTiltLimit(lerp(self.tiltLimit[0], self.tiltLimit[1], self._zoom))
         self.mapBall.updateTextZoom(self._zoom)
 
-    
+
     def mouseWheelUp(self, *args, **kwargs):
         self.setZoom(self._zoom + 0.050000000000000003)
 
-    
+
     def mouseWheelDown(self, *args, **kwargs):
         self.setZoom(self._zoom - 0.050000000000000003)
 
-    
+
     def handleEdgeDartClicked(self, dartPos):
         self.mapBall.rotatePtToCenter(dartPos, 1)
 
-    
+
     def startLocalAvPosTask(self):
         self.stopLocalAvPosTask()
         taskMgr.add(self.localAvPosTask, 'localAvMapPos')
 
-    
+
     def localAvPosTask(self, task):
         world = base.cr.getActiveWorld()
         if world:
             pos = world.getWorldPos(localAvatar)
             if pos:
                 self.updateLocalAvDart(pos)
-            
-        
+
+
         return task.cont
 
-    
+
     def stopLocalAvPosTask(self):
         taskMgr.removeTasksMatching('localAvMapPos')
 
-    
+
     def startLocalAvShipPosHprTask(self):
         self.stopLocalAvShipPosHprTask()
         taskMgr.add(self.localAvShipPosHprTask, 'localAvMapShip')
 
-    
+
     def localAvShipPosHprTask(self, task):
         world = base.cr.getActiveWorld()
         ship = localAvatar.getCrewShip()
@@ -196,25 +195,25 @@ class WorldMap(DirectFrame):
             rotation = 180 + ship.getH(world)
             if pos:
                 self.updateShip(ship.doId, pos, rotation)
-            
-        
+
+
         return task.cont
 
-    
+
     def stopLocalAvShipPosHprTask(self):
         taskMgr.removeTasksMatching('localAvMapShip')
 
-    
+
     def getFleetPosTaskName(self, fleetDoId):
         return 'fleet-%s-MapPos' % fleetDoId
 
-    
+
     def startFleetPosTask(self, fleetDoId):
         self.stopFleetPosTask(fleetDoId)
         task = taskMgr.add(self.FleetPosTask, self.getFleetPosTaskName(fleetDoId))
         task.fleetDoId = fleetDoId
 
-    
+
     def FleetPosTask(self, task):
         world = base.cr.getActiveWorld()
         fleet = base.cr.getDo(task.fleetDoId)
@@ -222,20 +221,20 @@ class WorldMap(DirectFrame):
             pos = world.getWorldPos(fleet)
             if pos:
                 self.updateFleet(task.fleetDoId, pos)
-            
-        
+
+
         return task.cont
 
-    
+
     def stopFleetPosTask(self, fleetDoId):
         taskMgr.removeTasksMatching(self.getFleetPosTaskName(fleetDoId))
 
-    
+
     def showMapConfig(self):
         if hasattr(self, 'mapConfig'):
             self.mapConfig.show()
             return None
-        
+
         self.mapConfig = MapConfig(relief = DGG.FLAT, frameSize = (-0.02, 0.81999999999999995, -1, 1), frameColor = (1, 1, 1, 1), pos = (0.69999999999999996, 0, 0.0), scale = 0.75)
         self.mapConfig.camSlider['command'] = self.buffer.camera.setY
         self.mapConfig.worldPSlider['command'] = self.ballRoot.setP
@@ -248,15 +247,15 @@ class WorldMap(DirectFrame):
             1]
         self.saveState()
 
-    
+
     def saveState(self, pt = None):
         if pt == 0:
             self.camY[0] = self.buffer.camera.getY()
         elif pt == 1:
             self.camY[1] = self.buffer.camera.getY()
-        
+
         if hasattr(self, 'mapConfig'):
-            
+
             def zoom(t):
                 self.mapConfig.camSlider['value'] = lerp(self.camY[0], self.camY[1], t)
 
@@ -267,10 +266,10 @@ class WorldMap(DirectFrame):
             elif pt == 1:
                 self.mapConfig.finalSlider['range'] = (self.mapConfig.finalSlider['range'][0], 1.0)
                 self.mapConfig.finalSlider['value'] = 1.0
-            
-        
 
-    
+
+
+
     def resetMapConfig(self):
         if hasattr(self, 'mapConfig'):
             self.mapConfig.camSlider['value'] = 0
@@ -278,23 +277,23 @@ class WorldMap(DirectFrame):
             self.mapConfig.worldZSlider['value'] = self.worldRoot.getZ()
             self.mapConfig.worldPSlider['value'] = self.ballRoot.getP()
             self.mapConfig.worldDecorScaleSlider['value'] = self.mapBall.mapScale
-        
 
-    
+
+
     def hideMapConfig(self):
         if hasattr(self, 'mapConfig'):
             self.mapConfig.show()
-        
 
-    
+
+
     def showCollisionDebug(self):
         if hasattr(self, 'collisionBufferFrames') and self.collisionBufferFrames:
             for (buffer, frame) in self.collisionBufferFrames:
                 frame.unstash()
                 buffer.enable()
-            
+
             return None
-        
+
         self.collisionBufferFrames = []
         cm = CardMaker('Side')
         cm.setFrame(Vec4(-1, 1, -1, 1))
@@ -321,115 +320,115 @@ class WorldMap(DirectFrame):
         self.setPos(-0.5, 0, 0)
         self.setScale(0.82499999999999996)
 
-    
+
     def hideCollisionDebug(self):
         if hasattr(self, 'collisionBufferFrames'):
             for (buffer, frame) in self.collisionBufferFrames:
                 buffer.disable()
                 frame.stash()
-            
+
             self.mapBall.traverser.hideCollisions()
             colNodes = self.render.findAllMatches('**/+CollisionNode')
             colNodes.hide()
-        
 
-    
+
+
     def updateTeleportIsland(self, teleportTokenId):
         self.mapBall.updateTeleportIsland(teleportTokenId)
 
-    
+
     def setReturnIsland(self, islandUid):
         self.mapBall.setReturnIsland(islandUid)
 
-    
+
     def setPortOfCall(self, islandUid):
         self.mapBall.setPortOfCall(islandUid)
 
-    
+
     def setCurrentIsland(self, islandUid):
         self.mapBall.setCurrentIsland(islandUid)
 
-    
+
     def addQuestDart(self, questId, worldPos):
         self.mapBall.addDart(questId, worldPos, Vec4(0.69999999999999996, 0.69999999999999996, 0, 1))
 
-    
+
     def updateQuestDart(self, questId, worldPos):
         self.mapBall.updateDart(questId, worldPos)
 
-    
+
     def removeQuestDart(self, questId):
         self.mapBall.removeDart()
 
-    
+
     def addLocalAvDart(self, worldPos = Vec3(0)):
         pass
 
-    
+
     def updateLocalAvDart(self, worldPos):
         pass
 
-    
+
     def addIsland(self, name, islandUid, modelPath, worldPos, rotation):
         return self.mapBall.addIsland(name, islandUid, modelPath, worldPos, rotation)
 
-    
+
     def updateIsland(self, name, worldPos = None, rotation = None):
         self.mapBall.updateIsland(name, worldPos, rotation)
 
-    
+
     def removeIsland(self, name):
         self.mapBall.removeIsland(name)
 
-    
+
     def addOceanArea(self, name, areaUid, pos1, pos2):
         self.mapBall.addOceanArea(name, areaUid, pos1, pos2)
 
-    
+
     def addShip(self, shipInfo, worldPos):
         self._hasLocalShip = True
         self.mapBall.addShip(shipInfo, worldPos)
         if self._enabled:
             self.startLocalAvShipPosHprTask()
-        
 
-    
+
+
     def updateShip(self, shipDoId, worldPos, rotation):
         self.mapBall.updateShip(shipDoId, worldPos, rotation)
 
-    
+
     def removeShip(self, shipDoId):
         self._hasLocalShip = False
         if self._enabled:
             self.stopLocalAvShipPosHprTask()
-        
+
         self.mapBall.removeShip(shipDoId)
 
-    
+
     def addFleet(self, fleet):
         self.mapBall.addFleet(fleet)
         self._fleets.append(fleet.getDoId())
         if self._enabled:
             self.startFleetPosTask(fleet.getDoId())
-        
 
-    
+
+
     def updateFleet(self, fleetDoId, pos):
         self.mapBall.updateFleet(fleetDoId, pos)
 
-    
+
     def removeFleet(self, fleet):
         if self._enabled:
             self.stopFleetPosTask(fleet.getDoId())
-        
+
         self._fleets.remove(fleet.getDoId())
         self.mapBall.removeFleet(fleet.getDoId())
 
-    
+
     def addPath(self, pathInfo):
         self.mapBall.addPath(pathInfo)
 
-    
+
     def removePath(self, pathInfo):
         self.mapBall.removePath(pathInfo)
 
