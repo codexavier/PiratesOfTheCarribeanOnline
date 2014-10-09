@@ -14,52 +14,52 @@ from pirates.piratesgui.BorderFrame import BorderFrame
 from pirates.ship.ShipMeter import ShipMeter
 
 class Item(NodePath):
-    
+
     def __init__(self, name, *args, **kwargs):
         NodePath.__init__(self, name, *args, **args)
 
-    
+
     def setPosition(self, worldNorth, *args, **kwargs):
         self.setPos(*args, **args)
 
-    
+
     def setRotation(self, worldNorth, rotation):
         self.setH(rotation)
 
-    
+
     def destroy(self):
         pass
 
 
 
 class Billboard(Item):
-    
+
     def __init__(self, name, nodePath = NodePath(), *args, **kwargs):
         Item.__init__(self, name, *args, **args)
         self._initBillboard(nodePath)
         self.setBin('fixed', 100)
         self.setDepthTest(0)
 
-    
+
     def _initBillboard(self, nodePath):
         self.setEffect(BillboardEffect.make(Vec3(0, 0, 1), True, False, 0, nodePath, Point3(0)))
         self.node().setBounds(BoundingSphere(Point3(0), 0.14999999999999999))
 
-    
+
     def updateZoom(self, zoom):
         self.setScale(1 - zoom / 1.5)
 
 
 
 class Spline(Item):
-    
+
     def __init__(self, name, verts, *args, **kwargs):
         Item.__init__(self, name, *args, **args)
         self.name = name
         self.verts = verts
         self._initRope()
 
-    
+
     def _initRope(self):
         rope = Rope(self.name)
         rope.ropeNode.setRenderMode(RopeNode.RMTape)
@@ -78,12 +78,12 @@ class Spline(Item):
 
 
 class Model(Item):
-    
+
     def __init__(self, name, modelName, scale = 1.0, modelPath = None, *args, **kwargs):
         Item.__init__(self, name, *args, **args)
         self._initModel(modelName, scale, modelPath)
 
-    
+
     def _initModel(self, modelName, scale, modelPath):
         if modelPath:
             geom = loader.loadModel(modelPath).find('**/%s' % modelName)
@@ -100,12 +100,12 @@ class Model(Item):
             self.geom = NodePath('dummy')
         self.geom.setScale(scale)
 
-    
+
     def setPosition(self, worldNorth, *args, **kwargs):
         Item.setPosition(self, worldNorth, *args, **args)
         self.headsUp(worldNorth, Vec3(self.getPos()))
 
-    
+
     def setRotation(self, worldNorth, rotation):
         Item.setRotation(self, worldNorth, rotation)
         self.headsUp(worldNorth, Vec3(self.getPos()))
@@ -114,20 +114,20 @@ class Model(Item):
 
 
 class PickableModel(Model):
-    
+
     def __init__(self, name, modelName, scale = 1.0, collisionIndex = 17, modelPath = None, *args, **kwargs):
         Model.__init__(self, name, modelName, scale, modelPath, *args, **args)
         bm = BitMask32.bit(collisionIndex)
         cGeom = self.geom.find('**/+CollisionNode;+s')
         if cGeom and not cGeom.isEmpty():
             cGeom.node().setIntoCollideMask(bm)
-        
+
         self.setTag('name', name)
 
 
 
 class BillboardModel(Billboard, PickableModel):
-    
+
     def __init__(self, name, modelName, nodePath = NodePath(), offset = 0.0, scale = 1.0, collisionIndex = 17, *args, **kwargs):
         Billboard.__init__(self, name, nodePath)
         PickableModel.__init__(self, modelName, scale, collisionIndex)
@@ -136,7 +136,7 @@ class BillboardModel(Billboard, PickableModel):
 
 
 class BillboardCard(Billboard, PickableModel):
-    
+
     def __init__(self, name, cardName, modelPath, nodePath = NodePath(), offset = 0.0, scale = 1.0, collisionIndex = 17, *args, **kwargs):
         Billboard.__init__(self, name, nodePath)
         PickableModel.__init__(self, name, cardName, scale, collisionIndex, modelPath)
@@ -145,7 +145,7 @@ class BillboardCard(Billboard, PickableModel):
 
 
 class Ship(Item):
-    
+
     def __init__(self, shipInfo, *args, **kwargs):
         name = shipInfo[1]
         Item.__init__(self, name, *args, **args)
@@ -154,7 +154,7 @@ class Ship(Item):
         self.shipModel.reparentTo(self)
         self.shipModel.setScale(0.13)
         self.shipModel.setTwoSided(1)
-        formattedName = '\x1smallCaps\x1\x1slant\x1' + name.replace(' ', '\n') + '\x2\x2'
+        formattedName = 'smallCapsslant' + name.replace(' ', '\n') + ''
         self.text = Text(name + '-text', NodePath(), 0.0, formattedName, 0, scale = 0.017000000000000001)
         self.text.reparentTo(self)
         if self.shipModel.getBounds().isEmpty():
@@ -171,31 +171,31 @@ class Ship(Item):
         self.shipNode.setHpr(0, 30, 0)
         self.shipModel.reparentTo(self.shipNode)
 
-    
+
     def setRotation(self, worldNorth, rotation):
         self.shipModel.setH(rotation)
 
-    
+
     def updateZoom(self, zoom):
         self.text.setScale(1 - zoom / 1.5)
 
-    
+
     def destroy(self):
         if self.shipModel:
             self.shipModel.destroy()
             self.shipModel = None
-        
+
 
 
 
 class Island(PickableModel):
-    
+
     def __init__(self, name, islandUid, modelName, isTeleportIsland, scale = 1.0, collisionIndex = 17, stencilId = 0, *args, **kwargs):
         PickableModel.__init__(self, name, modelName, scale / 160.0, collisionIndex, *args, **args)
         self.setTag('islandUid', islandUid)
         if isTeleportIsland or base.config.GetBool('teleport-all'):
             self.setTag('isTeleportIsland', 'True')
-        
+
         self._isCurrentIsland = False
         self._isReturnIsland = False
         self._isPortOfCall = False
@@ -206,67 +206,67 @@ class Island(PickableModel):
         self.geom.setBin('background', 1)
         self.geom.setDepthWrite(0)
 
-    
+
     def setAsCurrentIsland(self, isCurrent):
         self._isCurrentIsland = isCurrent
         self.updateCanTeleportTo()
 
-    
+
     def isCurrentIsland(self):
         return self._isCurrentIsland
 
-    
+
     def setAsReturnIsland(self, isReturn):
         pass
 
-    
+
     def isReturnIsland(self):
         return self._isReturnIsland
 
-    
+
     def setAsPortOfCall(self, isPortOfCall):
         self._isPortOfCall = isPortOfCall
         self.updateCanTeleportTo()
 
-    
+
     def isPortOfCall(self):
         return self._isPortOfCall
 
-    
+
     def setHasTeleportToken(self, hasToken):
         self._hasTeleportToken = hasToken
         self.updateCanTeleportTo()
 
-    
+
     def getHasTeleportToken(self, hasToken):
         return self._hasTeleportToken
 
-    
+
     def updateCanTeleportTo(self):
         if self._hasTeleportToken and self._isCurrentIsland and self._isPortOfCall and base.cr.distributedDistrict.worldCreator.isPvpIslandByUid(self.getTag('islandUid')) or base.config.GetBool('teleport-all', 0):
             pass
         self.setTag('canTeleportTo', str(bool(not base.cr.distributedDistrict.worldCreator.isMysteriousIslandByUid(self.getTag('islandUid')))))
 
-    
+
     def getCanTeleportTo(self):
         return self.getTag('canTeleportTo') == 'True'
 
-    
+
     def isTeleportIsland(self):
         return self.getTag('isTeleportIsland') == 'True'
 
-    
+
     def mouseOver(self, pos):
         pass
 
-    
+
     def mouseLeft(self):
         pass
 
 
 
 class Text(Billboard):
-    
+
     def __init__(self, name, nodePath, offset, text, stencilId, scale = 0.025000000000000001, *args, **kwargs):
         Billboard.__init__(self, name, nodePath, *args, **args)
         self.setBin('fixed', 110)
@@ -278,18 +278,18 @@ class Text(Billboard):
         self.textNode.instanceTo(sNode)
         sNode.setDepthTest(False)
 
-    
+
     def setBold(self, bold):
         self.textNode.setShadow(Vec4(0, 0, 0, bold))
 
-    
+
     def setTextScale(self, scale):
         self.textNode.setScale(self.scale * scale)
 
 
 
 class TextIsland(Island):
-    
+
     def __init__(self, name, islandUid, modelName, isTeleportIsland, nodePath = NodePath(), offset = 0.0, scale = 1.0, collisionIndex = 17, stencilId = 0, *args, **kwargs):
         Island.__init__(self, name, islandUid, modelName, isTeleportIsland, scale, collisionIndex, stencilId, *args, **args)
         pencil = self.geom.find('**/pencil*')
@@ -300,7 +300,7 @@ class TextIsland(Island):
         self.helpBox = None
         self.helpLabel = None
         self.textScaleNode = self.attachNewNode('textScale')
-        
+
         def formatName(name, lineWidth):
             tokens = name.split()
             out = ''
@@ -312,9 +312,9 @@ class TextIsland(Island):
                     continue
                 count = len(token) + 1
                 out = '%s\n%s' % (out, token)
-            
+
             out.strip()
-            return '\x1smallCaps\x1%s\x2' % (out,)
+            return 'smallCaps%s' % (out,)
 
         formattedName = formatName(self.name, 10)
         self.text = Text(name + '-text', nodePath, offset, formattedName, stencilId)
@@ -367,42 +367,42 @@ class TextIsland(Island):
         self.createHelpBox()
         self.updateState()
 
-    
+
     def updateZoom(self, zoom):
         self.textScaleNode.setScale(1 - zoom / 1.5)
 
-    
+
     def setAsCurrentIsland(self, isCurrent):
         Island.setAsCurrentIsland(self, isCurrent)
         self.updateState()
 
-    
+
     def setAsReturnIsland(self, isReturn):
         Island.setAsReturnIsland(self, isReturn)
         self.updateState()
 
-    
+
     def setAsPortOfCall(self, isPortOfCall):
         Island.setAsPortOfCall(self, isPortOfCall)
         self.updateState()
 
-    
+
     def setHasTeleportToken(self, hasToken):
         Island.setHasTeleportToken(self, hasToken)
         self.updateState()
 
-    
+
     def updateState(self, mouseOver = False):
         if not hasattr(self, 'button'):
             return None
-        
+
         self.button.hide()
         self.teleportIconEnabled.hide()
         self.teleportIconDisabled.hide()
         if self.isCurrentIsland():
             self.manIcon.show()
             self.button.show()
-        
+
         if self.isTeleportIsland():
             self.button.show()
             self.manIcon.hide()
@@ -410,7 +410,7 @@ class TextIsland(Island):
             self.teleportIconDisabled.clearColorScale()
             self.button.setColorScale(0.5, 0.5, 0.5, 1)
             self.setHelpLabel(PLocalizer.MapNeedsTeleportToken)
-        
+
         if self.getCanTeleportTo():
             self.button.show()
             self.button.clearColorScale()
@@ -425,8 +425,8 @@ class TextIsland(Island):
                 self.setHelpLabel(PLocalizer.MapCanTeleport)
             if mouseOver:
                 self.geom.setColorScale(0.5, 1, 0.5, 1)
-            
-        
+
+
         if self.isCurrentIsland() and not mouseOver:
             self.button.show()
             self.button.clearColorScale()
@@ -437,8 +437,8 @@ class TextIsland(Island):
             self.manIcon.show()
             if not self.isTeleportIsland():
                 self.setHelpLabel(PLocalizer.MapCurrentIsland)
-            
-        
+
+
         if self.isCurrentIsland() and mouseOver:
             self.button.show()
             self.button.clearColorScale()
@@ -447,25 +447,25 @@ class TextIsland(Island):
             self.teleportIconEnabled.show()
             self.teleportIconDisabled.hide()
             self.manIcon.hide()
-        
+
         if not self.isCurrentIsland() and not mouseOver:
             self.setHelpLabel('')
             self.text.setBold(0)
             self.manIcon.hide()
-        
 
-    
+
+
     def mouseOver(self, pos):
         self.updateState(mouseOver = True)
         self.showDetails(pos)
 
-    
+
     def mouseLeft(self):
         self.geom.clearColorScale()
         self.hideDetails()
         self.updateState(mouseOver = False)
 
-    
+
     def createHelpBox(self):
         if not self.helpBox:
             self.helpLabel = DirectLabel(parent = aspect2d, relief = None, text = '', text_align = TextNode.ALeft, text_scale = PiratesGuiGlobals.TextScaleSmall, text_fg = PiratesGuiGlobals.TextFG2, text_wordwrap = 12, text_shadow = (0, 0, 0, 1), textMayChange = 1, sortOrder = 91)
@@ -474,9 +474,9 @@ class TextIsland(Island):
             self.helpBox = BorderFrame(parent = aspect2d, state = DGG.DISABLED, frameSize = (-0.040000000000000001, width, height, 0.050000000000000003), pos = (0, 0, 0), sortOrder = 90)
             self.helpLabel.reparentTo(self.helpBox)
             self.helpBox.hide()
-        
 
-    
+
+
     def setHelpLabel(self, text):
         self.helpLabel['text'] = text
         self.helpLabel.resetFrameSize()
@@ -485,69 +485,69 @@ class TextIsland(Island):
         self.helpBox['frameSize'] = (-0.040000000000000001, width, height, 0.050000000000000003)
         self.helpBox.resetFrameSize()
 
-    
+
     def showDetails(self, pos):
         if self.helpLabel['text'] != '':
             self.helpBox.setPos(pos - Point3(self.helpBox['frameSize'][1] * 1.25, 0, 0))
             self.helpBox.setBin('gui-popup', 0)
             self.helpBox.show()
-        
 
-    
+
+
     def hideDetails(self):
         if self.helpBox:
             self.helpBox.hide()
-        
+
 
 
 
 class OceanAreaText(Text):
-    
+
     def __init__(self, name, areaUid):
         name = PLocalizer.LocationNames[name]
         text = ''
         for l in range(len(name)):
             text = text + name[l] + ' '
-        
-        text = '\x1slant\x1\x1smallCaps\x1' + text + '\x2\x2'
+
+        text = 'slantsmallCaps' + text + ''
         Text.__init__(self, name, NodePath(), 0, text, 0, 0.017000000000000001)
         self.uid = areaUid
         self.fadeIval = None
         self.hidden = False
 
-    
+
     def fadeOut(self):
         self.hidden = True
         self.fadeTo(0, 'easeOut')
 
-    
+
     def fadeIn(self):
         self.hidden = False
         self.fadeTo(1, 'easeIn')
 
-    
+
     def fadeTo(self, value, blendType):
         if self.fadeIval:
             self.fadeIval.pause()
             self.fadeIval = None
-        
+
         self.setTransparency(1)
         self.fadeIval = LerpFunc(self.setAlphaScale, duration = 0.14999999999999999 * abs(value - self.getColorScale().getW()), fromData = self.getColorScale().getW(), toData = value, blendType = blendType)
         self.fadeIval.start()
 
-    
+
     def updateZoom(self, zoom):
         Text.updateZoom(self, zoom)
         if zoom >= 0.0 and self.hidden:
             self.fadeIn()
         elif zoom < 0.0 and not (self.hidden):
             self.fadeOut()
-        
+
 
 
 
 class Swirl(Model):
-    
+
     def __init__(self, name, scale = 1.0, speed = 1, *args, **kwargs):
         Model.__init__(self, name, 'models/worldmap/world_map_swirl', scale / 80.0, *args, **args)
         self.swirl = self.attachNewNode('swirl')
@@ -558,7 +558,7 @@ class Swirl(Model):
 
 
 class Dart(PickableModel):
-    
+
     def __init__(self, name, parent, defaultPos, color = Vec4(1), offset = 0.0, *args, **kwargs):
         self.startScale = 0.074999999999999997
         self.highlightScale = 0.10000000000000001
@@ -584,17 +584,17 @@ class Dart(PickableModel):
         if qs:
             title = qs.getStatusText()
             self.setHelpLabel(title)
-        
 
-    
+
+
     def toggleHelpText(self):
         if self.helpBox:
             if not self.helpBox.isHidden():
                 self.hideDetails()
-            
-        
 
-    
+
+
+
     def createHelpBox(self):
         if not self.helpBox:
             self.helpLabel = DirectLabel(parent = aspect2d, relief = None, text = '', text_align = TextNode.ALeft, text_scale = PiratesGuiGlobals.TextScaleSmall, text_fg = PiratesGuiGlobals.TextFG2, text_wordwrap = 12, text_shadow = (0, 0, 0, 1), textMayChange = 1, sortOrder = 91)
@@ -603,9 +603,9 @@ class Dart(PickableModel):
             self.helpBox = BorderFrame(parent = aspect2d, state = DGG.DISABLED, frameSize = (-0.040000000000000001, width, height, 0.050000000000000003), pos = (0, 0, 0), sortOrder = 90)
             self.helpLabel.reparentTo(self.helpBox)
             self.helpBox.hide()
-        
 
-    
+
+
     def setHelpLabel(self, text):
         self.helpLabel['text'] = text
         self.helpLabel.resetFrameSize()
@@ -614,35 +614,35 @@ class Dart(PickableModel):
         self.helpBox['frameSize'] = (-0.040000000000000001, width, height, 0.050000000000000003)
         self.helpBox.resetFrameSize()
 
-    
+
     def showDetails(self, pos):
         if self.helpLabel['text'] != '':
             self.helpBox.setPos(pos + Point3(self.helpBox['frameSize'][1] * 0.25, 0, 0))
             self.helpBox.setBin('gui-popup', 0)
             self.helpBox.show()
             self.geom.setScale(self.highlightScale)
-        
 
-    
+
+
     def hideDetails(self):
         if self.helpBox:
             self.helpBox.hide()
             self.geom.setScale(self.startScale)
-        
 
-    
+
+
     def mouseOver(self, pos):
         self.showDetails(pos)
 
-    
+
     def mouseLeft(self):
         self.hideDetails()
 
-    
+
     def getDefaultPos(self):
         return self.defaultPos
 
-    
+
     def setEdgeMode(self, edgeMode):
         self.edgeMode = edgeMode
         if self.edgeMode:
@@ -650,21 +650,21 @@ class Dart(PickableModel):
         else:
             self.edgeModeNode.stash()
 
-    
+
     def setColorScale(self, *args, **kwargs):
         self.edgeModeNode.setColorScale(*args, **args)
         self.normalModeNode.setColorScale(*args, **args)
 
-    
+
     def setScale(self, *args, **kwargs):
         self.normalModeNode.setScale(*args, **args)
 
-    
+
     def setPosition(self, worldPos, *args, **kwargs):
         NodePath.setPos(self, *args, **args)
         if self.edgeMode:
             self.edgeModeNode.setPos(*args, **args)
-        
+
 
 
 DecorTypes = Enum('Item,                    Billboard,                    Model,                    BillboardModel,                    BillboardCard,                    Island,                    Text,                    TextIsland,                    Dart,                    Swirl,                    OceanAreaText,                    Ship,                    Spline,                    ')
