@@ -96,34 +96,34 @@ def __buildFortunePaths(node, ladderName):
     if isinstance(node, QuestDNA):
         FortunePathHelperDict[node.getQuestId()] = ladderName
         return None
-    
+
     for ladder in node.getContainers():
         __buildFortunePaths(ladder, ladderName)
-    
+
 
 
 def buildFortunePathHelper():
     for ladderName in FortuneQuestLadderDict.keys():
         ladder = FortuneQuestLadderDict[ladderName]
         __buildFortunePaths(ladder, ladderName)
-    
+
 
 
 def __buildFamePaths(node, ladderName):
     if isinstance(node, QuestDNA):
         FamePathHelperDict[node.getQuestId()] = ladderName
         return None
-    
+
     for ladder in node.getContainers():
         __buildFamePaths(ladder, ladderName)
-    
+
 
 
 def buildFamePathHelper():
     for ladderName in FameQuestLadderDict.keys():
         ladder = FameQuestLadderDict[ladderName]
         __buildFamePaths(ladder, ladderName)
-    
+
 
 LaddersInitialized = False
 
@@ -131,10 +131,10 @@ def initializeLadders():
     print 'Initializing quest ladders...'
     for ladder in FameQuestLadderDict.values():
         ladder.initialize()
-    
+
     for ladder in FortuneQuestLadderDict.values():
         ladder.initializeFortune(ladder.getDroppable())
-    
+
     buildFamePathHelper()
     buildFortunePathHelper()
     LaddersInitialized = True
@@ -149,13 +149,13 @@ def getLadder(name):
         if container:
             return ladder
             continue
-    
+
     for ladder in FortuneQuestLadderDict.values():
         container = ladder.getContainer(name)
         if container:
             return ladder
             continue
-    
+
 
 
 def getContainer(name):
@@ -164,13 +164,13 @@ def getContainer(name):
         if container:
             return container
             continue
-    
+
     for ladder in FortuneQuestLadderDict.values():
         container = ladder.getContainer(name)
         if container:
             return container
             continue
-    
+
 
 
 def getParentContainer(ctr):
@@ -179,13 +179,13 @@ def getParentContainer(ctr):
         if container:
             return container
             continue
-    
+
     for ladder in FortuneQuestLadderDict.values():
         container = ladder.getParentContainer(ctr)
         if container:
             return container
             continue
-    
+
 
 
 def __getPath(node, path, name):
@@ -194,14 +194,14 @@ def __getPath(node, path, name):
             return (True, path)
         else:
             return (False, path)
-    
+
     for ladder in node.getContainers():
         (found, path) = __getPath(ladder, path, name)
         if found:
             path.insert(0, ladder)
             return (found, path)
             continue
-    
+
     return (False, path)
 
 
@@ -215,8 +215,8 @@ def getFamePath(name):
             if found:
                 path.insert(0, ladder)
                 return path
-            
-        
+
+
     else:
         for ladder in FameQuestLadderDict.values():
             (found, path) = __getPath(ladder, path, name)
@@ -224,7 +224,7 @@ def getFamePath(name):
                 path.insert(0, ladder)
                 return path
                 continue
-        
+
     return path
 
 
@@ -238,8 +238,8 @@ def getFortunePath(name):
             if found:
                 path.insert(0, ladder)
                 return path
-            
-        
+
+
     else:
         for ladder in FortuneQuestLadderDict.values():
             (found, path) = __getPath(ladder, path, name)
@@ -247,7 +247,7 @@ def getFortunePath(name):
                 path.insert(0, ladder)
                 return path
                 continue
-        
+
     return path
 
 
@@ -256,15 +256,15 @@ def compileStats(name = None):
     if not name:
         for ladder in FameQuestLadderDict.values():
             ladder.compileStats(questStatData)
-        
+
         for ladder in FortuneQuestLadderDict.values():
             ladder.compileStats(questStatData)
-        
+
     else:
         ladder = getContainer(name)
         if ladder:
             ladder.compileStats(questStatData)
-        
+
     print '========================================================='
     print questStatData
     print '========================================================='
@@ -273,7 +273,7 @@ def compileStats(name = None):
 def generateRogerFile(dict):
     for (key, quest) in dict.items():
         recGenerateRogerFile(quest)
-    
+
 
 
 def recGenerateRogerFile(ladder):
@@ -281,8 +281,8 @@ def recGenerateRogerFile(ladder):
     if ladder.isContainer():
         for container in ladder.containers:
             recGenerateRogerFile(container)
-        
-    
+
+
 
 
 def getQuestInts(ladder):
@@ -295,10 +295,10 @@ def getQuestInts(ladder):
                 ints = getQuestInts(container)
                 for int in ints:
                     questInts.append(int)
-                
-            
-        
-    
+
+
+
+
     return questInts
 
 
@@ -309,15 +309,15 @@ def verifyQuestInts():
         ints = getQuestInts(ladder)
         for int in ints:
             questInts.append(int)
-        
-    
+
+
     for key in FortuneQuestLadderDict:
         ladder = FortuneQuestLadderDict.get(key)
         ints = getQuestInts(ladder)
         for int in ints:
             questInts.append(int)
-        
-    
+
+
     questInts.sort()
     print questInts
     uniqueQuestInts = []
@@ -326,7 +326,7 @@ def verifyQuestInts():
             uniqueQuestInts.append(questInt)
             continue
         print 'REPEATED QuestInt: ', questInt
-    
+
     print 'Available Quest Ints:'
     rangelist = []
     for i in range(1000, 35000):
@@ -337,7 +337,7 @@ def verifyQuestInts():
             print str(rangelist[0]) + ' - ' + str(rangelist[-1])
             rangelist = []
             continue
-    
+
 
 
 def getFilteredContainerList(ladderName):
@@ -351,7 +351,7 @@ def getFilteredContainerList(ladderName):
             currIndex = i
             break
             continue
-    
+
     while currIndex < len(containerList):
         container = containerList[currIndex]
         filteredContainerList.append(container)
@@ -364,14 +364,14 @@ def calculateContainerWeight(containerId, itemCount):
     if isinstance(container, QuestDNA):
         QuestWeightTable[containerId] = (1, itemCount)
         return (1, itemCount + 1)
-    
+
     totalWeight = 0
     subCount = itemCount
     containerList = getFilteredContainerList(containerId)
     for container in containerList:
         (weight, itemCount) = calculateContainerWeight(container.getName(), itemCount)
         totalWeight += weight
-    
+
     QuestWeightTable[containerId] = (totalWeight, subCount)
     return (totalWeight, itemCount)
 
@@ -384,7 +384,7 @@ def getContainerWeight(containerId):
     weight = QuestWeightTable.get(containerId)
     if weight:
         return weight[0]
-    
+
     return 0
 
 
@@ -392,7 +392,7 @@ def getContainerCount(containerId):
     count = QuestWeightTable.get(containerId)
     if count:
         return count[1]
-    
+
     return 0
 
 
@@ -403,25 +403,9 @@ def getPercentComplete(containerId, questId):
 
 
 def printContainerStrings(container, printAll = True):
-    
-    def raw(text):
-        charDict = {
-            '\x7': '\\a',
-            '\x1': '\\1',
-            '\x2': '\\2' }
-        new_string = ''
-        for char in text:
-            
-            try:
-                new_string += charDict[char]
-            continue
-            except KeyError:
-                new_string += char
-                continue
-            
 
-        
-        return new_string
+    def raw(text):
+        return text
 
     if isinstance(container, QuestLadderDNA):
         name = container.getName()
@@ -429,22 +413,22 @@ def printContainerStrings(container, printAll = True):
         print 'QuestLadder: ' + name
         if strings.has_key('title'):
             print raw('Title: ' + strings['title'])
-        
+
         if printAll:
             if strings.has_key('description'):
                 print raw('Story: ' + strings['description'])
-            
-        
+
+
         print ''
         containerList = getFilteredContainerList(name)
         for cont in containerList:
             printContainerStrings(cont, printAll)
-        
+
         if printAll:
             if strings.has_key('stringAfter'):
                 print raw('Dialog: ' + strings['stringAfter'])
-            
-        
+
+
         print '# END OF LADDER: ' + name
     elif isinstance(container, QuestBranchDNA):
         name = container.getName()
@@ -452,22 +436,22 @@ def printContainerStrings(container, printAll = True):
         print 'QuestBranch: ' + name
         if strings.has_key('title'):
             print raw('Title: ' + strings['title'])
-        
+
         if printAll:
             if strings.has_key('description'):
                 print raw('Story: ' + strings['description'])
-            
-        
+
+
         print ''
         containerList = getFilteredContainerList(name)
         for cont in containerList:
             printContainerStrings(cont, printAll)
-        
+
         if printAll:
             if strings.has_key('stringAfter'):
                 print raw('Dialog: ' + strings['stringAfter'])
-            
-        
+
+
         print '# END OF BRANCH: ' + name
     elif isinstance(container, QuestChoiceDNA):
         name = container.getName()
@@ -475,22 +459,22 @@ def printContainerStrings(container, printAll = True):
         print 'QuestChoice: ' + name
         if strings.has_key('title'):
             print raw('Title: ' + strings['title'])
-        
+
         if printAll:
             if strings.has_key('description'):
                 print raw('Story: ' + strings['description'])
-            
-        
+
+
         print 'Tasks:\n'
         containerList = getFilteredContainerList(name)
         for cont in containerList:
             printContainerStrings(cont, printAll)
-        
+
         if printAll:
             if strings.has_key('stringAfter'):
                 print raw('Dialog: ' + strings['stringAfter'])
-            
-        
+
+
         print '# END OF CHOICE: ' + name
     elif isinstance(container, QuestDNA):
         name = container.getName()
@@ -498,21 +482,21 @@ def printContainerStrings(container, printAll = True):
         print 'Quest: ' + name
         if strings.has_key('title'):
             print raw('Title: ' + strings['title'])
-        
+
         if container.getTasks():
             taskStr = container.getTasks()[0].getDescriptionText(0)
-            taskStr = taskStr.replace('\x1questObj\x1', '').replace('\x2', '')
+            taskStr = taskStr.replace('questObj', '')
             print raw('Task: ' + taskStr)
-        
+
         if printAll:
             if strings.has_key('description'):
                 print raw('Story: ' + strings['description'])
-            
+
             if strings.has_key('stringAfter'):
                 print raw('Dialog: ' + strings['stringAfter'])
-            
-        
-    
+
+
+
     print ''
 
 
@@ -528,18 +512,18 @@ def getAllLadders():
 
 containerIntDict = { }
 for currLadderTree in getAllLadders():
-    
+
     def storeQuestInt(ladder):
         if not isinstance(ladder, QuestDNA):
             containerIntDict[ladder.getQuestInt()] = ladder
             for currSubLadder in ladder.getContainers():
                 storeQuestInt(currSubLadder)
-            
-        
+
+
 
     for currLadder in currLadderTree:
         storeQuestInt(currLadder)
-    
+
 
 
 def getContainerFromQuestInt(questInt):
@@ -547,11 +531,11 @@ def getContainerFromQuestInt(questInt):
 
 
 def questIntInHistory(questInt, list):
-    
+
     def checkInts(theInt):
         if theInt in list:
             return True
-        
+
         container = QuestDB.questIntDict.get(theInt)
         if not container:
             container = getContainerFromQuestInt(theInt)
@@ -561,9 +545,9 @@ def questIntInHistory(questInt, list):
             parentContainer = getParentContainer(container)
             if not parentContainer:
                 return False
-            
+
             return checkInts(parentContainer.getQuestInt())
-        
+
         return False
 
     return checkInts(questInt)
@@ -573,11 +557,11 @@ def getCompletedQuestInts(questInt, container):
     questInts = []
     if container.getQuestInt() == questInt:
         return questInts
-    
+
     for cont in container.getContainers():
         if cont.getQuestInt() == questInt:
             return questInts
-        
+
         if isinstance(cont, QuestDNA):
             questInts.append(cont.getQuestInt())
             continue
@@ -586,7 +570,7 @@ def getCompletedQuestInts(questInt, container):
             return questInts
             continue
         questInts.append(cont.getQuestInt())
-    
+
     return questInts
 
 
@@ -596,7 +580,7 @@ def getAllParentContainers(ctr):
     parentContainer = getParentContainer(ctr)
     if parentContainer:
         containers += getAllParentContainers(parentContainer)
-    
+
     return containers
 
 
@@ -606,7 +590,7 @@ def getAllParentQuestInts(ctr):
     parentContainer = getParentContainer(ctr)
     if parentContainer:
         containers += getAllParentQuestInts(parentContainer)
-    
+
     return containers
 
 objectRefCache = { }
@@ -616,11 +600,11 @@ def cacheObjectRef(objId, container):
     if objectRefCache.has_key(objId):
         if container not in objectRefCache[objId]:
             objectRefCache[objId].append(container)
-        
+
     elif objId:
         objectRefCache[objId] = [
             container]
-    
+
 
 
 def getCachedObjectRef(objId):
@@ -634,7 +618,7 @@ def getPreferredAreaSpawnNode(areaUid, av):
         questDNA = QuestDB.QuestDict.get(questStateSpawn[0])
         if questIntInHistory(questDNA.getQuestInt(), av.getQuestLadderHistory()):
             questStateSpawnIdx = questStateSpawn[1]
-        
-    
+
+
     return questStateSpawnIdx
 

@@ -476,13 +476,13 @@ def getStringsForLocalAvatar(npc, type):
     list = []
     if __NPCSalutations.has_key(npc.getUniqueId()):
         list = __NPCSalutations.get(npc.getUniqueId()).get(type)
-    
+
     if not list and __NPCSalutations.has_key(npc.avatarType):
         list = __NPCSalutations.get(npc.avatarType).get(type)
-    
+
     if not list:
         list = __NPCSalutations.get(AvatarTypes.Townfolk).get(type)
-    
+
     for dict in list:
         if dict.has_key('prereqs'):
             passed = True
@@ -490,12 +490,12 @@ def getStringsForLocalAvatar(npc, type):
                 if not prereq.avIsReady(localAvatar):
                     passed = False
                     continue
-            
+
             if passed:
                 return dict.get('strings')
-            
+
         return dict.get('strings')
-    
+
 
 
 def getNPCGreeting(npc):

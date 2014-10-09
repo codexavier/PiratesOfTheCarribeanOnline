@@ -925,7 +925,7 @@ def getHighSeasRating(value):
         if value <= rating:
             return __highSeasAdventureRating[rating]
             continue
-    
+
     return __highSeasAdventureRating[rating]
 
 __crewAdventureRating = {
@@ -947,7 +947,7 @@ def getCrewRating(value):
         if value <= rating:
             return __crewAdventureRating[rating]
             continue
-    
+
     return __crewAdventureRating[rating]
 
 InvasionScoreboardTitle = '%s Invasion Results:'
@@ -2441,7 +2441,7 @@ def getInventoryTypeName(itemId):
     name = InventoryTypeNames.get(itemId)
     if name:
         return name
-    
+
     return ''
 
 ItemNames = {
@@ -4219,7 +4219,7 @@ def getItemRarityName(itemId):
     name = ItemRarityNames.get(itemId)
     if name:
         return name
-    
+
     return ''
 
 ItemTypeNames = {
@@ -4240,7 +4240,7 @@ def getItemTypeName(itemId):
     name = ItemTypeNames.get(itemId)
     if name:
         return name
-    
+
     return ''
 
 ItemSubtypeNames = {
@@ -4365,7 +4365,7 @@ def getItemAttributeName(itemId):
     name = ItemAttributeNames.get(itemId)
     if name:
         return name
-    
+
     return ''
 
 ItemAttributeDescriptions = {
@@ -4435,7 +4435,7 @@ def getItemAttributeDescription(itemId):
     name = ItemAttributeDescriptions.get(itemId)
     if name:
         return name
-    
+
     return ''
 
 ItemAttackStrength = 'Attack: %s'
@@ -6490,8 +6490,8 @@ def getFishName(genus, species):
         if species < len(speciesList):
             name = speciesList[species]
             return name
-        
-    
+
+
 
 from pirates.ship import ShipGlobals
 DeployShip = 'Launch'
@@ -6670,13 +6670,13 @@ def getShipName(nameIndices):
         if PirateShipPrefix[namePart] == nameIndices[0]:
             myName += namePart
             continue
-    
+
     myName += ' '
     for namePart in PirateShipSuffix:
         if PirateShipSuffix[namePart] == nameIndices[1]:
             myName += namePart
             continue
-    
+
     return myName
 
 defaultShipNames = {
@@ -6867,7 +6867,7 @@ def enumerateShipNameTokens():
 def printShipNameTokens():
     for name in sorted(enumerateShipNameTokens()):
         pass
-    
+
 
 BlackjackActionNames = {
     0: 'No Action',
@@ -6899,7 +6899,7 @@ def getHandNameSimple(handCode, cards):
 
 
 def getHandNameFull(handCode, cards):
-    
+
     def getRank(card):
         return card % 13
 
@@ -7292,25 +7292,25 @@ def enumeratePirateNames():
     lastFemale = []
     for none in PirateNames_LastNamePrefixesGeneric + PirateNames_LastNamePrefixesCapped:
         pre = None
-    
+
     for none in PirateNames_LastNamePrefixesGeneric + PirateNames_LastNamePrefixesCapped:
         pre = None
-    
+
     for none in PirateNames_LastNamePrefixesMale:
         pre = None
-    
+
     for none in PirateNames_LastNamePrefixesMale:
         pre = None
-    
+
     for none in PirateNames_LastNamePrefixesGeneric + PirateNames_LastNamePrefixesCapped:
         pre = None
-    
+
     for none in PirateNames_LastNamePrefixesFemale:
         pre = None
-    
+
     for none in PirateNames_LastNamePrefixesFemale:
         pre = None
-    
+
     return (firstGeneric, lastGeneric, firstMale, lastMale, firstFemale, lastFemale)
 
 
@@ -7328,7 +7328,7 @@ def enumeratePirateNameTokensLower():
 def printPirateNameTokens():
     for name in sorted(enumeratePirateNameTokens()):
         pass
-    
+
 
 QuestScriptTutorialJack_1 = "Aren't you a sight, You look like I feel."
 QuestScriptTutorialJack_2 = 'Here, use this to pull yourself together, mate.'
@@ -7800,7 +7800,7 @@ UndeadPokerNPCNames = [
 def pickPokerUndeadName(choices = []):
     if not choices:
         choices = UndeadPokerNPCNames
-    
+
     return (random.choice(choices), copy.copy(choices))
 
 
@@ -8650,7 +8650,7 @@ def makeHeadingString(str, headingLevel):
         str = '\x01%s\x01\x01%s\x01%s\x02\x02' % ('gold', 'smallCaps', str)
     elif headingLevel == 3:
         str = str.upper()
-    
+
     return str
 
 TutorialPanelDialog = {
@@ -11154,11 +11154,11 @@ def requiresAnIndefiniteArticle(stringList = []):
                 if letter != ' ':
                     if letter in vowels:
                         return True
-                    
+
                     return False
                     continue
-            
-    
+
+
     return False
 
 TownfolkGreetings = [
@@ -11494,51 +11494,51 @@ PotionGui = {
     'MaxedOutTitle': 'Potions Maxed Out',
     'MaxedOutText': 'You already have the maximum number of this potion. Continue anyway?' }
 PotionDescs = {
-    InventoryType.CannonDamageLvl1: string.Template('Increases Cannon Damage by $pot% for $dur $unit'),
-    InventoryType.CannonDamageLvl2: string.Template('Increases Cannon Damage by $pot% for $dur $unit'),
-    InventoryType.CannonDamageLvl3: string.Template('Increases Cannon Damage by $pot% for $dur $unit'),
-    InventoryType.PistolDamageLvl1: string.Template('Increases Pistol Damage by $pot% for $dur $unit'),
-    InventoryType.PistolDamageLvl2: string.Template('Increases Pistol Damage by $pot% for $dur $unit'),
-    InventoryType.PistolDamageLvl3: string.Template('Increases Pistol Damage by $pot% for $dur $unit'),
-    InventoryType.CutlassDamageLvl1: string.Template('Increases Cutlass Damage by $pot% for $dur $unit'),
-    InventoryType.CutlassDamageLvl2: string.Template('Increases Cutlass Damage by $pot% for $dur $unit'),
-    InventoryType.CutlassDamageLvl3: string.Template('Increases Cutlass Damage by $pot% for $dur $unit'),
-    InventoryType.DollDamageLvl1: string.Template('Increases Voodoo Damage by $pot% for $dur $unit'),
-    InventoryType.DollDamageLvl2: string.Template('Increases Voodoo Damage by $pot% for $dur $unit'),
-    InventoryType.DollDamageLvl3: string.Template('Increases Voodoo Damage by $pot% for $dur $unit'),
-    InventoryType.HastenLvl1: string.Template('Increases run speed by $pot% for $dur $unit'),
-    InventoryType.HastenLvl2: string.Template('Increases run speed by $pot% for $dur $unit'),
-    InventoryType.HastenLvl3: string.Template('Increases run speed by $pot% for $dur $unit'),
-    InventoryType.RepBonusLvl1: string.Template('Increases reputation gained by $pot% for $dur $unit'),
-    InventoryType.RepBonusLvl2: string.Template('Increases reputation gained by $pot% for $dur $unit'),
-    InventoryType.RepBonusLvl3: string.Template('Increases reputation gained by $pot% for $dur $unit'),
-    InventoryType.RepBonusLvlComp: string.Template('Increases reputation gained by $pot% for $dur $unit'),
-    InventoryType.GoldBonusLvl1: string.Template('Increases gold earned by $pot% for $dur $unit'),
-    InventoryType.GoldBonusLvl2: string.Template('Increases gold earned by $pot% for $dur $unit'),
-    InventoryType.InvisibilityLvl1: string.Template('Grants invisibility for $dur $unit'),
-    InventoryType.InvisibilityLvl2: string.Template('Grants invisibility for $dur $unit'),
-    InventoryType.RegenLvl1: string.Template('Restores $pot% of health every 2 seconds for $dur $unit'),
-    InventoryType.RegenLvl2: string.Template('Restores $pot% of health every 2 seconds for $dur $unit'),
-    InventoryType.RegenLvl3: string.Template('Restores $pot% of health every 2 seconds for $dur $unit'),
-    InventoryType.RegenLvl4: string.Template('Restores $pot% of health every 2 seconds for $dur $unit'),
-    InventoryType.Burp: string.Template('This potion will make you belch!'),
-    InventoryType.Fart: string.Template('This potion will make you fart!'),
-    InventoryType.FartLvl2: string.Template('This potion will make you fart A LOT!'),
-    InventoryType.Vomit: string.Template('This potion will make you puke!'),
-    InventoryType.HeadGrow: string.Template('This potion makes your head huge!'),
-    InventoryType.FaceColor: string.Template('This potion changes your color!'),
-    InventoryType.SizeReduce: string.Template('This potion makes you tiny!'),
-    InventoryType.SizeIncrease: string.Template('This potion make you huge!'),
-    InventoryType.HeadFire: string.Template('This potion lights your head on fire!'),
-    InventoryType.ScorpionTransform: string.Template('This potion transforms you into a scorpion!'),
-    InventoryType.AlligatorTransform: string.Template('This potion transforms you into an alligator!'),
-    InventoryType.CrabTransform: string.Template('This potion transforms you into a crab!'),
-    InventoryType.AccuracyBonusLvl1: string.Template('Increases weapon accuracy by $pot% for $dur $unit'),
-    InventoryType.AccuracyBonusLvl2: string.Template('Increases weapon accuracy by $pot% for $dur $unit'),
-    InventoryType.AccuracyBonusLvl3: string.Template('Increases weapon accuracy by $pot% for $dur $unit'),
-    InventoryType.RemoveGroggy: string.Template('Removes the groggy effect'),
-    InventoryType.StaffEnchant1: string.Template('Assists in staff creation'),
-    InventoryType.StaffEnchant2: string.Template('Assists in staff enhancement') }
+    InventoryType.CannonDamageLvl1: 'Increases Cannon Damage by %s for %s %s',
+    InventoryType.CannonDamageLvl2: 'Increases Cannon Damage by $pot% for $dur $unit',
+    InventoryType.CannonDamageLvl3: 'Increases Cannon Damage by $pot% for $dur $unit',
+    InventoryType.PistolDamageLvl1: 'Increases Pistol Damage by $pot% for $dur $unit',
+    InventoryType.PistolDamageLvl2: 'Increases Pistol Damage by $pot% for $dur $unit',
+    InventoryType.PistolDamageLvl3: 'Increases Pistol Damage by $pot% for $dur $unit',
+    InventoryType.CutlassDamageLvl1: 'Increases Cutlass Damage by $pot% for $dur $unit',
+    InventoryType.CutlassDamageLvl2: 'Increases Cutlass Damage by $pot% for $dur $unit',
+    InventoryType.CutlassDamageLvl3: 'Increases Cutlass Damage by $pot% for $dur $unit',
+    InventoryType.DollDamageLvl1: 'Increases Voodoo Damage by $pot% for $dur $unit',
+    InventoryType.DollDamageLvl2: 'Increases Voodoo Damage by $pot% for $dur $unit',
+    InventoryType.DollDamageLvl3: 'Increases Voodoo Damage by $pot% for $dur $unit',
+    InventoryType.HastenLvl1: 'Increases run speed by $pot% for $dur $unit',
+    InventoryType.HastenLvl2: 'Increases run speed by $pot% for $dur $unit',
+    InventoryType.HastenLvl3: 'Increases run speed by $pot% for $dur $unit',
+    InventoryType.RepBonusLvl1: 'Increases reputation gained by $pot% for $dur $unit',
+    InventoryType.RepBonusLvl2: 'Increases reputation gained by $pot% for $dur $unit',
+    InventoryType.RepBonusLvl3: 'Increases reputation gained by $pot% for $dur $unit',
+    InventoryType.RepBonusLvlComp: 'Increases reputation gained by $pot% for $dur $unit',
+    InventoryType.GoldBonusLvl1: 'Increases gold earned by $pot% for $dur $unit',
+    InventoryType.GoldBonusLvl2: 'Increases gold earned by $pot% for $dur $unit',
+    InventoryType.InvisibilityLvl1: 'Grants invisibility for $dur $unit',
+    InventoryType.InvisibilityLvl2: 'Grants invisibility for $dur $unit',
+    InventoryType.RegenLvl1: 'Restores $pot% of health every 2 seconds for $dur $unit',
+    InventoryType.RegenLvl2: 'Restores $pot% of health every 2 seconds for $dur $unit',
+    InventoryType.RegenLvl3: 'Restores $pot% of health every 2 seconds for $dur $unit',
+    InventoryType.RegenLvl4: 'Restores $pot% of health every 2 seconds for $dur $unit',
+    InventoryType.Burp: 'This potion will make you belch!',
+    InventoryType.Fart: 'This potion will make you fart!',
+    InventoryType.FartLvl2: 'This potion will make you fart A LOT!',
+    InventoryType.Vomit: 'This potion will make you puke!',
+    InventoryType.HeadGrow: 'This potion makes your head huge!',
+    InventoryType.FaceColor: 'This potion changes your color!',
+    InventoryType.SizeReduce: 'This potion makes you tiny!',
+    InventoryType.SizeIncrease: 'This potion make you huge!',
+    InventoryType.HeadFire: 'This potion lights your head on fire!',
+    InventoryType.ScorpionTransform: 'This potion transforms you into a scorpion!',
+    InventoryType.AlligatorTransform: 'This potion transforms you into an alligator!',
+    InventoryType.CrabTransform: 'This potion transforms you into a crab!',
+    InventoryType.AccuracyBonusLvl1: 'Increases weapon accuracy by $pot% for $dur $unit',
+    InventoryType.AccuracyBonusLvl2: 'Increases weapon accuracy by $pot% for $dur $unit',
+    InventoryType.AccuracyBonusLvl3: 'Increases weapon accuracy by $pot% for $dur $unit',
+    InventoryType.RemoveGroggy: 'Removes the groggy effect',
+    InventoryType.StaffEnchant1: 'Assists in staff creation',
+    InventoryType.StaffEnchant2: 'Assists in staff enhancement' }
 PotionHints = {
     'RecipeList': [
         'Choose a recipe from the list on the right.'],

@@ -269,7 +269,7 @@ def getHint(destId = None, level = None):
 
 
 class LoadingScreen(DirectObject.DirectObject):
-    
+
     def __init__(self, parent):
         DirectObject.DirectObject.__init__(self)
         self.parent = parent
@@ -290,77 +290,77 @@ class LoadingScreen(DirectObject.DirectObject):
         self.title_art = []
         self.tempVolume = []
 
-    
+
     def startLoading(self):
         pass
 
-    
+
     def beginStep(self, stageName, amt = 0, percent = 0):
         self.update()
 
-    
+
     def endStep(self, stageName):
         self.update()
 
-    
+
     def tick(self):
         self.update()
 
-    
+
     def destroy(self):
         for part in (self.model, self.snapshot):
             if part is not None:
                 tex = part.findTexture('*')
                 if tex:
                     tex.releaseAll()
-                
+
                 part.removeNode()
                 continue
-        
+
         self.model = None
         self.snapshot = None
         if self.snapshotFrame:
             self.snapshotFrame.destroy()
-        
+
         if self.snapshotFrameBasic:
             self.snapshotFrameBasic.destroy()
-        
+
         if self.locationLabel:
             self.locationLabel.destroy()
-        
+
         if self.hintLabel:
             self.hintLabel.destroy()
-        
+
         taskMgr.remove('updateLoadingScreen')
         self.ignoreAll()
 
-    
+
     def showTitleFrame(self):
         if base.config.GetBool('no-loading-screen', 0):
             return None
-        
+
         for part in self.title_art:
             part.show()
-        
 
-    
+
+
     def hideTitleFrame(self):
         for part in self.title_art:
             part.hide()
-        
 
-    
+
+
     def show(self, waitForLocation = False, disableSfx = True, expectedLoadScale = 1.0):
         if self.state or base.config.GetBool('no-loading-screen', 0):
             return None
-        
+
         self.startLoading()
         render.hide()
         self.state = True
         gsg = base.win.getGsg()
         if gsg:
             gsg.setIncompleteRender(False)
-        
+
         base.setTaskChainNetNonthreaded()
         self.allowLiveFlatten.setValue(1)
         if self.parent and base.cr.isPaid() == OTPGlobals.AccessVelvetRope and base.config.GetBool('loading-screen-interstitial', 0):
@@ -369,8 +369,8 @@ class LoadingScreen(DirectObject.DirectObject):
                 loadimage = self.model.find('**/loadimage')
                 if loadimage is not None:
                     loadimage.hide()
-                
-            
+
+
         else:
             self.model = loader.loadModel('models/gui/loading_screen')
         self.locationLabel = DirectLabel(parent = aspect2dp, relief = None, text = '', text_font = PiratesGlobals.getPirateOutlineFont(), text_fg = PiratesGuiGlobals.TextFG1, text_shadow = PiratesGuiGlobals.TextShadow, text_scale = PiratesGuiGlobals.TextScaleTitleJumbo * 0.69999999999999996, text_align = TextNode.ACenter, pos = (0.0, 0.0, -0.52000000000000002), textMayChange = 1)
@@ -395,7 +395,7 @@ class LoadingScreen(DirectObject.DirectObject):
             self.snapshotFrameBasic = DirectFrame(parent = aspect2dp, relief = DGG.FLAT, frameColor = (0.0, 0.0, 0.0, 1.0), frameSize = (-4.9500000000000002, -2.5, -1.1000000000000001, -2.6000000000000001))
             self.snapshotFrameBasic.reparentTo(root)
             frame_little.reparentTo(root)
-        
+
         self.title_art.append(title_bg)
         self.title_art.append(title_frame)
         self.hideTitleFrame()
@@ -403,19 +403,19 @@ class LoadingScreen(DirectObject.DirectObject):
             if self.snapshot is None:
                 screenshot = random.choice(tutorialShots_MoveAim)
                 self._LoadingScreen__setLoadingArt(screenshot)
-            
+
             if self.snapshot:
                 self.snapshot.show()
-            
+
         elif self.snapshot:
             self.snapshot.show()
-        
+
         if self.parent and self.snapshot and base.cr.isPaid() == OTPGlobals.AccessVelvetRope and base.config.GetBool('loading-screen-interstitial', 0):
             root = self.model.find('**/loading_screen_top')
             frame_little = self.model.find('**/frame_little')
             self.snapshot.reparentTo(root, 0)
             frame_little.reparentTo(root, 1)
-        
+
         self.snapshotFrame = DirectFrame(parent = aspect2dp, relief = DGG.FLAT, frameColor = (0.0, 0.0, 0.0, 1.0), frameSize = (-2.0, 2.0, 2.0, -2.0))
         self.snapshotFrame.setBin('fixed', 0)
         self.model.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)
@@ -429,15 +429,15 @@ class LoadingScreen(DirectObject.DirectObject):
             self.model.setPos(0.0, 0.0, -0.14999999999999999)
         if self.locationText and len(self.locationText):
             self._LoadingScreen__setLocationText(self.locationText)
-        
+
         if self.hintText is not None:
             if len(self.hintText):
                 self._LoadingScreen__setHintText(self.hintText)
-            
-        
+
+
         if self.parent and base.cr.isPaid() == OTPGlobals.AccessVelvetRope and base.config.GetBool('want-ad-reporting', 0) and base.config.GetBool('loading-screen-interstitial', 0):
             self._LoadingScreen__setAdArt()
-        
+
         base.graphicsEngine.renderFrame()
         base.graphicsEngine.renderFrame()
         base.refreshAds()
@@ -448,16 +448,16 @@ class LoadingScreen(DirectObject.DirectObject):
                 sfx_manager = base.sfxManagerList[index]
                 sfx_manager.setVolume(0.0)
                 index += 1
-        
+
         if base.appRunner:
             base.appRunner.notifyRequest('onLoadingMessagesStart')
-        
 
-    
+
+
     def showHint(self, destId = None, ocean = False):
         if base.config.GetBool('no-loading-screen', 0):
             return None
-        
+
         if ocean:
             hint = getOceanHint()
         elif hasattr(base, 'localAvatar'):
@@ -474,32 +474,32 @@ class LoadingScreen(DirectObject.DirectObject):
             '1196970080.56sdnaik']
         if (destId in shipPVPIslands or ocean) and base.localAvatar.getCurrentIsland() in shipPVPIslands:
             hint = getPrivateeringHint()
-        
+
         if self.parent and base.localAvatar.style.getTutorial() == PiratesGlobals.TUT_MET_JOLLY_ROGER:
             hint = '%s:  %s' % (PLocalizer.LoadingScreen_Hint, PLocalizer.GeneralTip7)
-        
+
         self._LoadingScreen__setHintText(hint)
 
-    
+
     def update(self, task = None):
         if not self.state:
             return Task.cont
-        
+
         realTime = globalClock.getRealTime()
         if realTime - self.lastUpdateTime < 0.10000000000000001:
             return Task.cont
-        
+
         self.currentTime += min(10, (realTime - self.lastUpdateTime) * 250)
         self.lastUpdateTime = realTime
         self.wheel.setR(-(self.currentTime))
         base.graphicsEngine.renderFrame()
         return Task.cont
 
-    
+
     def hide(self):
         if not self.state:
             return None
-        
+
         render.show()
         base.graphicsEngine.renderFrame()
         self.state = False
@@ -511,30 +511,30 @@ class LoadingScreen(DirectObject.DirectObject):
             gsg.setIncompleteRender(True)
             render.prepareScene(gsg)
             render2d.prepareScene(gsg)
-        
+
         for part in (self.model, self.snapshot):
             if part:
                 tex = part.findTexture('*')
                 if tex:
                     tex.releaseAll()
-                
+
                 part.removeNode()
                 continue
-        
+
         self.model = None
         self.snapshot = None
         if self.adImage:
             self.adImage = None
-        
+
         if self.snapshotFrame:
             self.snapshotFrame.destroy()
-        
+
         if self.locationLabel:
             self.locationLabel.destroy()
-        
+
         if self.hintLabel:
             self.hintLabel.destroy()
-        
+
         taskMgr.remove('updateLoadingScreen')
         self.allowLiveFlatten.clearValue()
         base.setTaskChainNetThreaded()
@@ -544,17 +544,17 @@ class LoadingScreen(DirectObject.DirectObject):
                 sfx_manager = base.sfxManagerList[index]
                 sfx_manager.setVolume(base.options.sound_volume)
                 index += 1
-        
+
         messenger.send('texture_state_changed')
         if base.appRunner:
             base.appRunner.notifyRequest('onLoadingMessagesStop')
-        
 
-    
+
+
     def showTarget(self, targetId = None, ocean = False, jail = False, pickapirate = False, exit = False, potionCrafting = False, benchRepair = False, shipRepair = False, cannonDefense = False):
         if base.config.GetBool('no-loading-screen', 0):
             return None
-        
+
         if pickapirate:
             screenshot = screenShot_EnterGame
         elif exit:
@@ -579,7 +579,7 @@ class LoadingScreen(DirectObject.DirectObject):
             screenshot = screenShots_WinterHolidayLocations.get(targetId)
             if not screenshot:
                 screenshot = screenShots_Locations.get(targetId)
-            
+
         else:
             screenshot = screenShots_Locations.get(targetId)
         if not screenshot:
@@ -597,7 +597,7 @@ class LoadingScreen(DirectObject.DirectObject):
             screenshot = random.choice(screenshot)
         else:
             screenshot = screenshot[0]
-        self._LoadingScreen__setLoadingArt(screenshot)
+        self._LoadingScreen__setLoadingArt('models/gui/loadingScreen_enter') # TODO
         if pickapirate:
             targetName = PLocalizer.LoadingScreen_PickAPirate
         elif exit:
@@ -611,19 +611,19 @@ class LoadingScreen(DirectObject.DirectObject):
         base.setLocationCode('Loading: %s' % targetName)
         if targetName is None:
             return None
-        
+
         if len(targetName):
             self._LoadingScreen__setLocationText(targetName)
-        
 
-    
+
+
     def _LoadingScreen__setLoadingArt(self, screenshot):
         if self.snapshot:
             return None
-        
+
         if self.parent and hasattr(base, 'localAvatar') and base.localAvatar.style.getTutorial() < PiratesGlobals.TUT_MET_JOLLY_ROGER and screenshot not in tutorialShots:
             screenshot = random.choice(tutorialShots)
-        
+
         self.snapshot = loader.loadModel(screenshot)
         if self.snapshot:
             if self.parent and base.cr.isPaid() == OTPGlobals.AccessVelvetRope and base.config.GetBool('loading-screen-interstitial', 0):
@@ -634,7 +634,7 @@ class LoadingScreen(DirectObject.DirectObject):
                     frame_little = self.model.find('**/frame_little')
                     self.snapshot.reparentTo(root, 0)
                     frame_little.reparentTo(root, 1)
-                
+
             else:
                 self.snapshot.reparentTo(aspect2dp, NO_FADE_SORT_INDEX)
                 self.snapshot.setScale(2.1499999999999999, 1, 1.2)
@@ -642,37 +642,37 @@ class LoadingScreen(DirectObject.DirectObject):
                 self.snapshot.setBin('fixed', 1)
             if not self._LoadingScreen__isVisible():
                 self.snapshot.hide()
-            
-        
 
-    
+
+
+
     def _LoadingScreen__setLocationText(self, locationText):
         self.locationText = locationText
         if self._LoadingScreen__isVisible():
             self.locationLabel['text'] = locationText
             self.locationLabel.show()
             self.showTitleFrame()
-        
+
         launcher.setValue('gameLocation', self.locationText)
 
-    
+
     def _LoadingScreen__setHintText(self, hintText):
         self.hintText = hintText
         if self._LoadingScreen__isVisible():
             self.hintLabel['text'] = hintText
             self.hintLabel.show()
-        
 
-    
+
+
     def _LoadingScreen__isVisible(self):
         return self.state
 
-    
+
     def scheduleHide(self, function):
         base.cr.queueAllInterestsCompleteEvent()
         self.acceptOnce(function, self.hide)
 
-    
+
     def _LoadingScreen__setAdArt(self):
         imageFrame = self.model.find('**/frame')
         randomImageNumber = random.randint(0, len(screenShots) - 1)
@@ -689,14 +689,14 @@ class LoadingScreen(DirectObject.DirectObject):
             self.nonBlockHTTP.beginGetDocument(DocumentSpec(urlToGet))
             instanceMarker = 'FunnelLoggingRequest-%s' % str(random.randint(1, 1000))
             self.startCheckingAsyncRequest(instanceMarker)
-        
 
-    
+
+
     def startCheckingAsyncRequest(self, name):
         taskMgr.remove(name)
         taskMgr.doMethodLater(0.5, self.pollAdTask, name)
 
-    
+
     def pollAdTask(self, task):
         result = self.nonBlockHTTP.run()
         if result == 0:
@@ -704,7 +704,7 @@ class LoadingScreen(DirectObject.DirectObject):
         else:
             return Task.again
 
-    
+
     def stopCheckingAdTask(self, name):
         taskMgr.remove(name)
 

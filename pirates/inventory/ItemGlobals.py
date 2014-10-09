@@ -1,6 +1,4 @@
-# File: I (Python 2.4)
-
-import cPickle
+import pickle
 from pandac.PandaModules import *
 from direct.showbase.PythonUtil import *
 from direct.showbase import AppRunnerGlobal
@@ -9,9 +7,12 @@ import os
 from ItemConstants import *
 from pirates.uberdog.UberDogGlobals import InventoryType, InventoryCategory
 from pirates.battle.EnemySkills import *
+
+
 vfs = VirtualFileSystem.getGlobalPtr()
 filename = Filename('ItemGlobals.pkl')
 searchPath = DSearchPath()
+
 if AppRunnerGlobal.appRunner:
     searchPath.appendDirectory(Filename.expandFrom('$POTCO_2_ROOT/etc'))
 else:
@@ -20,15 +21,16 @@ else:
     searchPath.appendDirectory(Filename.fromOsSpecific(os.path.expandvars('pirates/inventory')))
     searchPath.appendDirectory(Filename('.'))
     searchPath.appendDirectory(Filename('etc'))
+
 found = vfs.resolveFilename(filename, searchPath)
 if not found:
     message = 'ItemGlobals.pkl file not found on %s' % searchPath
     raise IOError, message
 
-data = vfs.readFile(filename, 1)
-__itemInfo = cPickle.loads(data)
-cPickle.Unpickler(data)
+data = open('etc/ItemGlobals.pkl', 'r')
+__itemInfo = pickle.load(data)
 __columnHeadings = __itemInfo.pop('columnHeadings')
+
 for (heading, value) in __columnHeadings.items():
     heading = string.replace(heading, '\r', '')
     exec '%s = %s' % (heading, value) in globals()
@@ -39,6 +41,7 @@ for item in __itemInfo:
 del searchPath
 del __columnHeadings
 del data
+
 GOLD_SALE_MULTIPLIER = 0.050000000000000003
 LEVEL_REQ_BUFFER = 0
 WEAPON_LEVEL_REQ_BUFFER = 5

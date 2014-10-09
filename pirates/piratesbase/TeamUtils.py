@@ -16,7 +16,7 @@ def teamStatus(team1, team2):
 
 
 def friendOrFoe(target, attacker):
-    
+
     try:
         if target.getPVPTeam() and attacker.getPVPTeam():
             if target.getPVPTeam() != attacker.getPVPTeam():
@@ -26,7 +26,7 @@ def friendOrFoe(target, attacker):
     except AttributeError:
         pass
 
-    
+
     try:
         if target.getSiegeTeam() and attacker.getSiegeTeam():
             if target.getSiegeTeam() != attacker.getSiegeTeam():
@@ -37,7 +37,7 @@ def friendOrFoe(target, attacker):
         pass
 
     unattackableStates = ('NPCInteract', 'PotionCrafting', 'BenchRepair', 'Fishing', 'DinghyInteract', 'TeleportIn', 'TelportOut', 'EnterTunnel', 'LeaveTunnel')
-    
+
     try:
         if target.getTeam() == attacker.getTeam():
             pass
@@ -49,24 +49,23 @@ def friendOrFoe(target, attacker):
                     pass
                 else:
                     return PiratesGlobals.ENEMY
-        else:
-            except AttributeError:
-                1
+    except AttributeError:
+        pass
 
-    
+
     try:
         if target.getTeam() == PiratesGlobals.PLAYER_TEAM and attacker.getTeam() != PiratesGlobals.PLAYER_TEAM:
             if target.getGameState() in unattackableStates:
                 return PiratesGlobals.NEUTRAL
-            
-    except AttributeError:
-        1
 
-    
+    except AttributeError:
+        pass
+
+
     try:
         return teamStatus(target.getTeam(), attacker.getTeam())
     except AttributeError:
-        1
+        pass
 
     return PiratesGlobals.NEUTRAL
 

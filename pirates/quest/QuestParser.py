@@ -60,7 +60,7 @@ def readFile(filename):
         if line == []:
             line = getLineOfTokens(gen)
             continue
-        
+
         if line[0] == 'ID':
             parseId(line)
         elif line[0] == 'FUNC_DEF':
@@ -75,7 +75,7 @@ def readFile(filename):
 def reReadFile():
     if lastReadFile:
         readFile(lastReadFile)
-    
+
 
 
 def getLineOfTokens(gen):
@@ -84,11 +84,10 @@ def getLineOfTokens(gen):
     token = gen.next()
     if token[0] == tokenize.ENDMARKER:
         return None
-    
+
     while token[0] != tokenize.NEWLINE and token[0] != tokenize.NL:
         if token[0] == tokenize.COMMENT:
             pass
-        1
         if token[0] == tokenize.OP and token[1] == '-':
             nextNeg = 1
         elif token[0] == tokenize.NUMBER:
@@ -101,8 +100,6 @@ def getLineOfTokens(gen):
             tokens.append(eval(token[1]))
         elif token[0] == tokenize.NAME:
             tokens.append(token[1])
-        else:
-            notify.warning('Ignored token type: %s on line: %s' % (tokenize.tok_name[token[0]], token[2][0]))
         token = gen.next()
     return tokens
 
@@ -128,7 +125,7 @@ def questDefined(scriptId):
 
 
 class NPCMoviePlayer(DirectObject.DirectObject):
-    
+
     def __init__(self, scriptId, toon, npc):
         print 'initializing movie player'
         self.scriptId = scriptId
@@ -136,7 +133,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         self.isLocalToon = self.toon == base.localAvatar
         if self.isLocalToon:
             self.toon.currentDialogMovie = self
-        
+
         self.npc = npc
         self.privateVarDict = { }
         self.toonHeads = { }
@@ -160,11 +157,11 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         self.msgPanelCount = 0
         self.dialogues = []
 
-    
+
     def getVar(self, varName):
         if len(globalVarDict) == 0:
             init()
-        
+
         if self.privateVarDict.has_key(varName):
             return self.privateVarDict[varName]
         elif globalVarDict.has_key(varName):
@@ -172,7 +169,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         else:
             notify.error('Variable not defined: %s' % varName)
 
-    
+
     def delVar(self, varName):
         if self.privateVarDict.has_key(varName):
             del self.privateVarDict[varName]
@@ -181,27 +178,27 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         else:
             notify.warning('Variable not defined: %s' % varName)
 
-    
+
     def setVar(self, varName, var):
         self.privateVarDict[varName] = var
 
-    
+
     def cleanup(self):
         if self.cleanedUp == True:
             return None
-        
+
         if self.isLocalToon and self.toon.currentDialogMovie is self:
             self.toon.currentDialogMovie = None
-        
+
         if self.currentTrack:
             self.currentTrack.pause()
             self.currentTrack = None
-        
+
         self.ignoreAll()
         taskMgr.remove(self.uniqueId)
         for toonHeadFrame in self.toonHeads.values():
             toonHeadFrame.destroy()
-        
+
         while self.chars:
             self._NPCMoviePlayer__unloadChar(self.chars[0])
         del self.toonHeads
@@ -214,56 +211,56 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         if self.oldGameState:
             if not self.enableLock:
                 localAvatar.gameFSM.lockFSM = False
-            
+
             localAvatar.b_setGameState(self.oldGameState)
             localAvatar.gameFSM.lockFSM = self.gameStateLock
             self.oldGameState = None
-        
+
         for dialogue in self.dialogues:
             if dialogue:
                 dialogue.stop()
                 continue
-        
+
         self.dialogues = []
 
-    
+
     def _NPCMoviePlayer__unloadChar(self, char):
         char.removeActive()
         if char.style.name == 'mk' or char.style.name == 'mn':
             char.stopEarTask()
-        
+
         char.delete()
         self.chars.remove(char)
 
-    
+
     def timeout(self, fFinish = 0):
         if self.timeoutTrack:
             if fFinish:
                 self.timeoutTrack.finish()
             else:
                 self.timeoutTrack.start()
-        
 
-    
+
+
     def finishMovie(self):
         messenger.send('dialogFinish')
         base.localAvatar.guiMgr.subtitler.clearText()
         self.cleanup()
 
-    
+
     def finish(self):
         self.currentTrack.pause()
         self.npc.showName()
         self.npc.nametag3d.setZ(0)
 
-    
+
     def finishUpAll(self):
         if self.currentTrack:
             self.currentTrack.finish()
-        
+
         if self.cleanedUp == True:
             return None
-        
+
         trackList = self.chapterDict.keys()
         for currTrack in trackList:
             if self.cleanedUp == False and len(self.chapterDict[currTrack]) > 0:
@@ -271,18 +268,18 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                 self.currentTrack.start()
                 self.currentTrack.finish()
                 continue
-        
+
         self.cleanup()
         messenger.send('closeTutorialWindow')
 
-    
+
     def overrideOldAvState(self, avState):
         oldGameState = self.oldGameState
         self.oldGameState = avState
         self.gameStateLock = localAvatar.gameFSM.lockFSM
         return oldGameState
 
-    
+
     def playNextChapter(self, eventName, timeStamp = 0.0):
         trackList = self.chapterDict[eventName]
         if trackList:
@@ -291,21 +288,21 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         else:
             notify.debug('Movie ended waiting for an event (%s)' % eventName)
 
-    
+
     def play(self):
         lineNum = 0
         self.currentEvent = 'start'
         lines = lineDict.get(self.scriptId)
         if lines is None:
             notify.error('No movie defined for scriptId: %s' % self.scriptId)
-        
+
         chapterList = []
         timeoutList = []
         print self.npc
         print self.toon
         for currEvent in self.events.keys():
             self.ignore(currEvent)
-        
+
         self.events = { }
         for line in lines:
             print line
@@ -317,11 +314,11 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                 chapterList = []
                 self.currentEvent = nextEvent
                 continue
-        
+
         self.closePreviousChapter(chapterList)
         if timeoutList:
             self.timeoutTrack = Sequence(*timeoutList)
-        
+
         self.playNextChapter('start')
         localAvatar.guiMgr.combatTray.hideSkills()
         localAvatar.guiMgr.combatTray.disableTray()
@@ -329,15 +326,15 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             self.oldGameState = localAvatar.gameFSM.state
             self.gameStateLock = localAvatar.gameFSM.lockFSM
             localAvatar.b_setGameState('Dialog')
-        
 
-    
+
+
     def parseFuncDefLines(self, funcDef):
         lineNum = 0
         lines = funcDef
         if lines is None:
             notify.error('No movie defined for scriptId: %s' % self.scriptId)
-        
+
         lineList = []
         timeoutList = []
         for line in lines:
@@ -345,10 +342,10 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             lineNum += 1
             command = line[0]
             (lineList, nextEvent) = self.parseLine(command, line, lineList, timeoutList, lineNum)
-        
+
         return (Sequence(*lineList), nextEvent)
 
-    
+
     def parseLine(self, command, line, chapterList, timeoutList, lineNum = -1):
         resultingNextEvent = None
         if command == 'UPON_TIMEOUT':
@@ -362,7 +359,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         if command == 'CALL':
             if uponTimeout:
                 self.notify.error('CALL not allowed in an UPON_TIMEOUT')
-            
+
             iList.append(self.parseCall(line))
             return (chapterList, resultingNextEvent)
         elif command == 'DEBUG':
@@ -371,7 +368,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         elif command == 'WAIT':
             if uponTimeout:
                 self.notify.error('WAIT not allowed in an UPON_TIMEOUT')
-            
+
             iList.append(self.parseWait(line))
             return (chapterList, resultingNextEvent)
         elif command == 'CHAT':
@@ -392,7 +389,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         elif command == 'CHAT_CONFIRM':
             if uponTimeout:
                 self.notify.error('CHAT_CONFIRM not allowed in an UPON_TIMEOUT')
-            
+
             avatarName = line[1]
             avatar = self.getVar(avatarName)
             resultingNextEvent = 'doneChatPage'
@@ -403,7 +400,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         elif command == 'LOCAL_CHAT_CONFIRM':
             if uponTimeout:
                 self.notify.error('LOCAL_CHAT_CONFIRM not allowed in an UPON_TIMEOUT')
-            
+
             avatarName = line[1]
             avatar = self.getVar(avatarName)
             resultingNextEvent = 'doneChatPage'
@@ -417,7 +414,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         elif command == 'LOCAL_CHAT_TO_CONFIRM':
             if uponTimeout:
                 self.notify.error('LOCAL_CHAT_TO_CONFIRM not allowed in an UPON_TIMEOUT')
-            
+
             avatarName = line[1]
             avatar = self.getVar(avatarName)
             resultingNextEvent = 'doneChatPage'
@@ -428,7 +425,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         elif command == 'CC_CHAT_CONFIRM':
             if uponTimeout:
                 self.notify.error('CC_CHAT_CONFIRM not allowed in an UPON_TIMEOUT')
-            
+
             avatarName = line[1]
             avatar = self.getVar(avatarName)
             resultingNextEvent = 'doneChatPage'
@@ -439,7 +436,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         elif command == 'CC_CHAT_TO_CONFIRM':
             if uponTimeout:
                 self.notify.error('CC_CHAT_TO_CONFIRM not allowed in an UPON_TIMEOUT')
-            
+
             avatarName = line[1]
             avatar = self.getVar(avatarName)
             resultingNextEvent = 'doneChatPage'
@@ -460,12 +457,12 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         elif command == 'SUBTITLE_CHAT_CONFIRM':
             if uponTimeout:
                 self.notify.error('SUBTITLE_CHAT_CONFIRM not allowed in an UPON_TIMEOUT')
-            
+
             iList.append(Func(self.acceptOnce, subtitleEvent, self.playNextChapter, [
                 subtitleEvent]))
             iList.append(self.parseSubtitleChatConfirm(line))
             return (chapterList, subtitleEvent)
-        
+
         if self.isLocalToon:
             if command == 'LOAD':
                 self.parseLoad(line)
@@ -650,38 +647,38 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             elif command == 'WAIT_EVENT':
                 if uponTimeout:
                     self.notify.error('WAIT_EVENT not allowed in an UPON_TIMEOUT')
-                
+
                 nextEvents = self.parseWaitEvent(line)
                 resultingNextEvent = nextEvents[0]
-                
+
                 def proceed(self = self, resultingNextEvent = resultingNextEvent):
                     self.playNextChapter(resultingNextEvent)
 
-                
+
                 def handleEvent(*args):
                     proceed = args[0]
                     proceed()
                     eventNames = args[1]
                     for currEventName in eventNames:
                         self.ignore(currEventName)
-                    
+
 
                 for currNextEvent in nextEvents:
                     iList.append(Func(self.accept, currNextEvent, handleEvent, [
                         proceed,
                         nextEvents]))
-                
+
             elif command == 'WAIT_EVENT_CHAT':
                 if uponTimeout:
                     self.notify.error('WAIT_EVENT not allowed in an UPON_TIMEOUT')
-                
+
                 (resultingNextEvent, prompts) = self.parseWaitEventChat(line)
-                
+
                 def proceed(self = self, resultingNextEvent = resultingNextEvent):
                     self.currentTrack.pause()
                     self.playNextChapter(resultingNextEvent)
 
-                
+
                 def handleEvent(*args):
                     proceed = args[0]
                     proceed()
@@ -691,7 +688,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                 for currPrompt in prompts:
                     iList.append(Wait(currPrompt[0]))
                     iList.append(currPrompt[1])
-                
+
             elif command == 'SET_MUSIC_VOLUME':
                 iList.append(self.parseSetMusicVolume(line))
             elif command == 'CREATE_MSG_PANEL':
@@ -740,23 +737,23 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                 iList.extend(self.parseClearCompassEffects(line))
             else:
                 notify.warning('Unknown command token: %s for scriptId: %s on line: %s' % (command, self.scriptId, lineNum))
-        
+
         return (chapterList, resultingNextEvent)
 
-    
+
     def letterboxOn(self):
         base.transitions.letterboxOn()
 
-    
+
     def letterboxOff(self):
         base.transitions.letterboxOff()
 
-    
+
     def closePreviousChapter(self, iList):
         trackList = self.chapterDict.setdefault(self.currentEvent, [])
         trackList.append(Sequence(*iList))
 
-    
+
     def parseDemoCompassIconShow(self, line):
         targetObj = localAvatar
         targetObjId = targetObj.doId
@@ -809,14 +806,14 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                 questNode = localAvatar.attachNewNode('demo-node-quest')
                 questNode.setPos(localAvatar, 0, 200, 0)
                 return Sequence(Func(localAvatar.guiMgr.radarGui.addDemoQuest, questNode))
-            
-        
 
-    
+
+
+
     def parseDemoCompassIconHide(self, line):
         return Sequence(Func(localAvatar.guiMgr.radarGui.removeRadarObject, localAvatar.doId, True), Func(localAvatar.guiMgr.radarGui.removeRadarObject, self.npc.doId, True), Func(localAvatar.guiMgr.radarGui.removeRadarObject, 'enemy', True), Func(localAvatar.guiMgr.radarGui.removeRadarObject, 'friend', True), Func(localAvatar.guiMgr.radarGui.setPos, -0.40000000000000002, 0, -0.40000000000000002), Func(localAvatar.guiMgr.radarGui.clearCloseUp))
 
-    
+
     def parseToggleCompass(self, line):
         receive = False
         destPos = None
@@ -824,11 +821,11 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             receive = True
             if len(line) > 2:
                 destPos = Point3(line[2], line[3], line[4])
-            
-        
+
+
         return Func(localAvatar.guiMgr.radarGui.toggleDisplay, receive, destPos)
 
-    
+
     def parseCreateMsgPanel(self, line, x = -1.2, y = -1, z = -0.59999999999999998):
         lineLen = len(line)
         scriptYes = None
@@ -843,47 +840,47 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             notify.error('invalid parseCreateMsgPanel command')
             return None
         tutorialPanel = NewTutorialPanel.NewTutorialPanel(line[1:len(line)])
-        
+
         def closeTutorialWindow(msg):
             messenger.send('closeTutorialWindow')
             messenger.send(msg)
 
         if scriptYes:
-            
+
             def _handleYesTutorial():
                 nmp = None
                 if scriptYes in lineDict.keys():
                     nmp = NPCMoviePlayer(scriptYes, self.toon, self.npc)
-                
+
                 closeTutorialWindow(scriptYes)
                 if nmp and self.npc and hasattr(self.npc, 'currentDialogMovie') and self.npc.currentDialogMovie:
                     self.npc.swapCurrentDialogMovie(nmp)
                     nmp.play()
-                
+
 
             tutorialPanel.setYesCommand(_handleYesTutorial)
-        
+
         if scriptNo:
-            
+
             def _handleNoTutorial():
                 if scriptNo in lineDict.keys():
                     nmp = NPCMoviePlayer(scriptNo, self.toon, self.npc)
                     nmp.play()
-                
+
                 closeTutorialWindow(scriptNo)
 
             tutorialPanel.setNoCommand(_handleNoTutorial)
-        
+
         tutorialWindow = 'tutorialWindow%s' % self.msgPanelCount
         self.setVar(tutorialWindow, tutorialPanel)
         self.msgPanelCount += 1
         return Func(self.getVar(tutorialWindow).activate)
 
-    
+
     def parseClearMsgPanel(self, line):
         return Func(messenger.send, 'closeTutorialWindowAll')
 
-    
+
     def parseSetTeam(self, line):
         (token, avatar, teamName) = line
         av = self.getVar(avatar)
@@ -891,7 +888,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         team = PiratesGlobals.teamStr2TeamId(teamName)
         return Func(av.setTeam, team)
 
-    
+
     def parseRestoreTeam(self, line):
         if self.npcTeam:
             (token, avatar) = line
@@ -899,9 +896,9 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             ival = Func(av.setTeam, self.npcTeam)
             self.npcTeam = None
             return ival
-        
 
-    
+
+
     def parseLoad(self, line):
         if len(line) == 3:
             (token, varName, modelPath) = line
@@ -913,20 +910,20 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             notify.error('invalid parseLoad command')
         self.setVar(varName, node)
 
-    
+
     def parseLoadSfx(self, line):
         (token, varName, fileName) = line
         sfx = base.loadSfx(fileName)
         self.setVar(varName, sfx)
 
-    
+
     def parseLoadDialogue(self, line):
         (token, varName, fileName) = line
         dialogue = base.loadSfx(fileName)
         self.setVar(varName, dialogue)
         self.dialogues.append(dialogue)
 
-    
+
     def parseLoadCCDialogue(self, line):
         (token, varName, filenameTemplate) = line
         if self.toon.getStyle().gender == 'm':
@@ -940,7 +937,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             dialogue = None
         self.setVar(varName, dialogue)
 
-    
+
     def parseLoadChar(self, line):
         (token, name, charType) = line
         char = Char.Char()
@@ -949,13 +946,13 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         char.setDNAString(dna)
         if charType == 'mk' or charType == 'mn':
             char.startEarTask()
-        
+
         char.nametag.manage(base.marginManager)
         char.addActive()
         char.hideName()
         self.setVar(name, char)
 
-    
+
     def parseLoadClassicChar(self, line):
         (token, name) = line
         char = Char.Char()
@@ -973,7 +970,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         self.setVar(name, char)
         self.chars.append(char)
 
-    
+
     def parseUnloadChar(self, line):
         (token, name) = line
         char = self.getVar(name)
@@ -982,7 +979,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         track.append(Func(self.delVar, name))
         return track
 
-    
+
     def parseLoadSuit(self, line):
         (token, name, suitType) = line
         suit = Suit.Suit()
@@ -991,38 +988,38 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         suit.setDNAString(dna)
         self.setVar(name, suit)
 
-    
+
     def parseSet(self, line):
         (token, varName, value) = line
         self.setVar(varName, value)
 
-    
+
     def parseCall(self, line):
         (token, scriptId) = line
         nmp = NPCMoviePlayer(scriptId, self.toon, self.npc)
         return Func(nmp.play)
 
-    
+
     def parseLockLocalToon(self, line):
         return Sequence(Func(self.toon.motionFSM.off))
 
-    
+
     def parseFreeLocalToon(self, line):
         return Sequence(Func(self.toon.motionFSM.on))
 
-    
+
     def parseDebug(self, line):
         (token, str) = line
         return Func(notify.debug, str)
 
-    
+
     def parseReparent(self, line):
         if len(line) == 3:
             (token, childNodeName, parentNodeName) = line
             subNodeName = None
         elif len(line) == 4:
             (token, childNodeName, parentNodeName, subNodeName) = line
-        
+
         childNode = self.getVar(childNodeName)
         if subNodeName:
             parentNode = self.getVar(parentNodeName).find(subNodeName)
@@ -1030,14 +1027,14 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             parentNode = self.getVar(parentNodeName)
         return ParentInterval(childNode, parentNode)
 
-    
+
     def parseWrtReparent(self, line):
         if len(line) == 3:
             (token, childNodeName, parentNodeName) = line
             subNodeName = None
         elif len(line) == 4:
             (token, childNodeName, parentNodeName, subNodeName) = line
-        
+
         childNode = self.getVar(childNodeName)
         if subNodeName:
             parentNode = self.getVar(parentNodeName).find(subNodeName)
@@ -1045,19 +1042,19 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             parentNode = self.getVar(parentNodeName)
         return WrtParentInterval(childNode, parentNode)
 
-    
+
     def parseShow(self, line):
         (token, nodeName) = line
         node = self.getVar(nodeName)
         return Func(node.show)
 
-    
+
     def parseHide(self, line):
         (token, nodeName) = line
         node = self.getVar(nodeName)
         return Func(node.hide)
 
-    
+
     def parseStashUid(self, line, stash = True):
         track = Sequence()
         uids = line[1:]
@@ -1069,15 +1066,15 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                 else:
                     track.append(Func(node.unstash))
             notify.warning('could not find object with uid %s' % currUid)
-            
+
             def Nothing():
                 pass
 
             track.append(Func(Nothing))
-        
+
         return track
 
-    
+
     def parsePos(self, line):
         if len(line) == 5:
             (token, nodeName, x, y, z) = line
@@ -1088,9 +1085,9 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             node = self.getVar(nodeName)
             relNode = self.getVar(relNodeName)
             return Func(node.setPos, relNode, x, y, z)
-        
 
-    
+
+
     def parseSetX(self, line):
         if len(line) == 3:
             (token, nodeName, val) = line
@@ -1101,9 +1098,9 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             node = self.getVar(nodeName)
             relNode = self.getVar(relNodeName)
             return Func(node.setX, relNode, val)
-        
 
-    
+
+
     def parseSetY(self, line):
         if len(line) == 3:
             (token, nodeName, val) = line
@@ -1114,9 +1111,9 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             node = self.getVar(nodeName)
             relNode = self.getVar(relNodeName)
             return Func(node.setY, relNode, val)
-        
 
-    
+
+
     def parseSetZ(self, line):
         if len(line) == 3:
             (token, nodeName, val) = line
@@ -1127,9 +1124,9 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             node = self.getVar(nodeName)
             relNode = self.getVar(relNodeName)
             return Func(node.setZ, relNode, val)
-        
 
-    
+
+
     def parseSetNametagZ(self, line):
         if len(line) == 3:
             (token, nodeName, val) = line
@@ -1140,9 +1137,9 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             node = self.getVar(nodeName)
             relNode = self.getVar(relNodeName)
             return Func(node.nametag3d.setZ, relNode, val)
-        
 
-    
+
+
     def parseHpr(self, line):
         if len(line) == 5:
             (token, nodeName, h, p, r) = line
@@ -1153,9 +1150,9 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             node = self.getVar(nodeName)
             relNode = self.getVar(relNodeName)
             return Func(node.setHpr, relNode, h, p, r)
-        
 
-    
+
+
     def parseSetH(self, line):
         if len(line) == 3:
             (token, nodeName, val) = line
@@ -1166,9 +1163,9 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             node = self.getVar(nodeName)
             relNode = self.getVar(relNodeName)
             return Func(node.setH, relNode, val)
-        
 
-    
+
+
     def parseSetP(self, line):
         if len(line) == 3:
             (token, nodeName, val) = line
@@ -1179,9 +1176,9 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             node = self.getVar(nodeName)
             relNode = self.getVar(relNodeName)
             return Func(node.setP, relNode, val)
-        
 
-    
+
+
     def parseSetR(self, line):
         if len(line) == 3:
             (token, nodeName, val) = line
@@ -1192,23 +1189,23 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             node = self.getVar(nodeName)
             relNode = self.getVar(relNodeName)
             return Func(node.setR, relNode, val)
-        
 
-    
+
+
     def parseLookAt(self, line):
         (token, nodeName, targetNodeName) = line
         targetNode = self.getVar(targetNodeName)
         node = self.getVar(nodeName)
         return Func(node.lookAt, targetNode)
 
-    
+
     def parseLookAtFace(self, line):
         (token, nodeName, targetNodeName) = line
         targetNode = self.getVar(targetNodeName)
         node = self.getVar(nodeName)
         return Func(node.lookAt, targetNode.headNode)
 
-    
+
     def parseCameraInteract(self, line):
         (token, nodeName, targetNodeName) = line
         track = Sequence()
@@ -1220,36 +1217,36 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         track.append(Func(node.setP, -20))
         return track
 
-    
+
     def parseScale(self, line):
         (token, nodeName, x, y, z) = line
         node = self.getVar(nodeName)
         return Func(node.setScale, x, y, z)
 
-    
+
     def parsePosHprScale(self, line):
         (token, nodeName, x, y, z, h, p, r, sx, sy, sz) = line
         node = self.getVar(nodeName)
         return Func(node.setPosHprScale, x, y, z, h, p, r, sx, sy, sz)
 
-    
+
     def parseColor(self, line):
         (token, nodeName, r, g, b, a) = line
         node = self.getVar(nodeName)
         return Func(node.setColor, r, g, b, a)
 
-    
+
     def parseColorScale(self, line):
         (token, nodeName, r, g, b, a) = line
         node = self.getVar(nodeName)
         return Func(node.setColorScale, r, g, b, a)
 
-    
+
     def parseWait(self, line):
         (token, waitTime) = line
         return Wait(waitTime)
 
-    
+
     def parseChat(self, line):
         print 'parsing chat line'
         toonId = self.toon.getDoId()
@@ -1261,14 +1258,14 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         (quitButton, extraChatFlags, dialogueList) = self.parseExtraChatArgs(line[3:])
         if extraChatFlags:
             chatFlags |= extraChatFlags
-        
+
         if len(dialogueList) > 0:
             dialogue = dialogueList[0]
         else:
             dialogue = None
         return Func(avatar.setChatAbsolute, chatString, chatFlags, dialogue)
 
-    
+
     def parseClearChat(self, line):
         toonId = self.toon.getDoId()
         avatarName = line[1]
@@ -1276,7 +1273,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         chatFlags = CFSpeech | CFTimeout
         return Func(avatar.setChatAbsolute, '', chatFlags)
 
-    
+
     def parseInteractionalChat(self, line):
         lineLen = len(line)
         avatar = self.getVar(line[1])
@@ -1284,24 +1281,24 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         audio = None
         if lineLen > 3:
             audio = self.getVar(line[3])
-        
+
         return Func(localAvatar.guiMgr.createInteractionalSubtitle, text, avatar, audio)
 
-    
+
     def parseClearInteractionalChat(self, line):
         return Func(localAvatar.guiMgr.clearInteractionalSubtitle)
 
-    
+
     def execEventCommands(self, eventName):
         commands = self.events.get(eventName)
         if commands == None:
             return None
-        
+
         (script, nextEvent) = self.parseLine(commands)
         scriptSeq = Sequence(*script)
         scriptSeq.play()
 
-    
+
     def parseExtraChatArgs(self, args):
         quitButton = 0
         extraChatFlags = None
@@ -1317,10 +1314,10 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                     dialogueList.append(self.getVar(arg))
             arg[:2] == 'CF'
             notify.error('invalid argument type')
-        
+
         return (quitButton, extraChatFlags, dialogueList)
 
-    
+
     def parseChatConfirm(self, line):
         lineLength = len(line)
         toonId = self.toon.getDoId()
@@ -1330,7 +1327,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         (quitButton, extraChatFlags, dialogueList) = self.parseExtraChatArgs(line[3:])
         return Func(avatar.setPageChat, toonId, 0, chatString, quitButton, extraChatFlags, dialogueList)
 
-    
+
     def parseLocalChatConfirm(self, line):
         lineLength = len(line)
         avatarName = line[1]
@@ -1339,7 +1336,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         (quitButton, extraChatFlags, dialogueList) = self.parseExtraChatArgs(line[3:])
         return Func(avatar.setLocalPageChat, chatString, quitButton, extraChatFlags, dialogueList)
 
-    
+
     def parseLocalChatPersist(self, line):
         lineLength = len(line)
         avatarName = line[1]
@@ -1352,7 +1349,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             dialogue = None
         return Func(avatar.setChatAbsolute, chatString, CFSpeech, dialogue)
 
-    
+
     def parseLocalChatToConfirm(self, line):
         lineLength = len(line)
         avatarKey = line[1]
@@ -1366,7 +1363,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         (quitButton, extraChatFlags, dialogueList) = self.parseExtraChatArgs(line[4:])
         return Func(avatar.setLocalPageChat, chatString, quitButton, extraChatFlags, dialogueList)
 
-    
+
     def parseCCChatConfirm(self, line):
         lineLength = len(line)
         avatarName = line[1]
@@ -1378,7 +1375,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         (quitButton, extraChatFlags, dialogueList) = self.parseExtraChatArgs(line[3:])
         return Func(avatar.setLocalPageChat, chatString, quitButton, extraChatFlags, dialogueList)
 
-    
+
     def parseCCChatToConfirm(self, line):
         lineLength = len(line)
         avatarKey = line[1]
@@ -1395,7 +1392,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         (quitButton, extraChatFlags, dialogueList) = self.parseExtraChatArgs(line[4:])
         return Func(avatar.setLocalPageChat, chatString, quitButton, extraChatFlags, dialogueList)
 
-    
+
     def parseSubtitleChat(self, line):
         chatString = eval('PLocalizer.' + line[1])
         if len(line) == 3:
@@ -1407,7 +1404,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         else:
             return Func(base.localAvatar.guiMgr.subtitler.showText, chatString, None, dialogue)
 
-    
+
     def parseSubtitleChatAnim(self, line):
         chatString = line[1]
         funcRef = funcDefs.get(chatString)
@@ -1424,21 +1421,21 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         animName = line[4]
         if len(line) == 6:
             idleAnimName = line[5]
-        
+
         if dialogue:
             animDuration = actor.getDuration(animName)
             seq = Sequence(Wait(2), Parallel(SoundInterval(dialogue, duration = animDuration), Sequence(actor.actorInterval(animName)), funcSeq))
             if idleAnimName:
                 seq.append(Func(actor.loop, idleAnimName))
-            
-            return (seq, nextEvent)
-        
 
-    
+            return (seq, nextEvent)
+
+
+
     def parseSubtitleClearChat(self, line):
         return Func(base.localAvatar.guiMgr.subtitler.clearText)
 
-    
+
     def parseSubtitleChatConfirm(self, line):
         lineLength = len(line)
         chatString = eval('PLocalizer.' + line[1])
@@ -1448,7 +1445,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             dialogue = None
         return Func(base.localAvatar.guiMgr.subtitler.confirmText, chatString, subtitleEvent, None, dialogue)
 
-    
+
     def parsePlaySfx(self, line):
         if len(line) == 2:
             (token, sfxName) = line
@@ -1460,13 +1457,13 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         sfx = self.getVar(sfxName)
         return Func(base.playSfx, sfx, looping)
 
-    
+
     def parseStopSfx(self, line):
         (token, sfxName) = line
         sfx = self.getVar(sfxName)
         return Func(sfx.stop)
 
-    
+
     def parsePlayAnim(self, line):
         if len(line) == 3:
             (token, actorName, animName) = line
@@ -1478,7 +1475,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         actor = self.getVar(actorName)
         return Sequence(Func(actor.setPlayRate, playRate, animName), Func(actor.play, animName))
 
-    
+
     def parseLoopAnim(self, line):
         if len(line) == 3:
             (token, actorName, animName) = line
@@ -1490,67 +1487,67 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         actor = self.getVar(actorName)
         return Sequence(Func(actor.setPlayRate, playRate, animName), Func(actor.loop, animName))
 
-    
+
     def parseLerpPos(self, line):
         (token, nodeName, x, y, z, t) = line
         node = self.getVar(nodeName)
         return Sequence(LerpPosInterval(node, t, Point3(x, y, z), blendType = 'easeInOut'), duration = 0.0)
 
-    
+
     def parseLerpHpr(self, line):
         (token, nodeName, h, p, r, t) = line
         node = self.getVar(nodeName)
         return Sequence(LerpHprInterval(node, t, VBase3(h, p, r), blendType = 'easeInOut'), duration = 0.0)
 
-    
+
     def parseLerpScale(self, line):
         (token, nodeName, x, y, z, t) = line
         node = self.getVar(nodeName)
         return Sequence(LerpScaleInterval(node, t, VBase3(x, y, z), blendType = 'easeInOut'), duration = 0.0)
 
-    
+
     def parseLerpPosHprScale(self, line):
         (token, nodeName, x, y, z, h, p, r, sx, sy, sz, t) = line
         node = self.getVar(nodeName)
         return Sequence(LerpPosHprScaleInterval(node, t, VBase3(x, y, z), VBase3(h, p, r), VBase3(sx, sy, sz), blendType = 'easeInOut'), duration = 0.0)
 
-    
+
     def parseLerpColor(self, line):
         (token, nodeName, sr, sg, sb, sa, er, eg, eb, ea, t) = line
         node = self.getVar(nodeName)
         return Sequence(LerpColorInterval(node, t, VBase4(er, eg, eb, ea), startColorScale = VBase4(sr, sg, sb, sa), blendType = 'easeInOut'), duration = 0.0)
 
-    
+
     def parseLerpColorScale(self, line):
         (token, nodeName, sr, sg, sb, sa, er, eg, eb, ea, t) = line
         node = self.getVar(nodeName)
         return Sequence(LerpColorScaleInterval(node, t, VBase4(er, eg, eb, ea), startColorScale = VBase4(sr, sg, sb, sa), blendType = 'easeInOut'), duration = 0.0)
 
-    
+
     def parseDepthWriteOn(self, line):
         (token, nodeName, depthWrite) = line
         node = self.getVar(nodeName)
         return Sequence(Func(node.setDepthWrite, depthWrite))
 
-    
+
     def parseDepthWriteOff(self, line):
         (token, nodeName) = line
         node = self.getVar(nodeName)
         return Sequence(Func(node.clearDepthWrite))
 
-    
+
     def parseDepthTestOn(self, line):
         (token, nodeName, depthTest) = line
         node = self.getVar(nodeName)
         return Sequence(Func(node.setDepthTest, depthTest))
 
-    
+
     def parseDepthTestOff(self, line):
         (token, nodeName) = line
         node = self.getVar(nodeName)
         return Sequence(Func(node.clearDepthTest))
 
-    
+
     def parseSetBin(self, line):
         if len(line) == 3:
             (token, nodeName, binName) = line
@@ -1560,19 +1557,19 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         node = self.getVar(nodeName)
         return Sequence(Func(node.setBin, binName, sortOrder))
 
-    
+
     def parseClearBin(self, line):
         (token, nodeName) = line
         node = self.getVar(nodeName)
         return Sequence(Func(node.clearBin))
 
-    
+
     def parseWaitEvent(self, line):
         token = line[0]
         eventNames = line[1:]
         return eventNames
 
-    
+
     def parseWaitEventChat(self, line):
         lineLen = len(line)
         token = line[0]
@@ -1582,7 +1579,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         if av:
             uniqueEventName = av.uniqueName(eventName)
             argIdx = 3
-        
+
         prompts = []
         promptsList = line[argIdx:len(line)]
         while promptsList:
@@ -1597,19 +1594,19 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             promptsList = promptsList[3:len(promptsList)]
         return (uniqueEventName, prompts)
 
-    
+
     def parseSendEvent(self, line):
         (token, eventName) = line
         return Func(messenger.send, eventName)
 
-    
+
     def parseFunction(self, line):
         (token, objectName, functionName) = line
         object = self.getVar(objectName)
         cfunc = compile('object' + '.' + functionName, '<string>', 'eval')
         return Func(eval(cfunc))
 
-    
+
     def parseAddLaffMeter(self, line):
         (token, maxHpDelta) = line
         newMaxHp = maxHpDelta + self.toon.getMaxHp()
@@ -1617,31 +1614,31 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         laffMeter = self.getVar('laffMeter')
         return Func(laffMeter.adjustFace, newHp, newMaxHp)
 
-    
+
     def parseLaffMeter(self, line):
         (token, newHp, newMaxHp) = line
         laffMeter = self.getVar('laffMeter')
         return Func(laffMeter.adjustFace, newHp, newMaxHp)
 
-    
+
     def parseObscureLaffMeter(self, line):
         (token, val) = line
         return Func(self.toon.laffMeter.obscure, val)
 
-    
+
     def parseAddInventory(self, line):
         (token, track, level, number) = line
         inventory = self.getVar('inventory')
         countSound = loadSfx(SoundGlobals.SFX_GUI_CLICK_01)
         return Sequence(Func(base.playSfx, countSound), Func(inventory.buttonBoing, track, level), Func(inventory.addItems, track, level, number), Func(inventory.updateGUI, track, level))
 
-    
+
     def parseSetInventory(self, line):
         (token, track, level, number) = line
         inventory = self.getVar('inventory')
         return Sequence(Func(inventory.setItem, track, level, number), Func(inventory.updateGUI, track, level))
 
-    
+
     def parseSetInventoryYPos(self, line):
         (token, track, level, yPos) = line
         inventory = self.getVar('inventory')
@@ -1649,7 +1646,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         text = button.find('**/+TextNode')
         return Sequence(Func(text.setY, yPos))
 
-    
+
     def parseSetInventoryDetail(self, line):
         if len(line) == 2:
             (token, val) = line
@@ -1667,31 +1664,31 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         else:
             notify.error('invalid inventory detail level: %s' % val)
 
-    
+
     def parseShowFriendsList(self, line):
         pass
 
-    
+
     def parseHideFriendsList(self, line):
         pass
 
-    
+
     def parseObscureChat(self, line):
         (token, val0, val1) = line
         return Func(self.toon.chatMgr.obscure, val0, val1)
 
-    
+
     def parseArrowsOn(self, line):
         arrows = self.getVar('arrows')
         (token, x1, y1, h1, x2, y2, h2) = line
         return Func(arrows.arrowsOn, x1, y1, h1, x2, y2, h2)
 
-    
+
     def parseArrowsOff(self, line):
         arrows = self.getVar('arrows')
         return Func(arrows.arrowsOff)
 
-    
+
     def parseStartThrob(self, line):
         (token, nodeName, r, g, b, a, r2, g2, b2, a2, t) = line
         node = self.getVar(nodeName)
@@ -1700,11 +1697,11 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         self.throbIval = Sequence(LerpColorScaleInterval(node, t / 2.0, destCScale, startColorScale = startCScale, blendType = 'easeInOut'), LerpColorScaleInterval(node, t / 2.0, startCScale, startColorScale = destCScale, blendType = 'easeInOut'))
         return Func(self.throbIval.loop)
 
-    
+
     def parseStopThrob(self, line):
         return Func(self.throbIval.finish)
 
-    
+
     def parseToonHead(self, line):
         if len(line) == 5:
             (token, toonName, x, z, toggle) = line
@@ -1720,13 +1717,13 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             toonHeadFrame.hide()
             self.toonHeads[toonId] = toonHeadFrame
             self.setVar('%sToonHead' % toonName, toonHeadFrame)
-        
+
         if toggle:
             return Sequence(Func(toonHeadFrame.setPos, x, 0, z), Func(toonHeadFrame.setScale, scale), Func(toonHeadFrame.show))
         else:
             return Func(toonHeadFrame.hide)
 
-    
+
     def parseToonHeadScale(self, line):
         (token, toonName, scale) = line
         toon = self.getVar(toonName)
@@ -1734,10 +1731,10 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         toonHeadFrame = self.toonHeads.get(toonId)
         return Func(toonHeadFrame.setScale, scale)
 
-    
+
     def parseSetMusicVolume(self, line):
         if base.config.GetString('language', 'english') == 'japanese':
-            
+
             try:
                 loader = base.cr.playGame.place.loader
                 type = 'music'
@@ -1751,7 +1748,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                     (token, level, type, duration) = line
                 elif len(line) == 5:
                     (token, level, type, duration, fromLevel) = line
-                
+
                 if type == 'battleMusic':
                     music = loader.battleMusic
                 elif type == 'activityMusic':
@@ -1761,28 +1758,28 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                 if duration == 0:
                     return Func(music.setVolume, level)
                 else:
-                    
+
                     def setVolume(level):
                         music.setVolume(level)
 
                     return LerpFunctionInterval(setVolume, fromData = fromLevel, toData = level, duration = duration)
             except AttributeError:
                 pass
-            
+
 
         return Wait(0.0)
 
-    
+
     def parseStartInteract(self, line):
         mySeq = Sequence()
         if self.toon.gameFSM.state == 'Cannon':
             mySeq.append(Func(self.toon.cannon.modeFSM.request, 'tutorialCutscene'))
-        
+
         mySeq.append(Func(self.npc.startInteract, self.toon))
         mySeq.append(Func(self.npc.requestInteraction, self.toon.doId))
         return mySeq
 
-    
+
     def parseStopInteract(self, line):
         mySeq = Sequence()
         mySeq.append(Func(self.toon.show))
@@ -1790,39 +1787,39 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         mySeq.append(Func(self.npc.nametag3d.setZ, 0))
         if self.toon.gameFSM.state == 'Cannon':
             mySeq.append(Func(self.toon.cannon.modeFSM.request, 'fireCannon'))
-        
+
         mySeq.append(Func(self.npc.stopInteract, self.toon))
         mySeq.append(Func(self.npc.requestStopInteract))
         return mySeq
 
-    
+
     def parseUnequipWeapon(self, line):
-        
+
         def uniquipCurrWeapon():
             (currentWeaponId, isWeaponDrawn) = localAvatar.getCurrentWeapon()
             if currentWeaponId and localAvatar.gameFSM.state == 'Battle':
                 localAvatar.guiMgr.combatTray.toggleWeapon(currentWeaponId)
-            
+
 
         return Func(uniquipCurrWeapon)
 
-    
+
     def parseEquipWeapon(self, line):
         if len(line) == 2:
             (token, weapon) = line
             if weapon == 10106:
                 weapon = 2001
-            
+
         else:
             weapon = 0
-        
+
         def equipCurrWeapon(weapon):
             if weapon == 0:
                 (weapon, isWeaponDrawn) = localAvatar.getCurrentWeapon()
-            
+
             localAvatar.toggleWeapon(weapon, localAvatar.currentWeaponSlotId)
 
-        
+
         def equipPistol():
             weapons = localAvatar.getInventory().getAllWeapons()
             for slot in weapons:
@@ -1830,9 +1827,9 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                     pistolSlotId = slot
                     break
                     continue
-            
+
             if pistolSlotId > Locations.RANGE_EQUIP_WEAPONS[1]:
-                
+
                 def handleSlotUpdate(slot):
                     localAvatar.guiMgr.setIgnoreAllKeys(False)
                     localAvatar.guiMgr.combatTray.toggleWeapon(ItemGlobals.FLINTLOCK_PISTOL, 2)
@@ -1849,42 +1846,42 @@ class NPCMoviePlayer(DirectObject.DirectObject):
 
         return Func(equipPistol)
 
-    
+
     def parseEnableAim(self, line):
         return Func(localAvatar.cameraFSM.request, 'FPS')
 
-    
+
     def parseSetAimBounds(self, line):
         (token, baseH, minH, maxH) = line
         return Func(localAvatar.cameraFSM.fpsCamera.setHBounds, baseH, minH, maxH)
 
-    
+
     def parseClearAimBounds(self, line):
         return Func(localAvatar.cameraFSM.fpsCamera.clearHBounds)
 
-    
+
     def parseKickOutOfArea(self, line):
         return Func(base.cr.activeWorld.worldGrid.quickLoadOtherSide)
 
-    
+
     def deleteCompassProps(self):
         if self.compassPirate:
             self.compassPirate.cleanupHuman()
             self.compassPirate.delete()
             self.compassPirate = None
-        
+
         if self.compassSkeleton:
             self.compassSkeleton.delete()
             self.compassSkeleton = None
-        
 
-    
+
+
     def parsePerformStandardInit(self, line):
         commands = []
         commands.append(Func(self.toon.setAllowSocialPanel, False))
         return commands
 
-    
+
     def parsePerformStandardCleanup(self, line):
         commands = []
         commands.append(Func(self.overrideOldAvState, None))
@@ -1899,7 +1896,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         commands.append(Func(self.toon.setAllowSocialPanel, True))
         return commands
 
-    
+
     def parseSetEquippedWeapons(self, line):
         (token, weapon) = line
         if weapon == 'All':
@@ -1909,38 +1906,21 @@ class NPCMoviePlayer(DirectObject.DirectObject):
             if weapon == 'Pistol':
                 validIndexes = [
                     1]
-            
+
             weapons = []
             for currIdx in range(len(localAvatar.equippedWeapons)):
                 if currIdx in validIndexes:
                     weapons.append(localAvatar.equippedWeapons[currIdx])
                     continue
                 weapons.append(0)
-            
+
         return [
             Func(localAvatar.guiMgr.cleanupEquippedWeapons),
             Func(localAvatar.guiMgr.setEquippedWeapons, weapons)]
 
-    
+
     def parseClearCompassEffects(self, line):
         return [
             Func(localAvatar.guiMgr.radarGui.cleanupEffects)]
 
-
-searchPath = DSearchPath()
-if AppRunnerGlobal.appRunner:
-    searchPath.appendDirectory(Filename.expandFrom('$POTCO_2_ROOT'))
-else:
-    searchPath.appendDirectory(Filename('etc'))
-    searchPath.appendDirectory(Filename.fromOsSpecific(os.path.expandvars('$PIRATES/src/quest')))
-    searchPath.appendDirectory(Filename.fromOsSpecific('pirates/src/quest'))
-    searchPath.appendDirectory(Filename.fromOsSpecific('pirates/quest'))
-    searchPath.appendDirectory(Filename('.'))
-scriptFile = Filename('QuestScripts.txt')
-found = vfs.resolveFilename(scriptFile, searchPath)
-if not found:
-    message = 'QuestScripts.txt file not found on %s' % searchPath
-    raise IOError, message
-
-lastReadFile = scriptFile
-readFile(scriptFile)
+readFile('resources/QuestScripts.txt')

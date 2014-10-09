@@ -121,7 +121,7 @@ if config.GetBool('want-kraken', 0):
 
 
 class MastSet:
-    
+
     def __init__(self):
         self.charRoot = None
         self.collisions = None
@@ -132,7 +132,7 @@ class MastSet:
 
 
 class MastCache:
-    
+
     def __init__(self):
         self.charRoot = None
         self.genericGeomSets = []
@@ -142,17 +142,17 @@ class MastCache:
         self.metaAnims = { }
         self.hitAnim = None
 
-    
+
     def getMastSet(self, index, custom = False):
         data = MastSet()
         if custom:
             for lod in self.customGeomSets[index]:
                 lod.reparentTo(NodePath(self.charRoot))
-            
+
         else:
             for lod in self.genericGeomSets[index]:
                 lod.reparentTo(NodePath(self.charRoot))
-            
+
         data.charRoot = NodePath(self.charRoot).copyTo(NodePath()).node()
         data.collisions = NodePath(data.charRoot).find('**/collisions')
         if index == 0:
@@ -160,15 +160,15 @@ class MastCache:
             data.collisions.findAllMatches('**/*_2*').detach()
         elif index == 1:
             data.collisions.findAllMatches('**/*_2*').detach()
-        
+
         if custom:
             for lod in self.customGeomSets[index]:
                 lod.detachNode()
-            
+
         else:
             for lod in self.genericGeomSets[index]:
                 lod.detachNode()
-            
+
         data.breakAnim = self.breakAnim
         data.metaAnims = self.metaAnims
         data.hitAnim = self.hitAnim
@@ -177,21 +177,21 @@ class MastCache:
 
 
 class SpritCache:
-    
+
     def __init__(self):
         self.root = None
         self.high = None
         self.med = None
         self.low = None
 
-    
+
     def getAsset(self):
         return (self.high.copyTo(NodePath()), self.med.copyTo(NodePath()), self.low.copyTo(NodePath()))
 
 
 
 class HullAsset:
-    
+
     def __init__(self):
         self.root = None
         self.geoms = []
@@ -201,7 +201,7 @@ class HullAsset:
 
 
 class HullCache:
-    
+
     def __init__(self):
         self.root = None
         self.genericGeoms = []
@@ -210,14 +210,13 @@ class HullCache:
         self.collisions = None
         self.cannonRoot = None
 
-    
+
     def getHullAsset(self, custom = False):
         data = HullAsset()
         data.root = self.root.copyTo(NodePath())
         if custom:
-            continue
             data.geoms = [ x.copyTo(NodePath()) for x in self.customGeoms ]
-        
+
         data.geoms = custom
         data.locators = self.locators.copyTo(NodePath())
         data.collisions = self.collisions.copyTo(NodePath())
@@ -244,7 +243,7 @@ def preprocessSprits():
         data.med = med
         data.low = low
         spritDict[prowType] = data
-    
+
     return spritDict
 
 
@@ -264,15 +263,15 @@ def stripAttribs(geom, cls):
         for i in range(node.getNumGeoms()):
             gs = node.getGeomState(i)
             node.setGeomState(i, gs.removeAttrib(cls.getClassType()))
-        
-    
+
+
     if geom.node().getClassType() == GeomNode.getClassType():
         node = geom.node()
         for i in range(node.getNumGeoms()):
             gs = node.getGeomState(i)
             node.setGeomState(i, gs.removeAttrib(cls.getClassType()))
-        
-    
+
+
 
 
 def generateHullCache(modelClass):
@@ -283,7 +282,7 @@ def generateHullCache(modelClass):
         omit = parent.attachNewNode(ModelNode('omit'))
         node.reparentTo(omit)
         node.setName('geom')
-    
+
     preFlatten(geom)
     logic = loader.loadModel('models/shipparts/pir_m_shp_%s_logic' % HullDict[modelClass])
     locators = logic.find('**/locators')
@@ -293,21 +292,21 @@ def generateHullCache(modelClass):
         bad = locators.find('**/location_ropeLadder_0_%s' % side)
         if bad:
             bad.setName('location_ropeLadder_%s_0' % side)
-        
+
         bad = locators.find('**/location_ropeLadder_1_%s' % side)
         if bad:
             bad.setName('location_ropeLadder_%s_1' % side)
-        
+
         bad = locators.find('**/location_ropeLadder_1_%s1' % side)
         if bad:
             bad.setName('location_ropeLadder_%s_2' % side)
             continue
-    
+
     collisions = logic.find('**/collisions')
     badPanel = collisions.find('**/collision_panel_3')
     if badPanel:
         badPanel.setName('collision_panel_2')
-    
+
     collisions.find('**/collision_panel_0').setTag('Hull Code', '0')
     collisions.find('**/collision_panel_1').setTag('Hull Code', '1')
     collisions.find('**/collision_panel_2').setTag('Hull Code', '2')
@@ -321,7 +320,7 @@ def generateHullCache(modelClass):
     deck = collisions.find('**/collision_deck')
     if not deck:
         deck = collisions.attachNewNode('deck')
-    
+
     mask = deck.getCollideMask()
     mask ^= PiratesGlobals.FloorBitmask
     mask |= PiratesGlobals.ShipFloorBitmask
@@ -329,7 +328,7 @@ def generateHullCache(modelClass):
     floors = collisions.find('**/collision_floors')
     if not floors:
         floors = collisions.find('**/collision_floor')
-    
+
     mask = floors.getCollideMask()
     mask ^= PiratesGlobals.FloorBitmask
     mask |= PiratesGlobals.ShipFloorBitmask
@@ -339,18 +338,18 @@ def generateHullCache(modelClass):
     geomMed = geom.find('**/lod_medium')
     if not geomMed:
         geomMed = geom.find('**/low_medium')
-    
+
     if not geomMed:
         geomMed = geomHigh.copyTo(NodePath())
-    
+
     geomLow = geom.find('**/lod_low')
     if not geomLow:
         geomLow = geomMed.copyTo(NodePath())
-    
+
     geomSuperLow = geom.find('**/lod_superlow')
     if not geomSuperLow:
         geomSuperLow = geomLow.copyTo(NodePath())
-    
+
     geomHigh.setName('high')
     geomMed.setName('med')
     geomLow.setName('low')
@@ -370,7 +369,7 @@ def generateHullCache(modelClass):
         spikeMed.copyTo(geomMed)
         spikeLow.copyTo(geomLow)
         spikeLow.copyTo(geomSuperLow)
-    
+
     flipRoot = NodePath('root')
     collisions.reparentTo(flipRoot)
     locators.reparentTo(flipRoot)
@@ -383,7 +382,7 @@ def generateHullCache(modelClass):
     omits = flipRoot.findAllMatches('**/omit')
     for node in omits:
         node.flattenStrong()
-    
+
     for group in [
         'static',
         'transparent',
@@ -395,11 +394,11 @@ def generateHullCache(modelClass):
             name = node.getName()
             for subNode in node.findAllMatches('**/*'):
                 subNode.setName(name)
-            
+
             node.flattenStrong()
             node.setName(name)
-        
-    
+
+
     geomHigh.detachNode()
     geomMed.detachNode()
     geomLow.detachNode()
@@ -411,13 +410,12 @@ def generateHullCache(modelClass):
         geomMed,
         geomLow,
         geomSuperLow]
-    continue
     customGeoms = [ x.copyTo(NodePath()) for x in genericGeoms ]
     for np in genericGeoms:
         trans = np.find('**/transparent')
         if trans:
             trans.stash()
-        
+
         np.flattenLight()
         sails = np.findAllMatches('**/sails')
         sails.stash()
@@ -425,7 +423,7 @@ def generateHullCache(modelClass):
         omits.stash()
         for node in omits:
             node.node().setPreserveTransform(node.node().PTDropNode)
-        
+
         generic = NodePath('generic')
         np.findAllMatches('**/+GeomNode').wrtReparentTo(generic)
         np.findAllMatches('*').detach()
@@ -437,23 +435,23 @@ def generateHullCache(modelClass):
         sails.reparentTo(np)
         for node in sails:
             node.node().setPreserveTransform(node.node().PTDropNode)
-        
+
         if trans:
             trans.unstash()
             trans.flattenStrong()
             if trans.node().isOfType(ModelNode.getClassType()):
                 trans.node().setPreserveTransform(ModelNode.PTDropNode)
-            
-        
+
+
         deck = np.find('**/=cam=shground')
         if deck:
             deck.setName('deck')
-        
+
         omits.unstash()
-    
+
     for np in customGeoms:
         collapse(np.find('**/static'))
-    
+
     data = HullCache()
     data.root = NodePath('hull')
     data.genericGeoms = genericGeoms
@@ -484,30 +482,30 @@ def generateMastCache(mastClass):
         for name in ('_1', '_1_rope', '_2', '_2_rope'):
             for node in geom.findAllMatches('**/boom%s' % name):
                 node.setName('boom')
-            
-        
-    
+
+
+
     preFlatten(geom)
     if mastClass in (6, 7, 8, 9, 10):
         for node in geom.findAllMatches('**/sail_0'):
             node.setName('skel_sail_0')
-        
+
         for node in geom.findAllMatches('**/sail_1'):
             node.setName('skel_sail_1')
-        
+
         for node in geom.findAllMatches('**/sail_2'):
             node.setName('skel_sail_2')
-        
-    
+
+
     for node in geom.findAllMatches('**/sail_0'):
         stripAttribs(node, TextureAttrib)
-    
+
     for node in geom.findAllMatches('**/sail_1'):
         stripAttribs(node, TextureAttrib)
-    
+
     for node in geom.findAllMatches('**/sail_2'):
         stripAttribs(node, TextureAttrib)
-    
+
     geomSet = [
         geom.find('**/lod_high'),
         geom.find('**/lod_medium'),
@@ -519,11 +517,11 @@ def generateMastCache(mastClass):
     data.collisions = logic.find('**/collisions')
     if not data.collisions.find('**/collision_masts'):
         data.collisions.find('**/collision_mast_0').setName('collision_masts')
-    
+
     sails = data.collisions.findAllMatches('**/collision_sails')
     for node in sails:
         node.setTag('Sail', '1')
-    
+
     sails.wrtReparentTo(data.collisions.find('**/collision_masts'))
     geomSet[0].setName('high')
     geomSet[1].setName('med')
@@ -534,7 +532,7 @@ def generateMastCache(mastClass):
     data.hitAnim = anim_prefix + 'hit'
     for anim in metaAnims:
         data.metaAnims[anim] = anim_prefix + anim
-    
+
     geom.findAllMatches('**/rigging_anchors').detach()
     geom.findAllMatches('**/breaks').detach()
     geom.findAllMatches('**/def_mast_base').detach()
@@ -554,7 +552,7 @@ def generateMastCache(mastClass):
                     foundReduction = True
                     continue
                 []
-            
+
             if foundReduction or not matchSet:
                 for group in [
                     'static',
@@ -562,19 +560,19 @@ def generateMastCache(mastClass):
                     for node in currGeom.findAllMatches('**/%s' % group):
                         node.flattenStrong()
                         node.setName(group)
-                    
-                
+
+
                 reducedSet.append(currGeom)
                 continue
-        
+
         customSet = []
         for np in reducedSet:
             sails = np.find('**/sails;+s')
             if not sails:
                 np.attachNewNode(ModelNode('sails'))
-            
+
             customSet.append(np.copyTo(NodePath()))
-        
+
         for np in reducedSet:
             np.find('static').node().setPreserveTransform(ModelNode.PTDropNode)
             np.find('custom').node().setPreserveTransform(ModelNode.PTDropNode)
@@ -585,13 +583,13 @@ def generateMastCache(mastClass):
                 for node in trans:
                     node.node().setPreserveTransform(ModelNode.PTDropNode)
                     node.stash()
-                
+
                 stripAttribs(np, TextureAttrib)
                 for node in trans:
                     node.unstash()
-                
+
             stripAttribs(np, TextureAttrib)
-        
+
         for np in customSet:
             np.flattenStrong()
             np.find('static').node().setPreserveTransform(ModelNode.PTDropNode)
@@ -602,15 +600,15 @@ def generateMastCache(mastClass):
                 for node in trans:
                     node.node().setPreserveTransform(ModelNode.PTDropNode)
                     node.stash()
-                
+
                 stripAttribs(np, TextureAttrib)
                 for node in trans:
                     node.unstash()
-                
-        
+
+
         data.genericGeomSets.append(reducedSet)
         data.customGeomSets.append(customSet)
-    
+
     NodePath(data.charRoot).removeChildren()
     data.collisions.reparentTo(NodePath(data.charRoot))
     return data
@@ -619,14 +617,13 @@ def generateMastCache(mastClass):
 def getMastInfo(shipClass, modelClass):
     defs = mastDefs.get(modelClass)
     setup = getMastSetup(shipClass)
-    continue
     return [](_[1])
 
 
 def stripPrefix(root, prefix):
     for node in root.findAllMatches('**/%s*' % prefix):
         node.setName(node.getName()[len(prefix):])
-    
+
 
 
 def setupWheel():
@@ -663,15 +660,15 @@ def setupShipTextures():
         if textures:
             shipTextures[i] = textures[0]
             continue
-    
+
     model = loader.loadModel('models/textureCards/sailColors.bam')
     for (style, name) in ColorDict.iteritems():
         sailColors[style] = model.find('**/%s' % name).findAllTextures('*')[0]
-    
+
     model = loader.loadModel('models/textureCards/sailLogo.bam')
     for (num, name) in LogoDict.iteritems():
         logoTextures[num] = model.find('**/%s' % name).findAllTextures('*')[0]
-    
+
 
 
 def getShipTexture(style):

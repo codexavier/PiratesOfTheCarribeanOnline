@@ -4,7 +4,8 @@ import sys
 import time
 import os
 from pandac.PandaModules import *
-from libotp import NametagGlobals, ChatBalloon, MarginManager
+from otp.nametag import NametagGlobals, ChatBalloon
+from otp.margins import MarginManager
 from direct.showbase.DirectObject import *
 from direct.showbase.PythonUtil import *
 from direct.showbase.Transitions import Transitions
@@ -59,18 +60,19 @@ class PiratesBase(OTPBase):
         'pandadx8',
         'pandadx9',
         'tinydisplay']
-    
+
     def __init__(self):
         OTPBase.__init__(self, windowType = 'none')
         print cpMgr
         self.hasEmbedded = hasEmbedded
         self.shipFactory = None
+        self.isMainWindowOpen = False
         if __dev__:
             launcher.setValue('GAME_SHOW_ADDS', 'NO')
-        
+
         if base.appRunner:
             launcher.setValue('GAME_SHOW_ADDS', 'NO')
-        
+
         self.fourthOfJuly = base.config.GetBool('test-fourth-of-july', 0)
         if self.hasEmbedded:
             self.inAdFrame = embedded.isMainWindowVisible()
@@ -100,29 +102,29 @@ class PiratesBase(OTPBase):
             Options.DEFAULT_API_FILE_PATH = Filename.expandFrom('$HOME/game_api.txt').toOsSpecific()
             Options.WORKING_FILE_PATH = Filename.expandFrom('$HOME/last_working_options.txt').toOsSpecific()
             Options.POSSIBLE_WORKING_FILE_PATH = Filename.expandFrom('$HOME/p_working_options.txt').toOsSpecific()
-        
+
         options_loaded = options.load(Options.DEFAULT_FILE_PATH)
         self.notify.info('Requested graphics API = %s' % options.api)
         if options.api == 'default' and self.config.GetBool('use-graphics-api-auto-select', True):
             base.makeDefaultPipe()
             options.automaticGraphicsApiSelection(base.pipe)
             self.notify.info('Auto-selected graphics API = %s' % options.api)
-        
+
         if options.api in self.apiNames:
             selection = GraphicsPipeSelection.getGlobalPtr()
             pipe = selection.makeModulePipe(options.api)
             if pipe:
                 base.pipe = pipe
                 self.notify.info('Loaded requested graphics %s' % base.pipe.getType().getName())
-            
-        
+
+
         if not base.pipe:
             base.makeDefaultPipe()
             if not base.pipe:
                 self.notify.error('Could not find any graphics API.')
-            
+
             self.notify.info('Loaded default graphics %s' % base.pipe.getType().getName())
-        
+
         bits_per_pixel = 32
         if self.inAdFrame:
             self.getVelvetDisplayResolutions(bits_per_pixel, base.pipe)
@@ -159,7 +161,7 @@ class PiratesBase(OTPBase):
         if use_recommended_options:
             options.recommendedOptions(base.pipe, False)
             options.log('Recommended Game Options')
-        
+
         overwrite_options = True
         options.verifyOptions(base.pipe, overwrite_options)
         string = options.optionsToPrcData()
@@ -191,15 +193,15 @@ class PiratesBase(OTPBase):
         self.loadingScreen.showTarget(pickapirate = True)
         self.loadingScreen.show()
         self.loadingScreen.beginStep('PiratesBase', 34, 25)
-        if not self.isMainWindowOpen():
-            
+        if not self.isMainWindowOpen:
+
             try:
                 launcher.setPandaErrorCode(7)
             except:
                 pass
 
             sys.exit(1)
-        
+
         self.loadingScreen.tick()
         options.options_to_config()
         options.setRuntimeOptions()
@@ -215,28 +217,28 @@ class PiratesBase(OTPBase):
         TextureStage.getDefault().setPriority(10)
         self.useDrive()
         self.disableMouse()
-        if self.mouseInterface:
-            self.mouseInterface.reparentTo(self.dataUnused)
-        
-        if base.mouse2cam:
-            self.mouse2cam.reparentTo(self.dataUnused)
-        
+        #if self.mouseInterface:
+        #    self.mouseInterface.reparentTo(self.dataUnused)
+
+        #if base.mouse2cam:
+        #    self.mouse2cam.reparentTo(self.dataUnused)
+
         if not base.config.GetBool('location-kiosk', 0):
             for key in PiratesGlobals.ScreenshotHotkeyList:
                 self.accept(key, self.takeScreenShot)
-            
+
             self.screenshotViewer = None
             if base.config.GetBool('want-screenshot-viewer', 0):
                 self.accept(PiratesGlobals.ScreenshotViewerHotkey, self.showScreenshots)
-            
-        
+
+
         self.wantMarketingViewer = base.config.GetBool('want-marketing-viewer', 0)
         self.marketingViewerOn = False
         if self.wantMarketingViewer:
             for key in PiratesGlobals.MarketingHotkeyList:
                 self.accept(key, self.toggleMarketingViewer)
-            
-        
+
+
         self.accept('panda3d-render-error', self.panda3dRenderError)
         camera.setPosHpr(0, 0, 0, 0, 0, 0)
         self.camLens.setMinFov(PiratesGlobals.DefaultCameraFov)
@@ -252,7 +254,7 @@ class PiratesBase(OTPBase):
         if self.config.GetBool('want-particles', 1):
             self.notify.debug('Enabling particles')
             self.enableParticles()
-        
+
         self.loadingScreen.tick()
         self.notify.debug('Enabling new ship controls')
         self.avatarPhysicsMgr = PhysicsManager()
@@ -283,12 +285,11 @@ class PiratesBase(OTPBase):
         self.accept('PandaRestarted', self.enableAllAudio)
         self.emoteGender = None
         shadow = loader.loadModel('models/misc/drop_shadow.bam')
-        shadow.findTexture('*').setQualityLevel(Texture.QLBest)
         self.loadingScreen.tick()
         taskMgr.setupTaskChain('phasePost', numThreads = 0, threadPriority = TPHigh)
-        launcher.addPhasePostProcess(3, self.phase3Post, taskChain = 'phasePost')
-        launcher.addPhasePostProcess(4, self.phase4Post, taskChain = 'phasePost')
-        launcher.addPhasePostProcess(5, self.phase5Post, taskChain = 'phasePost')
+        #launcher.addPhasePostProcess(3, self.phase3Post, taskChain = 'phasePost')
+        #launcher.addPhasePostProcess(4, self.phase4Post, taskChain = 'phasePost')
+        #launcher.addPhasePostProcess(5, self.phase5Post, taskChain = 'phasePost')
         self.whiteList = PWhiteList()
         tpMgr = TextPropertiesManager.getGlobalPtr()
         WLDisplay = TextProperties()
@@ -318,7 +319,7 @@ class PiratesBase(OTPBase):
         gsg = base.win.getGsg()
         if gsg.getShaderModel() < gsg.SM20:
             base.options.shader_runtime = 0
-        
+
         self.noticeSystemOn = 1
         self.lodTrav = CollisionTraverser('base.lodTrav')
         self.zoneLODEventHandler = CollisionHandlerEvent()
@@ -329,7 +330,7 @@ class PiratesBase(OTPBase):
         self.transitions.letterbox.setColorScale(0, 0, 0, 1)
         self.loadingScreen.endStep('PiratesBase')
 
-    
+
     def setNoticeSystem(self, on):
         if self.noticeSystemOn == on:
             return None
@@ -337,15 +338,15 @@ class PiratesBase(OTPBase):
             self.noticeSystemOn = on
             messenger.send('noticeStateChanged')
 
-    
+
     def deleteDialogs(self):
         if self.cpuSpeedDialog:
             self.cpuSpeedDialog.destroy()
             del self.cpuSpeedDialog
             self.cpuSpeedDialog = None
-        
 
-    
+
+
     def cpuSpeedDialogCommand(self, value):
         if value == DGG.DIALOG_OK:
             pass
@@ -354,10 +355,10 @@ class PiratesBase(OTPBase):
             base.options.cpu_frequency_warning = 0
             base.options.save(Options.DEFAULT_FILE_PATH, Options.NEW_STATE)
             base.options.log('Options Saved: Cpu Frequency Warning Disable')
-        
+
         self.deleteDialogs()
 
-    
+
     def displayCpuSpeedDialog(self, message):
         self.deleteDialogs()
         if base.options.cpu_frequency_warning:
@@ -367,10 +368,10 @@ class PiratesBase(OTPBase):
             self.cpuSpeedDialog = PDialog.PDialog(text = message, style = OTPDialog.TwoChoiceCustom, giveMouse = False, command = self.cpuSpeedDialogCommand, buttonText = buttonText)
             if self.cpuSpeedDialog:
                 self.cpuSpeedDialog.setBin('gui-fixed', 20, 20)
-            
-        
 
-    
+
+
+
     def memoryMonitorTask(self, task):
         if base.pipe:
             display = False
@@ -380,11 +381,11 @@ class PiratesBase(OTPBase):
                 if di.getPeakProcessMemory() > self.peakProcessMemory:
                     self.peakProcessMemory = di.getPeakProcessMemory()
                     display = True
-                
+
                 if di.getMemoryLoad() >= self.memoryMonitorMinimumPercentage and di.getMemoryLoad() > self.peakMemoryLoad:
                     self.peakMemoryLoad = di.getMemoryLoad()
                     display = True
-                
+
                 if display:
                     oomb = 1.0 / 1024.0 * 1024.0
                     string = 'memory_usage:    %d%%' % di.getMemoryLoad()
@@ -401,7 +402,7 @@ class PiratesBase(OTPBase):
                     self.notify.info(string)
                     string = 'page_faults:     %d' % di.getPageFaultCount()
                     self.notify.info(string)
-                
+
                 if base.config.GetBool('want-cpu-frequency-warning', 0):
                     processor_number = 0
                     di.updateCpuFrequency(processor_number)
@@ -411,17 +412,17 @@ class PiratesBase(OTPBase):
                         if current > 0:
                             if base.config.GetInt('test-cpu-frequency-warning', 0):
                                 current = maximum - 1000000
-                            
+
                             change = False
                             if current != self.currentCpuFrequency:
                                 if self.currentCpuFrequency:
                                     change = True
-                                
+
                                 self.currentCpuFrequency = current
-                            
+
                             if maximum != self.maximumCpuFrequency:
                                 self.maximumCpuFrequency = maximum
-                            
+
                             if current < maximum:
                                 if self.displayCpuFrequencyDialog == False:
                                     self.displayCpuFrequencyDialog = True
@@ -431,19 +432,19 @@ class PiratesBase(OTPBase):
                                     string = PLocalizer.CpuWarning % (c, m)
                                     self.displayCpuSpeedDialog(string)
                                     self.notify.info(string)
-                                
-                            
+
+
                             if current == maximum:
                                 self.displayCpuFrequencyDialog = False
-                            
-                        
-                    
-                
-            
-        
+
+
+
+
+
+
         return Task.again
 
-    
+
     def phase3Post(self):
         Sword = Sword
         Dagger = Dagger
@@ -452,19 +453,19 @@ class PiratesBase(OTPBase):
         Dagger.Dagger.setupAssets()
         self.buildShips()
 
-    
+
     def phase4Post(self):
         self.buildPhase4Assets()
         self.buildPhase4Ships()
 
-    
+
     def phase5Post(self):
         Raven = Raven
         import pirates.creature
         Raven.Raven.setupAssets()
         self.buildPhase5Ships()
 
-    
+
     def buildPhase4Assets(self):
         WeaponGlobals = WeaponGlobals
         import pirates.battle
@@ -502,13 +503,13 @@ class PiratesBase(OTPBase):
             import pirates.kraken
             Holder.Holder.setupAssets()
             self.loadingScreen.tick()
-        
+
         if base.config.GetBool('want-seamonsters', 0):
             SeaSerpent = SeaSerpent
             import pirates.creature
             SeaSerpent.SeaSerpent.setupAssets()
             self.loadingScreen.tick()
-        
+
         PowderKeg.PowderKeg.setupAssets()
         self.loadingScreen.tick()
         Torch.Torch.setupAssets()
@@ -560,45 +561,44 @@ class PiratesBase(OTPBase):
         Wasp.Wasp.setupAssets()
         self.loadingScreen.tick()
 
-    
+
     def buildAssets(self):
         pass
 
-    
+
     def buildShips(self):
         if not self.shipFactory:
             self.shipFactory = ShipFactory.ShipFactory(phasedLoading = True)
-        
+
         self.loadingScreen.tick()
 
-    
+
     def buildPhase4Ships(self):
         if not self.shipFactory:
             self.buildShips()
-        
+
         self.shipFactory.handlePhase4()
         self.loadingScreen.tick()
 
-    
+
     def buildPhase5Ships(self):
         if not self.shipFactory:
             self.buildShips()
-        
+
         self.shipFactory.handlePhase5()
         self.loadingScreen.tick()
 
-    
+
     def openMainWindow(self, *args, **kw):
         kw['stereo'] = bool(self.stereoEnabled)
-        success = OTPBase.openMainWindow(self, *args, **args)
+        success = OTPBase.openMainWindow(self, *args, **kw)
         if self.win:
             self.win.setSort(500)
             self.win.setChildSort(10)
             self.postOpenWindow()
-        
+        self.isMainWindowOpen = success
         return success
 
-    
     def postOpenWindow(self):
         NametagGlobals.setCamera(base.cam)
         if base.wantEnviroDR:
@@ -608,18 +608,18 @@ class PiratesBase(OTPBase):
         NametagGlobals.setMouseWatcher(base.mouseWatcherNode)
         if base.wantEnviroDR:
             base.setupEnviroCamera()
-        
+
         if self.config.GetBool('show-tex-mem', False):
             if not (self.texmem) or self.texmem.cleanedUp:
                 self.toggleTexMem()
-            
-        
 
-    
+
+
+
     def showEmbeddedFrame(self):
         if not self.hasEmbedded:
             return False
-        
+
         embedded.showMainWindow()
         self.inAdFrame = True
         self.options.fullscreen_runtime = 0
@@ -631,34 +631,34 @@ class PiratesBase(OTPBase):
         messenger.send('access-changed')
         return self.openDefaultWindow(props = self.embeddedWP, gsg = base.win, keepCamera = True)
 
-    
+
     def hideEmbeddedFrame(self):
         if not self.hasEmbedded:
             return False
-        
+
         embedded.hideMainWindow()
         self.detachedWP.setSize(self.options.getWidth(), self.options.getHeight())
         self.detachedWP.setFullscreen(self.options.fullscreen)
         messenger.send('access-changed')
         return self.openDefaultWindow(props = self.detachedWP, gsg = base.win, keepCamera = True)
 
-    
+
     def setEmbeddedFrameMode(self, access):
         if not self.hasEmbedded:
             return False
-        
+
         if access == OTPGlobals.AccessVelvetRope and launcher.getValue('GAME_SHOW_ADDS') != 'NO':
             self.inAdFrame = True
             if not embedded.isMainWindowVisible():
                 return self.showEmbeddedFrame()
-            
+
         else:
             self.inAdFrame = False
             if embedded.isMainWindowVisible():
                 return self.hideEmbeddedFrame()
-            
 
-    
+
+
     def popupBrowser(self, url, demandFocus = False):
         import sys
         if sys.platform == 'darwin':
@@ -668,7 +668,7 @@ class PiratesBase(OTPBase):
             import webbrowser as webbrowser
             webbrowser.open(url)
         else:
-            
+
             try:
                 import webbrowser as webbrowser
                 webbrowser.open(url, new = 2, autoraise = True)
@@ -685,16 +685,16 @@ class PiratesBase(OTPBase):
                     os.system('explorer "%s"' % url)
 
 
-    
+
     def refreshAds(self):
         self.notify.debug('Refresh Ads')
         if not self.hasEmbedded:
             return False
-        
+
         embedded.allowAddRefreshLeft()
         embedded.allowAddRefreshTop()
 
-    
+
     def positionFarCull(self):
         gridDetail = base.config.GetString('grid-detail', 'high')
         self.gridDetail = gridDetail
@@ -707,11 +707,11 @@ class PiratesBase(OTPBase):
         else:
             raise StandardError, 'Invalid grid-detail: %s' % gridDetail
 
-    
+
     def disableFarCull(self):
         self.farCull.setPos(0, 10000, 0)
 
-    
+
     def setLowMemory(self, lowMemory):
         self.lowMemory = lowMemory
         if lowMemory:
@@ -726,9 +726,9 @@ class PiratesBase(OTPBase):
             'models/misc/male_face.bam',
             'models/misc/female_face.bam']:
             self._setKeepRamImage(filename)
-        
 
-    
+
+
     def _setKeepRamImage(self, filename):
         model = loader.loadModel(filename)
         if self.lowMemory:
@@ -736,20 +736,20 @@ class PiratesBase(OTPBase):
                 tex.setCompression(tex.CMDefault)
                 tex.setKeepRamImage(False)
                 tex.clearRamImage()
-            
+
         else:
             for tex in model.findAllTextures():
                 tex.setCompression(tex.CMOff)
                 tex.setKeepRamImage(True)
                 tex.reload()
-            
 
-    
+
+
     def setupRender2d(self):
         OTPBase.setupRender2d(self)
         self.a2dTopRight.reparentTo(self.aspect2d, sort = 1)
 
-    
+
     def setupMouse(self, win):
         OTPBase.setupMouse(self, win)
         mk = self.mouseWatcher.getParent()
@@ -763,7 +763,7 @@ class PiratesBase(OTPBase):
         bt.node().setModifierButtons(mods)
         self.buttonThrowers.append(bt)
 
-    
+
     def doAvatarPhysics(self, state):
         dt = ClockObject.getGlobalClock().getDt()
         freq = base.config.GetFloat('avatar-physics-freq', 0.0)
@@ -772,21 +772,21 @@ class PiratesBase(OTPBase):
             self.avatarPhysicsMgr.doPhysics(dt)
         elif not hasattr(state, 'dtRollover'):
             state.dtRollover = 0
-        
+
         maxDt = 1.0 / freq
         dt += state.dtRollover
         steps = int(dt / maxDt)
         state.dtRollover = dt % maxDt
         for x in range(min(steps, maxSteps)):
             self.avatarPhysicsMgr.doPhysics(maxDt)
-        
+
         finalStep = max(steps - maxSteps, 0)
         if finalStep:
             self.avatarPhysicsMgr.doPhysics(finalStep * maxDt)
-        
+
         return Task.cont
 
-    
+
     def takeScreenShot(self):
         self.notify.info('Beginning screenshot capture')
         dt = time.localtime()
@@ -800,41 +800,41 @@ class PiratesBase(OTPBase):
         screenShotNotice = DirectLabel(text = PLocalizer.ScreenshotCaptured + ':\n' + winfile, scale = 0.050000000000000003, pos = (0.0, 0.0, 0.29999999999999999), text_bg = (1, 1, 1, 0), text_fg = (1, 1, 1, 1), frameColor = (1, 1, 1, 0), text_font = PiratesGlobals.getInterfaceOutlineFont())
         screenShotNotice.reparentTo(base.a2dBottomCenter)
         screenShotNotice.setBin('gui-popup', 0)
-        
+
         def clearScreenshotMsg(event):
             screenShotNotice.destroy()
 
         taskMgr.doMethodLater(3.0, clearScreenshotMsg, 'clearScreenshot')
 
-    
+
     def showScreenshots(self):
         filenames = os.listdir(os.curdir + '/' + PLocalizer.ScreenshotDir)
         for f in filenames:
             if 'jpg' in f:
                 if not self.screenshotViewer:
                     self.screenshotViewer = ScreenshotViewer.ScreenshotViewer()
-                
+
                 self.screenshotViewer.toggleShow()
                 continue
-        
 
-    
+
+
     def cleanupDownloadWatcher(self):
         self.downloadWatcher.cleanup()
         if hasattr(self, 'localAvatar'):
             if self.localAvatar.guiMgr.trackedQuestLabel:
                 self.localAvatar.guiMgr.trackedQuestLabel.setPos(-0.90000000000000002, 0, -0.050000000000000003)
-            
-        
+
+
         self.downloadWatcher = None
 
-    
+
     def startShow(self, cr):
         self.cr = cr
         WorldCreator = WorldCreator
         import pirates.world
         self.worldCreator = WorldCreator.WorldCreator(self.cr, None, None)
-        
+
         def nullYield(comment = ''):
             pass
 
@@ -866,14 +866,14 @@ class PiratesBase(OTPBase):
             url.setScheme('s')
             if not url.hasPort():
                 url.setPort(serverPort)
-            
+
             serverList.append(url)
-        
+
         if len(serverList) == 1:
             failover = base.config.GetString('server-failover', '')
             serverURL = serverList[0]
             for arg in failover.split():
-                
+
                 try:
                     port = int(arg)
                     url = URLSpec(serverURL)
@@ -884,13 +884,13 @@ class PiratesBase(OTPBase):
                 if url != serverURL:
                     serverList.append(url)
                     continue
-            
-        
+
+
         cr.loginFSM.request('connect', [
             serverList])
         self.musicMgr = MusicManager.MusicManager()
         self.ambientMgr = PiratesAmbientManager.PiratesAmbientManager()
-        
+
         def toggleGUI():
             self.showGui = not (self.showGui)
             render2d.toggleVis()
@@ -898,13 +898,13 @@ class PiratesBase(OTPBase):
             for i in range(npc.getNumPaths()):
                 np = npc.getPath(i)
                 np.toggleVis()
-            
+
             if not self.showGui:
                 messenger.send('GUIHidden')
             else:
                 messenger.send('GUIShown')
 
-        
+
         def toggleWorld():
             if base.cr.activeWorld.isHidden():
                 base.cr.activeWorld.show()
@@ -919,41 +919,41 @@ class PiratesBase(OTPBase):
 
         self.accept(PiratesGlobals.HideGuiHotkey, toggleGUI)
 
-    
+
     def panda3dRenderError(self):
         if launcher:
             launcher.setPandaErrorCode(14)
-        
+
         if self.cr.timeManager:
             self.cr.timeManager.setDisconnectReason(PiratesGlobals.DisconnectGraphicsError)
-        
+
         self.cr.sendDisconnect()
         sys.exit()
 
-    
+
     def userExit(self):
         if self._PiratesBase__alreadyExiting:
             return None
-        
+
         self._PiratesBase__alreadyExiting = True
         requestResult = False
         if hasattr(base, 'cr'):
             if self.cr.timeManager:
                 self.cr.timeManager.setDisconnectReason(PiratesGlobals.DisconnectCloseWindow)
-            
+
             if self.cr.loginFSM.getCurrentState().getName() == 'playingGame':
                 requestResult = self.cr.gameFSM.request('closeShard', [
                     'shutdown'])
             else:
                 requestResult = self.cr.loginFSM.request('shutdown')
-        
+
         self.loadingScreen.destroy()
         if not requestResult:
             self.notify.warning('Could not request shutdown; exiting anyway.')
             self.exitShow()
-        
 
-    
+
+
     def exitShow(self, errorCode = None):
         self.bamCache.flushIndex()
         self.ignore('f12')
@@ -961,14 +961,14 @@ class PiratesBase(OTPBase):
             self.musicMgr.delete()
             self.ambientMgr.delete()
             self.cr.ignoreAll()
-        
+
         self.notify.info('Exiting Pirates')
         if self.launcher and errorCode is not None:
             self.launcher.setPandaErrorCode(errorCode)
-        
+
         sys.exit()
 
-    
+
     def initNametagGlobals(self):
         arrow = loader.loadModel('models/gui/arrow')
         card = NodePath('card')
@@ -986,7 +986,7 @@ class PiratesBase(OTPBase):
         NametagGlobals.setNametagCard(card, VBase4(-1, 1, -1, 1))
         if self.mouseWatcherNode:
             NametagGlobals.setMouseWatcher(self.mouseWatcherNode)
-        
+
         NametagGlobals.setSpeechBalloon3d(speech3d)
         NametagGlobals.setThoughtBalloon3d(thought3d)
         NametagGlobals.setSpeechBalloon2d(speech2d)
@@ -1019,14 +1019,14 @@ class PiratesBase(OTPBase):
             mm.addGridCell(5, 2.5, base.a2dLeft, base.a2dRight, base.a2dBottom, base.a2dTop),
             mm.addGridCell(5, 1.5, base.a2dLeft, base.a2dRight, base.a2dBottom, base.a2dTop)]
 
-    
+
     def getShardPopLimits(self):
         low = self.config.GetInt('shard-pop-limit-low', 100)
         mid = self.config.GetInt('shard-pop-limit-mid', 200)
         high = self.config.GetInt('shard-pop-limit-high', 300)
         return (low, mid, high)
 
-    
+
     def toggleMarketingViewer(self):
         if not self.marketingViewerOn:
             if self.cr:
@@ -1034,19 +1034,19 @@ class PiratesBase(OTPBase):
                     self.cr.tutorialObject.map.marketingOn()
                 elif self.cr.avCreate:
                     self.cr.avCreate.marketingOn()
-                
-            
+
+
             self.marketingViewerOn = True
         elif self.cr:
             if self.cr.tutorialObject and self.cr.tutorialObject.map:
                 self.cr.tutorialObject.map.marketingOff()
             elif self.cr.avCreate:
                 self.cr.avCreate.marketingOff()
-            
-        
+
+
         self.marketingViewerOn = False
 
-    
+
     def setOverrideShipVisibility(self, value):
         self.overrideShipVisibility = value
         if value:
@@ -1058,7 +1058,7 @@ class PiratesBase(OTPBase):
             messenger.send('ship_vis_change', [
                 self.options.ocean_visibility])
 
-    
+
     def getVelvetDisplayResolutions(self, bits_per_pixel, pipe):
         self.getDisplayResolutions(bits_per_pixel, pipe)
         self.windowed_resolution_table = []
@@ -1067,9 +1067,9 @@ class PiratesBase(OTPBase):
             m = embedded.getAtWindowModeDef(i)
             self.windowed_resolution_table = self.windowed_resolution_table + [
                 (m['want_size_x'], m['want_size_y'])]
-        
 
-    
+
+
     def getDisplayResolutions(self, bits_per_pixel, pipe):
         di = pipe.getDisplayInformation()
         total_display_modes = di.getTotalDisplayModes()
@@ -1085,11 +1085,11 @@ class PiratesBase(OTPBase):
                                 if di.getDisplayModeWidth(index) <= di.getMaximumWindowWidth() and di.getDisplayModeHeight(index) <= di.getMaximumWindowHeight():
                                     resolution_table = resolution_table + [
                                         resolution]
-                                
-                            
-                        
-                    
-                
+
+
+
+
+
                 index += 1
             widescreen_resolution_table = [
                 (1280, 720),
@@ -1101,8 +1101,8 @@ class PiratesBase(OTPBase):
                     if resolution[0] <= di.getMaximumWindowWidth() and resolution[1] <= di.getMaximumWindowHeight():
                         resolution_table = resolution_table + [
                             resolution]
-                    
-                
+
+
                 index += 1
             width = base.config.GetInt('custom-window-width', 0)
             height = base.config.GetInt('custom-window-height', 0)
@@ -1112,9 +1112,9 @@ class PiratesBase(OTPBase):
                     if di.getDisplayModeWidth(index) <= di.getMaximumWindowWidth() and di.getDisplayModeHeight(index) <= di.getMaximumWindowHeight():
                         resolution_table = resolution_table + [
                             resolution]
-                    
-                
-            
+
+
+
             self.windowed_resolution_table = resolution_table
             resolution_table = []
             index = 0
@@ -1125,15 +1125,15 @@ class PiratesBase(OTPBase):
                         if resolution not in resolution_table:
                             resolution_table = resolution_table + [
                                 resolution]
-                        
-                    
-                
+
+
+
                 index += 1
             if False:
                 resolution = (2048, 1536)
                 resolution_table = resolution_table + [
                     resolution]
-            
+
             self.fullscreen_resolution_table = resolution_table
         else:
             default_windowed_resolution_table = [
@@ -1151,7 +1151,7 @@ class PiratesBase(OTPBase):
             self.windowed_resolution_table = default_windowed_resolution_table
             self.fullscreen_resolution_table = default_fullscreen_resolution_table
 
-    
+
     def width_to_resolution_id(self, width):
         id = 1
         index = 0
@@ -1160,31 +1160,31 @@ class PiratesBase(OTPBase):
             if width == GameOptions.resolution_table[index][0]:
                 id = index
                 break
-            
+
             index += 1
         return id
 
-    
+
     def hideEffects(self):
         self.effectsRoot.hide()
 
-    
+
     def showEffects(self):
         self.effectsRoot.show()
 
-    
+
     def zoneLODCollLoop(self, task):
         if self.zoneLODTarget:
             self.lodTrav.traverse(self.zoneLODTarget)
-        
+
         return Task.cont
 
-    
+
     def enableZoneLODs(self, target):
         self.zoneLODTarget = target
         taskMgr.add(self.zoneLODCollLoop, 'zoneLODloop', priority = 39)
 
-    
+
     def disableZoneLODs(self):
         self.zoneLODTarget = None
         self.zoneLODEventHandler.clear()

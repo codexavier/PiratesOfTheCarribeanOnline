@@ -1,7 +1,6 @@
 # File: D (Python 2.4)
 
 import cPickle
-from libpandaexpress import ConfigVariableBool
 from pandac.PandaModules import *
 from direct.showbase.PythonUtil import *
 from direct.showbase import AppRunnerGlobal
@@ -44,7 +43,7 @@ commonDropData = vfs.readFile(filenameDrops, 1)
 __commonDropInfo = cPickle.loads(commonDropData)
 __staticIdTypeList = { }
 for (heading, value) in __columnHeadings.items():
-    
+
     try:
         newHeading = string.replace(heading, '\r', '')
         exec '%s = %s' % (newHeading, value) in globals()
@@ -60,7 +59,7 @@ for (heading, value) in __commonDropInfo.items():
         value = 1
     else:
         value = 0
-    
+
     try:
         newHeading = string.replace(heading, '\r', '')
         id = None
@@ -78,7 +77,7 @@ del data
 def isLive(item):
     if ConfigVariableBool('force-all-items-live', False):
         return True
-    
+
     isLive = item[IS_LIVE]
     return item[IS_LIVE]
 
@@ -268,21 +267,21 @@ def getShipDropItemsByClass(shipClass):
     shipType = __shipTypeList.get(shipClass)
     if __lootShipCache.has_key(shipClass):
         return __lootShipCache[shipClass]
-    
+
     for itemId in __dropInfo:
         item = __dropInfo[itemId]
         if not isLive(item):
             continue
-        
+
         if item[DROPS_FROM_ALL_SHIPS]:
             dropItems.append(itemId)
-        
+
         if shipType and shipType < len(item):
             if item[shipType]:
                 dropItems.append(itemId)
-            
+
         item[shipType]
-    
+
     __lootShipCache[shipClass] = dropItems
     return dropItems
 
@@ -314,7 +313,7 @@ __enemyTypeList = {
     AvatarTypes.Zombie: Zombie,
     AvatarTypes.CaptMudmoss: CaptMudmoss,
     AvatarTypes.Revenant: Revenant,
-    AvatarTypes.RageGhost: RageGhost,
+    # AvatarTypes.RageGhost: RageGhost,
     AvatarTypes.MutineerGhost: MutineerGhost,
     AvatarTypes.DeviousGhost: DeviousGhost,
     AvatarTypes.TraitorGhost: TraitorGhost,
@@ -478,33 +477,33 @@ def getEnemyDropItemsByType(type, uniqueId):
         if __typeCommonDropList.has_key(typeKey):
             shouldUseCommonDrop = __typeCommonDropList[typeKey]
             dropKey = typeKey
-        
+
     dropItems = []
     enemyType = __staticIdTypeList.get(uniqueId)
     isBoss = 1
     if not enemyType:
         enemyType = __enemyTypeList.get(type)
-    
+
     if dropKey and __lootDropCache.has_key(dropKey):
         return __lootDropCache[dropKey]
-    
+
     for itemId in __dropInfo:
         item = __dropInfo[itemId]
         if not isLive(item):
             continue
-        
+
         if shouldUseCommonDrop and item[DROPS_FROM_ALL_ENEMIES]:
             dropItems.append(itemId)
-        
+
         if enemyType and enemyType < len(item):
             if item[enemyType]:
                 dropItems.append(itemId)
-            
+
         item[enemyType]
-    
+
     if dropKey:
         __lootDropCache[dropKey] = dropItems
-    
+
     return dropItems
 
 
@@ -514,17 +513,17 @@ def getStoreItems(uniqueId):
     if shopKeeper:
         if __lootStoreCache.has_key(uniqueId):
             return __lootStoreCache[uniqueId]
-        
+
         for itemId in __dropInfo:
             item = __dropInfo[itemId]
             if not isLive(item):
                 continue
-            
+
             if item[shopKeeper]:
                 storeItems.append(itemId)
                 continue
-        
-    
+
+
     __lootStoreCache[uniqueId] = storeItems
     return storeItems
 
@@ -535,11 +534,11 @@ def getMakeAPirateClothing():
         item = __dropInfo[itemId]
         if not isLive(item):
             continue
-        
+
         if item[MakeAPirate]:
             mapClothing.append(itemId)
             continue
-    
+
     return mapClothing
 
 
@@ -549,11 +548,11 @@ def getQuestPropItems():
         item = __dropInfo[itemId]
         if not isLive(item):
             continue
-        
+
         if item[QuestProp]:
             qpItems.append(itemId)
             continue
-    
+
     return qpItems
 
 __fishTables = []
@@ -566,13 +565,13 @@ for index in [
     for (itemId, item) in __dropInfo.iteritems():
         if not isLive(item):
             continue
-        
+
         if index < len(item):
             if item[index]:
                 dropTable.append(itemId)
-            
-        
-    
+
+
+
     __fishTables.append(dropTable)
 
 
@@ -583,14 +582,12 @@ def getFishDrops(size):
 def createZippedDist(unsummedDist, outcomes):
     hundredSum = abs(sum(unsummedDist) - 100) < 0.10000000000000001
     if hundredSum:
-        continue
-        return _[1]([ sum(unsummedDist[:x]) for x in range(len(unsummedDist)) ], outcomes)
-    
-    return None(hundredSum, outcomes)
+        return ([sum(unsummedDist[:x]) for x in range(len(unsummedDist))], outcomes)
+
+    return (hundredSum, outcomes)
 
 
 def rollDistribution(zippedDist):
     roll = random.uniform(0, 100)
-    continue
-    return _[1][-1][1]
+    return None # TODO: What should this return?
 

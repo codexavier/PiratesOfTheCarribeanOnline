@@ -1,147 +1,149 @@
-# File: A (Python 2.4)
-
 import random
 from pirates.pirate.AvatarType import AvatarType
 from pirates.pirate.AvatarTypeSet import AvatarTypeSet
 from pirates.piratesbase import PLocalizer as PL
+
+
 AnyAvatar = AvatarType()
 AnyShip = AvatarType()
-BossType = AvatarType(boss = 1)
-MovieCasts = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType()(range(6)))
-(JackSparrow, ElizabethSwan, CaptBarbossa, WillTurner, TiaDalma, JoshameeGibbs) = MovieCasts
-Factions = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(faction = x)(range(9)))
-(Undead, Navy, Creature, Townfolk, Pirate, TradingCo, Ghost, VoodooZombie, BountyHunter) = Factions
-CreatureTracks = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Creature, track = x)(range(5)))
-(LandCreature, SeaCreature, AirCreature, SeaMonster, Animal) = CreatureTracks
-LandCreatures = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = LandCreature, id = x)(range(24)))
-(Crab, StoneCrab, RockCrab, GiantCrab, CrusherCrab, Chicken, Rooster, Pig, Stump, TwistedStump, FlyTrap, RancidFlyTrap, AncientFlyTrap, Scorpion, DireScorpion, DreadScorpion, Alligator, BayouGator, BigGator, HugeGator, Dog, Seagull, Raven, Monkey) = LandCreatures
+BossType = AvatarType(boss=1)
+
+MovieCasts = [AvatarType() for _ in range(6)]
+JackSparrow, ElizabethSwan, CaptBarbossa, WillTurner, TiaDalma, JoshameeGibbs = MovieCasts
+
+Factions = [AvatarType(faction=x) for x in range(9)]
+Undead, Navy, Creature, Townfolk, Pirate, TradingCo, Ghost, VoodooZombie, BountyHunter = Factions
+
+CreatureTracks = [AvatarType(base=Creature, track=x) for x in range(5)]
+LandCreature, SeaCreature, AirCreature, SeaMonster, Animal = CreatureTracks
+
+LandCreatures = [AvatarType(base=LandCreature, id=x) for x in range(24)]
+Crab, StoneCrab, RockCrab, GiantCrab, CrusherCrab, Chicken, Rooster, Pig, Stump, TwistedStump, FlyTrap, RancidFlyTrap, AncientFlyTrap, Scorpion, DireScorpion, DreadScorpion, Alligator, BayouGator, BigGator, HugeGator, Dog, Seagull, Raven, Monkey = LandCreatures
+
 LandCrab = AvatarTypeSet(PL.LandCrabStrings, Crab, RockCrab, GiantCrab, CrusherCrab)
-CrabBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Crab, boss = x)(range(1, 2)))
+CrabBosses = [AvatarType(base=Crab, boss=x) for x in range(1, 2)]
 (SandStalker,) = CrabBosses
-RockCrabBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = RockCrab, boss = x)(range(1, 2)))
-(ManRipper,) = RockCrabBosses
-GiantCrabBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = GiantCrab, boss = x)(range(1, 2)))
-(ClawChief,) = GiantCrabBosses
-StumpBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Stump, boss = x)(range(1, 2)))
-(Bowbreaker,) = StumpBosses
-FlyTrapBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = FlyTrap, boss = x)(range(1, 2)))
-(SnapDragon,) = FlyTrapBosses
-ScorpionBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Scorpion, boss = x)(range(1, 2)))
-(RipTail,) = ScorpionBosses
-DreadScorpionBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = DreadScorpion, boss = x)(range(1, 2)))
-(SilentStinger,) = DreadScorpionBosses
-AlligatorBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Alligator, boss = x)(range(1, 2)))
 (Bonecracker,) = CrabBosses
-BigGatorBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = BigGator, boss = x)(range(1, 2)))
+
+RockCrabBosses = [AvatarType(base=RockCrab, boss=x) for x in range(1, 2)]
+(ManRipper,) = RockCrabBosses
+
+GiantCrabBosses = [AvatarType(base=GiantCrab, boss=x) for x in range(1, 2)]
+(ClawChief,) = GiantCrabBosses
+
+StumpBosses = [AvatarType(base=Stump, boss=x) for x in range(1, 2)]
+(Bowbreaker,) = StumpBosses
+
+FlyTrapBosses = [AvatarType(base=FlyTrap, boss=x) for x in range(1, 2)]
+(SnapDragon,) = FlyTrapBosses
+
+ScorpionBosses = [AvatarType(base=Scorpion, boss=x) for x in range(1, 2)]
+(RipTail,) = ScorpionBosses
+
+DreadScorpionBosses = [AvatarType(base=DreadScorpion, boss=x) for x in range(1, 2)]
+(SilentStinger,) = DreadScorpionBosses
+
+AlligatorBosses = [AvatarType(base=Alligator, boss=x) for x in range(1, 2)]
+BigGatorBosses = [AvatarType(base=BigGator, boss=x) for x in range(1, 2)]
 (Trapjaw,) = BigGatorBosses
-HugeGatorBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = HugeGator, boss = x)(range(1, 2)))
+
+HugeGatorBosses = [AvatarType(base=HugeGator, boss=x) for x in range(1, 2)]
 (SwampTerror,) = HugeGatorBosses
-Animals = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Animal, id = x)(range(6)))
-(Chicken, Rooster, Pig, Dog, Seagull, Raven) = Animals
-SeaCreatures = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = SeaCreature, id = x)(range(1)))
+
+Animals = [AvatarType(base=Animal, boss=x) for x in range(6)]
+Chicken, Rooster, Pig, Dog, Seagull, Raven = Animals
+
+SeaCreatures = [AvatarType(base=SeaCreature, boss=x) for x in range(1)]
 (Fish,) = SeaCreatures
-AirCreatures = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = AirCreature, id = x)(range(10)))
-(Seagull, Raven, Bat, RabidBat, VampireBat, FireBat, Wasp, KillerWasp, AngryWasp, SoldierWasp) = AirCreatures
-BatBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Bat, boss = x)(range(1, 2)))
+
+AirCreatures = [AvatarType(base=AirCreature, boss=x) for x in range(10)]
+Seagull, Raven, Bat, RabidBat, VampireBat, FireBat, Wasp, KillerWasp, AngryWasp, SoldierWasp = AirCreatures
+
+BatBosses = [AvatarType(base=Bat, boss=x) for x in range(1, 2)]
 (Frightfang,) = BatBosses
-VampireBatBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = VampireBat, boss = x)(range(1, 2)))
+
+VampireBatBosses = [AvatarType(base=VampireBat, boss=x) for x in range(1, 2)]
 (Bloodleach,) = VampireBatBosses
-WaspBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Wasp, boss = x)(range(1, 2)))
+
+WaspBosses = [AvatarType(base=Wasp, boss=x) for x in range(1, 2)]
 (Firesting,) = WaspBosses
-AngryWaspBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = AngryWasp, boss = x)(range(1, 2)))
+
+AngryWaspBosses = [AvatarType(base=AngryWasp, boss=x) for x in range(1, 2)]
 (Devilwing,) = AngryWaspBosses
-SeaMonsters = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = SeaMonster, id = x)(range(7)))
-(SeaKraken, Kraken, KrakenBody, KrakenHead, GrabberTentacle, HolderTentacle, SeaSerpent) = SeaMonsters
-UndeadTracks = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Undead, track = x)(range(9)))
-(Earth, Air, Fire, Water, Classic, Boss, French, Spanish, EarthSpecial) = UndeadTracks
-EarthUndead = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Earth, id = x)(range(15)))
-(Clod, Sludge, Mire, MireKnife, Muck, MuckCutlass, Corpse, CorpseCutlass, Carrion, CarrionKnife, Cadaver, CadaverCutlass, Zombie, CaptMudmoss, Mossman) = EarthUndead
-ClodBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Clod, boss = x)(range(4)))
-(WillBurybones, FoulCrenshaw, EvanTheDigger, ThadIllFortune) = ClodBosses
-SludgeBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Sludge, boss = x)(range(1, 2)))
+
+SeaMonsters = [AvatarType(base=SeaMonster, boss=x) for x in range(7)]
+SeaKraken, Kraken, KrakenBody, KrakenHead, GrabberTentacle, HolderTentacle, SeaSerpent = SeaMonsters
+
+UndeadTracks = [AvatarType(base=Undead, boss=x) for x in range(9)]
+Earth, Air, Fire, Water, Classic, Boss, French, Spanish, EarthSpecial = UndeadTracks
+
+EarthUndead = [AvatarType(base=Earth, boss=x) for x in range(15)]
+Clod, Sludge, Mire, MireKnife, Muck, MuckCutlass, Corpse, CorpseCutlass, Carrion, CarrionKnife, Cadaver, CadaverCutlass, Zombie, CaptMudmoss, Mossman = EarthUndead
+
+ClodBosses = [AvatarType(base=Clod, boss=x) for x in range(4)]
+WillBurybones, FoulCrenshaw, EvanTheDigger, ThadIllFortune = ClodBosses
+
+SludgeBosses = [AvatarType(base=Sludge, boss=x) for x in range(1, 2)]
 (SimonButcher,) = SludgeBosses
-MireBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Mire, boss = x)(range(1, 2)))
+
+MireBosses = [AvatarType(base=Mire, boss=x) for x in range(1, 2)]
 (ThaddeusWoodworm,) = MireBosses
-MuckBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Muck, boss = x)(range(1, 2)))
+
+MuckBosses = [AvatarType(base=Muck, boss=x) for x in range(1, 2)]
 (Bonebreaker,) = MuckBosses
-CorpseBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Corpse, boss = x)(range(1, 2)))
+
+CorpseBosses = [AvatarType(base=Corpse, boss=x) for x in range(1, 2)]
 (GideonGrog,) = CorpseBosses
-CarrionBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Carrion, boss = x)(range(1, 2)))
+
+CarrionBosses = [AvatarType(base=Carrion, boss=x) for x in range(1, 2)]
 (WhitWidowmaker,) = CarrionBosses
-CadaverBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Cadaver, boss = x)(range(1, 2)))
+
+CadaverBosses = [AvatarType(base=Cadaver, boss=x) for x in range(1, 2)]
 (Blackheart,) = CadaverBosses
-ZombieBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Zombie, boss = x)(range(1, 2)))
+
+ZombieBosses = [AvatarType(base=Zombie, boss=x) for x in range(1, 2)]
 (FrancisFaust,) = ZombieBosses
-CaptMudmossBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = CaptMudmoss, boss = x)(range(1, 2)))
+
+CaptMudmossBosses = [AvatarType(base=CaptMudmoss, boss=x) for x in range(1, 2)]
 (JeremyColdhand,) = CaptMudmossBosses
-MossmanBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Mossman, boss = x)(range(1, 2)))
+
+MossmanBosses = [AvatarType(base=Mossman, boss=x) for x in range(1, 2)]
 (Stench,) = MossmanBosses
-AirUndead = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Air, id = x)(range(10)))
-(Whiff, Reek, Billow, Stench, Shade, Specter, Phantom, Wraith, CaptZephyr, Squall) = AirUndead
-FireUndead = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Fire, id = x)(range(10)))
-(Glint, Flicker, Smolder, Spark, Imp, Brand, Lumen, Fiend, CaptCinderbones, Torch) = FireUndead
-WaterUndead = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Water, id = x)(range(10)))
-(Drip, Damp, Drizzle, Spray, Splatter, Drool, Drench, Douse, CaptBriney, Spout) = WaterUndead
+
+AirUndead = [AvatarType(base=Air, boss=x) for x in range(10)]
+Whiff, Reek, Billow, Stench, Shade, Specter, Phantom, Wraith, CaptZephyr, Squall = AirUndead
+
+FireUndead = [AvatarType(base=Fire, boss=x) for x in range(10)]
+Glint, Flicker, Smolder, Spark, Imp, Brand, Lumen, Fiend, CaptCinderbones, Torch = FireUndead
+
+WaterUndead = [AvatarType(base=Water, boss=x) for x in range(10)]
+Drip, Damp, Drizzle, Spray, Splatter, Drool, Drench, Douse, CaptBriney, Spout = WaterUndead
+
 ClassicUndead = list()
-BossUndead = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Boss, id = x)(range(1)))
+
+BossUndead = [AvatarType(base=Boss, boss=x) for x in range(1)]
 (JollyRoger,) = BossUndead
-FrenchUndead = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = French, id = x)(range(5)))
-(FrenchUndeadA, FrenchUndeadB, FrenchUndeadC, FrenchUndeadD, FrenchBoss) = FrenchUndead
-FrenchBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = FrenchBoss, boss = x)(range(1, 2)))
+
+FrenchUndead = [AvatarType(base=French, boss=x) for x in range(5)]
+FrenchUndeadA, FrenchUndeadB, FrenchUndeadC, FrenchUndeadD, FrenchBoss = FrenchUndead
+
+FrenchBosses = [AvatarType(base=FrenchBoss, boss=x) for x in range(1, 2)]
 (FrenchBossA,) = FrenchBosses
-SpanishUndead = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Spanish, id = x)(range(5)))
-(SpanishUndeadA, SpanishUndeadB, SpanishUndeadC, SpanishUndeadD, SpanishBoss) = SpanishUndead
-SpanishBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = SpanishBoss, boss = x)(range(1, 2)))
+
+SpanishUndead = [AvatarType(base=Spanish, boss=x) for x in range(5)]
+SpanishUndeadA, SpanishUndeadB, SpanishUndeadC, SpanishUndeadD, SpanishBoss = SpanishUndead
+
+SpanishBosses = [AvatarType(base=SpanishBoss, boss=x) for x in range(1, 2)]
 (SpanishBossA,) = SpanishBosses
-EarthSpecialUndead = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = EarthSpecial, id = x)(range(1)))
+
+EarthSpecialUndead = [AvatarType(base=EarthSpecial, boss=x) for x in range(1)]
 (BomberZombie,) = EarthSpecialUndead
+
 UndeadCommon = (EarthUndead[0], EarthUndead[1])
 UndeadUncommon = ()
 UndeadRare = ()
 UndeadUltraRare = ()
+
 AllUndead = []
 AllUndead.extend(UndeadCommon)
 AllUndead.extend(UndeadUncommon)
@@ -150,22 +152,17 @@ AllUndead.extend(UndeadRare)
 def pickUndead(minVal, maxVal, undeadType = EarthUndead):
     return undeadType[random.randint(minVal, maxVal)]
 
-
 def pickEarthUndead(minVal = 0, maxVal = len(EarthUndead) - 1):
     return EarthUndead[random.randint(minVal, maxVal)]
-
 
 def pickWaterUndead(minVal = 0, maxVal = len(WaterUndead) - 1):
     return WaterUndead[random.randint(minVal, maxVal)]
 
-
 def pickSpanishUndead(minVal = 0, maxVal = len(SpanishUndead) - 1):
     return SpanishUndead[random.randint(minVal, maxVal)]
 
-
 def pickFrenchUndead(minVal = 0, maxVal = len(FrenchUndead) - 1):
     return FrenchUndead[random.randint(minVal, maxVal)]
-
 
 def randomUndead(level):
     retval = level / 3
@@ -174,42 +171,39 @@ def randomUndead(level):
         retval -= 1
     elif rnd > 12:
         retval += 1
-    
     if retval < 0:
         retval = 0
-    
     if retval > 7:
         retval = 7
-    
     return EarthUndead[retval]
 
-NavyTracks = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Navy, track = x)(range(3)))
-(Soldier, Marksman, Leader) = NavyTracks
-Soldiers = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Soldier, id = x)(range(5)))
-(Axeman, Swordsman, RoyalGuard, MasterSwordsman, WeaponsMaster) = Soldiers
-Marksmen = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Marksman, id = x)(range(7)))
-(Cadet, Guard, Marine, Sergeant, Veteran, Officer, Dragoon) = Marksmen
-CadetBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Cadet, boss = x)(range(1, 2)))
+NavyTracks = [AvatarType(base=Navy, boss=x) for x in range(3)]
+Soldier, Marksman, Leader = NavyTracks
+
+Soldiers = [AvatarType(base=Soldier, boss=x) for x in range(5)]
+Axeman, Swordsman, RoyalGuard, MasterSwordsman, WeaponsMaster = Soldiers
+
+Marksmen = [AvatarType(base=Marksman, boss=x) for x in range(7)]
+Cadet, Guard, Marine, Sergeant, Veteran, Officer, Dragoon = Marksmen
+
+CadetBosses = [AvatarType(base=Cadet, boss=x) for x in range(1, 2)]
 (GeoffreyPain,) = CadetBosses
-GuardBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Guard, boss = x)(range(1, 2)))
+
+GuardBosses = [AvatarType(base=Guard, boss=x) for x in range(1, 2)]
 (HughBrandish,) = GuardBosses
-SergeantBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Sergeant, boss = x)(range(1, 2)))
+
+SergeantBosses = [AvatarType(base=Sergeant, boss=x) for x in range(1, 2)]
 (NathanielGrimm,) = SergeantBosses
-VeteranBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Veteran, boss = x)(range(1, 2)))
+
+VeteranBosses = [AvatarType(base=Veteran, boss=x) for x in range(1, 2)]
 (SidShiver,) = VeteranBosses
-OfficerBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Officer, boss = x)(range(1, 2)))
+
+OfficerBosses = [AvatarType(base=Officer, boss=x) for x in range(1, 2)]
 (IanRamjaw,) = OfficerBosses
-Leaders = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Leader, id = x)(range(5)))
-(FirstMate, Captain, Lieutenant, Admiral, Commodore) = Leaders
+
+Leaders = [AvatarType(base=Leader, boss=x) for x in range(5)]
+FirstMate, Captain, Lieutenant, Admiral, Commodore = Leaders
+
 NavyCommon = (Cadet, Guard, Sergeant, Veteran, Officer)
 
 def randomNavy(level):
@@ -219,15 +213,14 @@ def randomNavy(level):
         retval -= 1
     elif rnd > 12:
         retval += 1
-    
+
     if retval < 0:
         retval = 0
-    
+
     if retval > 4:
         retval = 4
-    
-    return Marksmen[retval]
 
+    return Marksmen[retval]
 
 def pickTrading(tradlow, tradhigh):
     return Mercenaries[random.randint(tradlow, tradhigh)]
@@ -236,96 +229,93 @@ def pickTrading(tradlow, tradhigh):
 def pickNavy(navylow, navyhigh):
     return Marksmen[random.randint(navylow, navyhigh)]
 
-TownfolkTracks = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Townfolk, track = x)(range(3)))
-(Commoner, StoreOwner, Cast) = TownfolkTracks
-Commoners = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Commoner, id = x)(range(1)))
-Peasant = Commoners
-StoreOwners = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = StoreOwner, id = x)(range(21)))
-(Gypsy, Blacksmith, Shipwright, Cannoneer, Merchant, Bartender, Gunsmith, Grenadier, MedicineMan, Tailor, Tattoo, Jeweler, Barber, Musician, Trainer, PvPRewards, Stowaway, Fishmaster, Cannonmaster, CatalogRep, ScrimmageMaster) = StoreOwners
-CastBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Cast, boss = x)(range(1, 2)))
+TownfolkTracks = [AvatarType(base=Townfolk, track=x) for x in range(3)]
+Commoner, StoreOwner, Cast = TownfolkTracks
+
+Commoners = [AvatarType(base=Leader, id=x) for x in range(1)]
+(Peasant,) = Commoners
+
+StoreOwners = [AvatarType(base=StoreOwner, id=x) for x in range(21)]
+Gypsy, Blacksmith, Shipwright, Cannoneer, Merchant, Bartender, Gunsmith, Grenadier, MedicineMan, Tailor, Tattoo, Jeweler, Barber, Musician, Trainer, PvPRewards, Stowaway, Fishmaster, Cannonmaster, CatalogRep, ScrimmageMaster = StoreOwners
+
+CastBosses = [AvatarType(base=Cast, boss=x) for x in range(1, 2)]
 (Kudgel,) = CastBosses
-PirateTracks = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Pirate, track = x)(range(3)))
-(Player, Brawler, Gunner) = PirateTracks
-Players = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Player, id = x)(range(2)))
-(LocalPirateType, NonLocalPirateType) = Players
-Brawlers = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Brawler, id = x)(range(5)))
-(Landlubber, Scallywag, Buccaneer, Swashbuckler, Warmonger) = Brawlers
-Gunners = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Gunner, id = x)(range(5)))
-(Bandit, Brigand, Sharpshooter, Rifleman, Gunner) = Gunners
-GhostTracks = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Ghost, track = x)(range(2)))
-(GhostPirates, KillerGhosts) = GhostTracks
-GhostPirates = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = GhostPirates, id = x)(range(6)))
-(Revenant, MutineerGhost, DeviousGhost, TraitorGhost, CrewGhost, LeaderGhost) = GhostPirates
-KillerGhosts = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = KillerGhosts, id = x)(range(1)))
+
+PirateTracks = [AvatarType(base=Pirate, track=x) for x in range(3)]
+Player, Brawler, Gunner = PirateTracks
+
+Players = [AvatarType(base=Player, id=x) for x in range(2)]
+LocalPirateType, NonLocalPirateType = Players
+
+Brawlers = [AvatarType(base=Brawler, id=x) for x in range(5)]
+Landlubber, Scallywag, Buccaneer, Swashbuckler, Warmonger = Brawlers
+
+Gunners = [AvatarType(base=Gunner, id=x) for x in range(5)]
+Bandit, Brigand, Sharpshooter, Rifleman, Gunner = Gunners
+
+GhostTracks = [AvatarType(base=Ghost, track=x) for x in range(2)]
+GhostPirates, KillerGhosts = GhostTracks
+
+GhostPirates = [AvatarType(base=GhostPirates, id=x) for x in range(6)]
+Revenant, MutineerGhost, DeviousGhost, TraitorGhost, CrewGhost, LeaderGhost = GhostPirates
+
+KillerGhosts = [AvatarType(base=KillerGhosts, id=x) for x in range(1)]
 (RageGhost,) = KillerGhosts
-LeaderGhostBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = LeaderGhost, boss = x)(range(1, 2)))
+
+LeaderGhostBosses = [AvatarType(base=LeaderGhost, boss=x) for x in range(1, 2)]
 (ElPatron,) = LeaderGhostBosses
-VoodooZombieTracks = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = VoodooZombie, track = x)(range(1)))
+
+VoodooZombieTracks = [AvatarType(base=VoodooZombie, track=x) for x in range(1)]
 (VoodooZombiePirates,) = VoodooZombieTracks
-VoodooZombiePirates = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = VoodooZombiePirates, id = x)(range(8)))
-(PressGangVoodooZombie, CookVoodooZombie, SwabbieVoodooZombie, LookoutVoodooZombie, AngryVoodooZombie, OfficerVoodooZombie, SlaveDriverVoodooZombie, VoodooZombieBoss) = VoodooZombiePirates
-VoodooZombieBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = VoodooZombieBoss, boss = x)(range(1, 2)))
+
+VoodooZombiePirates = [AvatarType(base=VoodooZombiePirates, id=x) for x in range(8)]
+PressGangVoodooZombie, CookVoodooZombie, SwabbieVoodooZombie, LookoutVoodooZombie, AngryVoodooZombie, OfficerVoodooZombie, SlaveDriverVoodooZombie, VoodooZombieBoss = VoodooZombiePirates
+
+VoodooZombieBosses = [AvatarType(base=VoodooZombieBoss, boss=x) for x in range(1, 2)]
 (LaSchafe,) = VoodooZombieBosses
-BountyHunterTracks = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = BountyHunter, track = x)(range(1)))
+
+BountyHunterTracks = [AvatarType(base=BountyHunter, track=x) for x in range(1)]
 (BountyHunters,) = BountyHunterTracks
-BountyHunters = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = BountyHunters, id = x)(range(7)))
-(PettyHunter, BailHunter, ScallyWagHunter, BanditHunter, PirateHunter, WitchHunter, MasterHunter) = BountyHunters
 
-def pickGhost(minVal = 0, maxVal = len(GhostPirates) - 1):
+BountyHunters = [AvatarType(base=BountyHunters, id=x) for x in range(7)]
+PettyHunter, BailHunter, ScallyWagHunter, BanditHunter, PirateHunter, WitchHunter, MasterHunter = BountyHunters
+
+def pickGhost(minVal=0, maxVal=len(GhostPirates)-1):
     return GhostPirates[random.randint(minVal, maxVal)]
-
 
 def pickVoodooZombie(minVal = 0, maxVal = len(VoodooZombiePirates) - 1):
     return VoodooZombiePirates[random.randint(minVal, maxVal)]
 
-
 def pickBountyHunter(minVal = 0, maxVal = len(BountyHunters) - 1):
     return BountyHunters[random.randint(minVal, maxVal)]
 
-TradingCoTracks = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = TradingCo, track = x)(range(3)))
-(Mercenary, Assassin, Official) = TradingCoTracks
-Mercenaries = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Mercenary, id = x)(range(5)))
-(Thug, Grunt, Hiredgun, Mercenary, Assassin) = Mercenaries
-ThugBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Thug, boss = x)(range(1, 2)))
+TradingCoTracks = [AvatarType(base=TradingCo, track=x) for x in range(3)]
+Mercenary, Assassin, Official = TradingCoTracks
+
+Mercenaries = [AvatarType(base=Mercenary, id=x) for x in range(5)]
+Thug, Grunt, Hiredgun, Mercenary, Assassin = Mercenaries
+
+ThugBosses = [AvatarType(base=Thug, boss=x) for x in range(1, 2)]
 (CarlosCudgel,) = ThugBosses
-GruntBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Grunt, boss = x)(range(1, 2)))
+
+GruntBosses = [AvatarType(base=Grunt, boss=x) for x in range(1, 2)]
 (ZachariahSharp,) = GruntBosses
-HiredgunBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Hiredgun, boss = x)(range(1, 2)))
+
+HiredgunBosses = [AvatarType(base=Hiredgun, boss=x) for x in range(1, 2)]
 (HenryFlint,) = HiredgunBosses
-MercenaryBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Mercenary, boss = x)(range(1, 2)))
+
+MercenaryBosses = [AvatarType(base=Mercenary, boss=x) for x in range(1, 2)]
 (PhineasFowl,) = MercenaryBosses
-AssassinBosses = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Assassin, boss = x)(range(1, 2)))
+
+AssassinBosses = [AvatarType(base=Assassin, boss=x) for x in range(1, 2)]
 (EdwardLohand,) = AssassinBosses
-Officials = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Official, id = x)(range(5)))
-(OffA, OffB, OffC, OffD, Viceroy) = Officials
-Assassins = tuple(lambda [outmost-iterable]: for x in [outmost-iterable]:
-AvatarType(base = Assassin, id = x)(range(5)))
-(Rogue, Stalker, Cutthroat, Executioner, Professional) = Assassins
+
+Officials = [AvatarType(base=Official, id=x) for x in range(5)]
+OffA, OffB, OffC, OffD, Viceroy = Officials
+
+Assassins = [AvatarType(base=Assassin, id=x) for x in range(5)]
+Rogue, Stalker, Cutthroat, Executioner, Professional = Assassins
+
 AVATAR_TYPE_IDX = 0
 
 def typePassthrough(type):
@@ -787,8 +777,6 @@ def buildEditorSpawnableTypes():
             NPC_SPAWNABLES[name] = [
                 lambda p0 = eval(currType): typePassthrough(p0)]
             NPC_SPAWNABLES_KEYS.append(name)
-        
-    
 
 buildEditorSpawnableTypes()
 
@@ -808,6 +796,5 @@ def pickPokerUndead(possibles = None):
             SpanishUndeadB,
             SpanishUndeadC,
             SpanishUndeadD]
-    
-    return (random.choice(possibles), possibles)
 
+    return (random.choice(possibles), possibles)

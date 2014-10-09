@@ -1,1 +1,11 @@
 *.pyc
+
+# Chan's secret service
+src/
+
+# Disney's failed attempt at something
+cache/
+
+# LiClipse
+*.pydevproject
+*.project

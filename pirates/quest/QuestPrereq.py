@@ -1,45 +1,35 @@
-# File: Q (Python 2.4)
-
 from direct.showbase.PythonUtil import POD, makeTuple
 from pirates.uberdog.UberDogGlobals import InventoryType
 from pirates.inventory import ItemGlobals
 
+
 class QuestPrereq(POD):
-    
     def avIsReady(self, av):
         return True
 
-    
     def avIsReadyAI(self, av):
         return self.avIsReady(av)
 
-    
     def giverCanGive(self, giver):
         return True
 
-
-
 class HpAtLeast(QuestPrereq):
-    DataSet = {
-        'minHp': None }
-    
-    def __init__(self, minHp):
-        QuestPrereq.__init__(self, minHp = minHp)
+    DataSet = {'minHp': None}
 
-    
+    def __init__(self, minHp):
+        QuestPrereq.__init__(self, minHp=minHp)
+
     def avIsReady(self, av):
         return av.getMaxHp() >= self.minHp
-
-
 
 class SwiftnessAtLeast(QuestPrereq):
     DataSet = {
         'minSwiftness': None }
-    
+
     def __init__(self, minSwiftness):
         QuestPrereq.__init__(self, minSwiftness = minSwiftness)
 
-    
+
     def avIsReady(self, av):
         return av.getMaxSwiftness() >= self.minSwiftness
 
@@ -48,11 +38,11 @@ class SwiftnessAtLeast(QuestPrereq):
 class LuckAtLeast(QuestPrereq):
     DataSet = {
         'minLuck': None }
-    
+
     def __init__(self, minLuck):
         QuestPrereq.__init__(self, minLuck = minLuck)
 
-    
+
     def avIsReady(self, av):
         return av.getMaxLuck() >= self.minLuck
 
@@ -61,11 +51,11 @@ class LuckAtLeast(QuestPrereq):
 class MojoAtLeast(QuestPrereq):
     DataSet = {
         'minMojo': None }
-    
+
     def __init__(self, minMojo):
         QuestPrereq.__init__(self, minMojo = minMojo)
 
-    
+
     def avIsReady(self, av):
         return av.getMaxMojo() >= self.minMojo
 
@@ -74,15 +64,15 @@ class MojoAtLeast(QuestPrereq):
 class DidQuest(QuestPrereq):
     DataSet = {
         'questIds': None }
-    
+
     def __init__(self, questIds):
         QuestPrereq.__init__(self, questIds = questIds)
 
-    
+
     def setQuestIds(self, questIds):
         self.questIds = makeTuple(questIds)
 
-    
+
     def avIsReady(self, av):
         QuestLadderDB = QuestLadderDB
         import pirates.quest
@@ -96,14 +86,14 @@ class DidQuest(QuestPrereq):
                     thisQuestInHistory = True
                     break
                     continue
-            
+
             if not thisQuestInHistory:
                 return False
                 continue
-        
+
         return True
 
-    
+
     def giverCanGive(self, avId):
         return False
 
@@ -112,15 +102,15 @@ class DidQuest(QuestPrereq):
 class GetFrom(QuestPrereq):
     DataSet = {
         'questGivers': None }
-    
+
     def __init__(self, questGivers):
         QuestPrereq.__init__(self, questGivers = questGivers)
 
-    
+
     def setQuestGivers(self, questGivers):
         self.questGivers = makeTuple(questGivers)
 
-    
+
     def giverCanGive(self, giver):
         return giver in self.questGivers
 
@@ -129,25 +119,25 @@ class GetFrom(QuestPrereq):
 class HasQuest(QuestPrereq):
     DataSet = {
         'questIds': None }
-    
+
     def __init__(self, questIds):
         QuestPrereq.__init__(self, questIds = questIds)
 
-    
+
     def setQuestIds(self, questIds):
         self.questIds = makeTuple(questIds)
 
-    
+
     def avIsReady(self, av):
         quests = []
         for q in av.getQuests():
             quests.append(q.getQuestId())
-        
+
         for questId in self.questIds:
             if questId not in quests:
                 return False
                 continue
-        
+
         return True
 
 
@@ -155,15 +145,15 @@ class HasQuest(QuestPrereq):
 class NotCompleted(QuestPrereq):
     DataSet = {
         'questIds': None }
-    
+
     def __init__(self, questIds):
         QuestPrereq.__init__(self, questIds = questIds)
 
-    
+
     def setQuestIds(self, questIds):
         self.questIds = makeTuple(questIds)
 
-    
+
     def avIsReady(self, av):
         QuestLadderDB = QuestLadderDB
         import pirates.quest
@@ -177,17 +167,17 @@ class NotCompleted(QuestPrereq):
                     thisQuestInHistory = True
                     break
                     continue
-            
+
             if thisQuestInHistory:
                 return False
-            
+
             currentQuests = av.getQuests()
             for quest in currentQuests:
                 if questId == quest.getQuestId() or container.hasQuest(quest.getQuestId()):
                     return False
                     continue
-            
-        
+
+
         return True
 
 
@@ -196,13 +186,13 @@ class WithinTimeOfDay(QuestPrereq):
     DataSet = {
         'timeFrom': 0,
         'timeTo': 0 }
-    
+
     def __init__(self, timeFrom, timeTo):
         QuestPrereq.__init__(self, timeFrom = timeFrom, timeTo = timeTo)
         self.timeFrom2 = None
         self.timeTo2 = None
 
-    
+
     def avIsReady(self, av):
         currTime = base.cr.timeOfDayManager.getCurrentIngameTime()
         if self.timeFrom > self.timeTo:
@@ -215,7 +205,7 @@ class WithinTimeOfDay(QuestPrereq):
             pass
         return currTime < self.timeTo
 
-    
+
     def avIsReadyAI(self, av):
         currTime = simbase.air.timeOfDayManager.getCurrentIngameTime()
         if self.timeFrom > self.timeTo:
@@ -233,18 +223,18 @@ class WithinTimeOfDay(QuestPrereq):
 class RequiresItemEquipped(QuestPrereq):
     DataSet = {
         'itemId': None }
-    
+
     def __init__(self, itemId):
         QuestPrereq.__init__(self, itemId = itemId)
 
-    
+
     def avIsReady(self, av):
         Locations = Locations
         import pirates.inventory.InventoryGlobals
         inv = av.getInventory()
         if not inv:
             return False
-        
+
         categoryId = ItemGlobals.getClass(self.itemId)
         if inv.getItemQuantity(categoryId, self.itemId) > 0:
             if categoryId == InventoryType.ItemTypeWeapon:
@@ -270,8 +260,8 @@ class RequiresItemEquipped(QuestPrereq):
                 if locatable and locatable[1] == self.itemId:
                     return True
                     continue
-            
-        
+
+
         return False
 
 
@@ -279,18 +269,18 @@ class RequiresItemEquipped(QuestPrereq):
 class RequiresItemUnequipped(QuestPrereq):
     DataSet = {
         'itemId': None }
-    
+
     def __init__(self, itemId):
         QuestPrereq.__init__(self, itemId = itemId)
 
-    
+
     def avIsReady(self, av):
         Locations = Locations
         import pirates.inventory.InventoryGlobals
         inv = av.getInventory()
         if not inv:
             return False
-        
+
         categoryId = ItemGlobals.getClass(self.itemId)
         if inv.getItemQuantity(categoryId, self.itemId) > 0:
             if categoryId == InventoryType.ItemTypeWeapon:
@@ -317,12 +307,12 @@ class RequiresItemUnequipped(QuestPrereq):
                 if locatable and locatable[1] == self.itemId:
                     equippedItem = True
                     continue
-            
+
             if not equippedItem:
                 return True
-            
+
             return False
-        
+
         return True
 
 
@@ -330,16 +320,16 @@ class RequiresItemUnequipped(QuestPrereq):
 class RequiresItem(QuestPrereq):
     DataSet = {
         'itemId': None }
-    
+
     def __init__(self, itemId):
         QuestPrereq.__init__(self, itemId = itemId)
 
-    
+
     def avIsReady(self, av):
         inv = av.getInventory()
         if not inv:
             return False
-        
+
         categoryId = ItemGlobals.getClass(self.itemId)
         if inv.getItemQuantity(categoryId, self.itemId) > 0:
             return True
@@ -351,15 +341,15 @@ class RequiresItem(QuestPrereq):
 class IsGender(QuestPrereq):
     DataSet = {
         'gender': 'm' }
-    
+
     def __init__(self, gender):
         QuestPrereq.__init__(self, gender = gender)
 
-    
+
     def avIsReady(self, av):
         return av.style.getGender() == self.gender
 
-    
+
     def avIsReadyAI(self, av):
         return av.dna.getGender() == self.gender
 
@@ -368,15 +358,15 @@ class IsGender(QuestPrereq):
 class IsHoliday(QuestPrereq):
     DataSet = {
         'holidayId': None }
-    
+
     def __init__(self, holidayId):
         QuestPrereq.__init__(self, holidayId = holidayId)
 
-    
+
     def avIsReady(self, av):
         return self.holidayId in base.cr.newsManager.getHolidayIdList()
 
-    
+
     def avIsReadyAI(self, av):
         return simbase.air.holidayManager.isHolidayActive(self.holidayId)
 

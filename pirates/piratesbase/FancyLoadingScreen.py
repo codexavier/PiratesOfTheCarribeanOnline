@@ -278,7 +278,7 @@ def getHint(destId = None, level = None):
 
 class FancyLoadingScreen(DirectObject.DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('LoadingScreen')
-    
+
     def __init__(self, parent):
         DirectObject.DirectObject.__init__(self)
         self.debugMode = config.GetInt('loading-screen') == 2
@@ -371,7 +371,6 @@ class FancyLoadingScreen(DirectObject.DirectObject):
             self.titlePlankMiddle = self.backdrop.find('**/plank_title_middle_box')
             self.titlePlankLeft = self.backdrop.find('**/plank_title_left')
             self.titlePlankRight = self.backdrop.find('**/plank_title_right')
-        continue
         self.loadingBarColors = [ (((i % 10) / 10.0 + 0.5) / 2.0, ((i % 100) / 10 / 10.0 + 0.5) / 2.0, (i / 100 / 10.0 + 0.5) / 2.0, 1) for i in range(1000) ]
         random.shuffle(self.loadingBarColors)
         self.lastUpdateTime = globalClock.getRealTime()
@@ -387,13 +386,13 @@ class FancyLoadingScreen(DirectObject.DirectObject):
         gsg = base.win.getGsg()
         if gsg:
             self.root.prepareScene(gsg)
-        
 
-    
+
+
     def startLoading(self, expectedLoadScale):
         if not self.debugMode:
             self.loadingBar.setSx(0)
-        
+
         self.loadScale = float(expectedLoadScale)
         self.currStage = 'unmapped'
         self.stagePercent = 0
@@ -407,21 +406,21 @@ class FancyLoadingScreen(DirectObject.DirectObject):
         if self.debugMode:
             self.overallLabel['text'] = '0.0'
             self.stageLabel['text'] = self.currStage
-        
+
         self.update()
 
-    
+
     def beginStep(self, stageName, amt = 0, percent = 0.001):
         if not self.state:
             return None
-        
+
         if self.currStage != 'unmapped' and stageName != self.currStage:
             if __dev__ and self.debugMode:
                 self.notify.error('step %s not finished when step %s was started!' % (self.currStage, stageName))
             else:
                 self.notify.warning('step %s not finished when step %s was started!' % (self.currStage, stageName))
                 return None
-        
+
         self.stepNum += 1
         if self.debugMode:
             stageColor = self.loadingBarColors[self.stepNum]
@@ -438,7 +437,7 @@ class FancyLoadingScreen(DirectObject.DirectObject):
             self.currPoly = NodePath('empty')
             self.stageLabel['text'] = stageName
             self.tickLabel['text'] = '0.0'
-        
+
         self.currPercent = 0.0
         self.overallPercent = min(100.0 * self.loadScale, self.lastPercent + self.stagePercent)
         self.lastPercent = self.overallPercent
@@ -449,18 +448,18 @@ class FancyLoadingScreen(DirectObject.DirectObject):
         base.graphicsEngine.renderFrame()
         base.graphicsEngine.renderFrame()
 
-    
+
     def endStep(self, stageName):
         if self.currStage == 'unmapped':
             self.notify.warning('step %s was started before loading screen was enabled' % stageName)
             return None
-        
+
         if stageName != self.currStage:
             if __dev__ and self.debugMode:
                 self.notify.error('step %s was active while step %s was trying to end!' % (self.currStage, stageName))
             else:
                 return None
-        
+
         self.tick()
         if self.debugMode:
             stageInfo = self.stepInfo[self.currStage]
@@ -469,27 +468,27 @@ class FancyLoadingScreen(DirectObject.DirectObject):
             self.stepCard.setFrame((self.lastPercent / self.loadScale) * 0.017999999999999999 - 0.90000000000000002, ((self.lastPercent + self.stagePercent) / self.loadScale) * 0.017999999999999999 - 0.90000000000000002, 0.10000000000000001, 0.5)
             self.loadingBarRoot.attachNewNode(self.stepCard.generate())
             self.stageLabel['text'] = 'unmapped'
-        
+
         self.currStage = 'unmapped'
         self.currPercent = 0.0
 
-    
+
     def tick(self):
         if self.state == False or self.analyzeMode:
             return None
-        
+
         if self.debugMode:
             if self.currStage == 'unmapped':
                 self.unmappedTicks.append(globalClock.getRealTime() - self.loadingStart)
             else:
                 self.stepInfo[self.currStage][3].append(globalClock.getRealTime() - self.loadingStart)
-        
+
         self.currNum += 1
         self.currPercent = min(1.0, self.currNum / float(self.numObjects + 1))
         self.overallPercent = min(100.0 * self.loadScale, self.lastPercent + self.currPercent * self.stagePercent)
         self.update()
 
-    
+
     def destroy(self):
         taskMgr.remove('updateLoadingScreen')
         for part in (self.model, self.snapshot):
@@ -497,24 +496,24 @@ class FancyLoadingScreen(DirectObject.DirectObject):
                 tex = part.findTexture('*')
                 if tex:
                     tex.releaseAll()
-                
+
                 part.removeNode()
                 continue
-        
+
         self.model = None
         self.snapshot = None
         if self.snapshotFrame:
             self.snapshotFrame.destroy()
-        
+
         if self.snapshotFrameBasic:
             self.snapshotFrameBasic.destroy()
-        
+
         if self.locationLabel:
             self.locationLabel.destroy()
-        
+
         if self.hintLabel:
             self.hintLabel.destroy()
-        
+
         if self.debugMode:
             self.stageLabel.destroy()
             self.tickLabel.destroy()
@@ -524,42 +523,42 @@ class FancyLoadingScreen(DirectObject.DirectObject):
             self.tickLabel = None
             self.overallLabel = None
             self.enterToContinue = None
-        
+
         self.ignoreAll()
 
-    
+
     def showTitleFrame(self):
         if base.config.GetBool('no-loading-screen', 0):
             return None
-        
+
         for part in self.title_art:
             part.show()
-        
 
-    
+
+
     def hideTitleFrame(self):
         for part in self.title_art:
             part.hide()
-        
 
-    
+
+
     def show(self, waitForLocation = False, disableSfx = True, expectedLoadScale = 1.0):
         if self.state and base.config.GetBool('no-loading-screen', 0) or not (self.locationLabel):
             return None
-        
+
         render.hide()
         render2d.hide()
         render2dp.hide()
         if not self.debugMode:
             self.loadingPlank.hide()
-        
+
         self.root.unstash()
         self.root.showThrough()
         self.state = True
         gsg = base.win.getGsg()
         if gsg:
             gsg.setIncompleteRender(False)
-        
+
         base.setTaskChainNetNonthreaded()
         self.allowLiveFlatten.setValue(1)
         self.startLoading(expectedLoadScale)
@@ -573,22 +572,22 @@ class FancyLoadingScreen(DirectObject.DirectObject):
                 sfx_manager = base.sfxManagerList[index]
                 sfx_manager.setVolume(0.0)
                 index += 1
-        
+
         if base.appRunner:
             base.appRunner.notifyRequest('onLoadingMessagesStart')
-        
+
         self._FancyLoadingScreen__setLocationText(self.locationText)
         self._FancyLoadingScreen__setHintText(self.hintText)
         if not waitForLocation:
             screenshot = random.choice(tutorialShots_MoveAim)
             self._FancyLoadingScreen__setLoadingArt(screenshot)
-        
 
-    
+
+
     def showHint(self, destId = None, ocean = False):
         if base.config.GetBool('no-loading-screen', 0) or not (self.locationLabel):
             return None
-        
+
         if ocean:
             hint = getOceanHint()
         elif hasattr(base, 'localAvatar'):
@@ -605,21 +604,21 @@ class FancyLoadingScreen(DirectObject.DirectObject):
             '1196970080.56sdnaik']
         if (destId in shipPVPIslands or ocean) and base.localAvatar.getCurrentIsland() in shipPVPIslands:
             hint = getPrivateeringHint()
-        
+
         if self.parent and base.localAvatar.style.getTutorial() == PiratesGlobals.TUT_MET_JOLLY_ROGER:
             hint = '%s:  %s' % (PLocalizer.LoadingScreen_Hint, PLocalizer.GeneralTip7)
-        
+
         self._FancyLoadingScreen__setHintText(hint)
 
-    
+
     def update(self, task = None):
         if not (self.state) or self.analyzeMode:
             return Task.cont
-        
+
         realTime = globalClock.getRealTime()
         if realTime - self.lastUpdateTime < 0.10000000000000001:
             return Task.cont
-        
+
         self.currentTime += min(10, (realTime - self.lastUpdateTime) * 250)
         self.lastUpdateTime = realTime
         if self.debugMode:
@@ -632,23 +631,23 @@ class FancyLoadingScreen(DirectObject.DirectObject):
                 self.currPoly.detachNode()
                 self.stepCard.setFrame((self.lastPercent / self.loadScale) * 0.017999999999999999 - 0.90000000000000002, (self.overallPercent / self.loadScale) * 0.017999999999999999 - 0.90000000000000002, 0.20000000000000001, 0.40000000000000002)
                 self.currPoly = self.loadingBarRoot.attachNewNode(self.stepCard.generate())
-            
-        
+
+
         if not self.debugMode:
             self.loadingBar.setSx((self.overallPercent / self.loadScale) * 3.3999999999999999)
             if self.overallPercent > 0:
                 self.loadingPlank.show()
-            
-        
+
+
         base.eventMgr.doEvents()
         base.graphicsEngine.renderFrame()
         return Task.cont
 
-    
+
     def hide(self, reallyHide = not (config.GetInt('loading-screen', 0) == 2)):
         if not self.state:
             return None
-        
+
         if not reallyHide:
             if not self.analyzeMode:
                 self.loadingEnd = globalClock.getRealTime()
@@ -656,14 +655,14 @@ class FancyLoadingScreen(DirectObject.DirectObject):
                     1])
                 self.enterToContinue.show()
                 self.generateAnalysis()
-            
+
             return None
-        
+
         self.cleanupLoadingScreen()
         if self.debugMode:
             self.enterToContinue.hide()
             self.ignore('shift')
-        
+
         self.root.hide()
         self.root.stash()
         render2d.show()
@@ -680,7 +679,7 @@ class FancyLoadingScreen(DirectObject.DirectObject):
             gsg.setIncompleteRender(True)
             render.prepareScene(gsg)
             render2d.prepareScene(gsg)
-        
+
         taskMgr.remove('updateLoadingScreen')
         self.allowLiveFlatten.clearValue()
         base.setTaskChainNetThreaded()
@@ -690,17 +689,17 @@ class FancyLoadingScreen(DirectObject.DirectObject):
                 sfx_manager = base.sfxManagerList[index]
                 sfx_manager.setVolume(base.options.sound_volume)
                 index += 1
-        
+
         messenger.send('texture_state_changed')
         if base.appRunner:
             base.appRunner.notifyRequest('onLoadingMessagesStop')
-        
 
-    
+
+
     def showTarget(self, targetId = None, ocean = False, jail = False, pickapirate = False, exit = False, potionCrafting = False, benchRepair = False, shipRepair = False, cannonDefense = False, fishing = False):
         if base.config.GetBool('no-loading-screen', 0):
             return None
-        
+
         if pickapirate:
             screenshot = screenShot_EnterGame
         elif exit:
@@ -727,7 +726,7 @@ class FancyLoadingScreen(DirectObject.DirectObject):
             screenshot = screenShots_WinterHolidayLocations.get(targetId)
             if not screenshot:
                 screenshot = screenShots_Locations.get(targetId)
-            
+
         else:
             screenshot = screenShots_Locations.get(targetId)
         if not screenshot:
@@ -759,34 +758,34 @@ class FancyLoadingScreen(DirectObject.DirectObject):
         base.setLocationCode('Loading: %s' % targetName)
         if targetName is None:
             return None
-        
+
         if len(targetName):
             self._FancyLoadingScreen__setLocationText(targetName)
-        
 
-    
+
+
     def _FancyLoadingScreen__setLoadingArt(self, screenshot):
         if self.currScreenshot:
             return None
-        
+
         if self.parent and hasattr(base, 'localAvatar') and base.localAvatar.style.getTutorial() < PiratesGlobals.TUT_MET_JOLLY_ROGER and screenshot not in tutorialShots:
             screenshot = random.choice(tutorialShots)
-        
+
         self.currScreenshot = loader.loadModel(screenshot).findAllTextures()[0]
         if not self.debugMode:
             self.screenshot.setTexture(self.currScreenshot)
-        
 
-    
+
+
     def _FancyLoadingScreen__setLocationText(self, locationText):
         if self.debugMode:
             return None
-        
+
         self.locationText = locationText
         if not self.locationText:
             self.locationText = ''
             self.titlePlank.hide()
-        
+
         if len(self.locationText) > 12:
             scaleFactor = len(self.locationText) / 12.0
             self.titlePlankMiddle.setSx(scaleFactor)
@@ -805,32 +804,32 @@ class FancyLoadingScreen(DirectObject.DirectObject):
             self.titlePlank.hide()
         launcher.setValue('gameLocation', self.locationText)
 
-    
+
     def _FancyLoadingScreen__setHintText(self, hintText):
         self.hintText = hintText
         if not self.hintText:
             self.hintText = ''
-        
+
         self.hintLabel['text'] = self.hintText
         if self._FancyLoadingScreen__isVisible():
             self.hintLabel.show()
-        
 
-    
+
+
     def _FancyLoadingScreen__isVisible(self):
         return self.state
 
-    
+
     def scheduleHide(self, function):
         base.cr.queueAllInterestsCompleteEvent()
         self.acceptOnce(function, self.interestComplete)
 
-    
+
     def interestComplete(self):
         self.endStep('scheduleHide')
         self.hide()
 
-    
+
     def _FancyLoadingScreen__setAdArt(self):
         return None
         imageFrame = self.model.find('**/frame')
@@ -848,14 +847,14 @@ class FancyLoadingScreen(DirectObject.DirectObject):
             self.nonBlockHTTP.beginGetDocument(DocumentSpec(urlToGet))
             instanceMarker = 'FunnelLoggingRequest-%s' % str(random.randint(1, 1000))
             self.startCheckingAsyncRequest(instanceMarker)
-        
 
-    
+
+
     def startCheckingAsyncRequest(self, name):
         taskMgr.remove(name)
         taskMgr.doMethodLater(0.5, self.pollAdTask, name)
 
-    
+
     def pollAdTask(self, task):
         result = self.nonBlockHTTP.run()
         if result == 0:
@@ -863,31 +862,31 @@ class FancyLoadingScreen(DirectObject.DirectObject):
         else:
             return Task.again
 
-    
+
     def stopCheckingAdTask(self, name):
         taskMgr.remove(name)
 
-    
+
     def cleanupLoadingScreen(self):
         if self.debugMode:
             self.loadingBarRoot.removeChildren()
             self.cleanupAnalysis()
             self.stepInfo = { }
             self.unmappedTicks = []
-        
 
-    
+
+
     def showInfo(self, stepName, pos):
         self.stageLabel['text'] = stepName
         info = self.stepInfo[stepName]
         self.tickLabel['text'] = '%s ticks(%s)' % (len(info[3]), info[6])
         self.overallLabel['text'] = '%3.2f seconds (%d%%)' % (info[1], 100 * info[1] / (self.loadingEnd - self.loadingStart))
 
-    
+
     def generateAnalysis(self):
         if self.analyzeMode:
             self.cleanupAnalysis()
-        
+
         self.analyzeMode = True
         cm = CardMaker('cm')
         self.analysisBar.show()
@@ -909,26 +908,26 @@ class FancyLoadingScreen(DirectObject.DirectObject):
             for tick in ticks:
                 self.line.moveTo(VBase3((tick / loadingTime) * 1.8 - 0.90000000000000002, 0, -0.5))
                 self.line.drawTo(VBase3((tick / loadingTime) * 1.8 - 0.90000000000000002, 0, -0.55000000000000004))
-            
-        
+
+
         for tick in self.unmappedTicks:
             self.line.moveTo(VBase3((tick / loadingTime) * 1.8 - 0.90000000000000002, 0, -0.5))
             self.line.drawTo(VBase3((tick / loadingTime) * 1.8 - 0.90000000000000002, 0, -0.55000000000000004))
-        
+
         self.analysisSegs = self.analysisBarRoot.attachNewNode(self.line.create())
 
-    
+
     def cleanupAnalysis(self):
         for button in self.analysisButtons:
             button.destroy()
-        
+
         self.analysisButtons = []
         self.analysisBarRoot.removeChildren()
         self.analysisBar.hide()
         self.analyzeMode = False
         self.analysisSegs = None
 
-    
+
     def adjustSize(self, window):
         x = max(1, window.getXSize())
         y = max(1, window.getYSize())

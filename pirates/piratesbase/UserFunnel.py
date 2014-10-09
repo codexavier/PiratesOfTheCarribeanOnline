@@ -18,7 +18,7 @@ from direct.directnotify.DirectNotifyGlobal import directNotify
 notify = directNotify.newCategory('UserFunnel')
 
 class UserFunnel:
-    
+
     def __init__(self):
         self.hitboxAcct = 'DM560804E8WD'
         self.omniAccount = 'wdgdolpironl,wdgdsec'
@@ -93,16 +93,16 @@ class UserFunnel:
         self.httpSession = HTTPClient()
         self.whatOSver()
 
-    
+
     def checkForCFfile(self):
         if firstRun() == True:
             pass
         1
         if os.path.isfile(self.cfCookieFile) == False:
             firstRun('write', True)
-        
 
-    
+
+
     def whatOSver(self):
         if sys.platform == 'win32':
             self.osMajorver = str(sys.getwindowsversion()[0])
@@ -118,7 +118,7 @@ class UserFunnel:
             infopipe.close()
             del infopipe
             versionStringStart = parseLine.find('10.')
-            
+
             try:
                 self.osMinorver = parseLine[versionStringStart + 3]
                 self.osRevver = parseLine[versionStringStart + 5:versionStringStart + 7].strip(' ')
@@ -135,33 +135,33 @@ class UserFunnel:
             self.osMinorver = '0'
             self.osRevver = '0'
             self.osBuild = '0000'
-        
 
-    
+
+
     def setmilestone(self, ms):
         if firstRun() == False:
             self.milestone = ms
         else:
             self.milestone = '%s_INITIAL' % ms
 
-    
+
     def setgamename(self, gamename):
         self.gameName = gamename
 
-    
+
     def printosComments(self):
         return self.osComments
 
-    
+
     def setHost(self, hostID):
         self.CurrentHost = hostID
 
-    
+
     def getFunnelURL(self):
         if patcherVer() == [
             'OFFLINE']:
             return None
-        
+
         if patcherVer() == []:
             patcherHTTP = HTTPClient()
             if checkParamFile() == None:
@@ -178,7 +178,7 @@ class UserFunnel:
             if self.patcherURL.find('FUNNEL_LOG') == -1:
                 patcherVer('w', 'OFFLINE')
                 return None
-            
+
             self.patcherURL = self.patcherURL.split('\n')
             del rf
             del patcherDoc
@@ -192,9 +192,9 @@ class UserFunnel:
         else:
             self.dynamicVRFunnel = patcherVer()[0]
 
-    
+
     def isVarSet(self, varInQuestion):
-        
+
         try:
             tempvar = type(varInQuestion)
             return 1
@@ -202,7 +202,7 @@ class UserFunnel:
             return 0
 
 
-    
+
     def buildURL(self):
         if sys.platform == 'win32':
             hitboxOSType = 'c3'
@@ -210,22 +210,22 @@ class UserFunnel:
             hitboxOSType = 'c4'
         elif sys.platform == 'linux2':
             hitboxOSType = 'c4'
-        
+
         if self.CurrentHost == 1:
             self.URLtoSend = 'http://' + self.hostDict[self.CurrentHost] + 'hb=' + str(self.hitboxAcct) + '&n=' + str(self.milestone) + '&ln=' + self.language + '&gp=STARTGAME_DOCK&fnl=PIRATES_FUNNEL&vcon=/' + self.cgRoot + '/' + self.cgLocation + '/' + str(vconGroup()) + '&c1=' + str(sys.platform) + '&' + str(hitboxOSType) + '=' + str(self.osMajorver) + '_' + str(self.osMinorver) + '_' + str(self.osRevver) + '_' + str(self.osBuild)
-        
+
         if self.CurrentHost == 2:
             self.URLtoSend = 'http://' + self.hostDict[self.CurrentHost] + 'hb=' + str(self.hitboxAcct) + '&n=' + str(self.milestone) + '&ln=' + self.language + '&vcon=/' + self.cgRoot + '/' + self.cgLocation + '/' + str(vconGroup()) + '&c1=' + str(sys.platform) + '&' + str(hitboxOSType) + '=' + str(self.osMajorver) + '_' + str(self.osMinorver) + '_' + str(self.osRevver) + '_' + str(self.osBuild)
-        
+
         if self.CurrentHost == 3:
             self.URLtoSend = 'http://' + self.hostDict[self.CurrentHost] + self.omniAccount + '/1/H.15.1/' + self.cacheBuster() + '?[AQB]&ns=dol&pageName=dgame%3Apir_onl%3Ammog%3A' + str(self.milestone).lower() + '&c1=' + str(oconGroup()) + '&c14=dgame&h1=mmog&c11=pir&c4=in_game&c25=' + self.ogLocation + '&v25=' + self.ogLocation + '[AQE]'
-        
+
         if self.CurrentHost == 0:
             localMAC = str(getMAC())
             self.URLtoSend = str(self.dynamicVRFunnel) + '?funnel=' + str(self.milestone) + '&platform=' + str(sys.platform) + '&sysver=' + str(self.osMajorver) + '_' + str(self.osMinorver) + '_' + str(self.osRevver) + '_' + str(self.osBuild) + '&mac=' + localMAC + '&username=' + str(loggingSubID()) + '&id=' + str(loggingAvID())
-        
 
-    
+
+
     def readInPandaCookie(self):
         thefile = open(self.cfCookieFile, 'r')
         thedata = thefile.read().split('\n')
@@ -233,9 +233,9 @@ class UserFunnel:
         del thefile
         if thedata[0].find('Netscape HTTP Cookie File') != -1:
             return None
-        
+
         thedata.pop()
-        
+
         try:
             while thedata:
                 temp = thedata.pop()
@@ -251,7 +251,7 @@ class UserFunnel:
                         variable,
                         value]
                     self.setTheHTTPCookie(self.pandaHTTPClientVarCTG)
-                
+
                 if variable == self.hitboxAcct + 'V6':
                     self.pandaHTTPClientVarDM = [
                         domain,
@@ -259,7 +259,7 @@ class UserFunnel:
                         variable,
                         value]
                     self.setTheHTTPCookie(self.pandaHTTPClientVarDM)
-                
+
                 if variable == 'WSS_GW':
                     self.pandaHTTPClientVarWSS = [
                         domain,
@@ -273,7 +273,7 @@ class UserFunnel:
 
         del thedata
 
-    
+
     def readInPandaCookieOmniture(self):
         thefile = open(self.cfCookieFileOmniture, 'r')
         thedata = thefile.read().split('\n')
@@ -281,9 +281,9 @@ class UserFunnel:
         del thefile
         if thedata[0].find('Netscape HTTP Cookie File') != -1:
             return None
-        
+
         thedata.pop()
-        
+
         try:
             while thedata:
                 temp = thedata.pop()
@@ -305,7 +305,7 @@ class UserFunnel:
 
         del thedata
 
-    
+
     def updateInstanceCookieValues(self):
         a = self.httpSession.getCookie(HTTPCookie('WSS_GW', '/', '.hitbox.com'))
         if a.getName():
@@ -314,7 +314,7 @@ class UserFunnel:
                 '/',
                 'WSS_GW',
                 a.getValue()]
-        
+
         b = self.httpSession.getCookie(HTTPCookie('CTG', '/', '.hitbox.com'))
         if b.getName():
             self.pandaHTTPClientVarCTG = [
@@ -322,7 +322,7 @@ class UserFunnel:
                 '/',
                 'CTG',
                 b.getValue()]
-        
+
         c = self.httpSession.getCookie(HTTPCookie(self.hitboxAcct + 'V6', '/', '.ehg-dig.hitbox.com'))
         if c.getName():
             self.pandaHTTPClientVarDM = [
@@ -330,12 +330,12 @@ class UserFunnel:
                 '/',
                 self.hitboxAcct + 'V6',
                 c.getValue()]
-        
+
         del a
         del b
         del c
 
-    
+
     def updateInstanceCookieValuesOmniture(self):
         a = self.httpSession.getCookie(HTTPCookie('s_vi', '/', '.go.com'))
         if a.getName():
@@ -344,82 +344,82 @@ class UserFunnel:
                 '/',
                 's_vi',
                 a.getValue()]
-        
+
         del a
 
-    
+
     def setTheHTTPCookie(self, cookieParams):
         c = HTTPCookie(cookieParams[2], cookieParams[1], cookieParams[0])
         c.setValue(cookieParams[3])
         self.httpSession.setCookie(c)
 
-    
+
     def writeOutPandaCookie(self):
-        
+
         try:
             thefile = open(self.cfCookieFile, 'w')
             if len(self.pandaHTTPClientVarWSS) == 4:
                 thefile.write(self.pandaHTTPClientVarWSS[0] + '\t' + self.pandaHTTPClientVarWSS[1] + '\t' + self.pandaHTTPClientVarWSS[2] + '\t' + self.pandaHTTPClientVarWSS[3] + '\n')
-            
+
             if len(self.pandaHTTPClientVarCTG) == 4:
                 thefile.write(self.pandaHTTPClientVarCTG[0] + '\t' + self.pandaHTTPClientVarCTG[1] + '\t' + self.pandaHTTPClientVarCTG[2] + '\t' + self.pandaHTTPClientVarCTG[3] + '\n')
-            
+
             if len(self.pandaHTTPClientVarDM) == 4:
                 thefile.write(self.pandaHTTPClientVarDM[0] + '\t' + self.pandaHTTPClientVarDM[1] + '\t' + self.pandaHTTPClientVarDM[2] + '\t' + self.pandaHTTPClientVarDM[3] + '\n')
-            
+
             thefile.close()
         except IOError:
             return None
 
 
-    
+
     def writeOutPandaCookieOmniture(self):
-        
+
         try:
             thefile = open(self.cfCookieFileOmniture, 'w')
             if len(self.pandaHTTPClientVarSVI) == 4:
                 thefile.write(self.pandaHTTPClientVarSVI[0] + '\t' + self.pandaHTTPClientVarSVI[1] + '\t' + self.pandaHTTPClientVarSVI[2] + '\t' + self.pandaHTTPClientVarSVI[3] + '\n')
-            
+
             thefile.close()
         except IOError:
             return None
 
 
-    
+
     def prerun(self):
         self.getFunnelURL()
         self.buildURL()
         if os.path.isfile(self.cfCookieFile) == True:
             if self.CurrentHost == 1 or self.CurrentHost == 2:
                 self.readInPandaCookie()
-            
-        
+
+
         if os.path.isfile(self.cfCookieFileOmniture) == True and self.CurrentHost == 3:
             self.readInPandaCookieOmniture()
-        
 
-    
+
+
     def run(self):
         if self.CurrentHost == 0 and patcherVer() == [
             'OFFLINE']:
             return None
-        
+
         self.nonBlock = self.httpSession.makeChannel(False)
         self.nonBlock.beginGetDocument(DocumentSpec(self.URLtoSend))
         instanceMarker = str(random.randint(1, 1000))
         instanceMarker = 'FunnelLoggingRequest-%s' % instanceMarker
         self.startCheckingAsyncRequest(instanceMarker)
 
-    
+
     def startCheckingAsyncRequest(self, name):
         taskMgr.remove(name)
         taskMgr.doMethodLater(0.5, self.pollFunnelTask, name)
 
-    
+
     def stopCheckingFunnelTask(self, name):
         taskMgr.remove('pollFunnelTask')
 
-    
+
     def pollFunnelTask(self, task):
         result = self.nonBlock.run()
         if result == 0:
@@ -427,15 +427,15 @@ class UserFunnel:
             if self.CurrentHost == 1 or self.CurrentHost == 2:
                 self.updateInstanceCookieValues()
                 self.writeOutPandaCookie()
-            
+
             if self.CurrentHost == 3:
                 self.updateInstanceCookieValuesOmniture()
                 self.writeOutPandaCookieOmniture()
-            
+
         else:
             return Task.again
 
-    
+
     def cacheBuster(self):
         return str(time.time())
 
@@ -444,10 +444,10 @@ class UserFunnel:
 def logSubmit(setHostID, setMileStone):
     if __dev__:
         return None
-    
+
     if setHostID == 1 or setHostID == 2:
         setHostID = 3
-    
+
     trackItem = UserFunnel()
     trackItem.setmilestone(quote_plus(setMileStone))
     trackItem.setHost(setHostID)
@@ -461,7 +461,7 @@ def getVRSFunnelURL():
 
 
 class HitBoxCookie:
-    
+
     def __init__(self):
         self.ieCookieDir = os.getenv('USERPROFILE') + '\\Cookies'
         self.pythonCookieFile = 'cf.txt'
@@ -472,13 +472,13 @@ class HitBoxCookie:
         self.dm560804E8WD = None
         self.pythonCookieHeader = '    # Netscape HTTP Cookie File\n    # http://www.netscape.com/newsref/std/cookie_spec.html\n    # This is a generated file!  Do not edit.\n\n'
 
-    
+
     def returnIECookieDir(self):
         return self.ieCookieDir
 
-    
+
     def findIECookieFiles(self):
-        
+
         try:
             sdir = os.listdir(self.ieCookieDir)
         except WindowsError:
@@ -489,19 +489,19 @@ class HitBoxCookie:
             temp = sdir.pop()
             if temp.find('@hitbox[') != -1:
                 self.hitboxCookieFile = temp
-            
+
             if temp.find('@ehg-dig.hitbox[') != -1:
                 self.ehgdigCookieFile = temp
                 continue
         if self.hitboxCookieFile != None and self.ehgdigCookieFile != None:
             return 1
-        
+
         if self.hitboxCookieFile == None and self.ehgdigCookieFile == None:
             return 0
         else:
             return -1
 
-    
+
     def openHitboxFile(self, filename, type = 'python'):
         if type == 'ie':
             fullfile = self.ieCookieDir + '\\' + filename
@@ -512,32 +512,32 @@ class HitBoxCookie:
         cf.close()
         return data
 
-    
+
     def splitIECookie(self, filestream):
         return filestream.split('*\n')
 
-    
+
     def sortIECookie(self, filestreamListElement):
         return [
             filestreamListElement.split('\n')[2],
             filestreamListElement.split('\n')[0],
             filestreamListElement.split('\n')[1]]
 
-    
+
     def sortPythonCookie(self, filestreamListElement):
         return [
             filestreamListElement.split('\t')[0],
             filestreamListElement.split('\t')[5],
             filestreamListElement.split('\t')[6]]
 
-    
+
     def writeIEHitBoxCookies(self):
         if self.ctg == None and self.wss_gw == None or self.dm560804E8WD == None:
             return None
-        
+
         if sys.platform != 'win32':
             return None
-        
+
         self.findIECookieFiles()
         iecData = self.openHitboxFile(self.ehgdigCookieFile, 'ie')
         iecData = iecData.split('*\n')
@@ -547,7 +547,7 @@ class HitBoxCookie:
                 iecData.pop(x)
                 print 'Removed it from the list'
                 break
-            
+
             x += 1
         iecWrite = open(self.ieCookieDir + '\\' + self.ehgdigCookieFile, 'w')
         while iecData:
@@ -555,12 +555,12 @@ class HitBoxCookie:
             iecBuffer = iecBuffer.strip('/')
             if iecBuffer[0] == '.':
                 iecBuffer = iecBuffer[1:]
-            
+
             iecWrite.write(iecBuffer)
         tempDMBUFFER = self.dm560804E8WD[0]
         if tempDMBUFFER[0].find('.') == 0:
             tempDMBUFFER = tempDMBUFFER[1:]
-        
+
         iecWrite.write(self.dm560804E8WD[1] + '\n' + self.dm560804E8WD[2] + '\n' + tempDMBUFFER + '/\n*\n')
         iecWrite.close()
         del iecData
@@ -570,19 +570,19 @@ class HitBoxCookie:
         iecBuffer = self.ctg[0]
         if iecBuffer[0] == '.':
             iecBuffer = iecBuffer[1:]
-        
+
         if iecBuffer.find('/') == -1:
             iecBuffer = iecBuffer + '/'
-        
+
         iecWrite.write(self.ctg[1] + '\n' + self.ctg[2] + '\n' + iecBuffer + '\n*\n')
         iecWrite.write(self.wss_gw[1] + '\n' + self.wss_gw[2] + '\n' + iecBuffer + '\n*\n')
         iecWrite.close()
 
-    
+
     def OLDwritePythonHitBoxCookies(self, filename = 'cf.txt'):
         if self.ctg == None and self.wss_gw == None or self.dm560804E8WD == None:
             return None
-        
+
         outputfile = open(filename, 'w')
         outputfile.write(self.pythonCookieHeader)
         outputfile.write('.' + self.dm560804E8WD[0].strip('/') + '\tTRUE\t/\tFALSE\t9999999999\t' + self.dm560804E8WD[1] + '\t' + self.dm560804E8WD[2] + '\n')
@@ -590,45 +590,45 @@ class HitBoxCookie:
         outputfile.write('.' + self.wss_gw[0].strip('/') + '\tTRUE\t/\tFALSE\t9999999999\t' + self.wss_gw[1] + '\t' + self.wss_gw[2] + '\n')
         outputfile.close()
 
-    
+
     def writePythonHitBoxCookies(self, filename = 'cf.txt'):
         if self.ctg == None and self.wss_gw == None or self.dm560804E8WD == None:
             return None
-        
+
         outputfile = open(filename, 'w')
         outputfile.write('.' + self.dm560804E8WD[0].strip('/') + '\t/\t' + self.dm560804E8WD[1] + '\t' + self.dm560804E8WD[2] + '\n')
         outputfile.write('.' + self.ctg[0].strip('/') + '\t/\t' + self.ctg[1] + '\t' + self.ctg[2] + '\n')
         outputfile.write('.' + self.wss_gw[0].strip('/') + '\t/\t' + self.wss_gw[1] + '\t' + self.wss_gw[2] + '\n')
         outputfile.close()
 
-    
+
     def loadPythonHitBoxCookies(self):
         if os.path.isfile(self.pythonCookieFile) != 1:
             return None
-        
+
         pythonStandard = self.openHitboxFile(self.pythonCookieFile, 'python')
         pythonStandard = pythonStandard.split('\n\n').pop(1)
         pythonStandard = pythonStandard.split('\n')
         for x in pythonStandard:
             if x.find('\tDM560804E8WD') != -1:
                 self.dm560804E8WD = self.sortPythonCookie(x)
-            
+
             if x.find('\tCTG\t') != -1:
                 self.ctg = self.sortPythonCookie(x)
-            
+
             if x.find('\tWSS_GW\t') != -1:
                 self.wss_gw = self.sortPythonCookie(x)
                 continue
-        
 
-    
+
+
     def loadIEHitBoxCookies(self):
         if self.findIECookieFiles() != 1:
             return None
-        
+
         if sys.platform != 'win32':
             return None
-        
+
         hitboxStandard = self.openHitboxFile(self.hitboxCookieFile, 'ie')
         hitboxDIG = self.openHitboxFile(self.ehgdigCookieFile, 'ie')
         hitboxStandard = self.splitIECookie(hitboxStandard)
@@ -638,23 +638,23 @@ class HitBoxCookie:
         for x in hitboxStandard:
             if x.find('CTG\n') != -1:
                 ctg = x
-            
+
             if x.find('WSS_GW\n') != -1:
                 wss = x
                 continue
-        
+
         if ctg == None or wss == None:
             return None
-        
+
         DM = None
         for x in hitboxDIG:
             if x.find('DM560804E8WD') != -1:
                 DM = x
                 continue
-        
+
         if DM == None:
             return None
-        
+
         self.ctg = self.sortIECookie(ctg)
         self.wss_gw = self.sortIECookie(wss)
         self.dm560804E8WD = self.sortIECookie(DM)
@@ -665,10 +665,10 @@ def convertHitBoxIEtoPython():
     if sys.platform != 'win32':
         print 'Cookie Converter: Warning: System is not MS-Windows. I have not been setup to work with other systems yet. Sorry ' + sys.platform + ' user. The game client will create a cookie.'
         return None
-    
+
     if __dev__:
         return None
-    
+
     a = HitBoxCookie()
     a.loadIEHitBoxCookies()
     a.writePythonHitBoxCookies()
@@ -679,10 +679,10 @@ def convertHitBoxPythontoIE():
     if sys.platform != 'win32':
         print 'System is not MS-Windows. I have not been setup to work with other systems yet. Sorry ' + sys.platform + ' user.'
         return None
-    
+
     if os.path.isfile('cf.txt') == True:
         return None
-    
+
     a = HitBoxCookie()
     a.loadPythonHitBoxCookies()
     a.writeIEHitBoxCookies()
@@ -693,7 +693,7 @@ def getreg(regVar):
     if sys.platform != 'win32':
         print "System is not MS-Windows. I haven't been setup yet to work with systems other than MS-Win using MS-Internet Explorer Cookies"
         return ''
-    
+
     siteName = 'pirates.online.disney'
     cookiedir = os.getenv('USERPROFILE') + '\\Cookies'
     sdir = os.listdir(cookiedir)
@@ -707,7 +707,7 @@ def getreg(regVar):
     if wholeCookie == None:
         print 'Cookie not found for site name: ' + siteName
         return ''
-    
+
     CompleteCookiePath = cookiedir + '\\' + wholeCookie
     cf = open(CompleteCookiePath, 'r')
     data = cf.read()
@@ -718,7 +718,7 @@ def getreg(regVar):
     regNameStart = data.find(regVar)
     if regNameStart == -1:
         return ''
-    
+
     regVarStart = data.find('=', regNameStart + 1)
     regVarEnd = data.find('&', regNameStart + 1)
     return data[regVarStart + 1:regVarEnd]
@@ -729,7 +729,7 @@ def getMAC(staticMAC = [
     if staticMAC[0] == None:
         if sys.platform == 'win32':
             correctSection = 0
-            
+
             try:
                 ipconfdata = os.popen('/WINDOWS/SYSTEM32/ipconfig /all').readlines()
             except:
@@ -739,14 +739,14 @@ def getMAC(staticMAC = [
             for line in ipconfdata:
                 if line.find('Local Area Connection') >= 0:
                     correctSection = 1
-                
+
                 if line.find('Physical Address') >= 0 and correctSection == 1:
                     pa = line.split(':')[-1].strip()
                     correctSection = 0
                     staticMAC[0] = pa
                     return pa
                     continue
-            
+
         elif sys.platform == 'darwin':
             macconfdata = os.popen('/usr/sbin/system_profiler SPNetworkDataType |/usr/bin/grep MAC').readlines()
             if macconfdata and macconfdata[0].find('MAC Address') != -1:
@@ -775,9 +775,9 @@ def firstRun(operation = 'read', newPlayer = None, newPlayerBool = [
     if operation != 'read':
         if len(newPlayerBool) != 0:
             newPlayerBool.pop()
-        
+
         newPlayerBool.append(newPlayer)
-    
+
     return newPlayerBool[0]
 
 
@@ -785,9 +785,9 @@ def patcherVer(operation = 'read', url = None, patchfile = []):
     if operation != 'read':
         if len(patchfile) != 0:
             patchfile.pop()
-        
+
         patchfile.append(url)
-    
+
     return patchfile
 
 
@@ -811,10 +811,10 @@ def vconGroup(operation = 'read', group = None, staticStore = []):
     if operation != 'read':
         if len(staticStore) != 0:
             staticStore.pop()
-        
+
         staticStore.append(group)
-    
-    
+
+
     try:
         return staticStore[0]
     except IndexError:
@@ -826,10 +826,10 @@ def oconGroup(operation = 'read', group = None, staticStore = []):
     if operation != 'read':
         if len(staticStore) != 0:
             staticStore.pop()
-        
+
         staticStore.append(group)
-    
-    
+
+
     try:
         return staticStore[0]
     except IndexError:
@@ -844,7 +844,7 @@ def printUnreachableLen():
     unreachableL = []
     for it in gc.garbage:
         unreachableL.append(it)
-    
+
     return len(str(unreachableL))
 
 
@@ -858,27 +858,25 @@ def printUnreachableNum():
 def reportMemoryLeaks():
     if printUnreachableNum() == 0:
         return None
-    
+
     import bz2 as bz2
     import gc
     gc.set_debug(gc.DEBUG_SAVEALL)
     gc.collect()
     uncompressedReport = ''
     for s in gc.garbage:
-        
         try:
             uncompressedReport += str(s) + '&'
-        continue
         except TypeError:
-            continue
-        
+            pass
 
-    
+
+
     reportdata = bz2.compress(uncompressedReport, 9)
     headers = {
         'Content-type': 'application/x-bzip2',
         'Accept': 'text/plain' }
-    
+
     try:
         baseURL = patcherVer()[0].split('/lo')[0]
     except IndexError:
@@ -889,7 +887,7 @@ def reportMemoryLeaks():
     if baseURL.count(':') == 2:
         basePort = baseURL[-4:]
         baseURL = baseURL[:-5]
-    
+
     baseURL = baseURL[7:]
     if basePort != 80:
         finalURL = 'http://' + baseURL + ':' + str(basePort) + '/logging/memory_leak.php?leakcount=' + str(printUnreachableNum())
@@ -918,5 +916,5 @@ def checkParamFile():
             return None
         else:
             return newURL + 'patcher.ver'
-    
+
 

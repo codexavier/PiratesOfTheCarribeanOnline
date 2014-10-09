@@ -43,7 +43,7 @@ from math import pi
 import time
 
 class SimpleStoreTab(LeftTab):
-    
+
     def __init__(self, tabBar, name, **kw):
         optiondefs = (('modelName', 'general_frame_d', None), ('borderScale', 0.38, None), ('bgBuffer', 0.14999999999999999, None))
         self.defineoptions(kw, optiondefs)
@@ -53,18 +53,18 @@ class SimpleStoreTab(LeftTab):
 
 
 class SimpleStoreTabBar(TabBar):
-    
+
     def hasTabs(self):
         return len(self.getOrder()) > 0
 
-    
+
     def refreshTabs(self):
         for (x, name) in enumerate(self.tabOrder):
             tab = self.tabs[name]
             tab.reparentTo(self.bParent)
             tab.setPos(-0.070000000000000007, 0, 1.0800000000000001 - 0.14999999999999999 * (x + self.offset))
             (tab.setScale(0.22, 1, 0.23499999999999999),)
-        
+
         self.activeIndex = max(0, min(self.activeIndex, len(self.tabOrder) - 1))
         if len(self.tabOrder):
             name = self.tabOrder[self.activeIndex]
@@ -72,9 +72,9 @@ class SimpleStoreTabBar(TabBar):
             tab.reparentTo(self.fParent)
             tab.setX(-0.080000000000000002)
             tab.setScale(0.23000000000000001, 1, 0.27000000000000002)
-        
 
-    
+
+
     def makeTab(self, name, **kw):
         return SimpleStoreTab(self, name, **None)
 
@@ -83,7 +83,7 @@ class SimpleStoreTabBar(TabBar):
 class SimpleStoreColorPicker(BorderFrame):
     sizeX = 0.65000000000000002
     sizeZ = 0.25
-    
+
     def __init__(self, store, parentFrame, item, **kw):
         optiondefs = (('state', DGG.DISABLED, None), ('frameSize', (-0.5 * self.sizeX, 0.5 * self.sizeX, -0.5 * self.sizeZ, 0.5 * self.sizeZ), None), ('modelName', 'pir_m_gui_frm_subframe', None), ('imageColorScale', VBase4(0.75, 0.75, 0.90000000000000002, 0.75), None))
         self.defineoptions(kw, optiondefs)
@@ -95,7 +95,7 @@ class SimpleStoreColorPicker(BorderFrame):
         self.parent = parentFrame
         self.setup()
 
-    
+
     def setup(self):
         self.setBin('gui-fixed', 1)
         offsetx = -0.5 * self.sizeX + 0.12
@@ -116,31 +116,31 @@ class SimpleStoreColorPicker(BorderFrame):
             if idx != 0 and (idx + 1) % 7 == 0:
                 offsetx = -0.5 * self.sizeX + 0.12
                 offsety -= 0.070000000000000007
-            
+
             self.colorButtons.append(colorButton)
             if idx in colorsOwned:
                 colorButton['state'] = DGG.DISABLED
                 colorButton['image_color'] = Vec4(0.5, 0.5, 0.5, 0.5)
                 colorFrame.setColorScale(0.5, 0.5, 0.5, 0.5)
                 continue
-        
 
-    
+
+
     def destroy(self):
         self.parent = None
         for button in self.colorButtons:
             button.destroy()
-        
+
         self.colorButtons = []
         BorderFrame.destroy(self)
 
-    
+
     def selectColor(self, colorId):
         if self.selectedColor:
             self.selectedColor.setScale(1.0)
             self.selectedColor['image_color'] = VBase4(1, 1, 1, 1)
             self.selectedColor['state'] = DGG.NORMAL
-        
+
         self.selectedColor = self.colorButtons[colorId]
         self.selectedColor.setScale(1.2)
         self.selectedColor['image_color'] = VBase4(1, 1, 0, 1)
@@ -149,7 +149,7 @@ class SimpleStoreColorPicker(BorderFrame):
             self.item.unapply(self.store.previewPirate, localAvatar.style)
             self.item.colorId = colorId
             self.item.apply(self.store.previewPirate)
-        
+
         self.store.invContainer.getItem(self.item.uid).setColorId(colorId)
         self.store.showClicked()
 
@@ -158,7 +158,7 @@ class SimpleStoreColorPicker(BorderFrame):
 class SimpleStoreBuyPanelGUI(BorderFrame):
     sizeX = 0.65000000000000002
     sizeZ = 0.25
-    
+
     def __init__(self, store, parentFrame, item, purchasable = False, **kw):
         optiondefs = (('state', DGG.DISABLED, None), ('frameSize', (-0.5 * self.sizeX, 0.5 * self.sizeX, -0.65000000000000002 * self.sizeZ, 0.5 * self.sizeZ), None), ('modelName', 'pir_m_gui_frm_subframe', None), ('imageColorScale', VBase4(0.75, 0.75, 0.90000000000000002, 0.75), None))
         self.defineoptions(kw, optiondefs)
@@ -177,21 +177,21 @@ class SimpleStoreBuyPanelGUI(BorderFrame):
         self.setPending(0)
         self.setupGui()
 
-    
+
     def setPending(self, pending):
         self.pending = pending
         taskMgr.remove('simpleStoreBuyPanelPurchasePending')
         if pending:
             taskMgr.doMethodLater(10.0, self.handlePurchaseTimeout, 'simpleStoreBuyPanelPurchasePending')
-        
 
-    
+
+
     def handlePurchaseTimeout(self, task = None):
         self.setPending(0)
         localAvatar.guiMgr.createWarning(PLocalizer.PurchaseTimeout, PiratesGuiGlobals.TextFG6)
         self.updateGui()
 
-    
+
     def destroy(self):
         taskMgr.remove('simpleStoreBuyPanelPurchasePending')
         self.store = None
@@ -200,40 +200,40 @@ class SimpleStoreBuyPanelGUI(BorderFrame):
         if self.qtyLabel:
             self.qtyLabel.destroy()
             self.qtyLabel = None
-        
+
         if self.qtyText:
             self.qtyText.destroy()
             self.qtyText = None
-        
+
         if self.minusButton:
             self.minusButton.destroy()
             self.minusButton = None
-        
+
         if self.plusButton:
             self.plusButton.destroy()
             self.plusButton = None
-        
+
         if self.costLabel:
             self.costLabel.destroy()
             self.costLabel = None
-        
+
         if self.costText:
             self.costText.destroy()
             self.costText = None
-        
+
         if self.buyButton:
             self.buyButton.destroy()
             self.buyButton = None
-        
+
         BorderFrame.destroy(self)
 
-    
+
     def setupGui(self):
         inventory = base.localAvatar.getInventory()
         qtyLimit = ItemGlobals.getStackLimit(self.item.uid)
         if not qtyLimit:
             qtyLimit = inventory.getStackLimit(self.item.uid)
-        
+
         freeSpace = qtyLimit - self.item.getQuantityInInventory()
         stackable = self.item.checkStackable()
         if stackable:
@@ -241,18 +241,18 @@ class SimpleStoreBuyPanelGUI(BorderFrame):
             qtyLimit = ItemGlobals.getStackLimit(self.item.uid)
             if not qtyLimit:
                 qtyLimit = inventory.getStackLimit(self.item.uid)
-            
+
             self.item.quantity = freeSpace
         else:
             qtyMult = 1
             qtyLimit = 10
-        
+
         def plusQuantity():
             inventory = base.localAvatar.getInventory()
             self.item.quantity += qtyMult
             self.updateGui()
 
-        
+
         def minusQuantity():
             inventory = base.localAvatar.getInventory()
             self.item.quantity -= qtyMult
@@ -262,11 +262,11 @@ class SimpleStoreBuyPanelGUI(BorderFrame):
         self.minusButton = GuiButton.GuiButton(parent = self, text = '-', text_fg = PiratesGuiGlobals.TextFG2, text_pos = (0.0, -0.014), text_scale = PiratesGuiGlobals.TextScaleTitleSmall, text_align = TextNode.ACenter, text_shadow = PiratesGuiGlobals.TextShadow, image = GuiButton.GuiButton.blueGenericButton, image_scale = (0.125, 0.35999999999999999, 0.35999999999999999), pos = (0.040000000000000001, 0.0, 0.028000000000000001), command = minusQuantity)
         if self.item.quantity == qtyMult:
             self.minusButton['state'] = DGG.DISABLED
-        
+
         self.plusButton = GuiButton.GuiButton(parent = self, text = '+', text_fg = PiratesGuiGlobals.TextFG2, text_pos = (0.0, -0.014), text_scale = PiratesGuiGlobals.TextScaleTitleSmall, text_align = TextNode.ACenter, text_shadow = PiratesGuiGlobals.TextShadow, image = GuiButton.GuiButton.blueGenericButton, image_scale = (0.125, 0.35999999999999999, 0.35999999999999999), pos = (0.17999999999999999, 0.0, 0.037999999999999999), command = plusQuantity)
         if self.item.quantity == qtyLimit:
             self.plusButton['state'] = DGG.DISABLED
-        
+
         self.qtyText = DirectLabel(parent = self, relief = None, state = DGG.DISABLED, text = str(self.item.quantity), text_font = PiratesGlobals.getInterfaceFont(), text_scale = PiratesGuiGlobals.TextScaleLarge, text_align = TextNode.ARight, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_wordwrap = 11, text_pos = (0, 0, 0), pos = (0.14000000000000001, 0, 0.014999999999999999), textMayChange = 1)
         self.qtyFullText = DirectLabel(parent = self, relief = None, state = DGG.DISABLED, text = PLocalizer.SimpleStoreFull, text_font = PiratesGlobals.getInterfaceFont(), text_scale = PiratesGuiGlobals.TextScaleLarge, text_align = TextNode.ALeft, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_wordwrap = 11, text_pos = (0, 0, 0), pos = (0.17000000000000001, 0, 0.014999999999999999), textMayChange = 1)
         self.qtyFullText.hide()
@@ -277,7 +277,7 @@ class SimpleStoreBuyPanelGUI(BorderFrame):
             freeSpace = len(localAvatar.getInventory().getFreeLocations(self.item.itemClass, self.item.itemType))
         if self.item.quantity > freeSpace:
             self.qtyText['text_fg'] = VBase4(1, 0, 0, 1)
-        
+
         self.ownedLabel = DirectLabel(parent = self, relief = None, state = DGG.DISABLED, text = PLocalizer.SimpleStoreOwned + ' %s' % quantity, text_scale = PiratesGuiGlobals.TextScaleLarge, text_align = TextNode.ALeft, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_wordwrap = 11, text_pos = (0, 0, 0.0), pos = (-0.20000000000000001, 0, 0.080000000000000002), text_font = PiratesGlobals.getInterfaceFont(), textMayChange = 1)
         totalCost = int(self.item.cost * qtyMult) * self.item.quantity / qtyMult
         costText = choice(self.item.cost == 0, PLocalizer.ShopFree, str(totalCost))
@@ -286,29 +286,29 @@ class SimpleStoreBuyPanelGUI(BorderFrame):
         totalMoney = localAvatar.getInventory().getGoldInPocket()
         if totalCost > totalMoney:
             self.costText['text_fg'] = VBase4(1, 0, 0, 1)
-        
+
         self.buyButton = GuiButton.GuiButton(parent = self, text = PLocalizer.PurchaseCommit, text_fg = PiratesGuiGlobals.TextFG2, text_pos = (0.0, -0.014), text_scale = PiratesGuiGlobals.TextScaleLarge, text_align = TextNode.ACenter, text_shadow = PiratesGuiGlobals.TextShadow, image = GuiButton.GuiButton.blueGenericButton, image_scale = (0.59999999999999998, 0.59999999999999998, 0.59999999999999998), pos = (0.0, 0.0, -0.115), command = self.store.handleBuyItem)
         if not self.purchasable:
             self.buyButton.hide()
-        
+
         self.updateGui()
         self.store.npc.resumeShopping()
 
-    
+
     def updateGui(self):
         if self.item == None:
             return None
-        
+
         if self.item.quantity < 0:
             self.item.quantity = 0
-        
+
         inventory = base.localAvatar.getInventory()
         quantity = self.item.getQuantityInInventory()
         inventory = base.localAvatar.getInventory()
         qtyLimit = ItemGlobals.getStackLimit(self.item.uid)
         if not qtyLimit:
             qtyLimit = inventory.getStackLimit(self.item.uid)
-        
+
         freeSpace = None
         stackable = self.item.checkStackable()
         if stackable:
@@ -317,13 +317,13 @@ class SimpleStoreBuyPanelGUI(BorderFrame):
             freeSpace = len(localAvatar.getInventory().getFreeLocations(self.item.itemClass, self.item.itemType))
         if self.item.quantity > freeSpace:
             self.item.quantity = freeSpace
-        
+
         if stackable:
             qtyMult = max(1, EconomyGlobals.getItemQuantity(self.item.uid))
             qtyLimit = ItemGlobals.getStackLimit(self.item.uid)
             if not qtyLimit:
                 qtyLimit = inventory.getStackLimit(self.item.uid)
-            
+
             self.ownedLabel['text'] = PLocalizer.SimpleStoreOwned + '  %s / %s' % (quantity, qtyLimit)
             self.qtyFullText['text'] = PLocalizer.SimpleStoreFull
         else:
@@ -339,13 +339,13 @@ class SimpleStoreBuyPanelGUI(BorderFrame):
             full = 1
             self.plusButton['state'] = DGG.DISABLED
             self.plusButton.hide()
-        
+
         self.minusButton['state'] = DGG.NORMAL
         self.minusButton.show()
         if self.item.quantity <= 0:
             self.minusButton['state'] = DGG.DISABLED
             self.minusButton.hide()
-        
+
         if self.item.quantity > freeSpace:
             self.qtyText['text_fg'] = VBase4(1, 0, 0, 1)
         else:
@@ -363,7 +363,7 @@ class SimpleStoreBuyPanelGUI(BorderFrame):
                 self.costText['text_fg'] = VBase4(1, 0, 0, 1)
             else:
                 self.costText['text_fg'] = VBase4(1, 1, 1, 1)
-        
+
         if self.pending:
             self.buyButton['state'] = DGG.DISABLED
             self.buyButton['text'] = PLocalizer.PurchasePending
@@ -401,7 +401,7 @@ class SimpleStoreGUI(DirectFrame):
         ItemType.CANNON_POUCH: SimplePouchItem,
         ItemType.FISHING_POUCH: SimplePouchItem,
         ItemType.FISHING_LURE: SimpleFishingLureItem }
-    
+
     def __init__(self, storeName, npc = None, shopId = None, **kw):
         optiondefs = (('relief', None, None), ('frameSize', (-(self.guiWidth) / 2, self.guiWidth / 2, -(self.guiHeight) / 2, self.guiHeight / 2), None))
         self.defineoptions(kw, optiondefs)
@@ -420,14 +420,14 @@ class SimpleStoreGUI(DirectFrame):
         self.pvpMode = 0
         if shopId == PiratesGlobals.PRIVATEER_HATS:
             self.pvpMode = 1
-        
+
         self.paid = Freebooter.getPaidStatus(localAvatar.getDoId())
         self.previewPirate = None
         if localAvatar.gameFSM.camIval is not None:
             if localAvatar.gameFSM.camIval.isPlaying():
                 localAvatar.gameFSM.camIval.finish()
-            
-        
+
+
         self.initialCamPos = camera.getPos()
         self.initialCamHpr = camera.getHpr()
         self.initialPirateH = 0
@@ -484,8 +484,8 @@ class SimpleStoreGUI(DirectFrame):
             if not localAvatar.guiMgr.trackedQuestLabel.isHidden():
                 localAvatar.guiMgr.hideTrackedQuestInfo()
                 self.showQuestLabel = True
-            
-        
+
+
         main_gui = loader.loadModel('models/gui/gui_main')
         generic_x = main_gui.find('**/x2')
         generic_box = main_gui.find('**/exit_button')
@@ -495,17 +495,17 @@ class SimpleStoreGUI(DirectFrame):
         self.xButton = OnscreenImage(parent = self.closeButton, image = generic_x, scale = 0.20000000000000001, pos = (-0.25600000000000001, 0, 0.76600000000000001))
         self.accept('TownfolkEndingInteract', self.closePanel)
 
-    
+
     def setupPanel(self):
         self.buyPanel = None
         self.colorPanel = None
 
-    
+
     def setupGrid(self, gridX = 3, gridZ = 7):
         if self.invContainer:
             self.invContainer.destroy()
             self.invContainer = None
-        
+
         imageScale = 0.13500000000000001
         self.gridX = gridX
         self.gridZ = gridZ
@@ -513,28 +513,28 @@ class SimpleStoreGUI(DirectFrame):
         self.invContainer.setPos(0.11799999999999999 * self.guiWidth, 0, -0.27500000000000002 * self.guiHeight)
         self.invContainer.reparentTo(self.cartFrame)
 
-    
+
     def changeMode(self, mode, refresh = True):
         pass
 
-    
+
     def showSellGUI(self):
         self.hide()
         self.npc.startSellItems(push = True)
 
-    
+
     def purchaseConfirmation(self):
         pass
 
-    
+
     def showBuyGUI(self):
         if self.confirmDialog:
             self.confirmDialog.destroy()
             self.confirmDialog = None
-        
+
         self.confirmDialog = PDialog.PDialog(pos = (-1, 0, 0), text = PLocalizer.InventoryBuyMessage, style = OTPDialog.YesNo, command = self.handleBuyItem)
 
-    
+
     def rotatePreviewPirate(self, slider):
         if self.previewPirate and slider:
             value = slider.getValue()
@@ -543,10 +543,10 @@ class SimpleStoreGUI(DirectFrame):
                 h = diff * 360.0 + self.previewPirate.getH()
                 self.previewPirate.setH(h)
                 self.rotateSliderOrigin = value
-            
-        
 
-    
+
+
+
     def destroy(self):
         localAvatar.guiMgr.inventoryUIManager.cancelCellItemDetails()
         self.ignoreAll()
@@ -554,68 +554,68 @@ class SimpleStoreGUI(DirectFrame):
         if self.confirmDialog:
             self.confirmDialog.destroy()
             self.confirmDialog = None
-        
+
         self._stopMouseReadTask()
         if self.camIval:
             self.camIval.finish()
             self.camIval = None
             camera.setHpr(0, 0, 0)
-        
+
         self.rotateSlider.destroy()
         self.unloadPirate()
         if self.CoinImage:
             self.CoinImage.removeNode()
             self.CoinImage = None
-        
+
         if self.ParchmentIcon:
             self.ParchmentIcon.removeNode()
             self.ParchmentIcon = None
-        
+
         if self.TailorIcons:
             self.TailorIcons.removeNode()
             self.TailorIcons = None
-        
+
         if self.ShirtIcon:
             self.ShirtIcon.removeNode()
             self.ShirtIcon = None
-        
+
         if self.LockIcon:
             self.LockIcon.removeNode()
             self.LockIcon = None
-        
+
         if self.alertDialog:
             self.alertDialog.destroy()
-        
+
         if self.redeemCodeGUI:
             self.redeemCodeGUI.destroy()
-        
+
         if len(localAvatar.guiMgr.trackedQuestLabel['text']):
             if self.showQuestLabel:
                 localAvatar.guiMgr.showTrackedQuestInfo()
-            
-        
+
+
         localAvatar.guiMgr.chatPanel.hide()
         if self.closeButton:
             self.closeButton.destroy()
             self.closeButton = None
-        
+
         if self.xButton:
             self.xButton.destroy()
             self.xButton = None
-        
+
         if self.invContainer:
             self.invContainer.destroy()
             self.invContainer = None
-        
 
-    
+
+
     def createItemCardPlaceholder(self):
         if not self.itemCardPlaceholder:
             sizeX = 0.65000000000000002
             sizeZ = 0.88
             self.itemCardPlaceholder = BorderFrame(parent = self.cartFrame, state = DGG.DISABLED, frameSize = (-0.5 * sizeX, 0.5 * sizeX, -0.5 * sizeZ, 0.5 * sizeZ), imageColorScale = (0.75, 0.75, 0.90000000000000002, 0.75), modelName = 'pir_m_gui_frm_subframe')
             self.itemCardPlaceholder.setPos(self.buyPanelXFactor * self.guiWidth, 0.0, 0.125)
-        
+
         if self.storeIconName and not (self.storeIcon):
             storeIcon = loader.loadModel(self.storeIconName)
             self.storeIcon = storeIcon.copyTo(self.itemCardPlaceholder)
@@ -623,11 +623,11 @@ class SimpleStoreGUI(DirectFrame):
             self.storeIcon.getChildren()[0].setPos(1.9330000000000001 * 2, 0, 1.55 * 2)
             self.storeIcon.setScale(0.10000000000000001)
             storeIcon.removeNode()
-        
+
         self.titleText = DirectLabel(parent = self.itemCardPlaceholder, relief = None, state = DGG.DISABLED, text = '', text_font = PiratesGlobals.getInterfaceFont(), text_scale = PiratesGuiGlobals.TextScaleTitleSmall, text_align = TextNode.ACenter, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_wordwrap = 14, text_pos = (0, 0, 0), pos = (0.0, 0.0, -0.505))
         self.instructionText = DirectLabel(parent = self.itemCardPlaceholder, relief = None, state = DGG.DISABLED, text = PLocalizer.SimpleStoreClickPreview, text_font = PiratesGlobals.getInterfaceFont(), text_scale = PiratesGuiGlobals.TextScaleLarge, text_align = TextNode.ACenter, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, text_wordwrap = 14, text_pos = (0, 0, 0), pos = (0.0, 0.0, -0.55000000000000004))
 
-    
+
     def createPreviewPirate(self):
         self.previewPirate = DynamicHuman.DynamicHuman()
         self.previewPirate.isPaid = localAvatar.isPaid
@@ -652,32 +652,32 @@ class SimpleStoreGUI(DirectFrame):
         self.previewPirate.show()
         localAvatar.stash()
 
-    
+
     def unloadPirate(self):
         if self.previewPirate:
             self.previewPirate.detachNode()
             self.previewPirate.cleanupHuman()
             self.previewPirate.delete()
             self.previewPirate = None
-        
+
         localAvatar.unstash()
 
-    
+
     def setPreviewItem(self, itemId):
         if self.buyPanel:
             self.buyPanel.updateGui()
-        
+
         if self.previewItem and self.previewItem.uid == itemId:
             return None
-        
+
         if self.previewItem:
             self.previewItem.unapply(self.previewPirate, localAvatar.style)
-        
+
         item = self.stock.get(itemId)
         self.previewItem = item
         if not self.previewItem:
             return None
-        
+
         self.previewItem.apply(self.previewPirate)
         gender = localAvatar.style.getGender()
         if self.previewItem.itemClass == InventoryType.ItemTypeClothing:
@@ -687,35 +687,35 @@ class SimpleStoreGUI(DirectFrame):
                     3,
                     4]:
                     self.showCutOffVestAlert()
-                
-            
-        
+
+
+
         currTime = globalClock.getFrameTime()
         if currTime - self.lastRun > 10:
             flavorAnim = self.previewItem.getFlavorAnim()
             self.previewPirate.play(flavorAnim)
             self.lastRun = currTime
-        
+
         self.focusCamera()
 
-    
+
     def reloadPirateDNA(self):
         if self.previewPirate is None:
             self.createPreviewPirate()
-        
+
         self.setPreviewItem(None)
 
-    
+
     def focusCamera(self):
         if localAvatar.gameFSM.camIval is not None:
             if localAvatar.gameFSM.camIval.isPlaying():
                 localAvatar.gameFSM.camIval.finish()
-            
-        
+
+
         if self.camIval:
             self.camIval.finish()
             self.camIval = None
-        
+
         self.previewPirate.setH(self.initialPirateH)
         self.rotateSlider['value'] = 0.5
         self.rotateSliderOrigin = 0.5
@@ -738,32 +738,32 @@ class SimpleStoreGUI(DirectFrame):
         h = camHpr[0] % 360
         if camH > h:
             h += 360
-        
+
         if h - camH > 180:
             h -= 360
-        
+
         camHpr.setX(h)
         camera.setH(camH)
         if self.camIval and self.camIval.endPos == camPos and self.camIval.endHpr == camHpr:
             return None
-        
+
         t = 1.5
         self.camIval = camera.posHprInterval(t, pos = camPos, hpr = camHpr, blendType = 'easeOut')
         localAvatar.cameraFSM.request('Control')
         self.camIval.start()
 
-    
+
     def _stopMouseReadTask(self):
         taskMgr.remove('SimpleStore-MouseRead')
 
-    
+
     def _startMouseReadTask(self):
         self._stopMouseReadTask()
         mouseData = base.win.getPointer(0)
         self.lastMousePos = (mouseData.getX(), mouseData.getY())
         taskMgr.add(self._mouseReadTask, 'SimpleStore-MouseRead')
 
-    
+
     def _mouseReadTask(self, task):
         if not base.mouseWatcherNode.hasMouse():
             pass
@@ -781,7 +781,7 @@ class SimpleStoreGUI(DirectFrame):
         self.rotateSlider['value'] = value
         return Task.cont
 
-    
+
     def showWardrobeLimitAlert(self, type):
         self.reloadPirateDNA()
         self.removeAlertDialog()
@@ -790,35 +790,35 @@ class SimpleStoreGUI(DirectFrame):
         self.alertDialog = PDialog.PDialog(text = text, text_align = TextNode.ACenter, style = OTPDialog.Acknowledge, pos = (-0.65000000000000002, 0.0, 0.0), command = self.removeAlertDialog)
         self.alertDialog.setBin('gui-fixed', 3, 3)
 
-    
+
     def removeAlertDialog(self, value = None):
         if self.alertDialog:
             self.alertDialog.destroy()
             self.alertDialog = None
-        
 
-    
+
+
     def getMoney(self):
         inventory = base.localAvatar.getInventory()
         if not inventory:
             return 0
-        
+
         if self.pvpMode:
             return inventory.getStackQuantity(InventoryType.PVPCurrentInfamy)
-        
+
         return inventory.getGoldInPocket()
 
-    
+
     def getMaxMoney(self, inventory):
         if not inventory:
             return 0
-        
+
         if self.pvpMode:
             return inventory.getStackLimit(InventoryType.PVPCurrentInfamy)
-        
+
         return GOLD_CAP
 
-    
+
     def closePanel(self):
         messenger.send('exitStore')
         self.ignoreAll()
@@ -827,34 +827,34 @@ class SimpleStoreGUI(DirectFrame):
         self.unloadPirate()
         if not hasattr(base, 'localAvatar'):
             return None
-        
 
-    
+
+
     def handleBuyItem(self, value = DGG.DIALOG_YES):
         if self.confirmDialog:
             self.confirmDialog.destroy()
             self.confirmDialog = None
-        
+
         if value != DGG.DIALOG_YES:
             return None
-        
+
         if not self.buyPanelItem:
             base.localAvatar.guiMgr.createWarning(PLocalizer.EmptyPurchaseWarning, PiratesGuiGlobals.TextFG6)
             return None
-        
+
         stackable = self.buyPanelItem.checkStackable()
         inventory = base.localAvatar.getInventory()
         myMoney = inventory.getGoldInPocket()
         if self.pvpMode:
             myMoney = self.getMoney()
-        
+
         if inventory:
             if stackable:
                 qtyMult = max(1, EconomyGlobals.getItemQuantity(self.buyPanelItem.uid))
                 qtyLimit = ItemGlobals.getStackLimit(self.buyPanelItem.uid)
                 if not qtyLimit:
                     qtyLimit = inventory.getStackLimit(self.buyPanelItem.uid)
-                
+
                 freeSpace = qtyLimit - self.buyPanelItem.getQuantityInInventory()
             else:
                 qtyMult = 1
@@ -863,28 +863,28 @@ class SimpleStoreGUI(DirectFrame):
             if myMoney < totalCost:
                 base.localAvatar.guiMgr.createWarning(PLocalizer.NotEnoughMoneyWarning, PiratesGuiGlobals.TextFG6)
                 return None
-            
+
             if self.buyPanelItem.cost < 0 and myMoney + totalCost > self.getMaxMoney(inventory):
                 base.localAvatar.guiMgr.createWarning(PLocalizer.CannotHoldGoldWarning, PiratesGuiGlobals.TextFG6)
                 return None
-            
+
             if self.buyPanelItem.quantity > freeSpace:
                 base.localAvatar.guiMgr.createWarning(PLocalizer.NoInventorySpaceWarning, PiratesGuiGlobals.TextFG6)
                 return None
-            
-        
+
+
         if self.buyPanelItem.quantity > 0:
             if not stackable:
                 for i in range(self.buyPanelItem.quantity):
                     self.buyPanelItem.purchase(self.npc)
-                
+
             else:
                 self.buyPanelItem.purchase(self.npc)
             self.buyPanel.setPending(1)
             self.buyPanel.updateGui()
-        
 
-    
+
+
     def purchaseConfirmation(self):
         if self.buyPanelItem and self.buyPanel.pending:
             itemName = self.invContainer.getItem(self.buyPanelItem.uid).getName()
@@ -894,14 +894,14 @@ class SimpleStoreGUI(DirectFrame):
             self.itemClicked(None)
             self.itemClicked(itemId)
             self.buyPanel.updateGui()
-        
 
-    
+
+
     def updateBalance(self):
         yourMoney = choice(self.pvpMode, PLocalizer.YourPVPMoney, PLocalizer.YourMoney)
         self.myGold['text'] = yourMoney + ' ' + str(self.getMoney())
 
-    
+
     def initTabs(self):
         self.tabBar = SimpleStoreTabBar(parent = self, backParent = self.backTabParent, frontParent = self.frontTabParent, offset = 0)
         self.createTabs()
@@ -909,9 +909,9 @@ class SimpleStoreGUI(DirectFrame):
             firstTabName = self.tabBar.getOrder()[0]
             self.tabBar.selectTab(firstTabName)
             self.setTab(firstTabName)
-        
 
-    
+
+
     def addTab(self, tabId, displayName = '', text = '', image = None, image_scale = None):
         newTab = self.tabBar.addTab(tabId, command = self.setTab, extraArgs = [
             tabId])
@@ -922,7 +922,7 @@ class SimpleStoreGUI(DirectFrame):
             textPosition = (-0.070000000000000007, -0.0, 0.0)
         newTab.nameTag = DirectLabel(parent = newTab, relief = None, state = DGG.DISABLED, pos = choice(image, (0.059999999999999998, 0, -0.035000000000000003), (0.0, 0, 0.0)), text = text, text_pos = textPosition, text_scale = PiratesGuiGlobals.TextScaleLarge * 4.0, text_align = TextNode.ACenter, text_fg = PiratesGuiGlobals.TextFG1, text_shadow = PiratesGuiGlobals.TextShadow, text_font = PiratesGlobals.getInterfaceFont(), text_wordwrap = 6, image = image, image_pos = (-0.10000000000000001, 0.0, 0.070000000000000007), image_scale = image_scale)
 
-    
+
     def setTab(self, tabId):
         self.tabBar.unstash()
         self.reloadPirateDNA()
@@ -933,44 +933,42 @@ class SimpleStoreGUI(DirectFrame):
         if self.rollInItemTask:
             taskMgr.remove(self.rollInItemTask)
             self.rollInItemTask = None
-        
+
         self.setupGrid()
-        titleText = ''
-        titleText += '\x1smallCaps\x1'
+        titleText = 'smallCaps'
         titleText += self.storeName
-        titleText += '\x2'
         self.cartFrame.nameTagLabel['text'] = titleText
         self.cartFrame.resetDecorations()
         itemIds = self.getTabItemIds(tabId)
         self.makeTabButtons(tabId, itemIds)
         self.itemCardPlaceholder.show()
 
-    
+
     def makeTabButtons(self, tabId, itemIds):
         self.invContainer.setupItems(itemIds)
         self.invContainer.disableUnusedCells()
 
-    
+
     def canChangeSelection(self):
         return self.confirmDialog is None
 
-    
+
     def setBuyPanelItem(self, itemId):
         if self.buyPanelItem and self.buyPanelItem.uid == itemId:
             return None
-        
+
         if self.buyPanelItem:
             self.buyPanel.destroy()
             self.buyPanel = None
-        
+
         if itemId is None and self.colorPanel:
             self.colorPanel.hide()
-        
+
         item = self.stock.get(itemId)
         self.buyPanelItem = item
         if not self.buyPanelItem:
             return None
-        
+
         self.buyPanel = SimpleStoreBuyPanelGUI(self, self.cartFrame, self.buyPanelItem, purchasable = True)
         self.buyPanel.setPos(self.buyPanelXFactor * self.guiWidth, 0.0, -0.47499999999999998)
         if not self.colorPanel:
@@ -984,16 +982,16 @@ class SimpleStoreGUI(DirectFrame):
         else:
             self.colorPanel.hide()
 
-    
+
     def itemRollIn(self, itemId, task = None):
         if self.rollInItem:
             self.itemRollOut(self.rollInItem.uid)
-        
+
         item = self.stock.get(itemId)
         self.rollInItem = item
         if self.rollInItem or self.clickedItem:
             self.itemCardPlaceholder.hide()
-        
+
         if self.clickedItem and itemId == self.clickedItem.uid:
             self.setBuyPanelItem(itemId)
         elif self.clickedItem and not (self.rollInItem):
@@ -1003,35 +1001,35 @@ class SimpleStoreGUI(DirectFrame):
             if self.rollInItemTask:
                 taskMgr.remove(self.rollInItemTask)
                 self.rollInItemTask = None
-            
+
         if getBase().config.GetBool('want-simple-preview', 0):
             self.setPreviewItem(itemId)
-        
 
-    
+
+
     def itemRollOut(self, itemId, task = None):
         if not (self.rollInItem) or self.rollInItem.uid != itemId:
             return None
-        
+
         self.rollInItem = None
         if getBase().config.GetBool('want-simple-preview', 0):
             if self.previewItem and itemId == self.previewItem.uid:
                 self.setPreviewItem(None)
-            
-        
+
+
         if not self.clickedItem:
             self.itemCardPlaceholder.show()
-        
+
         if self.rollInItemTask:
             taskMgr.remove(self.rollInItemTask)
             self.rollInItemTask = None
-        
 
-    
+
+
     def itemClicked(self, itemId, task = None):
         if self.clickedItem and itemId == self.clickedItem.uid:
             return None
-        
+
         self.clickedItem = self.stock.get(itemId)
         if isinstance(self.clickedItem, SimpleClothingItem) and ItemGlobals.canDyeItem(itemId):
             InventoryUIStoreContainer.InventoryUIStoreContainer.detailsHeight = 0.22
@@ -1040,36 +1038,36 @@ class SimpleStoreGUI(DirectFrame):
         self.showClicked()
         if not self.clickedItem:
             self.itemCardPlaceholder.show()
-        
+
         self.setPreviewItem(itemId)
         if getBase().config.GetBool('want-simple-buy', 0):
             self.showBuyGUI()
         else:
             self.setBuyPanelItem(itemId)
 
-    
+
     def showClicked(self):
         if not self.clickedItem:
             return None
-        
+
         self.invContainer.showItemDetails(self.clickedItem.uid)
         self.itemRollIn(self.clickedItem.uid)
 
-    
+
     def getMerchandiseIds(self):
         merchIds = DropGlobals.getStoreItems(self.npc.uniqueId)[:]
         return merchIds
 
-    
+
     def getStockItems(self, merchIds):
         stock = { }
         for id in merchIds:
             item = self.itemFromItemId(id)
             stock[id] = item
-        
+
         return stock
 
-    
+
     def removeHolidayItems(self, stock):
         newStock = { }
         activeHolidayIds = base.cr.newsManager.getActiveHolidayList()
@@ -1078,10 +1076,10 @@ class SimpleStoreGUI(DirectFrame):
             if not (item.holidayId) or item.holidayId in activeHolidayIds:
                 newStock[itemKey] = item
                 continue
-        
+
         return newStock
 
-    
+
     def filterStockItems(self, stock, pirate):
         newStock = { }
         for id in stock.keys():
@@ -1089,49 +1087,49 @@ class SimpleStoreGUI(DirectFrame):
             if not item or not item.canBeUsed(pirate):
                 continue
             newStock[id] = item
-        
+
         return newStock
 
-    
+
     def getStockIds(self, stock):
         return stock.keys()
 
-    
+
     def createTabs(self):
         pass
 
-    
+
     def itemFromItemId(self, itemId):
         item = None
         itemType = None
         itemGlobalsClass = ItemGlobals.getClass(itemId)
         if itemGlobalsClass in self.itemGlobalsClasses:
             item = self.itemGlobalsClasses[itemGlobalsClass](itemId)
-        
+
         if not item:
             itemType = EconomyGlobals.getItemType(itemId)
             if itemType in self.itemGlobalsClasses:
                 item = self.itemGlobalsClasses[itemType](itemId)
-            
-        
+
+
         if not item:
             self.notify.warning('Unhandled item: %s' % (itemId,))
             return None
-        
+
         return item
 
-    
+
     def tabIdFromItemId(self, uid):
         return ItemGlobals.getType(uid)
 
-    
+
     def getTabItemIds(self, tabId):
         allIds = self.getStockIds(self.stock)
         continue
         tabIds = _[1]
         return tabIds
 
-    
+
     def getTabItems(self, tabId):
         items = { }
         itemIds = self.getTabItemIds(tabId)
@@ -1139,14 +1137,14 @@ class SimpleStoreGUI(DirectFrame):
             if self.stock.get(itemId):
                 items[itemId] = self.stock[itemId]
                 continue
-        
+
         return items
 
 
 
 class CatalogStoreGUI(SimpleStoreGUI):
     storeIconName = 'models/buildings/sign1_eng_a_icon_tailor'
-    
+
     def __init__(self, npc, shopId, **kw):
         self.npc = npc
         self.previewSceneGraph = NodePath('PreviewSceneGraph')
@@ -1168,30 +1166,30 @@ class CatalogStoreGUI(SimpleStoreGUI):
         SimpleStoreGUI.__init__(self, PLocalizer.CatalogStore, npc, shopId, **None)
         self.rotateSlider.hide()
 
-    
+
     def destroy(self):
         SimpleStoreGUI.destroy(self)
         if self.previewMale:
             self.previewMale.detachNode()
             self.previewMale = None
-        
+
         if self.previewFemale:
             self.previewFemale.detachNode()
             self.previewFemale = None
-        
+
         self.destroyPreviewBuffer()
         for id in self.previewCards.keys():
             self.previewCards[id].detachNode()
             self.previewCards.pop(id)
-        
 
-    
+
+
     def createTabs(self):
         continue
         stockHolidayIds = [](_[1])
         if not stockHolidayIds:
             return None
-        
+
         firstTab = max(stockHolidayIds)
         while stockHolidayIds:
             holidayId = max(stockHolidayIds)
@@ -1201,11 +1199,11 @@ class CatalogStoreGUI(SimpleStoreGUI):
             self.addTab(holidayId, displayName, tabName)
         self.setTab(firstTab)
 
-    
+
     def tabIdFromItemId(self, uid):
         return ItemGlobals.getHoliday(uid)
 
-    
+
     def setTab(self, tabId):
         SimpleStoreGUI.setTab(self, tabId)
         self.updateCatalogRender(tabId)
@@ -1216,7 +1214,7 @@ class CatalogStoreGUI(SimpleStoreGUI):
         else:
             self.titleText['text'] = ''
 
-    
+
     def updateCatalogRender(self, tabId):
         self.unapplyStockFromPirate(self.currTabMaleStock, self.previewMale, self.maleDNA)
         self.currTabMaleStock = { }
@@ -1224,7 +1222,7 @@ class CatalogStoreGUI(SimpleStoreGUI):
             if self.tabIdFromItemId(uid) == tabId:
                 self.currTabMaleStock[uid] = self.maleStock[uid]
                 continue
-        
+
         self.applyStockToPirate(self.currTabMaleStock, self.previewMale)
         self.unapplyStockFromPirate(self.currTabFemaleStock, self.previewFemale, self.femaleDNA)
         self.currTabFemaleStock = { }
@@ -1232,17 +1230,17 @@ class CatalogStoreGUI(SimpleStoreGUI):
             if self.tabIdFromItemId(uid) == tabId:
                 self.currTabFemaleStock[uid] = self.femaleStock[uid]
                 continue
-        
+
         self.applyStockToPirate(self.currTabFemaleStock, self.previewFemale)
         for card in self.previewCards.itervalues():
             card.detachNode()
-        
+
         if not self.previewCards.get(tabId):
             self.previewCards[tabId] = self.createPreviewCard()
-        
+
         self.previewCards[tabId].reparentTo(self.itemCardPlaceholder)
 
-    
+
     def createPreviewBuffer(self):
         self.previewBg = loader.loadModel('models/gui/pir_m_gui_frm_catalog_bg')
         self.previewBg.setScale(1.0800000000000001, 1.1100000000000001, 1.1100000000000001)
@@ -1256,7 +1254,7 @@ class CatalogStoreGUI(SimpleStoreGUI):
         self.previewCam.reparentTo(self.previewSceneGraph)
         self.previewBg.reparentTo(self.previewCam)
 
-    
+
     def destroyPreviewBuffer(self):
         if self.previewBuffer:
             base.graphicsEngine.removeWindow(self.previewBuffer)
@@ -1264,13 +1262,13 @@ class CatalogStoreGUI(SimpleStoreGUI):
             self.previewBg.detachNode()
             self.previewCam.detachNode()
             self.previewCam = None
-        
 
-    
+
+
     def createPreviewPirate(self):
         pass
 
-    
+
     def createPreviewMale(self):
         self.previewMale = DynamicHuman.DynamicHuman()
         self.previewMale.ignoreAll()
@@ -1287,9 +1285,9 @@ class CatalogStoreGUI(SimpleStoreGUI):
         self.previewMale.setPos(1, 9.5, -3)
         if localAvatar.style.getGender() == 'f':
             self.previewMale.setY(10)
-        
 
-    
+
+
     def createPreviewFemale(self):
         self.previewFemale = DynamicHuman.DynamicHuman()
         self.previewFemale.ignoreAll()
@@ -1306,54 +1304,54 @@ class CatalogStoreGUI(SimpleStoreGUI):
         self.previewFemale.setPos(-1, 9.5, -3)
         if localAvatar.style.getGender() == 'm':
             self.previewFemale.setY(10)
-        
 
-    
+
+
     def unapplyStockFromPirate(self, stock, pirate, originalStyle):
         for stockItem in stock.itervalues():
             stockItem.unapply(pirate, originalStyle)
-        
 
-    
+
+
     def applyStockToPirate(self, stock, pirate):
         for stockItem in stock.itervalues():
             stockItem.apply(pirate)
-        
 
-    
+
+
     def createPreviewCard(self):
         if not self.cm:
             self.cm = CardMaker('previewCard')
             self.cm.setFrame(-0.32000000000000001, 0.32000000000000001, -0.4325, 0.4325)
-        
+
         tex = self.previewBuffer.getTexture()
         previewCard = NodePath(self.cm.generate())
         previewCard.setTexture(tex, 1)
         return previewCard
 
-    
+
     def setPreviewItem(self, itemId):
         item = self.stock.get(itemId)
         self.previewItem = item
         if not self.previewItem:
             return None
-        
 
-    
+
+
     def focusCamera(self):
         if self.previewItem:
             SimpleStoreGUI.focusCamera(self)
             return None
-        
+
         if localAvatar.gameFSM.camIval is not None:
             if localAvatar.gameFSM.camIval.isPlaying():
                 localAvatar.gameFSM.camIval.finish()
-            
-        
+
+
         if self.camIval:
             self.camIval.finish()
             self.camIval = None
-        
+
         dummy = self.npc.attachNewNode('dummy')
         dummy.setPos(dummy, 0, 3, self.npc.headNode.getZ(self.npc) + 0.25)
         dummy.wrtReparentTo(render)
@@ -1368,15 +1366,15 @@ class CatalogStoreGUI(SimpleStoreGUI):
         h = camHpr[0] % 360
         if camH > h:
             h += 360
-        
+
         if h - camH > 180:
             h -= 360
-        
+
         camHpr.setX(h)
         camera.setH(camH)
         if self.camIval and self.camIval.endPos == camPos and self.camIval.endHpr == camHpr:
             return None
-        
+
         t = 1.5
         self.camIval = camera.posHprInterval(t, pos = camPos, hpr = camHpr, blendType = 'easeOut')
         localAvatar.cameraFSM.request('Control')
@@ -1411,20 +1409,20 @@ class AccessoriesStoreGUI(SimpleStoreGUI):
             ClothingGlobals.VEST,
             '**/icon_shop_tailor_vest',
             0.5]]
-    
+
     def __init__(self, npc, shopId, **kw):
         self.TailorIcons = loader.loadModel('models/textureCards/tailorIcons')
         self.ShirtIcon = loader.loadModel('models/gui/char_gui').find('**/chargui_cloth')
         SimpleStoreGUI.__init__(self, PLocalizer.TailorStore, npc, shopId, **None)
 
-    
+
     def createTabs(self):
         for item in self.tabInfos:
             self.addTab(item[0], ClothingGlobals.getClothingTypeName(item[0]), image = self.TailorIcons.find(item[1]), image_scale = item[2])
-        
+
         self.addTab(ClothingGlobals.SHIRT, PLocalizer.CatalogStore, image = self.ShirtIcon, image_scale = 1.2)
 
-    
+
     def showCutOffVestAlert(self):
         self.removeAlertDialog()
         text = PLocalizer.ShopFemaleVestConflict
@@ -1462,11 +1460,11 @@ class JewelryStoreGUI(SimpleStoreGUI):
         JewelryGlobals.RHAND: [
             iconsB.find('**/icon_shop_tailor_hand'),
             (-0.5, 0.5, 0.5)] }
-    
+
     def __init__(self, npc, shopId, **kw):
         SimpleStoreGUI.__init__(self, PLocalizer.ShopJewelry, npc, shopId, **None)
 
-    
+
     def getTabItemIds(self, tabId):
         allIds = self.getMerchandiseIds()
         tabType = SimpleJewelryItem.itemTypeFromJewelryType(tabId)
@@ -1474,19 +1472,19 @@ class JewelryStoreGUI(SimpleStoreGUI):
         tabIds = _[1]
         return tabIds
 
-    
+
     def setTab(self, tabId):
         SimpleStoreGUI.setTab(self, tabId)
         items = SimpleStoreGUI.getTabItems(self, tabId)
         for item in items.itervalues():
             item.jewelryType = tabId
-        
 
-    
+
+
     def createTabs(self):
         for (key, value) in self.tabInfos.iteritems():
             self.addTab(key, PLocalizer.JewelryNames.get(key), image = value[0], image_scale = value[1])
-        
+
 
 
 
@@ -1513,11 +1511,11 @@ class TattooStoreGUI(SimpleStoreGUI):
             PLocalizer.TattooFace,
             '**/icon_shop_tailor_face_male',
             0.40000000000000002]]
-    
+
     def __init__(self, npc, shopId, **kw):
         SimpleStoreGUI.__init__(self, PLocalizer.TattooShop, npc, shopId, **None)
 
-    
+
     def getTabItemIds(self, tabId):
         allIds = self.stock.keys()
         tabType = SimpleTattooItem.itemTypeFromTattooType(tabId)
@@ -1525,19 +1523,19 @@ class TattooStoreGUI(SimpleStoreGUI):
         tabIds = _[1]
         return tabIds
 
-    
+
     def setTab(self, tabId):
         SimpleStoreGUI.setTab(self, tabId)
         items = SimpleStoreGUI.getTabItems(self, tabId)
         for item in items.itervalues():
             item.zone = tabId
-        
 
-    
+
+
     def createTabs(self):
         for item in self.tabInfos:
             self.addTab(item[0], item[1], image = SimpleTattooItem.Icons.find(item[2]), image_scale = item[3])
-        
+
 
 
 
@@ -1619,7 +1617,7 @@ class MerchantStoreGUI(SimpleStoreGUI):
         'SWORD': ('**/pir_t_ico_swd_cutlass_a', 'weapon'),
         'CANNON': ('**/cannon', 'skill'),
         'UNKNOWN': ('**/pir_t_ico_swd_rapier_a', 'weapon') }
-    
+
     def __init__(self, inventory, name, npc, **kw):
         self.inventory = inventory
         self.tabInventory = { }
@@ -1635,15 +1633,15 @@ class MerchantStoreGUI(SimpleStoreGUI):
                 self.tabInventory.setdefault(tabId, [])
                 self.tabInventory[tabId].append(itemId)
                 continue
-        
+
         SimpleStoreGUI.__init__(self, name, npc, **None)
         self.rotateSlider.hide()
 
-    
+
     def getTabItemIds(self, tabId):
         return self.tabInventory[tabId]
 
-    
+
     def createTabs(self):
         for tabId in self.TabOrder:
             tabName = self.TabDisplayNames[tabId]
@@ -1655,27 +1653,27 @@ class MerchantStoreGUI(SimpleStoreGUI):
                     icons = loader.loadModel('models/textureCards/skillIcons')
                 elif displayInfo[1] == 'fishing':
                     icons = loader.loadModel('models/textureCards/fishing_icons')
-                
+
                 image = icons.find(displayInfo[0])
                 self.addTab(tabId, tabName, tabName, image = image, image_scale = 0.55000000000000004)
                 continue
-        
 
-    
+
+
     def startCellItemDetails(self, cell, detailsPos, detailsHeight, detailsDelay, event = None):
         item = None
         if cell:
             if not cell.inventoryItem:
                 pass
             item = cell.hotlink
-        
+
         if item:
             oldTasks = taskMgr.getTasksNamed('inventoryUIHideDetailsTask')
             continue
             oldTasks = _[1]
             for tsk in oldTasks:
                 taskMgr.remove(tsk)
-            
+
             tsk = taskMgr.doMethodLater(detailsDelay, self.showDetails, 'inventoryUIShowDetailsTask', extraArgs = [
                 item,
                 cell,
@@ -1688,23 +1686,23 @@ class MerchantStoreGUI(SimpleStoreGUI):
         oldTasks = item
         for tsk in oldTasks:
             taskMgr.remove(tsk)
-        
 
-    
+
+
     def cancelCellItemDetails(self, cell, detailsDelay = 0, event = None):
         item = None
         if cell:
             if not cell.inventoryItem:
                 pass
             item = cell.hotlink
-        
+
         if item:
             oldTasks = taskMgr.getTasksNamed('inventoryUIShowDetailsTask')
             continue
             oldTasks = _[1]
             for tsk in oldTasks:
                 taskMgr.remove(tsk)
-            
+
             if not detailsDelay:
                 self.hideDetails(item)
             else:
@@ -1712,27 +1710,27 @@ class MerchantStoreGUI(SimpleStoreGUI):
                     item])
                 tsk.cell = cell
                 tsk.item = item
-        
 
-    
+
+
     def hideDetails(self, item, task = None):
         item.hideDetails()
 
-    
+
     def showDetails(self, item, cell, detailsPos, detailsHeight, task = None):
         item.showDetails(cell, detailsPos, detailsHeight)
 
-    
+
     def focusCamera(self):
         if localAvatar.gameFSM.camIval is not None:
             if localAvatar.gameFSM.camIval.isPlaying():
                 localAvatar.gameFSM.camIval.finish()
-            
-        
+
+
         if self.camIval:
             self.camIval.finish()
             self.camIval = None
-        
+
         dummy = self.npc.attachNewNode('dummy')
         dummy.setPos(dummy, 0, 3, self.npc.headNode.getZ(self.npc) + 0.25)
         dummy.wrtReparentTo(render)
@@ -1747,21 +1745,21 @@ class MerchantStoreGUI(SimpleStoreGUI):
         h = camHpr[0] % 360
         if camH > h:
             h += 360
-        
+
         if h - camH > 180:
             h -= 360
-        
+
         camHpr.setX(h)
         camera.setH(camH)
         if self.camIval and self.camIval.endPos == camPos and self.camIval.endHpr == camHpr:
             return None
-        
+
         t = 1.5
         self.camIval = camera.posHprInterval(t, pos = camPos, hpr = camHpr, blendType = 'easeOut')
         localAvatar.cameraFSM.request('Control')
         self.camIval.start()
 
-    
+
     def getMerchandiseIds(self):
         return self.inventory
 

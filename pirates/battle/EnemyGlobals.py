@@ -61,14 +61,9 @@ def listThreats():
                         attackers += 1
                     elif currentThreat + enemyThreat < threatCapcity + THREAT_LEEWAY:
                         attackers += 1
-                    
                 currentThreat + enemyThreat < threatCapcity + SINGLE_ENEMY_THREAT_BONUS
-            
             if attackers < MAX_ATTACKERS and attackers > 0:
                 print '    Max Level %s mobs against player: %s' % (monsterLevel, attackers)
-                continue
-        
-    
 
 BASE_GANGUP_CHANCE = 25
 TEAM_AGGRO_RADIUS = 7
@@ -79,31 +74,38 @@ LOW_LEVEL_GANGUP_HELP_LEVEL = 20
 GANGUP_LIMIT = 3
 WEAK_ENEMY_AGGRO_DEACTIVATION = 10
 AGGRO_RADIUS_TOLERANCE = 150
+
 RED = 1.5
 YELLOW = 1.0
 GREEN = 0.69999999999999996
 GREY = 0.40000000000000002
+
 ENEMY_DAMAGE_NERF = 0.42499999999999999
 ENEMY_DAMAGE_NERF_MODEL0 = 0.42499999999999999
 ENEMY_DAMAGE_NERF_MODEL1 = 0.64000000000000001
 ENEMY_HP_NERF_MODEL0 = 1.0
 ENEMY_HP_NERF_MODEL1 = 0.67000000000000004
+
 INTERIOR_MAX_SEARCH_RADIUS = 25
 MAX_SEARCH_RADIUS = 40
 MIN_SEARCH_RADIUS = 0
+
 AGGRO_MODE_DEFAULT = 0
 AGGRO_MODE_CUSTOM = 1
 AGGRO_MODE_FORCED = 2
 AGGRO_MODE_NEVER = 3
+
 AGGRO_NAME_DICT = {
     AGGRO_MODE_DEFAULT: 'AGGRO_MODE_DEFAULT',
     AGGRO_MODE_CUSTOM: 'AGGRO_MODE_CUSTOM',
     AGGRO_MODE_FORCED: 'AGGRO_MODE_FORCED',
     AGGRO_MODE_NEVER: 'AGGRO_MODE_NEVER' }
+
 TARGET_SWITCH_TYPE_RANDOM = BitMask32.bit(0)
 TARGET_SWITCH_TYPE_DAMAGE = BitMask32.bit(1)
 TARGET_SWITCH_TYPE_LOW_LVL = BitMask32.bit(2)
 TARGET_SWITCH_TYPE_HIGH_LVL = BitMask32.bit(3)
+
 SHIP_SEARCH_RADIUS = 4000
 SHIP_MIN_SEARCH_RADIUS = 1000
 SHIP_INSTANT_AGGRO_RADIUS = 1000
@@ -121,6 +123,7 @@ SHIP_THREAT_BOUNTY_HUNTERS = 3
 SHIP_THREAT_NAVY_HUNTERS = 4
 SHIP_THREAT_SCENARIO_START = 5
 SHIP_THREAT_SCENARIO_END = 6
+
 THREAT_ICON_DICT = {
     SHIP_THREAT_NONE: None,
     SHIP_THREAT_ATTACK_BACK: 'threat_L_One',
@@ -129,18 +132,21 @@ THREAT_ICON_DICT = {
     SHIP_THREAT_NAVY_HUNTERS: 'threat_L_Four',
     SHIP_THREAT_SCENARIO_START: 'threat_L_Five',
     SHIP_THREAT_SCENARIO_END: 'threat_L_Six' }
+
 THREAT_SCORE_VALUE_HUNTERS = 1
 THREAT_SCORE_VALUE_NAVY_HUNTERS = 2
 THREAT_SCORE_NAVY_HUNTERS = 5
 THREAT_SCORE_SCENARIO = 10
 BOARDING_DIFFICULTY_REGULAR = 0
 BOARDING_DIFFICULTY_RAISE_TO_LEVEL = 1
+
 OPEN_PORT_ALL = 0
 OPEN_PORT_NONE = 1
 OPEN_PORT_CUBA = 2
 OPEN_PORT_TORTUGA = 3
 OPEN_PORT_RAVEN_COVE = 4
 OPEN_PORT_DEVILS_ANVIL = 5
+
 OPEN_PORT_DICT = {
     OPEN_PORT_ALL: '',
     OPEN_PORT_NONE: '',
@@ -148,18 +154,23 @@ OPEN_PORT_DICT = {
     OPEN_PORT_TORTUGA: '1156207188.95dzlu',
     OPEN_PORT_RAVEN_COVE: '1271348547.01akelts',
     OPEN_PORT_DEVILS_ANVIL: '1164135492.81dzlu' }
+
 OPEN_PORT_REVERSER = {
-    '1160614528.73sdnaik': OPEN_PORT_CUBA,
-    '1156207188.95dzlu': OPEN_PORT_TORTUGA,
-    '1271348547.01akelts': OPEN_PORT_RAVEN_COVE,
-    '1164135492.81dzlu': OPEN_PORT_DEVILS_ANVIL }
+  '1160614528.73sdnaik': OPEN_PORT_CUBA,
+  '1156207188.95dzlu': OPEN_PORT_TORTUGA,
+  '1271348547.01akelts': OPEN_PORT_RAVEN_COVE,
+  '1164135492.81dzlu': OPEN_PORT_DEVILS_ANVIL
+}
+
 NON_WILD_ISLANDS = [
-    '1160614528.73sdnaik',
-    '1156207188.95dzlu',
-    '1271348547.01akelts',
-    '1164135492.81dzlu',
-    '1150922126.8dzlu',
-    '1233100928.0akelts']
+  '1160614528.73sdnaik',
+  '1156207188.95dzlu',
+  '1271348547.01akelts',
+  '1164135492.81dzlu',
+  '1150922126.8dzlu',
+  '1233100928.0akelts'
+]
+
 ALWAYS_HAVE = 100.0
 MOSTLY_HAVE = 80.0
 USUALLY_HAVE = 60.0
@@ -189,9 +200,11 @@ HEAVY = 11
 DUALCUTLASS = 12
 FOIL = 13
 BROADSWORD = 14
+
 __HP_CHART = (1, 50, 75, 125, 175, 250, 350, 450, 550, 650, 750, 850, 950, 1050, 1150, 1250, 1350, 1450, 1550, 1650, 1750, 1850, 1950, 2050, 2150, 2250, 2350, 2450, 2550, 2650, 2750, 2850, 2950, 3050, 3150, 3250, 3350, 3450, 3550, 3650, 3750, 3850, 3950, 4050, 4150, 4250, 4350, 4450, 4550, 4650, 4750, 4850, 4950, 5050, 5150, 5250, 5350, 5450, 5550, 5650, 5750, 5850, 5950, 6050, 6150, 6250, 6350, 6450, 6550, 6650, 6750, 6850, 6950, 7050, 7150, 7250, 7350, 7450, 7550, 7650, 7750, 7850, 7950, 8050, 8150, 8250, 8350, 8450, 8550, 8650, 8750, 8850, 8950, 9050, 9150, 9250, 9350, 9450, 9550, 9650, 9750)
 __MP_CHART = (5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530, 540, 550, 560, 570, 580, 590, 600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740, 750, 760, 770, 780, 790, 800, 810, 820, 830, 840, 850, 860, 870, 880, 890, 900, 910, 920, 930, 940, 950, 960, 970, 980, 990)
 __DMG_CHART = (10, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530, 540, 550, 560, 570, 580, 590, 600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 710, 720, 730, 740, 750, 760, 770, 780, 790, 800, 810, 820, 830, 840, 850, 860, 870, 880, 890, 900, 910, 920, 930, 940, 950, 960, 970, 980, 990, 1000)
+
 __weaponTable = {
     MELEE: [
         InventoryType.MeleeWeaponL1,
@@ -292,6 +305,7 @@ __enemyWeaponTable = {
         ItemGlobals.EPEE_1],
     BROADSWORD: [
         ItemGlobals.WORN_BROADSWORD] }
+
 MIN_LEVEL = 0
 MAX_LEVEL = 1
 SCALE_INDEX = 2
@@ -299,6 +313,7 @@ HEIGHT_INDEX = 3
 BATTLE_TUBE_RADIUS_INDEX = 4
 MONSTER_CLASS_INDEX = 5
 ENABLED_INDEX = 6
+
 __baseAvatarStats = {
     AvatarTypes.Undead: [
         1,
@@ -1354,24 +1369,24 @@ def getBaseStats(avatarType):
         if __dev__:
             import pdb as pdb
             pdb.set_trace()
-        
+
         self.notify.warning('AvatarType is a string %s' % avatarType)
-    
+
     baseStats = __baseAvatarStats.get(avatarType.getNonBossType())
     if not baseStats:
         fact = avatarType.getFaction()
         track = avatarType.getTrack()
         avatarType = AvatarType(faction = fact, track = track)
         baseStats = __baseAvatarStats.get(avatarType)
-    
+
     if not baseStats:
         fact = avatarType.getFaction()
         avatarType = AvatarType(faction = fact)
         baseStats = __baseAvatarStats.get(avatarType)
-    
+
     if baseStats:
         return baseStats[:]
-    
+
 
 
 def getHeight(avatarType):
@@ -2369,7 +2384,7 @@ def getAttackDelay(skillId, default = None):
             return [
                 2,
                 2]
-    
+
     delay = delayInfo[0] + delayInfo[1] * random.random()
     return delay
 
@@ -2381,12 +2396,12 @@ def getBaseSkills(avatarType):
         track = avatarType.getTrack()
         avatarType = AvatarType(faction = fact, track = track)
         baseSkills = __baseAvatarSkills.get(avatarType)
-    
+
     if not baseSkills:
         fact = avatarType.getFaction()
         avatarType = AvatarType(faction = fact)
         baseSkills = __baseAvatarSkills.get(avatarType)
-    
+
     return (baseSkills[WEAPON_INDEX][:], baseSkills[SKILL_INDEX][:])
 
 
@@ -2433,9 +2448,9 @@ def getEnemyScaleByType(avatarType, level, scaleMultiplier = 1):
         if __dev__:
             import pdb
             pdb.set_trace()
-        
+
         level = avgLvl
-    
+
     modifier = 1.0 + 0.029999999999999999 * (level - avgLvl)
     humanScale = 1.0 * scaleMultiplier
     if avatarType.isA(AvatarTypes.Navy):
@@ -2461,9 +2476,9 @@ def getRandomEncounter(level):
         if avgLvl < level + 6 and avgLvl > level - 6:
             if __baseAvatarStats[critter][ENABLED_INDEX]:
                 encounterArray.append(critter)
-            
+
         __baseAvatarStats[critter][ENABLED_INDEX]
-    
+
     if len(encounterArray):
         encounterType = random.choice(encounterArray)
         avgLvl = __baseAvatarStats[encounterType][MIN_LEVEL] + __baseAvatarStats[encounterType][MAX_LEVEL]
@@ -2501,7 +2516,7 @@ def getEnemyWeapons(avatarType, level, weaponlist = [], weaponlevel = 0):
             weaponId = weaponset[0]
         remainder = 0
         invWeapons[weaponId] = 1
-    
+
     return invWeapons
 
 
@@ -2517,11 +2532,11 @@ def getEnemySkills(avatarType, level, skillList = [], skillLevel = 0):
     skillLevel = levelModifier[SKILL_MOD]
     if not simbase.config.GetBool('npcs-all-skills', 0):
         skillLevel = 15
-    
+
     skillIds = skillList[0:skillLevel]
     for skillId in skillIds:
         weaponSkills[skillId] = WeaponGlobals.getSkillMaxQuantity(skillId)
-    
+
     return weaponSkills
 
 
@@ -2529,7 +2544,7 @@ def getRandomEnemyLevel(avatarType):
     baseStats = getBaseStats(avatarType.getNonBossType())
     if not baseStats:
         return 1
-    
+
     return random.randint(baseStats[MIN_LEVEL], baseStats[MAX_LEVEL])
 
 
@@ -2537,7 +2552,7 @@ def getMaxEnemyLevel(avatarType):
     baseStats = getBaseStats(avatarType.getNonBossType())
     if not baseStats:
         return 1
-    
+
     return baseStats[MAX_LEVEL]
 
 
@@ -2545,7 +2560,7 @@ def getMinEnemyLevel(avatarType):
     baseStats = getBaseStats(avatarType.getNonBossType())
     if not baseStats:
         return 1
-    
+
     return baseStats[MIN_LEVEL]
 
 __goldAmountByLevel = {
@@ -2661,7 +2676,7 @@ def getGoldDrop(avatarType, level, dropMultiplier = 1):
     level <= 60
     if not 1:
         return 0
-    
+
     (goldMin, goldMax) = __goldAmountByLevel.get(level)
     amount = random.randint(goldMin, goldMax)
     if avatarType:
@@ -2673,7 +2688,7 @@ def getGoldDrop(avatarType, level, dropMultiplier = 1):
             pass
         else:
             amount = 0
-    
+
     return int(amount * dropMultiplier)
 
 
@@ -2683,7 +2698,7 @@ def getMaxGoldDrop(avatarType, level, dropMultiplier = 1):
     level <= 60
     if not 1:
         return 0
-    
+
     (goldMin, goldMax) = __goldAmountByLevel.get(level)
     amount = goldMax
     if avatarType:
@@ -2695,7 +2710,7 @@ def getMaxGoldDrop(avatarType, level, dropMultiplier = 1):
             pass
         else:
             amount = 0
-    
+
     return int(amount * dropMultiplier)
 
 
@@ -2727,7 +2742,7 @@ def getShipNametagColor(team):
         return Vec4(0.80000000000000004, 0.69999999999999996, 0.5, 1)
     elif team == PiratesGlobals.BOUNTY_HUNTER_TEAM:
         return Vec4(0.80000000000000004, 0.69999999999999996, 0.5, 1)
-    
+
 
 
 def getTeamIconModelPath(team):
@@ -3002,7 +3017,7 @@ def getEffectScale(npc):
         effectScale *= 2.0
     elif npc.avatarType.isA(AvatarTypes.Wasp):
         effectScale *= 2.0
-    
+
     return effectScale
 
 
@@ -3011,7 +3026,7 @@ def getEffectOffset(npc):
         return VBase3(8, 0, 0)
     elif npc.avatarType.isA(AvatarTypes.Undead):
         return VBase3(-1.25, 0, 0)
-    
+
     return VBase3(0, 0, 0)
 
 

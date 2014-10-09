@@ -198,7 +198,7 @@ class SkillButton(DirectFrame):
     Image = None
     SkillRechargedSound = None
     SubLock = None
-    
+
     def __init__(self, skillId, callback, quantity = 0, skillRank = 0, showQuantity = False, showHelp = False, showRing = False, hotkey = None, name = '', showIcon = True, showLock = False, rechargeSkillId = False, isWeaponSkill = False, assocAmmo = []):
         DirectFrame.__init__(self, parent = NodePath(), relief = None)
         self.initialiseoptions(SkillButton)
@@ -216,8 +216,8 @@ class SkillButton(DirectFrame):
                     continue
                 specialImage = (SkillButton.SkillIcons.find('**/%s' % entry),)
                 SkillButton.SpecialIcons.append(specialImage)
-            
-        
+
+
         model = loader.loadModel('models/effects/particleMaps')
         toggleIcon = model.find('**/particleGlow')
         toggleIcon.node().setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MAdd))
@@ -259,7 +259,7 @@ class SkillButton(DirectFrame):
             self.weaponBackground.flattenLight()
             self.weaponBackground.setColor(0.20000000000000001, 0.20000000000000001, 0.20000000000000001, 0.20000000000000001)
             self.weaponBackground.setTransparency(1)
-        
+
         if showRing:
             if self.isBreakAttackSkill:
                 color = Vec4(1, 0, 0, 1)
@@ -272,17 +272,17 @@ class SkillButton(DirectFrame):
             self.skillRing.meterFaceHalf2.node().setGeomState(0, gs.removeAttrib(ColorAttrib.getClassType()))
             self.skillRing.reparentTo(self, 0)
             self.skillRing.setPos(0, 0, 0)
-        
+
         self.updateSkillId(skillId)
         if showQuantity:
             self.updateQuantity(quantity)
-        
+
         if hotkey:
             self.createHotkey(hotkey)
-        
+
         if showLock:
             self.createLock()
-        
+
         self.skillButton.bind(DGG.ENTER, self.showDetails)
         self.skillButton.bind(DGG.EXIT, self.hideDetails)
         if self.skillId >= InventoryType.begin_Consumables and self.skillId <= InventoryType.end_Consumables and not WeaponGlobals.getSkillEffectFlag(skillId):
@@ -293,7 +293,7 @@ class SkillButton(DirectFrame):
         if showRing:
             if not self.isBreakAttackSkill:
                 self.createSkillRingIval()
-            
+
             if self.tonicId:
                 timeSpentRecharging = localAvatar.skillDiary.getTimeSpentRecharging(InventoryType.UseItem)
             else:
@@ -303,7 +303,7 @@ class SkillButton(DirectFrame):
             elif not (self.isBreakAttackSkill):
                 if (self.totalRechargeTime or timeSpentRecharging) and not (timeSpentRecharging > self.totalRechargeTime):
                     self.skillRingIval.start(startT = timeSpentRecharging)
-                
+
             not (timeSpentRecharging > self.totalRechargeTime)
             self.skillRing.meterFaceHalf1.setR(0)
             self.skillRing.meterFaceHalf2.setR(180)
@@ -311,19 +311,19 @@ class SkillButton(DirectFrame):
             self.skillRing.meterFaceHalf2.setColor(self.skillRing.meterActiveColor, 100)
             self.skillRing.meterFaceHalf1.show()
             self.skillRing.meterFaceHalf2.show()
-        
+
         if not self.isBreakAttackSkill:
             self.checkAmount()
-        
+
         if self.isDefenseSkill:
             self.startRecharge()
-        
+
         if self.isWeaponSkill:
             self.weaponLabel = DirectLabel(parent = self, relief = None, text = PLocalizer.WeaponAbility, text_font = PiratesGlobals.getPirateBoldOutlineFont(), text_align = TextNode.ACenter, text_scale = PiratesGuiGlobals.TextScaleLarge, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, textMayChange = 0, pos = (0.0, 0, -0.12), sortOrder = 70, state = DGG.DISABLED)
             self.weaponLabel.flattenLight()
-        
 
-    
+
+
     def loadGlowRing(self):
         self.glowRing = loader.loadModel('models/effects/battleEffects').find('**/effectVoodooShockwave')
         self.glowRing.node().setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MAdd, ColorBlendAttrib.OIncomingAlpha, ColorBlendAttrib.OOne))
@@ -340,27 +340,27 @@ class SkillButton(DirectFrame):
         self.glowRing2.reparentTo(self)
         self.glowRing2.hide()
 
-    
+
     def checkAmount(self):
         if not (self.quantity) and self.showQuantity:
             if self.showRing and not self.skillRingIval.isPlaying():
                 self.setGeomColor(0.5, 0.5, 0.5, 1.0)
                 self.setRingColor(Vec4(0.5, 0.5, 0.5, 1.0))
-            
+
         elif self.showRing and not self.skillRingIval.isPlaying():
             self.setGeomColor(1.0, 1.0, 1.0, 1.0)
             self.setRingColor(self.skillRing.meterActiveColor)
-        
 
-    
+
+
     def toggleButton(self, state):
         if state == True:
             self.toggleFrame.show()
         elif state == False:
             self.toggleFrame.hide()
-        
 
-    
+
+
     def createSkillRingIval(self):
         if self.skillRingIval:
             self.skillRingIval.pause()
@@ -371,19 +371,19 @@ class SkillButton(DirectFrame):
             self.setGeomColor(1.0, 1.0, 1.0, 1.0)
             self.checkAmount()
             self.skillRingIval = None
-        
+
         if self.tonicId:
             timeSpentRecharging = localAvatar.skillDiary.getTimeSpentRecharging(InventoryType.UseItem)
         else:
             timeSpentRecharging = localAvatar.skillDiary.getTimeSpentRecharging(self.skillId)
         if self.isDefenseSkill:
             localAvatar.setDefenceEffect(self.skillId)
-        
+
         if self.showRing:
             self.skillRingIval = Sequence(Func(localAvatar.setDefenceEffect, 0), Func(self.setGeomColor, 0.5, 0.5, 0.5, 1.0), Func(self.skillRing.meterFaceHalf1.setColor, self.skillRing.meterActiveColor, 100), Func(self.skillRing.meterFaceHalf2.setColor, self.skillRing.meterColor, 100), Func(self.skillRing.meterFaceHalf1.setR, 0), Func(self.skillRing.meterFaceHalf2.setR, 0), Func(self.skillRing.meterFaceHalf1.show), Func(self.skillRing.meterFaceHalf2.show), LerpFunc(self.skillRing.meterFaceHalf2.setR, self.totalRechargeTime / 2, 0, -180), Func(self.skillRing.meterFaceHalf2.setColor, self.skillRing.meterActiveColor, 100), Func(self.skillRing.meterFaceHalf2.setR, 0), LerpFunc(self.skillRing.meterFaceHalf1.setR, self.totalRechargeTime / 2, 0, -180), Func(self.setGeomColor, 1.0, 1.0, 1.0, 1.0), Func(base.playSfx, SkillButton.SkillRechargedSound, volume = 0.5), Parallel(LerpScaleInterval(self.skillRing, 0.10000000000000001, Vec3(1.2, 1.2, 1.2)), LerpColorScaleInterval(self.skillRing, 0.10000000000000001, Vec4(0.0, 0.75, 0.0, 1.0), Vec4(1.0, 1.0, 1.0, 1.0), blendType = 'easeInOut')), Func(localAvatar.setDefenceEffect, self.skillId), LerpScaleInterval(self.skillRing, 0.20000000000000001, Vec3(0.90000000000000002, 0.90000000000000002, 0.90000000000000002)), LerpScaleInterval(self.skillRing, 0.029999999999999999, Vec3(1.1000000000000001, 1.1000000000000001, 1.1000000000000001)), Parallel(LerpScaleInterval(self.skillRing, 0.029999999999999999, Vec3(1.0, 1.0, 1.0)), LerpColorScaleInterval(self.skillRing, 1, Vec4(1.0, 1.0, 1.0, 1.0), blendType = 'easeInOut')), Func(self.skillRing.clearColorScale), Func(self.checkAmount))
-        
 
-    
+
+
     def updateSkillRingIval(self):
         if self.showRing:
             playing = self.skillRingIval.isPlaying()
@@ -393,49 +393,49 @@ class SkillButton(DirectFrame):
                 timeSpentRecharging = localAvatar.skillDiary.getTimeSpentRecharging(self.skillId)
             if timeSpentRecharging:
                 skillRechargeProgress = timeSpentRecharging / self.totalRechargeTime
-            
+
             self.totalRechargeTime = base.cr.battleMgr.getModifiedRechargeTime(localAvatar, self.skillId)
             if not self.totalRechargeTime:
                 self.totalRechargeTime = base.cr.battleMgr.getModifiedRechargeTime(localAvatar, InventoryType.UseItem)
-            
+
             if timeSpentRecharging:
                 timeSpentRecharging = skillRechargeProgress * self.totalRechargeTime
                 localAvatar.skillDiary.modifyTimeSpentRecharging(self.skillId, timeSpentRecharging)
-            
+
             self.createSkillRingIval()
             if playing and timeSpentRecharging:
                 self.skillRingIval.start(startT = timeSpentRecharging)
-            
-        
 
-    
+
+
+
     def quickGlowImpulse(self):
         if not self.glowRing2:
             self.loadGlowRing()
-        
+
         self.quickImpulseIval = Sequence(Func(self.glowRing2.show), LerpScaleInterval(self.glowRing2, 0.20000000000000001, Vec3(0.33000000000000002, 0.33000000000000002, 0.33000000000000002)), LerpScaleInterval(self.glowRing2, 0.25, Vec3(0.20000000000000001, 0.20000000000000001, 0.20000000000000001)), Func(self.glowRing2.hide))
         self.quickImpulseIval.start()
 
-    
+
     def startPowerImpulse(self):
         if not self.glowRing:
             self.loadGlowRing()
-        
+
         self.glowRing.show()
         self.impulseIval = Sequence(Parallel(LerpScaleInterval(self.glowRing, 0.10000000000000001, Vec3(0.20300000000000001, 0.20300000000000001, 0.20300000000000001)), LerpColorScaleInterval(self.glowRing, 0.10000000000000001, Vec4(0.80000000000000004, 0.80000000000000004, 0.80000000000000004, 0.80000000000000004), Vec4(1.0, 1.0, 1.0, 0.80000000000000004), blendType = 'easeInOut')), LerpScaleInterval(self.glowRing, 0.14999999999999999, Vec3(0.19, 0.19, 0.19)), LerpScaleInterval(self.glowRing, 0.050000000000000003, Vec3(0.20200000000000001, 0.20200000000000001, 0.20200000000000001)), Parallel(LerpScaleInterval(self.glowRing, 0.029999999999999999, Vec3(0.20000000000000001, 0.20000000000000001, 0.20000000000000001)), LerpColorScaleInterval(self.glowRing, 0.40000000000000002, Vec4(1.0, 1.0, 1.0, 1.0), blendType = 'easeInOut')), Func(self.glowRing.clearColorScale))
         self.impulseIval.loop()
 
-    
+
     def stopPowerImpulse(self):
         if self.glowRing:
             self.glowRing.hide()
-        
+
         if self.impulseIval:
             self.impulseIval.finish()
             self.impulseIval = None
-        
 
-    
+
+
     def updateRechargeRing(self):
         timeSpentRecharging = localAvatar.skillDiary.getTimeSpentRecharging(self.skillId)
         self.totalRechargeTime = base.cr.battleMgr.getModifiedRechargeTime(localAvatar, self.skillId)
@@ -444,7 +444,7 @@ class SkillButton(DirectFrame):
             if self.skillRingIval:
                 self.skillRingIval.pause()
                 self.skillRingIval = None
-            
+
             self.skillRing.meterFaceHalf1.setR(0)
             self.skillRing.meterFaceHalf2.setR(180)
             self.skillRing.setScale(1.0)
@@ -456,17 +456,17 @@ class SkillButton(DirectFrame):
             self.rechargeFilled = 0
             self.setGeomColor(0.5, 0.5, 0.5, 1.0)
             self.skillRing.update(timeSpentRecharging, self.totalRechargeTime)
-        
 
-    
+
+
     def updateSkillId(self, skillId):
         self.skillId = skillId
         if self.skillButton:
             if self.quantityLabel:
                 self.quantityLabel.detachNode()
-            
+
             self.skillButton.destroy()
-        
+
         if self.showQuantity and not (self.quantity):
             geomColor = Vec4(0.5, 0.5, 0.5, 1.0)
         else:
@@ -475,11 +475,11 @@ class SkillButton(DirectFrame):
             asset = WeaponGlobals.getSkillIcon(skillId)
             if hasattr(self, '_skillIconName'):
                 asset = self._skillIconName
-            
+
             geom = SkillButton.SkillIcons.find('**/%s' % asset)
             if geom.isEmpty():
                 geom = SkillButton.SkillIcons.find('**/base')
-            
+
             repId = WeaponGlobals.getSkillReputationCategoryId(self.skillId)
             geom_scale = getGeomScale(repId, skillId)
             image_color = (1, 1, 1, 1)
@@ -494,16 +494,16 @@ class SkillButton(DirectFrame):
             specialIconId = 2
         elif skillId == ItemGlobals.getSpecialAttack(localAvatar.currentWeaponId):
             specialIconId = 3
-        
+
         if specialIconId:
             something = SkillButton.SpecialIcons[specialIconId][0]
             if self.skillRing:
                 self.skillRing.setupFace(something)
-            
+
             self['image'] = None
         elif self.skillRing:
             self.skillRing.setupFace()
-        
+
         if self.showRing:
             image = None
         else:
@@ -514,18 +514,18 @@ class SkillButton(DirectFrame):
         self.skillButton.bind(DGG.EXIT, self.hideDetails)
         if self.quantityLabel and not self.quantityLabel.isEmpty():
             self.quantityLabel.reparentTo(self.skillButton)
-        
 
-    
+
+
     def createHotkey(self, hotkey):
         self.hotkeyLabel = DirectLabel(parent = self, relief = None, text = hotkey, text_font = PiratesGlobals.getPirateBoldOutlineFont(), text_align = TextNode.ARight, text_scale = PiratesGuiGlobals.TextScaleLarge, text_fg = PiratesGuiGlobals.TextFG2, text_shadow = PiratesGuiGlobals.TextShadow, textMayChange = 0, pos = (0.070000000000000007, 0, -0.059999999999999998), sortOrder = 70, state = DGG.DISABLED)
         self.hotkeyLabel.flattenLight()
 
-    
+
     def createLock(self):
         if self.lock:
             return None
-        
+
         self.lock = DirectFrame(parent = self, relief = None, image = SkillButton.SubLock, image_scale = 0.14000000000000001, image_pos = (0.050000000000000003, 0, -0.025000000000000001), sortOrder = 99)
         if self.showIcon:
             self.lock.setColorScale(0.90000000000000002, 0.90000000000000002, 0.90000000000000002, 1)
@@ -535,17 +535,17 @@ class SkillButton(DirectFrame):
             self.skillButton.clearColorScale()
         if self.showHelp:
             self.lock.hide()
-        
 
-    
+
+
     def createHelpFrame(self, args = None):
         if self.helpFrame:
             return None
-        
+
         inv = localAvatar.getInventory()
         if not inv:
             return None
-        
+
         baseRank = max(self.skillRank, 1)
         lvlDamageMod = WeaponGlobals.getLevelDamageModifier(localAvatar.getLevel())
         buff = WeaponGlobals.getSkillEffectFlag(self.skillId)
@@ -568,8 +568,8 @@ class SkillButton(DirectFrame):
             if manaCost < 0:
                 amt = localAvatar.getSkillRankBonus(InventoryType.StaffConservation)
                 manaCost = min(manaCost - manaCost * amt, 1.0)
-            
-        
+
+
         damage = 0
         loDamage = 0
         mpDamage = 0
@@ -582,8 +582,8 @@ class SkillButton(DirectFrame):
             loDamage = damage / 2
             mpDamage = int(WeaponGlobals.getAttackTargetMojo(self.skillId) * mod)
             mpLoDamage = mpDamage / 2
-        
-        
+
+
         try:
             skillInfo = PLocalizer.SkillDescriptions.get(self.skillId)
             skillTitle = PLocalizer.makeHeadingString(PLocalizer.InventoryTypeNames.get(self.skillId), 2)
@@ -600,31 +600,31 @@ class SkillButton(DirectFrame):
                 description += ' ' + PLocalizer.HealsDamageRange
             else:
                 description += ' ' + PLocalizer.HealsDamage
-        
+
         if mpDamage < 0:
             description += ' ' + PLocalizer.DealsMpDamage
-        
+
         effectId = WeaponGlobals.getSkillEffectFlag(self.skillId)
         if effectId:
             description += ' ' + SkillEffectDescriptions.get(effectId)[0]
-        
+
         if bonus:
             if self.skillId == InventoryType.SailBroadsideLeft or self.skillId == InventoryType.SailBroadsideRight:
                 description += ' ' + PLocalizer.BroadsideDesc
-            
+
             if self.skillId == InventoryType.CannonShoot:
                 description += ' ' + PLocalizer.CannonShootDesc
-            
+
             if self.skillId == InventoryType.DollAttune:
                 description += ' ' + PLocalizer.MultiAttuneDesc
-            
-        
+
+
         if WeaponGlobals.getSkillInterrupt(self.skillId):
             description += ' ' + PLocalizer.InterruptDesc
-        
+
         if WeaponGlobals.getSkillUnattune(self.skillId):
             description += ' ' + PLocalizer.UnattuneDesc
-        
+
         upgradeInfo = ''
         if self.showUpgrade and rank < 5:
             if rank > 0:
@@ -634,10 +634,10 @@ class SkillButton(DirectFrame):
                         upgradeInfo += PLocalizer.UpgradesDamage
                     elif damage > 0:
                         upgradeInfo += PLocalizer.UpgradesHealing
-                    
+
                     if mpDamage < 0:
                         upgradeInfo += ' ' + PLocalizer.UpgradesMpDamage
-                    
+
                     if effectId:
                         entry = SkillEffectDescriptions.get(effectId)
                         if len(entry) > 1:
@@ -646,10 +646,10 @@ class SkillButton(DirectFrame):
                             else:
                                 upgradeInfo += ' ' + PLocalizer.And
                             upgradeInfo += ' ' + entry[1]
-                        
-                    
+
+
                     upgradeInfo += '!'
-                
+
             elif len(upgradeInfo) >= 4:
                 upgradeInfo = skillInfo[3]
             else:
@@ -658,68 +658,67 @@ class SkillButton(DirectFrame):
             unlockLevel = RepChart.getSkillUnlockLevel(self.skillId)
             if unlockLevel > 0:
                 upgradeInfo = PLocalizer.UnlocksAtLevel % unlockLevel
-            
-        
+
+
         if self.skillId in SkillComboReq and SkillComboReq[self.skillId] and inv.getStackQuantity(self.skillId - 1) < 2:
-            color = '\x1red\x1'
+            color = 'red'
             if rank == 0:
-                color = '\x1red\x1'
+                color = 'red'
                 upgradeInfo = ''
-            
+
             description += '\n' + color + SkillComboReq[self.skillId] + '.'
-        
-        skillDesc = skillTitle + '\n' + skillType + '\n\n' + description + '\n\x1green\x1' + upgradeInfo + '\x2'
+
+        skillDesc = skillTitle + '\n' + skillType + '\n\n' + description + '\ngreen' + upgradeInfo
         stats = []
         if manaCost:
             stats.append(abs(manaCost))
-        
+
         if damage and loDamage:
             stats.append(abs(loDamage))
             stats.append(abs(damage))
         elif damage:
             stats.append(abs(damage))
-        
+
         if mpDamage:
             stats.append(abs(mpLoDamage))
             stats.append(abs(mpDamage))
-        
+
         if buff == WeaponGlobals.C_CURSE:
             stats.append(WeaponGlobals.CURSED_DAM_AMP * 100)
-        
+
         if buff == WeaponGlobals.C_WEAKEN:
             stats.append(WeaponGlobals.WEAKEN_PENALTY * 100)
-        
+
         if effect > 0:
             stats.append(effect)
-        
+
         if skillInfo[4]:
             if bonus == 0 and upgradeAmt > 0:
                 if not self.skillId == InventoryType.SailBroadsideLeft and self.skillId == InventoryType.SailBroadsideRight:
                     pass
                 if not (self.skillId == InventoryType.CannonShoot):
                     bonus = upgradeAmt
-                
+
             if upgradeAmt < 1.0 and upgradeAmt > 0:
                 bonus *= 100
-            
+
             if self.skillId == InventoryType.SailTreasureSense:
                 bonus /= 2.0
             elif self.skillId == InventoryType.CutlassParry:
                 bonus += WeaponGlobals.getSubtypeParryBonus(localAvatar.currentWeaponId)
-            
+
             if bonus:
                 stats.append(abs(bonus))
-            
-        
+
+
         if self.skillId == InventoryType.DollAttune:
             stats.append(rank)
-        
+
         if self.skillRank:
             rankText = DirectFrame(parent = self, relief = None, text = PLocalizer.makeHeadingString(PLocalizer.Rank + ' %s' % (self.skillRank + skillBoost), 2), text_align = TextNode.ARight, text_scale = PiratesGuiGlobals.TextScaleSmall, text_fg = PiratesGuiGlobals.TextFG2, text_wordwrap = 15, text_shadow = (0, 0, 0, 1), pos = (0.45000000000000001, 0, 0), textMayChange = 1, sortOrder = 92, state = DGG.DISABLED)
-        
-        stats = tuple(lambda [outmost-iterable]: for stat in [outmost-iterable]:
-stat + 0.01(stats))
-        
+
+        stats = [stat + 0.01 for stat in stats]
+
         try:
             pass
         except TypeError:
@@ -729,48 +728,48 @@ stat + 0.01(stats))
         height = -(helpText.getHeight() + 0.01)
         if self.lock:
             height = height - 0.040000000000000001
-        
+
         width = 0.55000000000000004
         self.helpFrame = BorderFrame(parent = self, state = DGG.DISABLED, frameSize = (-0.040000000000000001, width, height, 0.050000000000000003), pos = (0, 0, -0.12), sortOrder = 90)
         self.helpFrame.setBin('gui-popup', 0)
         helpText.reparentTo(self.helpFrame)
         if self.skillRank:
             rankText.reparentTo(self.helpFrame)
-        
+
         if self.lock:
             self.lockedFrame = DirectFrame(parent = self.helpFrame, relief = None, pos = (0.087999999999999995, 0, height + 0.029999999999999999), image = SkillButton.SubLock, image_scale = 0.13, image_pos = (-0.055, 0, 0.012999999999999999), text = PLocalizer.VR_AuthAccess, text_scale = PiratesGuiGlobals.TextScaleSmall, text_align = TextNode.ALeft, text_fg = PiratesGuiGlobals.TextFG13)
             self.notify.debug('locked!')
-        
+
         pos = self.helpFrame.getPos(aspect2d)
         x = min(pos[0], base.a2dRight - width)
         z = max(pos[2], base.a2dBottom - height)
         self.helpFrame.setPos(aspect2d, x, 0, z)
 
-    
+
     def showDetails(self, event):
         if self.showHelp:
             self.createHelpFrame()
-        
+
         if self.showRing:
             self.skillRing.rollover(True)
-        
 
-    
+
+
     def hideDetails(self, event):
         if self.helpFrame:
             self.helpFrame.destroy()
             self.helpFrame = None
-        
+
         if self.showRing:
             self.skillRing.rollover(False)
-        
 
-    
+
+
     def updateQuantity(self, quantity):
         self.quantity = quantity
         if not self.showQuantity:
             return None
-        
+
         if quantity == WeaponGlobals.INF_QUANT:
             text = ''
         elif self.assocAmmo:
@@ -779,8 +778,8 @@ stat + 0.01(stats))
             if inv:
                 for ammoId in self.assocAmmo:
                     assocQuantity += inv.getItemQuantity(self.getAmmoCat(), ammoId)
-                
-            
+
+
             if quantity != assocQuantity:
                 text = '%s' % assocQuantity
             else:
@@ -795,50 +794,50 @@ stat + 0.01(stats))
             self.quantityLabel.reparentTo(self)
             if self.skillButton and not self.skillButton.isEmpty():
                 self.quantityLabel.reparentTo(self.skillButton)
-            
 
-    
+
+
     def getAmmoCat(self):
         pass
 
-    
+
     def startRecharge(self):
         if not self.showRing:
             return None
-        
+
         if self.isBreakAttackSkill:
             self.setGeomColor(0.5, 0.5, 0.5, 1.0)
             self.updateRechargeRing()
             return None
-        
+
         if self.skillRingIval.isPlaying():
             self.createSkillRingIval()
-        
+
         self.skillRingIval.start()
 
-    
+
     def stopRecharge(self):
         if self.showRing:
             if self.isBreakAttackSkill:
                 self.setGeomColor(0.5, 0.5, 0.5, 1.0)
                 self.updateRechargeRing()
                 return None
-            
+
             if self.skillRingIval.isPlaying():
                 self.skillRingIval.pause()
-            
-        
 
-    
+
+
+
     def setGeomColor(self, r, g, b, a):
         self.skillButton['geom_color'] = Vec4(r, g, b, a)
 
-    
+
     def setRingColor(self, color):
         self.skillRing.meterFaceHalf1.setColor(color[0], color[1], color[2], color[3], 100)
         self.skillRing.meterFaceHalf2.setColor(color[0], color[1], color[2], color[3], 100)
 
-    
+
     def setShowUpgrade(self, show):
         if self.showUpgrade != show:
             self.showUpgrade = show
@@ -846,10 +845,10 @@ stat + 0.01(stats))
                 self.helpFrame.destroy()
                 self.helpFrame = None
                 self.showDetails(None)
-            
-        
 
-    
+
+
+
     def setShowIcon(self, show):
         if self.showIcon != show:
             self.showIcon = show
@@ -857,10 +856,10 @@ stat + 0.01(stats))
             if self.helpFrame:
                 self.helpFrame.destroy()
                 self.helpFrame = None
-            
-        
 
-    
+
+
+
     def setShowLock(self, show):
         if self.showLock != show:
             self.showLock = show
@@ -870,28 +869,28 @@ stat + 0.01(stats))
                 self.lock.destroy()
                 self.lock = None
                 self.skillButton.clearColorScale()
-            
-        
 
-    
+
+
+
     def destroy(self):
         self.callback = None
         if self.skillRingIval:
             self.skillRingIval.pause()
             self.skillRingIval = None
-        
+
         if self.quantityLabel:
             self.quantityLabel.destroy()
             self.quantityLabel = None
-        
+
         if self.impulseIval:
             self.impulseIval.pause()
             self.impulseIval = None
-        
+
         if self.quickImpulseIval:
             self.quickImpulseIval.pause()
             self.quickImpulseIval = None
-        
+
         self.ignoreAll()
         DirectFrame.destroy(self)
 

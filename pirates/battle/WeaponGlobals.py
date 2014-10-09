@@ -3,6 +3,7 @@
 import copy
 import math
 import cPickle
+import pickle
 from pandac.PandaModules import *
 from direct.interval.IntervalGlobal import *
 from direct.showbase.PythonUtil import *
@@ -142,9 +143,9 @@ if not found:
     message = 'WeaponGlobals.pkl file not found on %s' % searchPath
     raise IOError, message
 
-data = vfs.readFile(filename, 1)
-__skillInfo = cPickle.loads(data)
-__attackEffectsSkillInfo = { }
+data = open('etc/WeaponGlobals.pkl', 'r')
+__skillInfo = pickle.load(data)
+__attackEffectsSkillInfo = {}
 __columnHeadings = __skillInfo.pop('columnHeadings')
 for (heading, value) in __columnHeadings.items():
     exec '%s = %s' % (heading, value) in globals()
@@ -471,10 +472,10 @@ def getWeaponClass(weaponId):
     weaponClass = __subtypeId2Class.get(subtypeId)
     if not weaponClass:
         weaponClass = __typeId2Class.get(typeId)
-    
+
     if not weaponClass:
         weaponClass = __weaponId2Class.get(weaponId)
-    
+
     return weaponClass
 
 
@@ -1727,7 +1728,7 @@ def getWeaponStats(attacker, itemId):
             0,
             0,
             0])
-    
+
     entry = __weaponStatList.get(itemId)
     if entry:
         return entry
@@ -1837,7 +1838,7 @@ def getWeaponDamageScale(itemId):
     entry = __weaponDamageScaleList.get(type)
     if not entry:
         entry = __weaponDamageScaleList.get(itemId)
-    
+
     if entry:
         return entry[0]
     else:
@@ -1857,7 +1858,7 @@ def getWeaponExperienceScale(itemId):
     entry = __weaponDamageScaleList.get(type)
     if not entry:
         entry = __weaponDamageScaleList.get(itemId)
-    
+
     if entry:
         return entry[1]
     else:
@@ -1869,7 +1870,7 @@ def getWeaponPvpDamageScale(itemId):
     entry = __weaponDamageScaleList.get(type)
     if not entry:
         entry = __weaponDamageScaleList.get(itemId)
-    
+
     if entry:
         return entry[2]
     else:
@@ -2062,7 +2063,7 @@ def getPlayerSkills(weaponRepId):
         if skillId >= 10000:
             skillSet.append(skillId)
             continue
-    
+
     return skillSet
 
 
@@ -2082,7 +2083,7 @@ def canFreeUse(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[FREE_INDEX]
-    
+
     return 0
 
 
@@ -2090,7 +2091,7 @@ def canPVPUse(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[PVP_INDEX]
-    
+
     return 0
 
 
@@ -2098,10 +2099,10 @@ def isProjectileSkill(skillId, ammoSkillId):
     value = 0
     if skillId:
         value += __skillInfo[skillId][IS_PROJECTILE_INDEX]
-    
+
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][IS_PROJECTILE_INDEX]
-    
+
     if skillId and ammoSkillId:
         if value == 2:
             return 1
@@ -2141,14 +2142,14 @@ def getLinkedSkillId(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[LINKED_SKILL]
-    
+
 
 
 def getSkillInterrupt(skillId):
     if skillId:
         value = __skillInfo[skillId][INTERRUPT_INDEX]
         return value
-    
+
     return 0
 
 
@@ -2156,7 +2157,7 @@ def getSkillUnattune(skillId):
     if skillId:
         value = __skillInfo[skillId][UNATTUNE_INDEX]
         return value
-    
+
     return 0
 
 
@@ -2168,7 +2169,7 @@ def isFriendlyFire(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][FRIENDLY_FIRE_INDEX]
     if ammoSkillId:
         value |= __skillInfo[ammoSkillId][FRIENDLY_FIRE_INDEX]
-    
+
     return value
 
 
@@ -2176,7 +2177,7 @@ def getSkillAmmoInventoryId(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[AMMO_INVENTORY_TYPE]
-    
+
 
 
 def getAllAmmoSkills():
@@ -2185,7 +2186,7 @@ def getAllAmmoSkills():
         if getSkillAmmoInventoryId(skillId):
             skillIds.append(skillId)
             continue
-    
+
     return skillIds
 
 
@@ -2195,7 +2196,7 @@ def getSkillIdForAmmoSkillId(ammoSkillId):
         if ammoSkillId == getSkillAmmoInventoryId(skillId):
             return skillId
             continue
-    
+
 
 
 def getSkillMaxQuantity(skillId):
@@ -2213,10 +2214,10 @@ def getAttackMaxCharge(skillId, ammoSkillId = 0):
     value = 0
     if skillId:
         value += __skillInfo[skillId][MAX_CHARGE_INDEX]
-    
+
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][MAX_CHARGE_INDEX]
-    
+
     return value
 
 
@@ -2235,7 +2236,7 @@ def getSkillTrack(skillId):
 def getSkillIcon(skillId):
     if not __skillInfo.has_key(skillId):
         return 'base'
-    
+
     icon = __skillInfo[skillId][SKILL_ICON_INDEX]
     if icon:
         return str(icon)
@@ -2255,7 +2256,7 @@ def getHitEffect(skillId):
     skill = __skillInfo[skillId]
     if skill:
         return skill[HIT_VFX]
-    
+
     return 0
 
 
@@ -2263,11 +2264,11 @@ def getCenterEffect(skillId, ammoSkillId = 0):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[CENTER_VFX]
-    
+
     ammoSkill = __skillInfo.get(ammoSkillId)
     if ammoSkill:
         return ammoSkill[CENTER_VFX]
-    
+
 
 
 def getUsableInAir(skillId, ammoSkillId = 0):
@@ -2275,11 +2276,11 @@ def getUsableInAir(skillId, ammoSkillId = 0):
     skill = __skillInfo.get(skillId)
     if skill:
         val += skill[USABLE_IN_AIR]
-    
+
     ammoSkill = __skillInfo.get(ammoSkillId)
     if ammoSkill:
         val += ammoSkill[USABLE_IN_AIR]
-    
+
     return val
 
 
@@ -2288,7 +2289,7 @@ def getNPCModifier(skillId):
     skill = __skillInfo[skillId]
     if skill:
         damageMult = skill[NPC_MODIFIER]
-    
+
     return damageMult
 
 
@@ -2297,8 +2298,8 @@ def isValidSkill(skillId, weaponId, repId):
     if skillInfo:
         if skillInfo[REPUTATION_CATEGORY_INDEX] == repId:
             return 1
-        
-    
+
+
     return 0
 
 
@@ -2306,7 +2307,7 @@ def isValidAttack(skillId, ammoSkillId, weaponId, repId):
     skillRep = getSkillReputationCategoryId(skillId)
     if not skillRep:
         return 1
-    
+
     if not skillRep == repId:
         pass
     valid = skillRep == InventoryType.SailingRep
@@ -2314,7 +2315,7 @@ def isValidAttack(skillId, ammoSkillId, weaponId, repId):
         if valid:
             pass
         valid = getSkillReputationCategoryId(ammoSkillId) == repId
-    
+
     return valid
 
 
@@ -2322,7 +2323,7 @@ def getAttackReputation(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][REPUTATION_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][REPUTATION_INDEX]
-    
+
     return value
 
 
@@ -2330,7 +2331,7 @@ def getAttackEffects(skillId, ammoSkillId = None):
     data = __attackEffectsSkillInfo.get((skillId, ammoSkillId))
     if data:
         return data
-    
+
     skill = __skillInfo.get(skillId)
     if skill:
         selfHP = skill[SELF_HP_INDEX]
@@ -2356,8 +2357,8 @@ def getAttackEffects(skillId, ammoSkillId = None):
                 targetMojo += skill[TARGET_MOJO_INDEX]
                 selfSwiftness = 0
                 targetSwiftness += 0
-            
-        
+
+
         finalData = ([
             selfHP,
             selfPower,
@@ -2371,14 +2372,14 @@ def getAttackEffects(skillId, ammoSkillId = None):
             targetSwiftness])
         __attackEffectsSkillInfo[(skillId, ammoSkillId)] = finalData
         return finalData
-    
+
 
 
 def getAttackTargetHP(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][TARGET_HP_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][TARGET_HP_INDEX]
-    
+
     return value
 
 
@@ -2386,7 +2387,7 @@ def getAttackSelfHP(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][SELF_HP_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][SELF_HP_INDEX]
-    
+
     return value
 
 
@@ -2394,7 +2395,7 @@ def getAttackTargetMojo(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][TARGET_MOJO_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][TARGET_MOJO_INDEX]
-    
+
     return value
 
 
@@ -2402,12 +2403,12 @@ def getAttackSelfMojo(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][SELF_MOJO_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][SELF_MOJO_INDEX]
-    
+
     if config.GetBool('mana-free-skills', 0):
         if value < 0:
             value = 0
-        
-    
+
+
     return value
 
 
@@ -2415,7 +2416,7 @@ def getAttackHullHP(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][HULL_HP_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][HULL_HP_INDEX]
-    
+
     return value
 
 
@@ -2423,7 +2424,7 @@ def getAttackSailHP(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][SAIL_HP_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][SAIL_HP_INDEX]
-    
+
     return value
 
 
@@ -2432,7 +2433,7 @@ def getAttackAccuracy(skillId, ammoSkillId = None):
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][ACCURACY_INDEX]
         value /= 2
-    
+
     value = max(0, min(100, value))
     return value
 
@@ -2446,10 +2447,10 @@ def getAttackRechargeTime(skillId, ammoSkillId = None):
     value = 0.0
     if skillId:
         value += __skillInfo[skillId][RECHARGE_INDEX]
-    
+
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][RECHARGE_INDEX]
-    
+
     return value
 
 
@@ -2479,7 +2480,7 @@ def getAttackDelay(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][DELAY_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][DELAY_INDEX]
-    
+
     return value
 
 
@@ -2487,7 +2488,7 @@ def getAttackDuration(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][DURATION_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][DURATION_INDEX]
-    
+
     return value
 
 
@@ -2495,7 +2496,7 @@ def getAttackRecur(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][RECUR_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][RECUR_INDEX]
-    
+
     return value
 
 
@@ -2503,7 +2504,7 @@ def getAttackAreaRadius(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][AREA_EFFECT_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][AREA_EFFECT_INDEX]
-    
+
     value = max(0, value)
     return value
 
@@ -2512,10 +2513,10 @@ def isAttackAreaSelfDamaging(skillId, ammoSkillId = None):
     value = 0
     if skillId:
         value |= __skillInfo[skillId][AREA_EFFECT_SELF_DAMAGE_INDEX]
-    
+
     if ammoSkillId:
         value |= __skillInfo[ammoSkillId][AREA_EFFECT_SELF_DAMAGE_INDEX]
-    
+
     return value
 
 
@@ -2523,7 +2524,7 @@ def isSelfUseSkill(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[SELF_USE_INDEX]
-    
+
     return 0
 
 
@@ -2531,7 +2532,7 @@ def getAttackVolley(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][VOLLEY_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][VOLLEY_INDEX]
-    
+
     return float(value)
 
 
@@ -2539,7 +2540,7 @@ def getAttackProjectilePower(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][PROJECTILE_POWER_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][PROJECTILE_POWER_INDEX]
-    
+
     return value
 
 
@@ -2547,7 +2548,7 @@ def getAttackReactionDelay(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][REACTION_DELAY_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][REACTION_DELAY_INDEX]
-    
+
     return value
 
 
@@ -2555,7 +2556,7 @@ def getNumHits(skillId, ammoSkillId = None):
     value = __skillInfo[skillId][NUM_HIT_INDEX]
     if ammoSkillId:
         value += __skillInfo[ammoSkillId][NUM_HIT_INDEX]
-    
+
     return value
 
 
@@ -2564,7 +2565,7 @@ def getIsInstantSkill(skillId, ammoSkillId = None):
     ammoValue = 1
     if ammoSkillId:
         ammoValue = __skillInfo[ammoSkillId][INSTANT_INDEX]
-    
+
     if skillValue and ammoValue:
         return 1
     else:
@@ -2575,7 +2576,7 @@ def getIsHostileBuff(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[HOSTILE_BUFF]
-    
+
     return 0
 
 
@@ -2591,7 +2592,7 @@ def getNeedTarget(skillId, ammoSkillId = None):
             return ammoNeedsTarget
         else:
             return skillNeedsTarget
-    
+
     return 0
 
 
@@ -2599,7 +2600,7 @@ def getSplitTarget(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[SPLIT_TARGET_INDEX]
-    
+
     return 0
 
 
@@ -2615,7 +2616,7 @@ def getNeedSight(skillId, ammoSkillId = None):
             return ammoNeedsSight
         else:
             return skillNeedsSight
-    
+
     return 0
 
 
@@ -2623,7 +2624,7 @@ def getShipAcceleration(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[SHIP_ACCEL_INDEX]
-    
+
     return 0
 
 
@@ -2631,7 +2632,7 @@ def getShipMaxSpeed(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[SHIP_MAXSPEED_INDEX]
-    
+
     return 0
 
 
@@ -2639,7 +2640,7 @@ def getShipRevAcceleration(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[SHIP_REVACCEL_INDEX]
-    
+
     return 0
 
 
@@ -2647,7 +2648,7 @@ def getShipRevMaxSpeed(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[SHIP_REVMAXSPEED_INDEX]
-    
+
     return 0
 
 
@@ -2655,7 +2656,7 @@ def getShipTurnRate(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[SHIP_TURNRATE_INDEX]
-    
+
     return 0
 
 
@@ -2663,7 +2664,7 @@ def getShipMaxTurn(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[SHIP_MAXTURN_INDEX]
-    
+
     return 0
 
 
@@ -2671,7 +2672,7 @@ def getIsShout(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[SHOUT_INDEX]
-    
+
     return 0
 
 
@@ -2679,7 +2680,7 @@ def getShipEffects(skillId, ammoSkillId = 0):
     skill = __skillInfo.get(skillId)
     if ammoSkillId:
         skill = __skillInfo.get(ammoSkillId)
-    
+
     if skill:
         return [
             skill[SHIP_ACCEL_INDEX],
@@ -2688,7 +2689,7 @@ def getShipEffects(skillId, ammoSkillId = 0):
             skill[SHIP_REVMAXSPEED_INDEX],
             skill[SHIP_TURNRATE_INDEX],
             skill[SHIP_MAXTURN_INDEX]]
-    
+
     return [
         0,
         0,
@@ -2733,7 +2734,7 @@ def getAnimTime(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[ANIM_TIME_INDEX]
-    
+
     return 0
 
 
@@ -2741,7 +2742,7 @@ def getIsAreaAnimSkill(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[NEED_AREA_ANIM_INDEX]
-    
+
     return 0
 
 EFFECT_FLAME = 2
@@ -2750,7 +2751,7 @@ def getSkillEffectFlag(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[EFFECT_FLAG_INDEX]
-    
+
     return 0
 
 
@@ -2758,7 +2759,7 @@ def getAttackClass(skillId):
     skill = __skillInfo.get(skillId)
     if skill:
         return skill[ATTACK_CLASS_INDEX]
-    
+
     return 0
 
 
@@ -2767,12 +2768,12 @@ def getAttackAreaShape(skillId, ammoSkillId):
         ammoShape = __skillInfo[ammoSkillId][AREA_SHAPE_INDEX]
         if ammoShape:
             return ammoShape
-        
-    
+
+
     skillShape = __skillInfo[skillId][AREA_SHAPE_INDEX]
     if skillShape:
         return skillShape
-    
+
     return AREA_OFF
 
 PLAYABLE_INDEX = 0
@@ -3255,21 +3256,21 @@ def getProjectileSpeed(skillId):
     entry = __projectileAttacks.get(skillId)
     if entry:
         return entry[0]
-    
+
 
 
 def getProjectileAnimT(skillId):
     entry = __projectileAttacks.get(skillId)
     if entry:
         return entry[1]
-    
+
 
 
 def getProjectileDefaultRange(skillId):
     entry = __projectileAttacks.get(skillId)
     if entry:
         return entry[2]
-    
+
 
 
 def getLevelDamageModifier(level):
@@ -3306,7 +3307,7 @@ def getComparativeLevelAccuracyModifier(attacker, defender):
             mod = min(100.0, max(0, attackerLevel - defenderLevel - THRESHOLD) * 6.0)
         else:
             mod = max(-50.0, min(0, (attackerLevel - defenderLevel) + THRESHOLD) * 6.0)
-    
+
     return mod
 
 
@@ -3318,7 +3319,7 @@ def getComparativeShipLevelDamageModifier(attacker, defender):
         mod = 1.0
         if attacker.isNpc:
             mod = max(0, attackerLevel - defenderLevel - THRESHOLD) * 0.059999999999999998 + 1.0
-        
+
     elif attacker.isNpc:
         mod = min(0, (attackerLevel - defenderLevel) + THRESHOLD) * 0.059999999999999998 + 1.0
     else:
@@ -3352,7 +3353,7 @@ def skillTableSanityCheck():
         if maxQuant != INF_QUANT and maxQuant != STAFF_QUANT:
             continue
         ammoInvId = getSkillAmmoInventoryId(skillId)
-    
+
     return 1
 
 __effectTable = {
@@ -3551,7 +3552,7 @@ def getBuffCategory(buffId):
     val = __buffPriority.get(buffId)
     if val:
         return val[0]
-    
+
     return 0
 
 
@@ -3559,7 +3560,7 @@ def getBuffPriority(buffId):
     val = __buffPriority.get(buffId)
     if val:
         return val[1]
-    
+
     return 0
 
 __weaponVolley = {
@@ -3583,10 +3584,10 @@ def getWeaponVolley(weaponId):
     val = ItemGlobals.getBarrels(weaponId)
     if ItemGlobals.getType(weaponId) == ItemGlobals.GRENADE:
         val = 1
-    
+
     if val:
         return val
-    
+
     return 0
 
 __staffChargeSkills = {
@@ -3631,7 +3632,7 @@ def getSkillRankBonus(self, av, skillId):
     rank = getSkillRank(av, skillId)
     if WeaponGlobals.getSkillTrack(skillId) != WeaponGlobals.PASSIVE_SKILL_INDEX:
         rank -= 1
-    
+
     statBonus = 0
     if rank > 5:
         statBonus = 5 * upgradeAmt
@@ -3648,7 +3649,7 @@ def getSkillRank(self, av, skillId):
         skillLvl = max(0, inv.getStackQuantity(skillId) - 1)
         skillLvl += ItemGlobals.getWeaponBoosts(av.currentWeaponId, skillId)
         skillLvl += ItemGlobals.getWeaponBoosts(av.getCurrentCharm(), skillId)
-    
+
     return skillLvl
 
 defaultSkill = 0
@@ -3666,10 +3667,10 @@ def getWeaponSfx(weaponId, skillId):
             sfx = subtypeSfxs.get(skillId)
             if not sfx:
                 sfx = subtypeSfxs.get(defaultSkill)
-            
+
             return sfx
-        
-    
+
+
 
 DistanceDamageModifiers = {
     ItemGlobals.BLUNDERBUSS: [
@@ -3696,7 +3697,7 @@ DistanceDamageModifiers = {
 def getDistanceDamageModifier(weaponId, skillId):
     if skillId == EnemySkills.PISTOL_POINT_BLANK:
         return DistanceDamageModifiers.get(ItemGlobals.BLUNDERBUSS)
-    
+
     subtypeId = ItemGlobals.getSubtype(weaponId)
     return DistanceDamageModifiers.get(subtypeId)
 
@@ -3730,8 +3731,8 @@ def getSubtypeDamageModifier(weaponId, attackType):
         subtypeModifier = SubtypeDamageModifiers.get(subtype)
         if subtypeModifier:
             return subtypeModifier.get(attackType, 0.0)
-        
-    
+
+
     return 0.0
 
 AttackClassProtectionMap = {
@@ -3744,7 +3745,7 @@ def getAttackClassProtection(weaponId, attackType):
     protection = AttackClassProtectionMap.get(attackType)
     if protection:
         return ItemGlobals.getWeaponAttributes(weaponId, protection) * 0.050000000000000003
-    
+
     return 0.0
 
 InfiniteAmmoMap = {
@@ -3770,8 +3771,8 @@ def canUseInfiniteAmmo(weaponId, skillId):
         rank = ItemGlobals.getWeaponAttributes(weaponId, infiniteAttribute)
         if rank:
             return 1
-        
-    
+
+
     return 0
 
 CriticalAmmoMap = {
@@ -3786,7 +3787,7 @@ def getExtraCriticalChance(weaponId, skillId):
     crit = CriticalAmmoMap.get(skillId)
     if crit:
         return ItemGlobals.getWeaponAttributes(weaponId, crit)
-    
+
     return 0
 
 DeadzoneSubtypes = [
@@ -3797,7 +3798,7 @@ def hasDeadzone(weaponId):
     subtype = ItemGlobals.getSubtype(weaponId)
     if subtype in DeadzoneSubtypes:
         return True
-    
+
     return False
 
 GunRanges = {
@@ -3811,7 +3812,7 @@ def getRange(itemId):
     subtype = ItemGlobals.getSubtype(itemId)
     if subtype:
         return GunRanges.get(subtype, ItemGlobals.SHORT)
-    
+
     return ItemGlobals.SHORT
 
 RangeAmmoMap = {
@@ -3826,7 +3827,7 @@ def getExtraRange(weaponId, skillId):
     range = RangeAmmoMap.get(skillId)
     if range:
         return ItemGlobals.getWeaponAttributes(weaponId, range)
-    
+
     return 0
 
 MAX_HEADING_DIFF = 15.0
@@ -3884,7 +3885,7 @@ def hasImmunityFromEffect(effectId, itemId):
     attributeId = ImmunityItems.get(effectId)
     if attributeId:
         return ItemGlobals.getWeaponAttributes(itemId, attributeId)
-    
+
     return 0
 
 HalfDurationItems = {
@@ -3905,7 +3906,7 @@ def canHalveEffectDuration(effectId, itemId):
     attributeId = HalfDurationItems.get(effectId)
     if attributeId:
         return ItemGlobals.getWeaponAttributes(itemId, attributeId)
-    
+
     return 0
 
 HalfDamageItems = {
@@ -3916,7 +3917,7 @@ def canHalveEffectDamage(effectId, itemId):
     attributeId = HalfDamageItems.get(effectId)
     if attributeId:
         return ItemGlobals.getWeaponAttributes(itemId, attributeId)
-    
+
     return 0
 
 SpecialSkills = [

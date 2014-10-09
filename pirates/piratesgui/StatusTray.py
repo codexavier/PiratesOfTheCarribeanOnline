@@ -22,7 +22,7 @@ import copy
 
 class StatusTray(GuiTray.GuiTray):
     SHOW_SKILL_DURATION = 2.0
-    
+
     def __init__(self, parent, showSkills = 0, **kw):
         GuiTray.GuiTray.__init__(self, parent, 0.75, 0.14999999999999999, **None)
         self.initialiseoptions(StatusTray)
@@ -74,7 +74,7 @@ class StatusTray(GuiTray.GuiTray):
             else:
                 icon.setScale(0.44)
             icon.flattenStrong()
-        
+
         self.icons = {
             PiratesGlobals.UNDEAD_TEAM: flagModels[0],
             PiratesGlobals.NAVY_TEAM: flagModels[1],
@@ -94,7 +94,7 @@ class StatusTray(GuiTray.GuiTray):
         for logo in self.privateerLogos.itervalues():
             logo.setScale(0.073999999999999996)
             logo.flattenStrong()
-        
+
         self.currentIcon = None
         if showSkills:
             self.card = loader.loadModel('models/textureCards/skillIcons')
@@ -118,25 +118,25 @@ class StatusTray(GuiTray.GuiTray):
             self.skillFrame['image_pos'] = (0, 0, 0.02)
             self.activeName['text_align'] = TextNode.ALeft
             self.activeName.setPos(0.089999999999999997, 0, 0.01)
-        
 
-    
+
+
     def show(self):
         if not self.doId:
             return None
-        
+
         if base.cr.doId2do[self.doId].state != 'Spawn' and base.cr.doId2do[self.doId].state != 'Death' and base.cr.doId2do[self.doId].state != 'Waiting':
             GuiTray.GuiTray.show(self)
-        
 
-    
+
+
     def destroy(self):
         taskMgr.remove(self.taskName('updateStatusPanelTask'))
         taskMgr.remove('hideSkillTask')
         if self.card:
             self.card.removeNode()
             self.card = None
-        
+
         self.hpMeterDownIval.pause()
         self.hpMeterUpGreenIval.pause()
         self.hpMeterUpRedIval.pause()
@@ -149,11 +149,11 @@ class StatusTray(GuiTray.GuiTray):
         del self.statusEffectsPanel
         for key in self.icons.keys():
             self.icons[key].removeNode()
-        
+
         del self.icons
         GuiTray.GuiTray.destroy(self)
 
-    
+
     def updateName(self, name, level, doId):
         self.name = name
         self.level = level
@@ -162,30 +162,30 @@ class StatusTray(GuiTray.GuiTray):
         target = base.cr.doId2do.get(doId)
         if not target:
             return None
-        
+
         color = base.cr.battleMgr.getExperienceColor(base.localAvatar, target)
         avType = target.getAvatarType()
         if avType.isA(AvatarTypes.JollyRoger):
-            color = '\x1red\x1'
-            text = '%s  \x1smallCaps\x1%s%s%s\x2\x2' % (name, color, PLocalizer.Lv, PLocalizer.InvasionLv)
+            color = 'red'
+            text = '%s  smallCaps%s%s%s' % (name, color, PLocalizer.Lv, PLocalizer.InvasionLv)
         elif target.isInInvasion():
             text = '%s' % self.name
         elif color:
-            text = '%s  \x1smallCaps\x1%s%s%s\x2\x2' % (name, color, PLocalizer.Lv, self.level)
+            text = '%s  smallCaps%s%s%s' % (name, color, PLocalizer.Lv, self.level)
         else:
             text = '%s' % self.name
         self.nameLabel['text'] = text
         self.updateIcon(doId)
 
-    
+
     def updateIcon(self, doId):
         target = base.cr.doId2do.get(doId)
         if not target:
             return None
-        
+
         if self.currentIcon:
             self.currentIcon.hide()
-        
+
         pvpTeam = target.getPVPTeam()
         siegeTeam = target.getSiegeTeam()
         if pvpTeam:
@@ -198,10 +198,10 @@ class StatusTray(GuiTray.GuiTray):
         if icon:
             icon.reparentTo(self.enemyFrame)
             icon.show()
-        
+
         self.currentIcon = icon
 
-    
+
     def updateSticky(self, bool):
         self.sticky = bool
         if self.sticky:
@@ -209,18 +209,18 @@ class StatusTray(GuiTray.GuiTray):
         else:
             self.stickyLabel['text'] = ''
 
-    
+
     def updateHp(self, hp, maxHp, srcDoId = None):
         hp = max(0, hp)
         if localAvatar.gameFSM.getCurrentOrNextState() == 'Death':
             hp = 0
-        
+
         if not maxHp:
             return None
-        
+
         if srcDoId != self.doId and srcDoId:
             return None
-        
+
         if self.doId != self.prevDoId and self.doId:
             self.prevDoId = self.doId
             hp = base.cr.doId2do[self.doId].getHp()
@@ -246,9 +246,9 @@ class StatusTray(GuiTray.GuiTray):
                 self.hpMeterUpRedIval.finish()
             elif self.hpMeterUpYellowIval.isPlaying():
                 self.hpMeterUpYellowIval.finish()
-            
+
             return None
-        
+
         hpFraction = float(hp) / float(maxHp)
         if hpFraction >= 0.5:
             barColor = (0.10000000000000001, 0.69999999999999996, 0.10000000000000001, 1)
@@ -263,23 +263,23 @@ class StatusTray(GuiTray.GuiTray):
             if not self.doId:
                 localAvatar.guiMgr.gameGui.hpModMeter['value'] = hp
                 localAvatar.guiMgr.gameGui.hpModMeter['barColor'] = barColor
-            
-        
+
+
         if not self.hideValues:
             if not self.doId:
                 inv = localAvatar.getInventory()
                 vtLevel = None
                 if inv:
                     vtLevel = inv.getStackQuantity(InventoryType.Vitae_Level)
-                
+
                 if not vtLevel:
                     self.hpMeter['text'] = '%s/%s' % (hp, maxHp)
                 else:
                     modHp = int(maxHp * 0.75)
-                    self.hpMeter['text'] = '%s\x1Bred\x1/%s\x2' % (hp, modHp)
+                    self.hpMeter['text'] = '%sBred/%s' % (hp, modHp)
             else:
                 self.hpMeter['text'] = '%s/%s' % (hp, maxHp)
-        
+
         if self.hpMeterDownIval.isPlaying():
             currentTime = self.hpMeterDownIval.getT()
         else:
@@ -289,9 +289,9 @@ class StatusTray(GuiTray.GuiTray):
                 self.prevValue = self.prevValue + self.prevChange
                 if self.prevValue > maxHp:
                     self.prevValue = maxHp
-                
-            
-        
+
+
+
         if self.prevValue > hp:
             self.hpMeterChange.setColor(1.0, 0.0, 0.0, 1.0)
             change = float(self.prevValue - hp)
@@ -307,20 +307,20 @@ class StatusTray(GuiTray.GuiTray):
             self.hpMeterChange['frameSize'] = (0.0, frameRight, frameBottom, frameTop)
             if self.hpMeterUpGreenIval.isPlaying():
                 self.hpMeterUpGreenIval.finish()
-            
+
             if self.hpMeterUpRedIval.isPlaying():
                 self.hpMeterUpRedIval.finish()
-            
+
             if self.hpMeterUpYellowIval.isPlaying():
                 self.hpMeterUpYellowIval.finish()
-            
+
             self.prevChange = change
             self.prevRange = maxHp
             self.prevValue = hp
             if currentTime is None:
                 self.hpMeterDownIval.start()
                 return None
-            
+
             if currentTime >= 0.5:
                 self.hpMeterDownIval.start()
             else:
@@ -340,20 +340,20 @@ class StatusTray(GuiTray.GuiTray):
             if frameLeft > 0.52000000000000002:
                 diff = frameLeft - 0.52000000000000002
                 frameRight = float(frameRight - diff)
-            
+
             self.prevChange = change
             if self.hpMeterDownIval.isPlaying():
                 self.hpMeterDownIval.finish()
-            
+
             if self.hpMeterUpGreenIval.isPlaying():
                 self.hpMeterUpGreenIval.finish()
-            
+
             if self.hpMeterUpRedIval.isPlaying():
                 self.hpMeterUpRedIval.finish()
-            
+
             if self.hpMeterUpYellowIval.isPlaying():
                 self.hpMeterUpYellowIval.finish()
-            
+
             self.prevRange = maxHp
             self.prevValue = hp
             self.hpMeterChange['frameSize'] = (0.0, frameRight, frameBottom, frameTop)
@@ -363,56 +363,56 @@ class StatusTray(GuiTray.GuiTray):
                 self.hpMeterUpYellowIval.start()
             else:
                 self.hpMeterUpRedIval.start()
-        
 
-    
+
+
     def updateVoodoo(self, voodoo, maxVoodoo, srcDoId = None):
         self.voodooMeter['range'] = maxVoodoo
         self.voodooMeter['value'] = voodoo
         if srcDoId != self.doId and srcDoId:
             return None
-        
+
         if localAvatar.guiMgr.gameGui.voodooModMeter:
             if not self.doId:
                 localAvatar.guiMgr.gameGui.voodooModMeter['value'] = voodoo
-            
-        
+
+
         if not self.hideValues:
             if not self.doId:
                 inv = localAvatar.getInventory()
                 vtLevel = None
                 if inv:
                     vtLevel = inv.getStackQuantity(InventoryType.Vitae_Level)
-                
+
                 if not vtLevel:
                     self.voodooMeter['text'] = '%s/%s' % (voodoo, maxVoodoo)
                 else:
                     modVoodoo = int(maxVoodoo * 0.75)
-                    self.voodooMeter['text'] = '%s\x1Bred\x1/%s\x2' % (voodoo, modVoodoo)
+                    self.voodooMeter['text'] = '%sBred/%s' % (voodoo, modVoodoo)
             else:
                 self.voodooMeter['text'] = '%s/%s' % (voodoo, maxVoodoo)
-        
 
-    
+
+
     def updateLuck(self, luck, maxLuck):
         pass
 
-    
+
     def updateSwiftness(self, swiftness, maxSwiftness):
         pass
 
-    
+
     def fadeOut(self, *args, **kwargs):
         self.doId = 0
         GuiTray.GuiTray.fadeOut(self, *args, **args)
 
-    
+
     def hide(self, *args, **kwargs):
         self.removeDurationTask()
         self.doId = 0
         GuiTray.GuiTray.hide(self, *args, **args)
 
-    
+
     def updateStatusEffects(self, effects):
         effectIdList = effects.keys()
         for effectKeyId in effectIdList:
@@ -435,7 +435,7 @@ class StatusTray(GuiTray.GuiTray):
                 self.statusEffectsPanel.addStatusEffect(effectId, duration, timeLeft, ts, attackerId)
                 continue
             self.statusEffectsPanel.updateStatusEffect(effectId, duration, timeLeft, ts, attackerId)
-        
+
         for effectKeyId in self.skillEffects.keys():
             if effectKeyId not in effectIdList:
                 buff = self.skillEffects.get(effectKeyId)
@@ -443,48 +443,48 @@ class StatusTray(GuiTray.GuiTray):
                     effectId = buff[0]
                     attackerId = buff[1]
                     self.statusEffectsPanel.removeStatusEffect(effectId, attackerId)
-                
-        
+
+
         self.skillEffects = copy.copy(effects)
         if self.skillEffects:
             self.addDurationTask()
         else:
             self.removeDurationTask()
 
-    
+
     def addDurationTask(self):
         if not self.durationTask:
             self.durationTask = taskMgr.add(self.updateDurationTask, self.taskName('updateStatusPanelTask'))
-        
 
-    
+
+
     def removeDurationTask(self):
         if self.durationTask:
             taskMgr.remove(self.taskName('updateStatusPanelTask'))
             self.durationTask = None
-        
 
-    
+
+
     def updateDurationTask(self, task):
         if len(self.skillEffects) > 0:
             if self.statusEffectsPanel:
                 self.statusEffectsPanel.updateDurations()
-            
+
             return Task.cont
         else:
             self.durationTask = None
             return Task.done
 
-    
+
     def updateSkill(self, skillInfo, srcDoId = None):
         if srcDoId != self.doId:
             return None
-        
+
         if skillInfo:
             self.showSkill(skillInfo[0], skillInfo[1], skillInfo[2])
-        
 
-    
+
+
     def showSkill(self, skillId, ammoSkillId = 0, timestamp = 0):
         if ammoSkillId and skillId != EnemySkills.PISTOL_RELOAD and skillId != EnemySkills.GRENADE_RELOAD:
             visSkillId = ammoSkillId
@@ -497,20 +497,20 @@ class StatusTray(GuiTray.GuiTray):
             self.skillFrame['image'] = tex
             self.skillFrame['image_scale'] = 0.074999999999999997
             self.skillFrame.setPos(-0.105, 0, -0.255)
-        
+
         ts = globalClockDelta.localElapsedTime(timestamp)
         delay = self.SHOW_SKILL_DURATION - ts
         if delay > 0:
             if self.fader:
                 self.fader.finish()
-            
+
             self.reloadFrame.show()
             self.reloadFrame.setAlphaScale(1.0)
             taskMgr.remove('hideSkillTask')
             taskMgr.doMethodLater(delay, self.hideSkill, 'hideSkillTask')
-        
 
-    
+
+
     def hideSkill(self, args = None):
         fadeOut = LerpFunctionInterval(self.reloadFrame.setAlphaScale, fromData = self.getColorScale()[3], toData = 0, duration = 0.5)
         self.fader = Sequence(fadeOut, Func(self.reloadFrame.hide))

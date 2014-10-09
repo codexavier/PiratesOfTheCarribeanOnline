@@ -1,0 +1,2 @@
+class ChatInputWhiteList:
+    pass # TODO

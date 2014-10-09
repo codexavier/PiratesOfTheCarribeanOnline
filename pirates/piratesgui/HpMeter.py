@@ -10,7 +10,7 @@ from pirates.piratesbase import PiratesGlobals
 
 class HpMeter(DirectFrame):
     FADEOUT_TIME = 8.0
-    
+
     def __init__(self, name = '', width = 0.40000000000000002, height = 0.025000000000000001, fadeOut = 0, parent = None, originAtMidPt = False):
         DirectFrame.__init__(self, relief = None, parent = parent)
         self.initialiseoptions(HpMeter)
@@ -31,22 +31,22 @@ class HpMeter(DirectFrame):
         self.update(self.value, self.max)
         if not base.config.GetBool('display-enemyHp', 0):
             self.valueLabel.hide()
-        
 
-    
+
+
     def destroy(self):
         taskMgr.remove('hpMeterHideTask')
         if self.fader:
             self.fader.pause()
-        
+
         self.fader = None
         DirectFrame.destroy(self)
 
-    
+
     def update(self, value, maxVal):
         if self.fader:
             self.fader.pause()
-        
+
         self.fader = None
         self.value = max(value, 0)
         self.max = maxVal
@@ -56,7 +56,7 @@ class HpMeter(DirectFrame):
         self.meter['value'] = self.value
         if not self.max:
             return None
-        
+
         hpFraction = float(self.value) / float(self.max)
         if hpFraction >= 0.5:
             self.meter['barColor'] = (0.10000000000000001, 0.69999999999999996, 0.10000000000000001, 1)
@@ -67,32 +67,32 @@ class HpMeter(DirectFrame):
         if self.fadeOut:
             taskMgr.remove('hpMeterHideTask')
             taskMgr.doMethodLater(self.FADEOUT_TIME, self.hidePopup, 'hpMeterHideTask')
-        
 
-    
+
+
     def setMeterName(self, name, level, doId):
         self.name = name
         self.level = level
         self.doId = doId
-        name = '%s  \x1smallCaps\x1%s%s\x2' % (self.name, PLocalizer.Lv, self.level)
+        name = '%s  smallCaps%s%s' % (self.name, PLocalizer.Lv, self.level)
         self.categoryLabel['text'] = name
 
-    
+
     def hidePopup(self, task):
         if self.fader:
             self.fader.pause()
-        
+
         self.fader = None
         fadeOut = LerpFunctionInterval(self.setAlphaScale, fromData = self.getColorScale()[3], toData = 0, duration = 1.0)
         self.fader = Sequence(fadeOut, Func(self.hideMeter))
         self.fader.start()
 
-    
+
     def showMeter(self):
         self.show()
         self.setAlphaScale(1.0)
 
-    
+
     def hideMeter(self):
         self.hide()
 

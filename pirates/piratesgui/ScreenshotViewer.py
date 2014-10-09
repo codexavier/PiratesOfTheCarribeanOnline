@@ -13,7 +13,7 @@ from direct.directnotify import DirectNotifyGlobal
 
 class ScreenshotViewer:
     notify = DirectNotifyGlobal.directNotify.newCategory('ScreenshotViewer')
-    
+
     def __init__(self):
         self.resetImages()
         imageFrame = PDialog(parent = aspect2dp, pos = (0, 0, 0.10000000000000001), image_scale = (1.3 * 4 / 3.0, 1, 1.3), fadeScreen = 0.84999999999999998, scale = 1.1000000000000001)
@@ -35,24 +35,23 @@ class ScreenshotViewer:
         self.imageFrame = imageFrame
         base.transitions.fadeScreen(0.84999999999999998)
 
-    
+
     def destroy(self):
         self.imageFrame.destroy()
 
-    
+
     def resetImages(self):
         filenames = os.listdir(os.curdir + '/' + PLocalizer.ScreenshotDir)
-        continue
         self.screens = _[1]
         self.currentIndex = 0
 
-    
+
     def resetButtons(self):
         self.closeButton.setPos(Vec3(0.78000000000000003, 0, -0.5))
         self.nextButton.setPos(Vec3(0.69999999999999996, 0, 0))
         self.prevButton.setPos(Vec3(-0.69999999999999996, 0, 0))
 
-    
+
     def showImage(self, index):
         if index >= 0 and index < len(self.screens):
             self.imageFrame.show()
@@ -62,7 +61,7 @@ class ScreenshotViewer:
             self.imageLabel['text'] = '%s:\n%s\n%s\n[%s/%s]' % (PLocalizer.ScreenshotLocation, winfile, self.screens[index], index + 1, len(self.screens))
             self.imageLabel['text_fg'] = (0.59999999999999998, 0.59999999999999998, 0.59999999999999998, 1)
             self.imageLabel['text_scale'] = 0.040000000000000001
-        
+
         if len(self.screens) == 1:
             self.prevButton['state'] = DGG.DISABLED
             self.nextButton['state'] = DGG.DISABLED
@@ -70,38 +69,38 @@ class ScreenshotViewer:
             self.prevButton['state'] = DGG.NORMAL
             self.nextButton['state'] = DGG.NORMAL
 
-    
+
     def next(self):
         self.currentIndex = (self.currentIndex + 1) % len(self.screens)
-        
+
         try:
             self.showImage(self.currentIndex)
         except:
             self.notify.error('Bad image')
 
 
-    
+
     def prev(self):
         self.currentIndex = (self.currentIndex - 1) % len(self.screens)
-        
+
         try:
             self.showImage(self.currentIndex)
         except:
             self.notify.error('Bad Image')
 
 
-    
+
     def close(self):
         self.imageFrame.hide()
 
-    
+
     def show(self):
         self.resetImages()
         self.resetButtons()
         self.showImage(0)
         self.showIval.start()
 
-    
+
     def toggleShow(self):
         if self.imageFrame.isHidden():
             self.show()

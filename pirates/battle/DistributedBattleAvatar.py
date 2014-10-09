@@ -114,7 +114,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
     PlayersInvulnerable = base.config.GetBool('players-invulnerable', 0)
     ShowUnderstandable = base.config.GetBool('show-understandable', 0)
     WantHpCheck = base.config.GetBool('want-hp-check', 1)
-    
+
     def __init__(self, cr):
         DistributedReputationAvatar.__init__(self, cr)
         WeaponBase.__init__(self)
@@ -247,13 +247,13 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 base.visCount = 0
                 base.npcList = []
                 base.npcCount = 0
-            
+
             self.pstatsFPS = PStatCollector('Battle Avatars:fps')
             self.pstatsTotal = PStatCollector('Battle Avatars:Avatars Unseen')
             self.pstatsVisible = PStatCollector('Battle Avatars:Avatars Seen')
             self.pstatsTotal.setLevel(0)
             self.pstatsVisible.setLevel(0)
-        
+
         self.emoteId = 0
         self.emoteTrack = None
         self.emoteAnimIval = None
@@ -264,11 +264,11 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         self.efficiency = False
 
     if WantHpCheck:
-        
+
         def get_hp(self):
             return self._DistributedBattleAvatar__hp
 
-        
+
         def set_hp(self, hp):
             if type(hp) in [
                 types.IntType,
@@ -278,11 +278,11 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self._DistributedBattleAvatar__hp = 0
 
         hp = property(get_hp, set_hp)
-        
+
         def get_maxHp(self):
             return self._DistributedBattleAvatar__maxHp
 
-        
+
         def set_maxHp(self, maxHp):
             if type(maxHp) in [
                 types.IntType,
@@ -292,8 +292,8 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self._DistributedBattleAvatar__maxHp = 1
 
         maxHp = property(get_maxHp, set_maxHp)
-    
-    
+
+
     def generate(self):
         DistributedReputationAvatar.generate(self)
         WeaponBase.generate(self)
@@ -307,9 +307,9 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         self.accept('localAvatarActiveQuestId', self.setIsTracked)
         if base.options.getCharacterDetailSetting() == 0 and not self.isLocal():
             self.wantsActive = 0
-        
 
-    
+
+
     def announceGenerate(self):
         DistributedBattleAvatar.Count += 1
         self.handleLocalAvatarVisZoneChanged()
@@ -324,7 +324,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         if not self.isLocal() and self.canMove:
             self.showDebugName()
             self.startSmooth()
-        
+
         yieldThread('smoothing')
         self.setCurrentWeapon(self.currentWeaponId, self.isWeaponDrawn)
         yieldThread('current weapon')
@@ -334,10 +334,10 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.ambientFx = SoundInterval(self.ambientSfx, node = self)
             self.ambientFx.loop()
             yieldThread('sound')
-        
+
         if self.dropShadow:
             self.dropShadow.setPos(self, (0, 0, 0))
-        
+
         self.setIsTracked(localAvatar.activeQuestId)
         if self.trackStats:
             base.npcList.append(self.doId)
@@ -347,19 +347,19 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.pstatsVisible.setLevel(base.visCount)
             if base.options.character_detail_level == PiratesGlobals.CD_LOW and not self.isLocal():
                 self.setLODAnimation(100, 5, 0.10000000000000001)
-            
-        
+
+
         if self.isGhost:
             self.startGhost(self.isGhost)
-        
+
         if self.isInvisible():
             if self.isInteractiveMasked():
                 self.requestHideTarget()
-            
-            self.activateInvisibleEffect()
-        
 
-    
+            self.activateInvisibleEffect()
+
+
+
     def disable(self):
         DistributedBattleAvatar.Count -= 1
         if self.trackStats:
@@ -369,17 +369,17 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 while self.doId in base.visList:
                     base.visList.remove(self.doId)
                 base.visCount = len(base.visList)
-            
+
             onScreenDebug.add('Avatar Count', base.npcCount)
             onScreenDebug.add('Avatar Vis Count', base.visCount)
             self.pstatsTotal.setLevel(base.npcCount - base.visCount + 1)
             self.pstatsVisible.setLevel(base.visCount)
-        
+
         if self.isGhost:
             holdGhost = self.isGhost
             self.setIsGhost(0, override = 1)
             self.isGhost = holdGhost
-        
+
         self.ignoreAll()
         self.detachNode()
         self.stopSmooth()
@@ -394,24 +394,24 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         taskMgr.remove(self.taskName('playMpDamage'))
         if not self.isLocal():
             self.deleteBattleCollisions()
-        
+
         if hasattr(self, 'stopLookAroundTask'):
             self.stopLookAroundTask()
-        
+
         self.stopBobSwimTask()
         taskMgr.remove(self.uniqueName('InvisibleFlicker'))
         if self.invisibleFlickerSeq:
             self.invisibleFlickerSeq.clearToInitial()
             self.invisibleFlickerSeq = None
-        
+
         if self.potionStatusEffectManager:
             self.disablePotionFx()
-        
+
         self.ship = 0
         if self.pendingSetShip:
             self.cr.relatedObjectMgr.abortRequest(self.pendingSetShip)
             self.pendingSetShip = None
-        
+
         self._removePoisonEffect(cleanup = True)
         self._removeHoldEffect(cleanup = True)
         self._removeToxinEffect(cleanup = True)
@@ -427,19 +427,19 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.crewBuffDisplay.stop()
             self.crewBuffDisplay.destroy()
             self.crewBuffDisplay = None
-        
+
         if self.isLocal():
             self.guiMgr.hideDirtPanel()
             self.guiMgr.hideSmokePanel()
-        
+
         if self.ouchAnim:
             self.ouchAnim.finish()
             self.ouchAnim = None
-        
+
         if self.curAttackAnim:
             self.curAttackAnim.pause()
             self.curAttackAnim = None
-        
+
         self.stopCompassEffect()
         self.destroyMinimapObject()
         taskMgr.remove(self.taskName('sendSwitchMsgTask'))
@@ -448,19 +448,19 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             if ival:
                 ival.pause()
                 continue
-        
+
         self.hpTextIvals = []
         for hpText in self.hpTextNodes:
             if hpText:
                 hpText.removeNode()
                 continue
-        
+
         self.hpTextNodes = []
         for currTextEffect in self.textEffects:
             if currTextEffect:
                 currTextEffect.finish()
                 continue
-        
+
         self.textEffects = []
         self.hideHpMeter(0.0)
         self.gameFSM.cleanup()
@@ -470,15 +470,15 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         if self.setWeaponIval:
             self.setWeaponIval.pause()
             self.setWeaponIval = None
-        
+
         if self.currentWeapon:
             self.currentWeapon.delete()
             self.currentWeapon = None
-        
+
         if self.secondWeapon:
             self.secondWeapon.removeNode()
             self.secondWeapon = None
-        
+
         self.currentWeaponId = 0
         self.isWeaponDrawn = 0
         self.currentTarget = None
@@ -486,28 +486,28 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         WeaponBase.disable(self)
         if self.ambientFx:
             self.ambientFx.pause()
-        
+
         self.ambientFx = None
         self.cleanupEmote()
         del self.battleRandom
 
-    
+
     def delete(self):
         self.ropeActor = None
         if self.ropeEndNode:
             self.ropeEndNode.removeNode()
             self.ropeEndNode = None
-        
+
         self.rope = None
         taskMgr.remove(self.getSwimTaskName())
         DistributedReputationAvatar.delete(self)
         WeaponBase.delete(self)
 
-    
+
     def getBroadcastPeriod(self):
         return PiratesGlobals.AI_MOVEMENT_PERIOD
 
-    
+
     def startSmooth(self):
         if not self.isLocal():
             broadcastPeriod = 2.0
@@ -517,17 +517,17 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.smoother.setDefaultToStandingStill(False)
             self.smoother.setDelay(OTPGlobals.NetworkLatency * 1.5)
             self.setSmoothWrtReparents(True)
-        
+
         DistributedReputationAvatar.startSmooth(self)
 
-    
+
     def setAvatarType(self, avatarType):
         self.avatarType = avatarType
         self.height = EnemyGlobals.getHeight(avatarType)
         self.battleTubeHeight = max(10.0, self.height)
         self.battleTubeRadius = EnemyGlobals.getBattleTubeRadius(avatarType)
 
-    
+
     def smoothPosition(self):
         DistributedSmoothNode.DistributedSmoothNode.smoothPosition(self)
         if self.getGameState() == 'WaterRoam':
@@ -542,31 +542,31 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     self.setZ(render, zWater)
                     geom = self.getGeomNode()
                     geom.setP(render, normal[1] * 90 - 7)
-                
-            
-        
+
+
+
         if self.getGameState() not in ('Injured', 'Dying', 'Healing'):
             self.updateMyAnimState(self.smoother.getSmoothForwardVelocity(), self.smoother.getSmoothRotationalVelocity(), self.smoother.getSmoothLateralVelocity())
-        
 
-    
+
+
     def updateMyAnimState(self, forwardVel, rotationVel, lateralVel):
         self.motionFSM.motionAnimFSM.updateAnimState(forwardVel, rotationVel, lateralVel)
 
-    
+
     def setNpc(self, isNpc):
         self.isNpc = isNpc
 
-    
+
     def setAmbush(self, ambush):
         self.ambushEnemy = ambush
 
-    
+
     def setShipId(self, shipId):
         if self.pendingSetShip:
             self.cr.relatedObjectMgr.abortRequest(self.pendingSetShip)
             self.pendingSetShip = None
-        
+
         if shipId:
             self.pendingSetShip = self.cr.relatedObjectMgr.requestObjects([
                 shipId], eachCallback = self._setShip)
@@ -575,23 +575,23 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             if self.crewBuffDisplay and self.isLocal():
                 self.crewBuffDisplay.stop()
                 self.crewBuffDisplay.destroy()
-            
 
-    
+
+
     def getShipId(self):
         if not self.ship or self.ship.doId:
             pass
         return 0
 
-    
+
     def _setShip(self, ship):
         self.ship = ship
 
-    
+
     def getShip(self):
         return self.ship
 
-    
+
     def setName(self, name):
         DistributedReputationAvatar.setName(self, name)
         self.refreshStatusTray()
@@ -613,27 +613,27 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     self.bossIcon.setBillboardPointEye()
                     self.bossIcon.setPos(-0.75, 0, 2.6000000000000001)
                     self.bossIcon.reparentTo(nameText)
-                
-                nameText['fg'] = color2
-            
-        
 
-    
+                nameText['fg'] = color2
+
+
+
+
     def getNameText(self):
         pass
 
-    
+
     def setMonsterNameTag(self):
         if self.level:
             color = self.cr.battleMgr.getExperienceColor(base.localAvatar, self)
-            name = '%s  %s\x1smallCaps\x1%s%s\x2\x2' % (self.name, color, PLocalizer.Lv, self.level)
+            name = '%s  %s1smallCaps%s%s' % (self.name, color, PLocalizer.Lv, self.level)
         else:
             name = self.name
         if self.getNameText():
             self.getNameText()['text'] = name
-        
 
-    
+
+
     def considerUnderstandable(self):
         DistributedReputationAvatar.considerUnderstandable(self)
         if self.ShowUnderstandable and not (self.isNpc) and self.iconNodePath and self.isUnderstandable() and not (self.chatIcon) and base.localAvatar.getDoId() != self.getDoId():
@@ -641,9 +641,9 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.chatIcon.setScale(2.5, 1.5, 1.5)
             self.chatIcon.setPos(5, 0, -1.0)
             self.chatIcon.reparentTo(self.iconNodePath)
-        
 
-    
+
+
     def refreshStatusTray(self):
         statusTray = localAvatar.guiMgr.targetStatusTray
         if localAvatar.currentTarget == self or statusTray.doId == self.doId:
@@ -659,19 +659,19 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 statusTray.show()
             else:
                 self.hideHpMeter(1.0)
-        
 
-    
+
+
     def showProximityInfo(self):
         if not hasattr(base, 'tutorial'):
             DistributedReputationAvatar.showProximityInfo(self)
-        
 
-    
+
+
     def initializeBattleCollisions(self):
         if self.battleTubeNodePaths or self.battleCollisionsDisabled:
             return None
-        
+
         self.battleTubeEvent = self.uniqueName('battleAvatarTube')
         self.battleTube = CollisionTube(0, 0, 0, 0, 0, self.battleTubeHeight, self.battleTubeRadius)
         self.battleTube.setTangible(1)
@@ -694,59 +694,59 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             aimTubeNodePath.setTag('avId', str(self.doId))
             self.cr.targetMgr.addTarget(aimTubeNodePath.id(), self)
             self.aimTubeNodePaths.append(aimTubeNodePath)
-        
 
-    
+
+
     def disableBattleCollisions(self):
         self.deleteBattleCollisions()
         self.battleCollisionsDisabled = True
 
-    
+
     def enableBattleCollisions(self):
         self.battleCollisionsDisabled = False
         self.initializeBattleCollisions()
 
-    
+
     def deleteBattleCollisions(self):
         if not self.battleTubeNodePaths:
             return None
-        
+
         if self.battleTube:
             self.battleTube = None
-        
+
         for np in self.battleTubeNodePaths:
             np.removeNode()
-        
+
         self.battleTubeNodePaths = []
         if self.isBattleable():
             for np in self.aimTubeNodePaths:
                 if hasattr(self.cr, 'targetMgr') and self.cr.targetMgr:
                     self.cr.targetMgr.removeTarget(np.id())
-                
-                np.removeNode()
-            
-            self.aimTubeNodePaths = []
-        
 
-    
+                np.removeNode()
+
+            self.aimTubeNodePaths = []
+
+
+
     def stashBattleCollisions(self):
         for tube in self.battleTubeNodePaths:
             tube.stash()
-        
+
         for tube in self.aimTubeNodePaths:
             tube.stash()
-        
 
-    
+
+
     def unstashBattleCollisions(self):
         for tube in self.battleTubeNodePaths:
             tube.unstash()
-        
+
         for tube in self.aimTubeNodePaths:
             tube.unstash()
-        
 
-    
+
+
     def createHitTrack(self, parent, explosionPoint = Point3(0)):
         explosion = loader.loadModel('models/sea/splash.bam')
         explosion.setScale(0.40000000000000002)
@@ -754,54 +754,54 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         explosion.setBillboardPointWorld()
         return Sequence(Func(explosion.reparentTo, parent), Func(explosion.setPos, explosionPoint), Wait(0.59999999999999998), Func(explosion.detachNode))
 
-    
+
     def isBattleable(self):
         return 1
 
-    
+
     def canAggro(self):
         return True
 
-    
+
     def requestInteraction(self, avId, interactType = 0):
         if self.isLocal():
             self.notify.warning('We are hearing our own requestInteraction bounced back to us')
             return None
-        
+
         DistributedReputationAvatar.requestInteraction(self, avId, interactType)
         if not self.isBattleable():
             return None
-        
+
         if not self.canAggro():
             return None
-        
+
         skillEffects = self.getSkillEffects()
         if WeaponGlobals.C_SPAWN in skillEffects:
             return None
-        
+
         base.localAvatar.setCurrentTarget(self.doId)
 
-    
+
     def requestExit(self):
         if self.isLocal():
             self.notify.warning('We are hearing our own requestExit bounced back to us')
             return None
-        
+
         DistributedReputationAvatar.requestExit(self)
 
-    
+
     def setCurrentTarget(self, targetId):
         if self.currentTarget:
             if targetId == None:
                 self.currentTarget.resetComboLevel()
-            
-        
+
+
         self.currentTarget = self.cr.doId2do.get(targetId)
         if hasattr(self, 'undead') and self.undead:
             self.skeleton.currentTarget = self.currentTarget
-        
 
-    
+
+
     def setLocalTarget(self, on):
         DistributedReputationAvatar.setLocalTarget(self, on)
         return None
@@ -810,9 +810,9 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.battleTubeNodePath.stash()
             else:
                 self.battleTubeNodePath.unstash()
-        
 
-    
+
+
     def isInvisible(self):
         skillEffects = self.getSkillEffects()
         if WeaponGlobals.C_INVISIBILITY_LVL1 in skillEffects or WeaponGlobals.C_INVISIBILITY_LVL2 in skillEffects:
@@ -820,12 +820,12 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         else:
             return 0
 
-    
+
     def fakeEnemyAggroTask(self, task):
         currControls = self.controlManager.currentControls
         if currControls == None:
             return None
-        
+
         if not base.shadowTrav.hasCollider(currControls.cWallSphereNodePath):
             pass
         colliderExists = currControls.cTrav.hasCollider(currControls.cWallSphereNodePath)
@@ -840,33 +840,33 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             base.shadowTrav.addCollider(currControls.cWallSphereNodePath, currControls.event)
         return Task.done
 
-    
+
     def setIsInvisible(self, setInvisible):
         if not self.isGenerated():
             return None
-        
+
         if setInvisible:
             if self.isInteractiveMasked():
                 self.requestHideTarget()
-            
+
             self.activateInvisibleEffect()
         else:
             self.deactivateInvisibleEffect()
             if self.isLocal():
                 taskMgr.doMethodLater(0.10000000000000001, self.fakeEnemyAggroTask, 'fakeEnemyAggroTask')
                 self.fakeEnemyAggroTask(None)
-            
+
         if hasattr(self, 'refreshName'):
             self.refreshName()
-        
+
         if self.minimapObj:
             if setInvisible:
                 self.minimapObj.mapGeom.hide()
             else:
                 self.minimapObj.mapGeom.show()
-        
 
-    
+
+
     def activateInvisibleEffect(self):
         self.deleteDropShadow()
         geom = self.getGeomNode()
@@ -891,14 +891,14 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.addInvisibleFlickerSeq()
             if self.invisibleFlickerSeq:
                 self.invisibleFlickerSeq.loop()
-            
+
         else:
             geom.setTransparency(1)
             geom.setDepthWrite(0)
             geom.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MAdd, ColorBlendAttrib.OIncomingAlpha, ColorBlendAttrib.OOne))
             geom.setColorScale(VBase4(0.0, 0.0, 0.0, 0.0))
 
-    
+
     def deactivateInvisibleEffect(self):
         geom = self.getGeomNode()
         geom.clearDepthWrite()
@@ -920,19 +920,19 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         if self.invisibleFlickerSeq:
             self.invisibleFlickerSeq.clearToInitial()
             self.invisibleFlickerSeq = None
-        
 
-    
+
+
     def addInvisibleFlickerSeq(self):
         if self.invisibleFlickerSeq:
             self.invisibleFlickerSeq.finish()
             del self.invisibleFlickerSeq
             self.invisibleFlickerSeq = None
-        
+
         geom = self.getGeomNode()
         self.invisibleFlickerSeq = Sequence(LerpFunc(geom.setAlphaScale, duration = 1.0, toData = 0.5, fromData = 0.29999999999999999), LerpFunc(geom.setAlphaScale, duration = 1.0, toData = 0.29999999999999999, fromData = 0.5))
 
-    
+
     def setGhostColor(self, ghostColor):
         self.ghostColor = ghostColor
         self.ghostBaseNegative = 0
@@ -958,50 +958,50 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.ghostBaseNegative = 1
             else:
                 self.ghostBaseColor = VBase4(0.0, 1.0, 1.0, 1.0)
-        
+
         if self.isGhost:
             self.stopGhost(self.isGhost)
             self.startGhost(self.isGhost)
-        
 
-    
+
+
     def setIsGhost(self, isGhost, override = 0):
         if self.ghostBaseColor == None:
             self.ghostBaseColor = VBase4(0.29999999999999999, 1.0, 0.75, 1.0)
-        
+
         if self.isGhost == isGhost and not (self.ghostDelay):
             return None
         elif self.isGenerated() == False and not override:
             self.isGhost = isGhost
             self.ghostDelay = 1
             return None
-        
+
         self.stopGhost(self.isGhost)
         if isGhost:
             self.isGhost = isGhost
             self.startGhost(isGhost)
             if self.isInteractiveMasked():
                 self.requestHideTarget()
-            
-        
+
+
         self.isGhost = isGhost
         if hasattr(self, 'refreshName'):
             self.refreshName()
-        
+
         if self.minimapObj:
             if self.isInvisibleGhost():
                 self.minimapObj.mapGeom.hide()
             else:
                 self.minimapObj.mapGeom.show()
-        
 
-    
+
+
     def isInteractiveMasked(self):
         if not self.isInvisible():
             pass
         return self.isInvisibleGhost()
 
-    
+
     def isInvisibleGhost(self):
         if self.isGhost in [
             3,
@@ -1010,11 +1010,11 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         else:
             return 0
 
-    
+
     def startGhost(self, effectNumber):
         if effectNumber == 7:
             return None
-        
+
         if self.ghostGeomGenerated == 0:
             if self.style:
                 self.generateHuman(self.style.getGender(), base.cr.human)
@@ -1027,20 +1027,20 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 redraw = 0
                 if self.isLocal() and localAvatar.isWeaponDrawn:
                     redraw = 1
-                
+
                 self.gameFSM.request('LandRoam')
                 self.gameFSM.request('Battle')
                 if self.isLocal() and redraw:
                     localAvatar.toggleWeapon(localAvatar.currentWeaponId, localAvatar.currentWeaponSlotId)
-                
-            
-        
+
+
+
         self.deleteDropShadow()
         if self.currentWeapon:
             if hasattr(self.currentWeapon, 'removeTrail'):
                 self.currentWeapon.removeTrail()
-            
-        
+
+
         geom = self.getGeomNode()
         self.ghostColorMult = 1.0
         ghostColor = self.ghostBaseColor * self.ghostColorMult
@@ -1070,7 +1070,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     self.ghostEffect.beNegative()
                 else:
                     self.ghostEffect.bePositive()
-            
+
             taskMgr.add(self.ghostFlicker, self.uniqueName('GhostFlicker'))
         elif effectNumber == 2:
             geom.setTransparency(1)
@@ -1092,7 +1092,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     self.ghostEffect.beNegative()
                 else:
                     self.ghostEffect.bePositive()
-            
+
             npCollection = geom.findAllMatches('**/eyes')
             for np in npCollection:
                 np.setColorScale(VBase4(1.0, 0.0, 0.0, 1.0), 4)
@@ -1101,7 +1101,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 np.setTextureOff(1)
                 np.setBin('pre-additive', 2, 2)
                 np.show()
-            
+
             eyeGlow = EvilEyeGlow.getEffect(1)
             if eyeGlow:
                 self.ghostEyeGlowR = eyeGlow
@@ -1109,7 +1109,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.ghostEyeGlowR.setColorScale(VBase4(0.5, 0.0, 0.0, 1.0), 5)
                 self.ghostEyeGlowR.setBin('pre-additive', 0, 2)
                 self.ghostEyeGlowR.startLoop()
-            
+
             eyeGlow = EvilEyeGlow.getEffect(1)
             if eyeGlow:
                 self.ghostEyeGlowL = eyeGlow
@@ -1117,7 +1117,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.ghostEyeGlowL.setColorScale(VBase4(0.5, 0.0, 0.0, 1.0), 5)
                 self.ghostEyeGlowL.setBin('pre-additive', 0, 2)
                 self.ghostEyeGlowL.startLoop()
-            
+
             if self.ghostEyeGlowL and self.ghostEyeGlowR:
                 if self.style.gender == 'f':
                     self.ghostEyeGlowL.setPos(0.17499999999999999, -0.13, -0.25)
@@ -1131,7 +1131,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.ghostEyeGlowL.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MAdd, ColorBlendAttrib.OIncomingAlpha, ColorBlendAttrib.OOne), 1)
                 self.ghostEyeGlowR.setAttrib(ColorWriteAttrib.make(ColorWriteAttrib.CAll), 1)
                 self.ghostEyeGlowR.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MAdd, ColorBlendAttrib.OIncomingAlpha, ColorBlendAttrib.OOne), 1)
-            
+
         elif effectNumber == 3:
             geom.setTransparency(1)
             geom.setDepthWrite(0)
@@ -1148,7 +1148,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     self.ghostEffect.beNegative()
                 else:
                     self.ghostEffect.bePositive()
-            
+
         elif effectNumber == 4:
             geom.setTransparency(1)
             geom.setDepthWrite(0)
@@ -1180,43 +1180,43 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.addInvisibleFlickerSeq()
                 if self.invisibleFlickerSeq:
                     self.invisibleFlickerSeq.loop()
-                
+
             else:
                 geom.setTransparency(1)
                 geom.setDepthWrite(0)
                 geom.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MAdd, ColorBlendAttrib.OIncomingAlpha, ColorBlendAttrib.OOne))
                 geom.setColorScale(VBase4(0.0, 0.0, 0.0, 0.0))
                 geom.setRenderModeFilled()
-        
 
-    
+
+
     def fadeOutGhost(self):
         if self.addGhostEffect(self.ghostBaseColor):
             self.ghostEffect.beThick()
             self.ghostEffect.beOrb()
             self.ghostEffect.moveDown()
             self.ghostEffect.play()
-        
+
         taskMgr.remove(self.uniqueName('GhostFlicker'))
         taskMgr.remove(self.uniqueName('InvisibleFlicker'))
         self.ghostTransitionIval = Sequence(Func(self.getGeomNode().setTransparency, 1), LerpColorScaleInterval(self.getGeomNode(), 1.5, VBase4(1, 1, 1, 0)))
         self.ghostTransitionIval.start()
 
-    
+
     def addGhostEffect(self, ghostColor):
         if self.ghostEffect:
             self.ghostEffect.stopLoop()
             self.ghostEffect = None
-        
+
         if self.ghostShadowEffect:
             self.ghostShadowEffect.stopLoop()
             self.ghostShadowEffect = None
-        
+
         self.ghostEffect = GhostAura.getEffect(unlimited = 1)
         if not self.ghostEffect:
             self.ghostEffect = None
             return 0
-        
+
         self.ghostEffect.reparentTo(self)
         if self.ghostBaseNegative and 0:
             self.ghostEffect.p0.renderer.setColor(Vec4(1.0 - ghostColor[0], 1.0 - ghostColor[1], 1.0 - ghostColor[2], ghostColor[3]))
@@ -1233,14 +1233,14 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         self.ghostShadowEffect.reparentTo(self)
         return 1
 
-    
+
     def postAsyncLoadFix(self):
         if self.isGhost == 2 and self.ghostEyeGlowL and self.ghostEyeGlowR:
             self.ghostEyeGlowL.reparentTo(self.headNode)
             self.ghostEyeGlowR.reparentTo(self.headNode)
-        
 
-    
+
+
     def ghostFlicker(self, task):
         geom = self.getGeomNode()
         if geom:
@@ -1249,14 +1249,14 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.ghostColorMult = max(min(1.0, self.ghostColorMult), 0.5)
             ghostColor = self.ghostBaseColor * self.ghostColorMult
             geom.setColorScale(ghostColor)
-        
+
         return task.cont
 
-    
+
     def stopGhost(self, effectNumber, isDev = False):
         if effectNumber == 7:
             return None
-        
+
         geom = self.getGeomNode()
         geom.clearDepthWrite()
         geom.clearDepthTest()
@@ -1273,15 +1273,15 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         if self.currentWeapon:
             if hasattr(self.currentWeapon, 'createTrail'):
                 self.currentWeapon.createTrail(self)
-            
-        
+
+
         if effectNumber == 1:
             taskMgr.remove(self.uniqueName('GhostFlicker'))
             geom.findAllMatches('**/teeth*').show()
             geom.findAllMatches('**/eyes').show()
             if self.depthGeom:
                 self.depthGeom.removeNode()
-            
+
         elif effectNumber == 2:
             npCollection = geom.findAllMatches('**/eyes')
             for np in npCollection:
@@ -1291,10 +1291,10 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 np.clearAttrib(ColorBlendAttrib.getClassType())
                 np.clearAttrib(ColorWriteAttrib.getClassType())
                 np.setTextureOff(0)
-            
+
             if self.depthGeom:
                 self.depthGeom.removeNode()
-            
+
         elif effectNumber == 3:
             pass
         elif effectNumber == 4:
@@ -1305,36 +1305,36 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.depthGeom.removeNode()
             else:
                 geom.setRenderModeFilled()
-        
+
         if self.invisibleFlickerSeq:
             self.invisibleFlickerSeq.finish()
             del self.invisibleFlickerSeq
             self.invisibleFlickerSeq = None
-        
+
         localAvatar.removeWobbleId(self.doId)
         if self.ghostEffect:
             self.ghostEffect.stopLoop()
             self.ghostEffect = None
-        
+
         if self.ghostShadowEffect:
             self.ghostShadowEffect.stopLoop()
             self.ghostShadowEffect = None
-        
+
         if self.ghostEyeGlowR:
             self.ghostEyeGlowR.stopLoop()
             self.ghostEyeGlowR.destroy()
             self.ghostEyeGlowR = None
-        
+
         if self.ghostEyeGlowL:
             self.ghostEyeGlowL.stopLoop()
             self.ghostEyeGlowL.destroy()
             self.ghostEyeGlowL = None
-        
 
-    
+
+
     def doScare(self):
         geom = self.getGeomNode()
-        
+
         def ghostWorld():
             base.cr.timeOfDayManager.skyGroup.hide()
             render.setColorScale(VBase4(0.5, 0.0, 0.0, 1.0))
@@ -1342,14 +1342,14 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             geom.clearAttrib(ColorBlendAttrib.getClassType())
             geom.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MNone))
 
-        
+
         def normalWorld():
             geom.clearAttrib(ColorBlendAttrib.getClassType())
             render.clearAttrib(ColorBlendAttrib.getClassType())
             render.clearColorScale()
             base.cr.timeOfDayManager.skyGroup.show()
 
-        
+
         def zombieAnim():
             pass
 
@@ -1359,34 +1359,34 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         self.scareIval = Parallel(Sequence(LerpFunctionInterval(self.setCamFov, fromData = orgFov, toData = crazyFov, duration = 2.0, blendType = 'easeOut'), Func(self.setCamFov, orgFov)), Sequence(Func(ghostWorld), Func(zombieAnim), Wait(2.0), Func(normalWorld), Func(self.startGhost)))
         self.scareIval.start()
 
-    
+
     def getCurrentWeapon(self):
         return (self.currentWeaponId, self.isWeaponDrawn)
 
-    
+
     def setCurrentWeapon(self, currentWeaponId, isWeaponDrawn):
         self.checkWeaponSwitch(currentWeaponId, isWeaponDrawn)
         weaponIds = base.localAvatar.equippedWeapons
 
-    
+
     def setSecondWeapon(self, weapon):
         if weapon == self.secondWeapon:
             return None
-        
+
         if self.secondWeapon:
             self.secondWeapon.removeNode()
-        
+
         if not (self.isNpc) and self.currentWeapon and self.currentWeapon.getParent() == self.leftHandNode:
             self.currentWeapon.reparentTo(self.rightHandNode)
-        
+
         self.secondWeapon = weapon
 
-    
+
     def checkWeaponSwitch(self, currentWeaponId, isWeaponDrawn):
         yieldThread('setCurrentWeapon begin')
         if isWeaponDrawn == self.isWeaponDrawn and currentWeaponId == self.currentWeaponId:
             return None
-        
+
         if isWeaponDrawn and not (self.isWeaponDrawn):
             self.isWeaponDrawn = isWeaponDrawn
             self.currentWeaponId = currentWeaponId
@@ -1409,27 +1409,27 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         else:
             self.currentWeaponId = currentWeaponId
 
-    
+
     def _DistributedBattleAvatar__initWeaponChange(self):
         if self.isLocal():
             if hasattr(self.cr, 'targetMgr') and self.cr.targetMgr:
                 self.cr.targetMgr.stopFollowAim()
-            
-        
+
+
         if self.setWeaponIval:
             self.setWeaponIval.finish()
             self.setWeaponIval = None
-        
+
         self.setWeaponIval = Sequence()
         if self.isLocal():
             self.setWeaponIval.append(Func(messenger.send, 'drawStarted'))
-        
 
-    
+
+
     def _DistributedBattleAvatar__endWeaponChange(self):
         if self.isLocal():
             self.setWeaponIval.append(Func(messenger.send, 'drawFinished'))
-        
+
         self.setWeaponIval.start()
         if self.isNpc:
             if self.currentWeaponId:
@@ -1439,18 +1439,18 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                         self.showVoodooDollAttuned()
                     else:
                         self.showVoodooDollUnattuned()
-                
-            
-        
 
-    
+
+
+
+
     def _DistributedBattleAvatar__doPutAwayWeapon(self):
         if self.isLocal():
             taskMgr.remove('usageTask')
             localAvatar.guiMgr.combatTray.ignoreInput()
             localAvatar.guiMgr.combatTray.disableTray()
             localAvatar.stopAllDefenceEffects()
-        
+
         if self.currentWeapon:
             if self.isNpc:
                 pass
@@ -1460,12 +1460,12 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     if ival:
                         self.setWeaponIval.append(ival)
                         self.setWeaponIval.append(Func(self.currentWeapon.delete))
-                    
+
                 else:
                     self.currentWeapon.detachFrom(localAvatar)
-            
 
-    
+
+
     def _DistributedBattleAvatar__doDrawWeapon(self):
         weaponClass = WeaponGlobals.getWeaponClass(self.currentWeaponId)
         if weaponClass:
@@ -1474,107 +1474,107 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 bayonetPart = self.currentWeapon.find('**/bayonet')
                 if bayonetPart:
                     bayonetPart.stash()
-                
-            
+
+
             if not self.isLocal() and ItemGlobals.getType(self.currentWeaponId) == ItemGlobals.FISHING:
                 self.currentWeapon.setR(-90)
-            
+
             ammoSkillId = 0
             if self.currentWeaponId == ItemGlobals.GRENADE_POUCH:
                 if self.currentAmmo:
                     ammoSkillId = self.currentAmmo
-                
-            
+
+
             ival = self.pullOutCurrentWeapon(ammoSkillId = ammoSkillId, blendInT = 0, blendOutT = 0.29999999999999999)
             if ival:
                 self.setWeaponIval.append(ival)
-            
+
             if self.isLocal():
                 if hasattr(self.cr, 'targetMgr'):
                     self.setWeaponIval.append(Func(self.cr.targetMgr.startFollowAim))
-                
+
                 if self.currentWeaponId:
                     rep = WeaponGlobals.getRepId(self.currentWeaponId)
                     self.setWeaponIval.append(Func(localAvatar.guiMgr.combatTray.initCombatTray, rep))
-                
-            
-        
 
-    
+
+
+
+
     def showVoodooDollAttuned(self):
         if not self.isNpc:
             return None
-        
+
         if not self.attuneEffect:
             self.attuneEffect = VoodooAura.getEffect()
-        
+
         if self.attuneEffect:
             self.attuneEffect.reparentTo(self.rightHandNode)
             self.attuneEffect.setPos(0, 0, 0)
             self.attuneEffect.particleDummy.reparentTo(self.rightHandNode)
             self.attuneEffect.setEffectColor(Vec4(0.20000000000000001, 0.10000000000000001, 0.5, 1))
             self.attuneEffect.startLoop()
-        
 
-    
+
+
     def showVoodooDollUnattuned(self):
         if not self.isNpc:
             return None
-        
+
         if self.attuneEffect:
             self.attuneEffect.stopLoop()
             self.attuneEffect = None
-        
 
-    
+
+
     def isCurrentWeapon(self, weaponId):
         if self.currentWeaponId:
             return self.currentWeaponId == weaponId
-        
+
         return 0
 
-    
+
     def getCurrentAmmo(self):
         return self.currentAmmo
 
-    
+
     def setCurrentAmmo(self, currentAmmo, init = 0):
         if currentAmmo == self.currentAmmo and not init:
             return None
-        
+
         oldCurrentAmmo = self.currentAmmo
         self.currentAmmo = currentAmmo
         if hasattr(self, 'undead') and self.undead:
             self.skeleton.currentAmmo = self.currentAmmo
-        
+
         if self.isNpc:
             self.currentAmmo = currentAmmo
             if hasattr(self, 'undead') and self.undead:
                 self.skeleton.currentAmmo = self.currentAmmo
-            
-        
+
+
         if self.currentWeapon:
             if self.setWeaponIval:
                 self.setWeaponIval.finish()
                 self.setWeaponIval = None
-            
+
             self.setWeaponIval = Sequence()
             ival = self.changeAmmunition()
             if ival:
                 self.setWeaponIval.append(ival)
-            
-            self.setWeaponIval.start()
-        
 
-    
+            self.setWeaponIval.start()
+
+
+
     def getCurrentCharm(self):
         return self.currentCharm
 
-    
+
     def setCurrentCharm(self, currentCharm):
         self.currentCharm = currentCharm
 
-    
+
     def pullOutCurrentWeapon(self, ammoSkillId = 0, blendInT = 0.10000000000000001, blendOutT = 0):
         self.setWalkForWeapon()
         if hasattr(self, 'undead') and self.undead:
@@ -1583,7 +1583,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             drawIval = self.currentWeapon.getDrawIval(self, ammoSkillId, blendInT, blendOutT)
         return drawIval
 
-    
+
     def putAwayCurrentWeapon(self, blendInT = 0.10000000000000001, blendOutT = 0.10000000000000001):
         if hasattr(self, 'undead') and self.undead:
             returnIval = self.currentWeapon.getReturnIval(self.skeleton, blendInT, blendOutT)
@@ -1591,7 +1591,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             returnIval = self.currentWeapon.getReturnIval(self, blendInT, blendOutT)
         return returnIval
 
-    
+
     def changeAmmunition(self):
         if hasattr(self, 'undead') and self.undead:
             returnIval = self.currentWeapon.getAmmoChangeIval(self.skeleton, 0, self.currentAmmo, 0, None)
@@ -1599,14 +1599,14 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             returnIval = self.currentWeapon.getAmmoChangeIval(self, 0, self.currentAmmo, 0, None)
         return returnIval
 
-    
+
     def setWalkForWeapon(self):
         if self.currentWeapon:
             (walkAnim, runAnim, reverseAnim, neutralAnim, strafeLeftAnim, strafeRightAnim, strafeDiagLeftAnim, strafeDiagRightAnim, strafeRevDiagLeftAnim, strafeRevDiagRightAnim, fallGroundAnim, fallWaterAnim, spinLeftAnim, spinRightAnim) = self.currentWeapon.getWalkForWeapon(self)
             self.motionFSM.setAnimInfo(((neutralAnim, 1.0), (walkAnim, 1.5), (runAnim, 1.0), (reverseAnim, -1.5), (strafeLeftAnim, 1.0), (strafeRightAnim, 1.0), (strafeDiagLeftAnim, 1.0), (strafeDiagRightAnim, 1.0), (strafeRevDiagLeftAnim, 1.0), (strafeRevDiagRightAnim, 1.0), (fallGroundAnim, 1.0), (fallWaterAnim, -1.0), (spinLeftAnim, 1.0), (spinRightAnim, 1.0)))
-        
 
-    
+
+
     def getSkillQuantity(self, skillId):
         inv = self.getInventory()
         if inv:
@@ -1614,7 +1614,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         else:
             return 0
 
-    
+
     def getAmmoQuantity(self, ammoInvId):
         inv = self.getInventory()
         if inv:
@@ -1622,23 +1622,23 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         else:
             return 0
 
-    
+
     def useTargetedSkill(self, skillId, ammoSkillId, skillResult, targetId, areaIdList, attackerEffects, targetEffects, areaIdEffects, itemEffects, timestamp, pos, charge = 0, localSignal = 0):
         DistributedReputationAvatar.useTargetedSkill(self, skillId, ammoSkillId, skillResult, targetId, areaIdList, attackerEffects, targetEffects, areaIdEffects, itemEffects, timestamp, pos, charge, localSignal)
         WeaponBase.useTargetedSkill(self, skillId, ammoSkillId, skillResult, targetId, areaIdList, attackerEffects, targetEffects, areaIdEffects, itemEffects, timestamp, pos, charge)
 
-    
+
     def useProjectileSkill(self, skillId, ammoSkillId, posHpr, timestamp, charge):
         WeaponBase.useProjectileSkill(self, skillId, ammoSkillId, posHpr, timestamp, charge)
         if not self.isLocal():
             self.playSkillMovie(skillId, ammoSkillId, WeaponGlobals.RESULT_DELAY, charge)
-        
 
-    
+
+
     def packMultiHitEffects(self, targetEffects, numHits):
         if numHits <= 1:
             return targetEffects
-        
+
         divDamage = int(targetEffects[0] / numHits + 1)
         multiHitEffects = []
         multiHitEffects.append(list(targetEffects))
@@ -1650,7 +1650,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 0,
                 0,
                 0])
-        
+
         multiHitEffects.append([
             targetEffects[0] - divDamage * (numHits - 1),
             0,
@@ -1659,56 +1659,56 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             0])
         return multiHitEffects
 
-    
+
     def toonUp(self, hpGained):
         if self.hp == None or hpGained < 0:
             return None
-        
+
         if hpGained > 0:
             self.showHpText(hpGained)
             self.hpChange(quietly = 0)
-        
 
-    
+
+
     def mojoUp(self, mojoGained):
         if self.mojo == None or mojoGained < 0:
             return None
-        
+
         if self.mojo + mojoGained > self.maxMojo:
             mojoGained = self.maxMojo - self.mojo
-        
+
         if mojoGained > 0:
             self.showHpText(mojoGained, bonus = 10)
-        
 
-    
+
+
     def takeDamage(self, hpLost, pos, bonus = 0, itemEffects = []):
         if self.hp == None or hpLost < 0:
             return None
-        
+
         if hpLost > 0:
             self.showHpText(-hpLost, pos, bonus, itemEffects = itemEffects)
             self.hpChange(quietly = 0)
-        
 
-    
+
+
     def takeMpDamage(self, mpLost, pos, bonus = 3):
         if self.mojo == None and mpLost < 0 or self.mojo <= 0:
             return None
-        
+
         self.refreshStatusTray()
         if self.mojo < mpLost:
             mpLost = self.mojo
-        
+
         if mpLost > 0:
             self.showHpText(-mpLost, pos, bonus)
-        
 
-    
+
+
     def playOuch(self, skillId, ammoSkillId, targetEffects, attacker, pos, itemEffects = [], multihit = 0, targetBonus = 0, skillResult = 0):
         if self.isDisabled():
             return None
-        
+
         DistributedReputationAvatar.playOuch(self, skillId, ammoSkillId, targetEffects, attacker, pos, multihit = multihit, targetBonus = targetBonus, skillResult = skillResult)
         (targetHp, targetPower, targetEffect, targetMojo, targetSwiftness) = targetEffects
         if self.PlayersInvulnerable and targetHp < 0 and not (self.isNpc):
@@ -1718,23 +1718,23 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.takeDamage(-targetHp, pos, bonus = targetEffects[1], itemEffects = itemEffects)
         elif targetHp > 0:
             self.toonUp(targetHp)
-        
+
         if targetMojo < 0 and not (attacker == self):
             taskMgr.doMethodLater(WeaponGlobals.MP_DAMAGE_DELAY, self.takeMpDamage, self.taskName('playMpDamage'), extraArgs = [
                 -targetMojo,
                 pos])
         elif targetMojo > 0:
             self.mojoUp(targetMojo)
-        
+
         messenger.send('pistolHitTarget')
 
-    
+
     def playSkillMovie(self, skillId, ammoSkillId, skillResult, charge, targetId = 0, areaIdList = []):
         self.cleanupOuchIval()
         skillInfo = WeaponGlobals.getSkillAnimInfo(skillId)
         if not skillInfo:
             return None
-        
+
         anim = skillInfo[WeaponGlobals.PLAYABLE_INDEX]
         if self.curAttackAnim:
             if self.curAttackAnim.isPlaying() and WeaponGlobals.getIsInstantSkill(skillId, ammoSkillId):
@@ -1742,11 +1742,11 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             else:
                 self.curAttackAnim.pause()
                 self.curAttackAnim = None
-        
+
         if self.secondWeapon:
             self.secondWeapon.removeNode()
             self.secondWeapon = None
-        
+
         timestamp = globalClockDelta.getFrameNetworkTime()
         self.currentAttack = [
             skillId,
@@ -1759,22 +1759,22 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             for areaId in areaIdList:
                 if id == targetId:
                     continue
-                
+
                 area = self.cr.doId2do.get(areaId)
                 if area:
                     areaList.append(area)
                     continue
-            
+
             self.curAttackAnim = getattr(self.cr.combatAnims, anim)(self, skillId, ammoSkillId, charge, target, skillResult, areaList)
         else:
             self.curAttackAnim = getattr(self.cr.combatAnims, anim)(self, skillId, ammoSkillId, charge, target, skillResult)
         if localAvatar.duringDialog:
             self.curAttackAnim = None
-        
+
         self.preprocessAttackAnim()
         if self.curAttackAnim != None:
             self.curAttackAnim.start()
-        
+
         if not self.isLocal():
             if WeaponGlobals.getSkillTrack(skillId) == WeaponGlobals.DEFENSE_SKILL_INDEX:
                 newZ = self.getZ(localAvatar)
@@ -1783,52 +1783,52 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     self.showEffectString(PLocalizer.AttackReflected)
                 else:
                     self.showEffectString(PLocalizer.AttackBlocked)
-            
-        
 
-    
+
+
+
     def preprocessAttackAnim(self):
         pass
 
-    
+
     def cleanupOuchIval(self):
         DistributedReputationAvatar.cleanupOuchIval(self)
         if self.ouchAnim != None:
             self.ouchAnim.finish()
             self.ouchAnim = None
-        
 
-    
+
+
     def getFadeInTrack(self):
         parent = self.getParentObj()
         if not parent:
             return None
-        
+
         dclassName = parent.dclass.getName()
         if dclassName == 'DistributedGAInterior':
             return None
-        
+
         if self.getNameText():
             fadeInIval = Sequence(Func(self.setTransparency, TransparencyAttrib.MAlpha), Func(self.setAlphaScale, 0.0), Func(self.getNameText().setAlphaScale, 0.0), Parallel(LerpFunctionInterval(self.setAlphaScale, 1.0, fromData = 0.0, toData = 1.0), LerpFunctionInterval(self.getNameText().setAlphaScale, 1.0, fromData = 0.0, toData = 1.0)), Func(self.clearTransparency), Func(self.clearColorScale), Func(self.getNameText().clearColorScale))
         else:
             fadeInIval = Sequence(Func(self.setTransparency, TransparencyAttrib.MAlpha), Func(self.setAlphaScale, 0.0), LerpFunctionInterval(self.setAlphaScale, 1.0, fromData = 0.0, toData = 1.0), Func(self.clearTransparency), Func(self.clearColorScale))
         return fadeInIval
 
-    
+
     def getSpawnTrack(self):
         avatarTeam = self.getTeam()
         if avatarTeam in [
             PiratesGlobals.UNDEAD_TEAM,
             PiratesGlobals.FRENCH_UNDEAD_TEAM,
             PiratesGlobals.SPANISH_UNDEAD_TEAM] and not self.avatarType.isA(AvatarTypes.Ghost):
-            
+
             def startSFX():
                 sfx = self.getSfx('spawn')
                 if sfx:
                     base.playSfx(sfx, node = self, cutoff = 100)
-                
 
-            
+
+
             def startVFX():
                 if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsHigh:
                     effectScale = EnemyGlobals.getEffectScale(self)
@@ -1838,7 +1838,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                         spawnEffect.setPos(self.getPos(render))
                         spawnEffect.setScale(effectScale)
                         spawnEffect.play()
-                    
+
                     portal = DarkPortal.getEffect()
                     if portal:
                         portal.reparentTo(render)
@@ -1846,8 +1846,8 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                         portal.size = effectScale * 10.0
                         portal.holdTime = 3.0
                         portal.play()
-                    
-                
+
+
 
             if self.getAnimControl('intro'):
                 duration = self.getDuration('intro')
@@ -1871,27 +1871,27 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         introIval.append(Func(self.ambushIntroDone))
         return introIval
 
-    
+
     def getGetupTrack(self):
         pass
 
-    
+
     def getDyingTrack(self):
         pass
 
-    
+
     def getDeathTrack(self):
         av = self
         if hasattr(self, 'creature') and self.creature:
             av = self.creature
-        
+
         animName = av.getDeathAnimName()
         duration = av.getDuration(animName)
         frames = av.getNumFrames(animName)
         if duration is None or frames is None:
             base.cr.centralLogger.writeClientEvent('Invalid Death: %s,%s' % (self, animName))
             return Sequence()
-        
+
         Biped = Biped
         import pirates.pirate.Biped
         if isinstance(self, Biped):
@@ -1902,27 +1902,27 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 'death4': 1.6000000000000001 }.get(animName, 1.0)
         else:
             delay = 0.0
-        
+
         def startSFX():
             sfx = self.getSfx('death')
             if sfx:
                 base.playSfx(sfx, node = self, cutoff = 60)
-            
 
-        
+
+
         def stopSmooth():
             if self.smoothStarted:
                 taskName = self.taskName('smooth')
                 taskMgr.remove(taskName)
                 self.smoothStarted = 0
-            
+
 
         avatarTeam = self.getTeam()
         if avatarTeam in [
             PiratesGlobals.UNDEAD_TEAM,
             PiratesGlobals.FRENCH_UNDEAD_TEAM,
             PiratesGlobals.SPANISH_UNDEAD_TEAM] and not self.avatarType.isA(AvatarTypes.Ghost):
-            
+
             def startVFX():
                 if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsHigh:
                     effectScale = EnemyGlobals.getEffectScale(self)
@@ -1930,24 +1930,24 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     root = av.headNode
                     if root.isEmpty():
                         root = av
-                    
+
                     deathEffect = JRDeath.getEffect()
                     if deathEffect:
                         deathEffect.reparentTo(render)
                         deathEffect.setPos(root, offset)
                         deathEffect.setScale(effectScale)
                         deathEffect.play()
-                    
+
                     deathBlast = JRDeathBlast.getEffect()
                     if deathBlast:
                         deathBlast.reparentTo(render)
                         deathBlast.setPos(root, offset)
                         deathBlast.setScale(effectScale)
                         deathBlast.play()
-                    
-                
 
-            
+
+
+
             def startGlow():
                 geom = av.getGeomNode()
                 model = loader.loadModel('models/effects/particleMaps')
@@ -1968,28 +1968,28 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             deathIval = Parallel(Func(stopSmooth), Func(self.setTransparency, 1), av.actorInterval(animName, blendOutT = 0.0), Sequence(Wait(duration / 2.0), Func(self.stopGhost, 0), LerpColorScaleInterval(av, duration / 2.0, Vec4(1, 1, 1, 0), startColorScale = Vec4(1)), Func(self.hide, 0, PiratesGlobals.INVIS_DEATH), Func(self.clearColorScale), Func(self.clearTransparency)), Sequence(Wait(delay), Func(startSFX)))
         return deathIval
 
-    
+
     def ambushIntroDone(self):
         if hasattr(self, 'ambushEnemy'):
             self.sendUpdate('ambushIntroDone')
-        
 
-    
+
+
     def b_setGameState(self, gameState, localArgs = []):
         timestamp = globalClockDelta.getFrameNetworkTime()
         state = self.getGameState()
         self.setGameState(gameState, timestamp, localArgs, localChange = 1)
         if state != self.getGameState():
             self.d_setGameState(gameState, timestamp)
-        
 
-    
+
+
     def d_setGameState(self, gameState, timestamp):
         self.sendUpdate('setGameState', [
             gameState,
             timestamp])
 
-    
+
     def setGameState(self, gameState, timestamp = None, localArgs = [], localChange = 0):
         self.notify.debug('setGameState: %s state: %s' % (self.doId, gameState))
         if timestamp is None:
@@ -2000,17 +2000,17 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             if self.gameFSM.getCurrentOrNextState() != gameState:
                 self.gameFSM.request(gameState, [
                     ts] + localArgs)
-            
-        
+
+
 
     setGameState = report(types = [
         'frameCount',
         'args'], dConfigParam = 'jail')(setGameState)
-    
+
     def getGameState(self):
         return self.gameFSM.getCurrentOrNextState()
 
-    
+
     def b_setAirborneState(self, airborneState):
         timestamp = globalClockDelta.getFrameNetworkTime()
         self.setAirborneStateLocal(airborneState, timestamp)
@@ -2020,7 +2020,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         'args',
         'deltaStamp'], dConfigParam = [
         'jump'])(b_setAirborneState)
-    
+
     def d_setAirborneState(self, airborneState, timestamp):
         self.sendUpdate('setAirborneState', [
             airborneState,
@@ -2030,7 +2030,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         'args',
         'deltaStamp'], dConfigParam = [
         'jump'])(d_setAirborneState)
-    
+
     def setAirborneStateLocal(self, airborneState, timestamp):
         self.motionFSM.motionAnimFSM.setAirborneState(airborneState)
 
@@ -2038,10 +2038,10 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         'args',
         'deltaStamp'], dConfigParam = [
         'jump'])(setAirborneStateLocal)
-    
+
     def setAirborneState(self, airborneState, timestamp):
         wait = self.smoother.getDelay() - globalClockDelta.localElapsedTime(timestamp)
-        
+
         def wrap():
             self.motionFSM.motionAnimFSM.setAirborneState(airborneState)
             self.motionFSM.motionAnimFSM.updateAnimState(self.smoother.getSmoothForwardVelocity(), self.smoother.getSmoothRotationalVelocity(), self.smoother.getSmoothLateralVelocity())
@@ -2052,7 +2052,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         'args',
         'deltaStamp'], dConfigParam = [
         'jump'])(setAirborneState)
-    
+
     def b_playMotionAnim(self, anim):
         timestamp = globalClockDelta.getFrameNetworkTime()
         self.d_playMotionAnim(anim, timestamp)
@@ -2062,7 +2062,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         'args',
         'deltaStamp'], dConfigParam = [
         'jump'])(b_playMotionAnim)
-    
+
     def d_playMotionAnim(self, anim, timestamp):
         self.sendCurrentPosition()
         self.sendUpdate('playMotionAnim', [
@@ -2073,7 +2073,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         'args',
         'deltaStamp'], dConfigParam = [
         'jump'])(d_playMotionAnim)
-    
+
     def l_playMotionAnim(self, anim, timestamp):
         self.motionFSM.motionAnimFSM.playMotionAnim(anim, local = True)
 
@@ -2081,7 +2081,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         'args',
         'deltaStamp'], dConfigParam = [
         'jump'])(l_playMotionAnim)
-    
+
     def playMotionAnim(self, anim, timestamp):
         wait = self.smoother.getDelay() - globalClockDelta.localElapsedTime(timestamp)
         taskMgr.doMethodLater(wait, self.motionFSM.motionAnimFSM.playMotionAnim, self.taskName('playMotionAnim-%s-%d' % (anim, timestamp)), [
@@ -2092,35 +2092,35 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         'args',
         'deltaStamp'], dConfigParam = [
         'jump'])(playMotionAnim)
-    
+
     def b_setGroundState(self, groundState):
         timestamp = globalClockDelta.getFrameNetworkTime()
         self.setGroundStateLocal(groundState, timestamp)
         self.d_setGroundState(groundState, timestamp)
 
-    
+
     def d_setGroundState(self, groundState, timestamp):
         self.sendUpdate('setGroundState', [
             groundState,
             timestamp])
 
-    
+
     def setGroundStateLocal(self, groundState, timestamp):
         self.motionFSM.motionAnimFSM.setGroundState(groundState)
 
-    
+
     def setGroundState(self, groundState, timestamp):
         wait = self.smoother.getDelay() - globalClockDelta.localElapsedTime(timestamp)
         if wait > 0:
             taskMgr.doMethodLater(wait, self.motionFSM.motionAnimFSM.setGroundState, self.taskName('playMotionAnim-%s-%d' % (groundState, timestamp)), [
                 groundState])
-        
 
-    
+
+
     def getSwimTaskName(self):
         return self.taskName('swimBobTask')
 
-    
+
     def startBobSwimTask(self):
         swimTaskName = self.getSwimTaskName()
         task = taskMgr.add(self.bobTask, swimTaskName, priority = 35)
@@ -2128,7 +2128,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         task.zStart = self.getZ(render)
         self.bobbing = True
 
-    
+
     def bobTask(self, task):
         world = self.cr.getActiveWorld()
         if world:
@@ -2144,14 +2144,14 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             zWater = lerp(task.zStart, zWater, clampScalar(0.0, 1.0, task.time / task.zPosTime))
             if task.time >= task.zPosTime:
                 self.bobbing = False
-            
-        
+
+
         self.setZ(render, zWater)
         geom = self.getGeomNode()
         geom.setP(render, normal[1] * 90)
         return task.cont
 
-    
+
     def stopBobSwimTask(self):
         swimTaskName = self.getSwimTaskName()
         taskMgr.remove(swimTaskName)
@@ -2160,23 +2160,23 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         geom.setP(0)
         geom.setR(0)
 
-    
+
     def getTotalHp(self):
         if self.hp is None:
             return 0
-        
+
         return self.hp
 
-    
+
     def hpChange(self, quietly = 0):
         pass
 
-    
+
     def setMaxHp(self, hp):
         DistributedReputationAvatar.setMaxHp(self, hp)
         self.refreshStatusTray()
 
-    
+
     def setHp(self, hp, quietly = 0):
         if hp is not None and self.hp is not None and self.hp - hp > 0:
             pass
@@ -2187,172 +2187,172 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         self.hpChange(quietly = 1)
         if justRanOutOfHp:
             self.died()
-        
 
-    
+
+
     def getTotalLuck(self):
         return self.luck + self.luckMod
 
-    
+
     def getLuck(self):
         return self.luck
 
-    
+
     def setLuck(self, luck):
         self.luck = luck
 
-    
+
     def setLuckMod(self, luck):
         self.luckMod = luck
 
-    
+
     def getMaxLuck(self):
         return self.maxLuck
 
-    
+
     def setMaxLuck(self, maxLuck):
         self.maxLuck = maxLuck
 
-    
+
     def getTotalPower(self):
         return self.power + self.powerMod
 
-    
+
     def getPower(self):
         return self.power
 
-    
+
     def setPower(self, power):
         self.power = power
 
-    
+
     def setPowerMod(self, power):
         self.notify.debug('setPowerMod %s' % power)
         self.powerMod = power
 
-    
+
     def setMaxPower(self, maxPower):
         self.maxPower = maxPower
 
-    
+
     def getTotalMojo(self):
         return self.mojo + self.mojoMod
 
-    
+
     def setMojo(self, mojo):
         self.mojo = mojo
         self.refreshStatusTray()
         base.localAvatar.guiMgr.combatTray.skillTray.updateSkillTrayStates()
 
-    
+
     def setMojoMod(self, mojo):
         self.mojoMod = mojo
         self.refreshStatusTray()
         base.localAvatar.guiMgr.combatTray.skillTray.updateSkillTrayStates()
 
-    
+
     def setMaxMojo(self, maxMojo):
         self.maxMojo = maxMojo
         self.refreshStatusTray()
 
-    
+
     def getMaxMojo(self):
         return self.maxMojo
 
-    
+
     def getMojo(self):
         return self.mojo
 
-    
+
     def getTotalSwiftness(self):
         return self.swiftness + self.swiftnessMod
 
-    
+
     def setSwiftness(self, swiftness):
         self.swiftness = swiftness
 
-    
+
     def setSwiftnessMod(self, swiftness):
         self.notify.debug('setSwiftnessMod %s' % swiftness)
         self.swiftnessMod = swiftness
 
-    
+
     def setStunMod(self, stun):
         self.notify.debug('setStunMod %s' % stun)
         self.stunMod = stun
 
-    
+
     def setHasteMod(self, haste):
         self.notify.debug('setHasteMod %s' % haste)
         self.hasteMod += haste
 
-    
+
     def setAimMod(self, stun):
         self.notify.debug('setAimMod %s' % stun)
         self.aimMod = stun
 
-    
+
     def setTireMod(self, tire):
         self.tireMod = tire
 
-    
+
     def attackTire(self, seconds = 3.0):
         pass
 
-    
+
     def setMaxSwiftness(self, maxSwiftness):
         self.maxSwiftness = maxSwiftness
 
-    
+
     def getCombo(self):
         return (self.combo, self.isTeamCombo, self.comboDamage)
 
-    
+
     def setCombo(self, combo, teamCombo, comboDamage, attackerId = 0):
         DistributedReputationAvatar.setCombo(self, combo, teamCombo, comboDamage, attackerId = attackerId)
         if attackerId == base.localAvatar.getDoId():
             return None
-        
+
         self.combo = combo
         if teamCombo:
             self.isTeamCombo = teamCombo
-        
+
         self.comboDamage = comboDamage
         if base.localAvatar.currentTarget == self:
             messenger.send('trackCombo', [
                 self.combo,
                 self.isTeamCombo,
                 self.comboDamage])
-        
 
-    
+
+
     def resetComboLevel(self, args = None):
         DistributedReputationAvatar.resetComboLevel(self, args)
         self.isTeamCombo = 0
         self.setCombo(0, 0, 0)
         self.comboAttackers = { }
 
-    
+
     def isDeathPenaltyActive(self):
         inv = self.getInventory()
         if not inv:
             return False
-        
+
         ptLoss = inv.getStackQuantity(InventoryType.Vitae_Level)
         if ptLoss > 0:
             return True
         else:
             return False
 
-    
+
     def getSkills(self, weaponId):
         if self.getInventory() is None:
             self.notify.warning('Inventory not created yet!')
             return { }
-        
+
         return self.getInventory().getSkills(weaponId)
 
-    
+
     def setSkillEffects(self, buffs):
         for (effectId, attackerId, timestamp, duration, timeLeft, recur, buffData) in buffs:
             buffKeyId = '%s-%s' % (effectId, attackerId)
@@ -2369,7 +2369,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             effect = self.skillEffects[buffKeyId]
             effect[3] = timeLeft
             effect[4] = timestamp
-        
+
         killList = []
         for buffKeyId in self.skillEffects.keys():
             foundEntry = 0
@@ -2378,28 +2378,28 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 if buffKeyId == id:
                     foundEntry = 1
                     continue
-            
+
             if not foundEntry:
                 killList.append((buffKeyId, self.skillEffects[buffKeyId][0], self.skillEffects[buffKeyId][1]))
                 continue
-        
+
         for (buffKeyId, effectId, attackerId) in killList:
             del self.skillEffects[buffKeyId]
             self.removeStatusEffect(effectId, attackerId)
-        
+
         self.refreshStatusTray()
 
-    
+
     def findAllBuffCopyKeys(self, effectId):
         buffCopies = []
         for buffKeyId in self.skillEffects.keys():
             if self.skillEffects[buffKeyId][0] == effectId:
                 buffCopies.append(buffKeyId)
                 continue
-        
+
         return buffCopies
 
-    
+
     def getSkillEffects(self):
         buffIds = []
         for buffKeyId in self.skillEffects.keys():
@@ -2407,10 +2407,10 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             if buffId not in buffIds:
                 buffIds.append(buffId)
                 continue
-        
+
         return buffIds
 
-    
+
     def addStatusEffect(self, effectId, attackerId, duration, timeLeft, timestamp, buffData):
         if effectId == WeaponGlobals.C_BLIND:
             self._addBlindEffect(attackerId, timeLeft)
@@ -2428,18 +2428,18 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self._addOnFireEffect(attackerId, timeLeft)
             if self.fireEffect:
                 self.fireEffect.setDefaultColor()
-            
+
         elif effectId == WeaponGlobals.C_ON_CURSED_FIRE:
             self._addOnFireEffect(attackerId, timeLeft)
             if self.fireEffect:
                 self.fireEffect.setCursedColor()
-            
+
         elif effectId == WeaponGlobals.C_SLOW:
             self._addSlowEffect(attackerId, timeLeft)
         elif effectId == WeaponGlobals.C_STUN:
             if self.getGameState() not in ('Injured',):
                 self._addStunEffect(attackerId, timeLeft)
-            
+
         elif effectId == WeaponGlobals.C_HOLD:
             self._addHoldEffect(attackerId, timeLeft)
         elif effectId == WeaponGlobals.C_ATTUNE:
@@ -2477,7 +2477,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         elif base.config.GetBool('want-potion-game', 0) and PotionGlobals.getIsPotionBuff(effectId):
             if not self.potionStatusEffectManager:
                 self.enablePotionFx()
-            
+
             self.potionStatusEffectManager.addStatusEffect(effectId, attackerId, duration, timeLeft, timestamp, buffData)
         elif effectId == WeaponGlobals.C_DARK_CURSE:
             self.setGhostColor(2)
@@ -2487,9 +2487,9 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.startGhost(1)
         elif effectId == WeaponGlobals.C_SPAWN:
             self.playSpawnEffect()
-        
 
-    
+
+
     def playSpawnEffect(self):
         if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsLow and base.launcher.getPhaseComplete(3):
             self.protectionEffect = ProtectionDome.getEffect()
@@ -2498,23 +2498,23 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.protectionEffect.setScale(0.5)
                 self.protectionEffect.setZ(1.0)
                 self.protectionEffect.startLoop()
-            
-        
 
-    
+
+
+
     def stopSpawnEffect(self):
         if self.protectionEffect:
             self.protectionEffect.stopLoop()
-        
 
-    
+
+
     def removeStatusEffect(self, effectId, attackerId):
         if effectId == WeaponGlobals.C_ATTUNE:
             self._removeAttuneEffect()
-        
+
         if self.findAllBuffCopyKeys(effectId):
             return None
-        
+
         if effectId == WeaponGlobals.C_BLIND:
             self._removeBlindEffect()
         elif effectId == WeaponGlobals.C_DIRT:
@@ -2567,7 +2567,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         elif base.config.GetBool('want-potion-game', 0) and PotionGlobals.getIsPotionBuff(effectId):
             if not self.potionStatusEffectManager:
                 self.enablePotionFx()
-            
+
             self.potionStatusEffectManager.removeStatusEffect(effectId, attackerId)
         elif effectId == WeaponGlobals.C_DARK_CURSE:
             self.stopGhost(1)
@@ -2575,38 +2575,38 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.stopGhost(1)
         elif effectId == WeaponGlobals.C_SPAWN:
             self.stopSpawnEffect()
-        
 
-    
+
+
     def _addBlindEffect(self, attackerId, duration):
         if self.isLocal():
             self.guiMgr.showSmokePanel()
-        
 
-    
+
+
     def _removeBlindEffect(self):
         if self.isLocal():
             self.guiMgr.hideSmokePanel()
-        
 
-    
+
+
     def _addDirtEffect(self, attackerId, duration):
         if self.isLocal():
             self.guiMgr.showDirtPanel()
-        
 
-    
+
+
     def _removeDirtEffect(self):
         if self.isLocal():
             self.guiMgr.hideDirtPanel()
-        
 
-    
+
+
     def _addPoisonEffect(self, attackerId, duration):
         LerpColorScaleInterval(self.getGeomNode(), 1.0, Vec4(0.69999999999999996, 1, 0.59999999999999998, 1), startColorScale = Vec4(1, 1, 1, 1)).start()
         if self.poisonEffect:
             return None
-        
+
         if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsMedium:
             avatarScale = self.getEnemyScale()
             self.poisonEffect = PoisonEffect.getEffect()
@@ -2615,25 +2615,25 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.poisonEffect.setPos(0, 0.75, self.height - 1.5)
                 self.poisonEffect.effectScale = avatarScale
                 self.poisonEffect.startLoop()
-            
-        
 
-    
+
+
+
     def _removePoisonEffect(self, cleanup = False):
         if not cleanup:
             LerpColorScaleInterval(self.getGeomNode(), 1.0, Vec4(1, 1, 1, 1), startColorScale = Vec4(0.69999999999999996, 1.0, 0.59999999999999998, 1)).start()
-        
+
         if self.poisonEffect:
             self.poisonEffect.stopLoop()
             self.poisonEffect = None
-        
 
-    
+
+
     def _addToxinEffect(self, attackerId, duration):
         LerpColorScaleInterval(self.getGeomNode(), 1.0, Vec4(0.80000000000000004, 0.84999999999999998, 1, 1), startColorScale = Vec4(1, 1, 1, 1)).start()
         if self.toxinEffect:
             return None
-        
+
         if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsMedium:
             avatarScale = self.getEnemyScale()
             self.toxinEffect = ToxinEffect.getEffect()
@@ -2642,36 +2642,36 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.toxinEffect.setPos(0, 0.75, self.height - 1.5)
                 self.toxinEffect.effectScale = avatarScale
                 self.toxinEffect.startLoop()
-            
-        
 
-    
+
+
+
     def _removeToxinEffect(self, cleanup = False):
         if not cleanup:
             LerpColorScaleInterval(self.getGeomNode(), 1.0, Vec4(1, 1, 1, 1)).start()
-        
+
         if self.toxinEffect:
             self.toxinEffect.stopLoop()
             self.toxinEffect = None
-        
 
-    
+
+
     def _addAcidEffect(self, attackerId, duration):
         self.smokeWispEffect = SmokeWisps.getEffect()
         if self.smokeWispEffect:
             self.smokeWispEffect.reparentTo(self)
             self.smokeWispEffect.setPos(0, 0, self.height)
             self.smokeWispEffect.startLoop()
-        
 
-    
+
+
     def _removeAcidEffect(self):
         if self.smokeWispEffect:
             self.smokeWispEffect.stopLoop()
             self.smokeWispEffect = None
-        
 
-    
+
+
     def _addFreezeEffect(self, attackerId, duration):
         self.frozenCopy = self.getParent().attachNewNode('FrozenCopy')
         geom = self.getGeomNode()
@@ -2686,37 +2686,37 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             freezeBlast.setPos(0, 0, self.getHeight() / 2.0)
             freezeBlast.setScale(1, 1, max(1, self.getHeight() / 3.0))
             freezeBlast.play()
-        
 
-    
+
+
     def _removeFreezeEffect(self):
         self.frozenCopy.removeNode()
         self.getGeomNode().getParent().show()
 
-    
+
     def _addWoundEffect(self, attackerId, duration):
         pass
 
-    
+
     def _removeWoundEffect(self):
         pass
 
-    
+
     def _addTauntEffect(self, attackerId, duration):
         self.getGeomNode().setColorScale(1.0, 0.40000000000000002, 0.40000000000000002, 1)
 
-    
+
     def _removeTauntEffect(self):
         self.getGeomNode().setColorScale(1, 1, 1, 1)
 
-    
+
     def _addOnFireEffect(self, attackerId, duration):
         if self.fireEffect:
             return None
-        
+
         if self.avatarType.isA(AvatarTypes.Ghost):
             return None
-        
+
         avatarScale = self.getEnemyScale()
         self.fireEffect = Flame.getEffect()
         if self.fireEffect:
@@ -2730,30 +2730,30 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.fireEffect.effectScale = 0.25 * avatarScale
             self.fireEffect.duration = 4.0
             self.fireEffect.startLoop()
-        
+
         self.smokeWispEffect = SmokeWisps.getEffect()
         if self.smokeWispEffect:
             self.smokeWispEffect.reparentTo(self)
             self.smokeWispEffect.setPos(0, 0, self.height)
             self.smokeWispEffect.startLoop()
-        
 
-    
+
+
     def _removeOnFireEffect(self):
         if self.fireEffect:
             self.fireEffect.stopLoop()
             self.fireEffect = None
-        
+
         if self.smokeWispEffect:
             self.smokeWispEffect.stopLoop()
             self.smokeWispEffect = None
-        
 
-    
+
+
     def _addSlowEffect(self, attackerId, duration):
         if self.slowEffect:
             return None
-        
+
         self.slowEffect = SlowEffect.getEffect()
         if self.slowEffect:
             self.slowEffect.duration = 1.75
@@ -2767,7 +2767,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.slowEffect.setHpr(self, 0, 0, 0)
                 self.slowEffect.setPos(self, 0, 0, self.getHeight() + 1.5)
             self.slowEffect.startLoop()
-        
+
         self.slowEffect2 = SlowEffect.getEffect()
         if self.slowEffect2:
             self.slowEffect2.duration = 1.75
@@ -2781,24 +2781,24 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.slowEffect2.setHpr(self, 120, 0, 0)
                 self.slowEffect2.setPos(self, 0, 0, self.getHeight() + 1.25)
             self.slowEffect2.startLoop()
-        
 
-    
+
+
     def _removeSlowEffect(self):
         if self.slowEffect:
             self.slowEffect.stopLoop()
             self.slowEffect = None
-        
+
         if self.slowEffect2:
             self.slowEffect2.stopLoop()
             self.slowEffect2 = None
-        
 
-    
+
+
     def _addStunEffect(self, attackerId, duration):
         if self.stunEffect:
             return None
-        
+
         self.stunEffect = StunEffect.getEffect()
         if self.stunEffect:
             self.stunEffect.duration = 1.0
@@ -2813,7 +2813,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.stunEffect.setHpr(self, 0, 0, 0)
                 self.stunEffect.setPos(self, 0, 0, self.getHeight() + 1)
             self.stunEffect.startLoop()
-        
+
         self.stunEffect2 = StunEffect.getEffect()
         if self.stunEffect2:
             self.stunEffect2.duration = 1.0
@@ -2828,27 +2828,27 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.stunEffect2.setHpr(self, 120, 0, 0)
                 self.stunEffect2.setPos(self, 0, 0, self.getHeight() + 0.90000000000000002)
             self.stunEffect2.startLoop()
-        
 
-    
+
+
     def _removeStunEffect(self):
         if self.stunEffect:
             self.stunEffect.stopLoop()
             self.stunEffect = None
-        
+
         if self.stunEffect2:
             self.stunEffect2.stopLoop()
             self.stunEffect2 = None
-        
+
         if self.isLocal():
             messenger.send('skillFinished')
-        
 
-    
+
+
     def _addHoldEffect(self, attackerId, duration):
         if self.shacklesEffect:
             return None
-        
+
         attacker = self.cr.doId2do.get(attackerId)
         avatarScale = self.getEnemyScale()
         if attacker and attacker.avatarType:
@@ -2864,15 +2864,15 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.shacklesEffect.setColor(Vec4(1, 1, 1, 1))
             self.shacklesEffect.setPos(0, 0, 0)
             self.shacklesEffect.startLoop()
-        
+
         if not isJollyHold:
             self.voodooSmokeEffect = AttuneSmoke.getEffect()
             if self.voodooSmokeEffect:
                 self.voodooSmokeEffect.reparentTo(self)
                 self.voodooSmokeEffect.setPos(0, 0, 0.20000000000000001)
                 self.voodooSmokeEffect.startLoop()
-            
-        
+
+
         if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsHigh:
             effect = GroundDirt.getEffect()
             if effect:
@@ -2880,7 +2880,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 effect.setScale(avatarScale)
                 effect.reparentTo(self)
                 effect.play()
-            
+
             cameraShakerEffect = CameraShaker()
             cameraShakerEffect.reparentTo(self)
             cameraShakerEffect.setPos(0, 0, 0)
@@ -2889,9 +2889,9 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             cameraShakerEffect.numShakes = 2
             cameraShakerEffect.scalePower = 1
             cameraShakerEffect.play(100.0)
-        
 
-    
+
+
     def _removeHoldEffect(self, cleanup = False):
         if not cleanup:
             effect = GroundDirt.getEffect()
@@ -2901,105 +2901,105 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 effect.setScale(avatarScale)
                 effect.reparentTo(self)
                 effect.play()
-            
-        
+
+
         if self.voodooSmokeEffect:
             self.voodooSmokeEffect.stopLoop()
             self.voodooSmokeEffect = None
-        
+
         if self.shacklesEffect:
             self.shacklesEffect.stopLoop()
             self.shacklesEffect = None
-        
 
-    
+
+
     def _addAttuneEffect(self, attackerId, duration):
         attacker = self.cr.doId2do.get(attackerId)
         self.checkAttuneBuffEffect()
         if (attacker or attacker.isLocal()) and not self.isInvisibleGhost():
             attacker.addStickyTarget(self.doId)
-        
 
-    
+
+
     def _removeAttuneEffect(self):
         self.checkAttuneBuffEffect()
 
-    
+
     def _addVoodooStunEffect(self, attackerId, duration):
         self.showVoodooDollUnattuned()
         self.showEffectString(PLocalizer.AttackUnattune)
 
-    
+
     def _removeVoodooStunEffect(self):
         if self.currentTarget:
             if self.findAllBuffCopyKeys(WeaponGlobals.C_VOODOO_HEX_STUN):
                 return None
-            
-            self.showVoodooDollAttuned()
-        
 
-    
+            self.showVoodooDollAttuned()
+
+
+
     def _addVoodooHexStunEffect(self, attackerId, duration):
         self.showVoodooDollUnattuned()
 
-    
+
     def _removeVoodooHexStunEffect(self):
         if self.currentTarget:
             if self.findAllBuffCopyKeys(WeaponGlobals.C_VOODOO_STUN):
                 return None
-            
-            self.showVoodooDollAttuned()
-        
 
-    
+            self.showVoodooDollAttuned()
+
+
+
     def _addInterruptedEffect(self, attackerId, duration):
         self.showEffectString(PLocalizer.AttackInterrupt)
 
-    
+
     def _removeInterruptedEffect(self):
         pass
 
-    
+
     def _addOpenFireEffect(self, attackerId, duration):
         if self.doId == localAvatar.doId:
             if self.crewBuffDisplay:
                 self.crewBuffDisplay.stop()
                 self.crewBuffDisplay.destroy()
-            
+
             self.crewBuffDisplay = CrewBuffDisplay(skillIcon = loader.loadModel('models/textureCards/skillIcons').find('**/sail_openfire2'), duration = duration, buffName = PLocalizer.CrewBuffOpenFireString, buffDesc = PLocalizer.CrewBuffOpenFire % int((WeaponGlobals.OPEN_FIRE_BONUS - 1) * 100), parent = base.a2dBottomRight)
             self.crewBuffDisplay.reparentTo(base.a2dBottomRight, sort = -1000)
             self.crewBuffDisplay.play()
-        
 
-    
+
+
     def _removeOpenFireEffect(self):
         if self.crewBuffDisplay:
             self.crewBuffDisplay.stop()
             self.crewBuffDisplay.destroy()
             self.crewBuffDisplay = None
-        
 
-    
+
+
     def _addTakeCoverEffect(self, attackerId, duration):
         if self.doId == localAvatar.doId:
             if self.crewBuffDisplay:
                 self.crewBuffDisplay.stop()
                 self.crewBuffDisplay.destroy()
-            
+
             self.crewBuffDisplay = CrewBuffDisplay(skillIcon = loader.loadModel('models/textureCards/skillIcons').find('**/sail_take_cover'), duration = duration, buffName = PLocalizer.CrewBuffTakeCoverString, buffDesc = PLocalizer.CrewBuffTakeCover % int((1 - WeaponGlobals.TAKE_COVER_BONUS) * 100), parent = base.a2dBottomRight)
             self.crewBuffDisplay.reparentTo(base.a2dBottomRight, sort = -1000)
             self.crewBuffDisplay.play()
-        
 
-    
+
+
     def _removeTakeCoverEffect(self):
         if self.crewBuffDisplay:
             self.crewBuffDisplay.stop()
             self.crewBuffDisplay.destroy()
             self.crewBuffDisplay = None
-        
 
-    
+
+
     def _addMonkeyPanicEffect(self, attackerId, duration):
         LerpColorScaleInterval(self.getGeomNode(), 1.0, Vec4(1, 0.59999999999999998, 0.59999999999999998, 1), startColorScale = Vec4(1, 1, 1, 1)).start()
         if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsHigh:
@@ -3014,44 +3014,44 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.monkeyPanic.duration = duration
                 self.monkeyPanic.usesSound = self.isLocal()
                 self.monkeyPanic.startLoop()
-            
-        
 
-    
+
+
+
     def _removeMonkeyPanicEffect(self, cleanup = False):
         if not cleanup:
             LerpColorScaleInterval(self.getGeomNode(), 1.0, Vec4(1, 1, 1, 1)).start()
-        
+
         if self.monkeyPanic:
             self.monkeyPanic.stopLoop()
             self.monkeyPanic = None
-        
 
-    
+
+
     def _addMastersRiposteEffect(self, attackerId, duration):
         if self.currentWeapon and hasattr(self.currentWeapon, 'startFrost'):
             self.currentWeapon.startFrost()
-        
 
-    
+
+
     def _removeMastersRiposteEffect(self):
         if self.currentWeapon and hasattr(self.currentWeapon, 'stopFrost'):
             self.currentWeapon.stopFrost()
-        
 
-    
+
+
     def _addQuickloadEffect(self, attackerId, duration):
         if self.currentWeapon and hasattr(self.currentWeapon, 'startPulseGlow'):
             self.currentWeapon.startPulseGlow()
-        
 
-    
+
+
     def _removeQuickloadEffect(self):
         if self.currentWeapon and hasattr(self.currentWeapon, 'stopPulseGlow'):
             self.currentWeapon.stopPulseGlow()
-        
 
-    
+
+
     def _addRegenEffect(self, attackerId, duration):
         unlimited = self.isLocal()
         self.healRaysEffect = HealRays.getEffect(unlimited)
@@ -3061,7 +3061,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.healRaysEffect.setPos(0, 0, 3.5)
             self.healRaysEffect.setEffectColor(Vec4(0.29999999999999999, 1, 1, 1))
             self.healRaysEffect.startLoop()
-        
+
         if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsHigh:
             self.healSparksEffect = HealSparks.getEffect(unlimited)
             if self.healSparksEffect:
@@ -3070,21 +3070,21 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.healSparksEffect.setPos(0, 0, 3.5)
                 self.healSparksEffect.setEffectColor(Vec4(0.29999999999999999, 1, 1, 0.29999999999999999))
                 self.healSparksEffect.startLoop()
-            
-        
 
-    
+
+
+
     def _removeRegenEffect(self):
         if self.healRaysEffect:
             self.healRaysEffect.stopLoop()
             self.healRaysEffect = None
-        
+
         if self.healSparksEffect:
             self.healSparksEffect.stopLoop()
             self.healSparksEffect = None
-        
 
-    
+
+
     def _addFuryEffect(self, attackerId, duration):
         unlimited = self.isLocal()
         if not self.furyEffect:
@@ -3095,7 +3095,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.furyEffect.setScale(0.69999999999999996)
             self.furyEffect.setEffectColor(Vec4(0.59999999999999998, 0, 0, 0.5))
             self.furyEffect.startLoop()
-        
+
         if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsHigh:
             self.pulseEffect = PulseEffect.getEffect(unlimited)
             if self.pulseEffect:
@@ -3107,40 +3107,40 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     self.pulseEffect.setPos(0, 0, self.height * 0.65000000000000002)
                 self.pulseEffect.setEffectScale(0.5)
                 self.pulseEffect.startLoop()
-            
-        
 
-    
+
+
+
     def _removeFuryEffect(self):
         if self.furyEffect:
             self.furyEffect.stopLoop()
             self.furyEffect = None
-        
+
         if self.pulseEffect:
             self.pulseEffect.stopLoop()
             self.pulseEffect = None
-        
 
-    
+
+
     def _createGhostGuardEffect(self):
         if not self.ghostGuardEffect:
             unlimited = self.isLocal()
             self.ghostGuardEffect = ProtectionSpiral.getEffect(unlimited)
-        
+
         if self.ghostGuardEffect:
             self.ghostGuardEffect.reparentTo(self)
             self.ghostGuardEffect.setPos(0, 0, 2)
             self.ghostGuardEffect.setScale(0.80000000000000004, 0.59999999999999998, 0.90000000000000002)
-        
 
-    
+
+
     def _removeGhostGuardEffect(self):
         if self.ghostGuardEffect:
             self.ghostGuardEffect.stopLoop()
             self.ghostGuardEffect = None
-        
 
-    
+
+
     def pulseGhostGuardEffect(self, attacker, color, wantBlending = True):
         if self.ghostGuardEffect:
             originalColor = self.ghostGuardEffect.effectColor
@@ -3155,7 +3155,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     auraPulse.setScale(0.80000000000000004)
                     auraPulse.lookAt(attacker)
                     auraPulse.play()
-                
+
                 flashEffect = FlashEffect()
                 flashEffect.reparentTo(self)
                 flashEffect.setScale(10.0)
@@ -3163,34 +3163,34 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 flashEffect.fadeTime = 1.0
                 flashEffect.setEffectColor(Vec4(color), wantBlending)
                 flashEffect.play()
-            
-        
 
-    
+
+
+
     def _addMeleeShieldEffect(self, attackerId, duration):
         self._createGhostGuardEffect()
         if self.ghostGuardEffect:
             self.ghostGuardEffect.setEffectColor(Vec4(0, 0, 0, 0.75))
             self.ghostGuardEffect.startLoop()
-        
 
-    
+
+
     def _addMissileShieldEffect(self, attackerId, duration):
         self._createGhostGuardEffect()
         if self.ghostGuardEffect:
             self.ghostGuardEffect.setEffectColor(Vec4(1, 1, 1, 0.75))
             self.ghostGuardEffect.startLoop()
-        
 
-    
+
+
     def _addMagicShieldEffect(self, attackerId, duration):
         self._createGhostGuardEffect()
         if self.ghostGuardEffect:
             self.ghostGuardEffect.setEffectColor(Vec4(0.5, 0.29999999999999999, 1, 0.75))
             self.ghostGuardEffect.startLoop()
-        
 
-    
+
+
     def checkAttuneBuffEffect(self):
         attuneBuffs = self.findAllBuffCopyKeys(WeaponGlobals.C_ATTUNE)
         if not attuneBuffs or self.isInvisibleGhost():
@@ -3199,17 +3199,17 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.voodooAttuneSound = None
                 self.voodooAttuneEffect.stopLoop()
                 self.voodooAttuneEffect = None
-            
+
             return None
-        
+
         if not self.voodooAttuneEffect:
             self.voodooAttuneEffect = AttuneEffect.getEffect()
             if self.voodooAttuneEffect:
                 self.voodooAttuneEffect.reparentTo(self)
                 self.voodooAttuneEffect.setPos(0, 0, self.getHeight())
                 self.voodooAttuneEffect.startLoop()
-            
-        
+
+
         if self.voodooAttuneEffect:
             self.voodooAttuneSound = loadSfx(SoundGlobals.SFX_WEAPON_DOLL_ATTUNE_LOOP)
             base.playSfx(self.voodooAttuneSound, looping = 1, node = self, volume = 0.25, cutoff = 100)
@@ -3224,15 +3224,15 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                                 buffColorType = 'localFriendly'
                             elif buffColorType != 'localFriendly':
                                 buffColorType = 'friendly'
-                            
-                        
+
+
                     elif attackerId == localAvatar.doId or self.doId == localAvatar.doId:
                         buffColorType = 'localHostile'
                     elif buffColorType != 'localHostile' and buffColorType != 'localFriendly':
                         buffColorType = 'hostile'
-                    
+
                 buffColorType != 'localFriendly'
-            
+
             if buffColorType == 'localHostile':
                 self.voodooAttuneEffect.setEffectColor(Vec4(0.20000000000000001, 0.10000000000000001, 0.5, 1))
             elif buffColorType == 'localFriendly':
@@ -3241,10 +3241,10 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.voodooAttuneEffect.setEffectColor(Vec4(0.0, 0.0, 0.0, 0.5))
             elif buffColorType == 'friendly':
                 self.voodooAttuneEffect.setEffectColor(Vec4(0.0, 0.0, 0.0, 0.5))
-            
-        
 
-    
+
+
+
     def getPVPMoney(self):
         inv = self.getInventory()
         if inv:
@@ -3252,7 +3252,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         else:
             return 0
 
-    
+
     def getMaxPVPMoney(self):
         inv = self.getInventory()
         if inv:
@@ -3260,47 +3260,47 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         else:
             return 0
 
-    
+
     def setMaxMoney(self, maxMoney):
         self.maxMoney = maxMoney
 
-    
+
     def getMaxMoney(self):
         return self.maxMoney
 
-    
+
     def setMoney(self, money):
         self.money = money
 
-    
+
     def getMoney(self):
         return self.money
 
-    
+
     def setMaxBankMoney(self, maxMoney):
         self.maxBankMoney = maxMoney
 
-    
+
     def getMaxBankMoney(self):
         return self.maxBankMoney
 
-    
+
     def setBankMoney(self, money):
         self.bankMoney = money
 
-    
+
     def getBankMoney(self):
         return self.bankMoney
 
-    
+
     def getTotalMoney(self):
         return self.getBankMoney() + self.getMoney()
 
-    
+
     def updateReputation(self, category, value):
         DistributedReputationAvatar.updateReputation(self, category, value)
 
-    
+
     def showHpText(self, number, pos = 0, bonus = 0, duration = 2.0, scale = 0.5, basicPenalty = 0, crewBonus = 0, doubleXPBonus = 0, holidayBonus = 0, potionBonus = 0, itemEffects = []):
         if self.HpTextEnabled and not (self.ghostMode) and base.showGui:
             freebooter = not Freebooter.getPaidStatus(base.localAvatar.getDoId())
@@ -3321,38 +3321,38 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             else:
                 startPos = pos
             newEffect = None
-            
+
             def cleanup():
                 if newEffect in self.textEffects:
                     self.textEffects.remove(newEffect)
-                
+
 
             mods = { }
             if basicPenalty > 0:
                 mods[TextEffect.MOD_BASICPENALTY] = basicPenalty
-            
+
             if crewBonus > 0:
                 mods[TextEffect.MOD_CREWBONUS] = crewBonus
-            
+
             if doubleXPBonus > 0:
                 mods[TextEffect.MOD_2XPBONUS] = doubleXPBonus
-            
+
             if holidayBonus > 0:
                 mods[TextEffect.MOD_HOLIDAYBONUS] = holidayBonus
-            
+
             if potionBonus > 0:
                 mods[TextEffect.MOD_POTIONBONUS] = potionBonus
-            
+
             if ItemGlobals.CRITICAL in itemEffects:
                 scale *= 1.5
-            
+
             newEffect = TextEffect.genTextEffect(self, self.HpTextGenerator, number, bonus, self.isNpc, cleanup, startPos, scale = scale, modifiers = mods, effects = itemEffects)
             if newEffect:
                 self.textEffects.append(newEffect)
-            
-        
 
-    
+
+
+
     def hideHpText(self, hpText = None):
         if hpText:
             index = self.hpTextNodes.index(hpText)
@@ -3360,9 +3360,9 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.hpTextIvals[index] = None
             self.hpTextNodes[index].removeNode()
             self.hpTextNodes[index] = None
-        
 
-    
+
+
     def showHpString(self, text, pos = 0, duration = 2.0, scale = 0.5):
         if self.HpTextEnabled and not (self.ghostMode) and base.showGui:
             if text != '':
@@ -3403,14 +3403,14 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 track.start()
                 self.hpTextNodes.append(hpTextDummy)
                 self.hpTextIvals.append(track)
-            
-        
 
-    
+
+
+
     def newBackstab(self):
         self.showEffectString(PLocalizer.AttackBackstab, 0, 1.7, 0.46000000000000002)
 
-    
+
     def showEffectString(self, text, pos = 0, duration = 2.0, scale = 0.5):
         if self.HpTextEnabled and not (self.ghostMode) and base.showGui:
             if text != '':
@@ -3446,10 +3446,10 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 track.start()
                 self.hpTextNodes.append(hpTextDummy)
                 self.hpTextIvals.append(track)
-            
-        
 
-    
+
+
+
     def showHpMeter(self):
         DistributedReputationAvatar.showHpMeter(self)
         statusTray = localAvatar.guiMgr.targetStatusTray
@@ -3471,29 +3471,29 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             statusTray.voodooMeter.hide()
             statusTray.targetFrame2.hide()
 
-    
+
     def hideHpMeter(self, delay = 6.0):
         DistributedReputationAvatar.hideHpMeter(self, delay = delay)
         if base.localAvatar.guiMgr.targetStatusTray.doId == self.getDoId():
             if self.getTotalHp() <= 0:
                 localAvatar.guiMgr.targetStatusTray.updateHp(0, self.maxHp)
-            
-            localAvatar.guiMgr.targetStatusTray.fadeOut(delay = delay)
-        
 
-    
+            localAvatar.guiMgr.targetStatusTray.fadeOut(delay = delay)
+
+
+
     def getLandRoamIdleAnimInfo(self):
         return ('idle', 1.0)
 
-    
+
     def setEnsnaredTargetId(self, avId):
         self.ensnaredTargetId = avId
 
-    
+
     def getEnsnaredTargetId(self):
         return self.ensnaredTargetId
 
-    
+
     def getRope(self, thickness = 0.125):
         if not self.rope:
             rope = Rope.Rope()
@@ -3505,7 +3505,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             ropeTex = ropeHigh.findTexture('rope_single_omit')
             if ropeTex != None:
                 rope.setTexture(ropeTex)
-            
+
             ropeHigh.removeNode()
             self.rope = rope
             ropeActor = Actor.Actor()
@@ -3516,30 +3516,30 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.ropeActor = ropeActor
             self.ropeActor.setH(180)
             self.ropeEndNode = self.attachNewNode('ropeEndNode')
-        
+
         self.rope.ropeNode.setThickness(thickness)
         return (self.rope, self.ropeActor, self.ropeEndNode)
 
-    
+
     def startCompassEffect(self):
         if not self.isDisabled():
             self.stopCompassEffect()
             taskMgr.add(self.compassTask, self.uniqueName('compassTask'), priority = 25)
-        
 
-    
+
+
     def stopCompassEffect(self):
         self.compassTask(0)
         taskMgr.remove(self.uniqueName('compassTask'))
 
-    
+
     def compassTask(self, task):
         if not (self.tracksTerrain) and config.GetBool('want-compass-task', 1):
             self.setR(render, 0)
-        
+
         return Task.cont
 
-    
+
     def setHeight(self, height):
         self.height = height
         self.adjustNametag3d()
@@ -3547,17 +3547,17 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.collTube.setPointB(0, 0, height - self.getRadius())
             if self.collNodePath:
                 self.collNodePath.forceRecomputeBounds()
-            
-        
+
+
         if self.battleTube:
             self.battleTube.setPointB(0, 0, max(10.0, height) - self.getRadius())
-        
+
         for tube in self.aimTubeNodePaths:
             tube.node().modifySolid(0).setPointA(0, 0, -max(10.0, height))
             tube.node().modifySolid(0).setPointB(0, 0, max(10.0, height))
-        
 
-    
+
+
     def adjustNametag3d(self):
         defaultZ = 1
         scaleOffset = 0
@@ -3568,19 +3568,19 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         elif 1 > self.scale:
             scaleOffset = 1 - self.scale
             newZ = 1 - scaleOffset * 5
-        
+
         self.nametag3d.setPos(0, 0, newZ)
 
-    
+
     def drainMojo(self, amt):
         self.sendUpdate('drainMojo', [
             amt])
 
-    
+
     def isAirborne(self):
         return self.motionFSM.isAirborne()
 
-    
+
     def printExpText(self, totalExp, colorSetting, basicPenalty, crewBonus, doubleXPBonus, holidayBonus, potionBonus):
         taskMgr.doMethodLater(0.5, self.showHpText, self.taskName('printExp'), [
             totalExp,
@@ -3594,50 +3594,50 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             holidayBonus,
             potionBonus])
 
-    
+
     def swapFloorCollideMask(self, oldMask, newMask):
         pass
 
-    
+
     def handleShipArrive(self, ship):
         pass
 
-    
+
     def handleShipLeave(self, ship):
         pass
 
-    
+
     def onShipWithLocalAv(self, sameShip):
         pass
 
-    
+
     def setLevel(self, level):
         if level is None:
             if __dev__:
                 import pdb as pdb
                 pdb.set_trace()
-            
+
             level = 0
-        
+
         self.level = level
 
-    
+
     def getLevel(self):
         return self.level
 
-    
+
     def resetAnimProp(self):
         pass
 
-    
+
     def motionFSMEnterState(self, anim):
         pass
 
-    
+
     def motionFSMExitState(self, anim):
         pass
 
-    
+
     def getAdjMaxHp(self):
         if self.isNpc:
             inv = 0
@@ -3651,7 +3651,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         else:
             return self.maxHp
 
-    
+
     def getAdjMaxMojo(self):
         if self.isNpc:
             inv = 0
@@ -3665,55 +3665,55 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
         else:
             return self.maxMojo
 
-    
+
     def interrupted(self, effectId):
         pass
 
-    
+
     def getSfx(self, name):
         return self.sfx.get(name)
 
-    
+
     def getEnemyScale(self):
         return EnemyGlobals.getEnemyScale(self)
 
-    
+
     def isBoss(self):
         return self.avatarType.isA(AvatarTypes.BossType)
 
-    
+
     def getShortName(self):
         return self.avatarType.getShortName()
 
-    
+
     def setInInvasion(self, value):
         self.inInvasion = value
 
-    
+
     def isInInvasion(self):
         return self.inInvasion
 
-    
+
     def getEfficiency(self):
         return self.efficiency
 
-    
+
     def setEfficiency(self, efficiency):
         self.efficiency = efficiency
 
-    
+
     def setArmorScale(self, armorScale):
         self.armorScale = armorScale
 
-    
+
     def getArmorScale(self):
         return self.armorScale
 
-    
+
     def setTrackTerrain(self, value):
         self.tracksTerrain = value
 
-    
+
     def trackTerrain(self):
         if self.tracksTerrain == None:
             trackingCreatures = [
@@ -3731,44 +3731,44 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.setTrackTerrain(True)
             else:
                 self.setTrackTerrain(False)
-        
+
         if self.tracksTerrain:
             gNode = self.getGeomNode()
             if gNode and not gNode.isEmpty():
                 if self.gNodeFwdPt == None:
                     self.gNodeFwdPt = gNode.getRelativePoint(self, Point3(0, 1, 0))
-                
+
                 gNode.headsUp(self.gNodeFwdPt, self.getRelativeVector(self.getParentObj(), self.floorNorm))
-            
-        
+
+
         return self.tracksTerrain
 
-    
+
     def battleRandomSync(self):
         if hasattr(self, 'battleRandom'):
             self.battleRandom.resync()
-        
 
-    
+
+
     def arrivedOnShip(self, ship):
         print '[DistributedBattleAvatar] arrivedOnShip'
         self.reparentTo(ship)
 
-    
+
     def leftShip(self, ship):
         print '[DistributedBattleAvatar] leftShip'
 
-    
+
     def ramKnockdown(self):
         actorIval = Sequence(self.actorInterval('injured_fall', playRate = 1.5, blendOutT = 0), self.actorInterval('injured_standup', playRate = 1.5, blendInT = 0))
         self.ouchAnim = actorIval
         self.ouchAnim.start()
 
-    
+
     def regenUpdate(self, hpGained):
         self.showHpText(hpGained)
 
-    
+
     def initializeDropShadow(self, hasGeomNode = True):
         DistributedReputationAvatar.initializeDropShadow(self, hasGeomNode = True)
         if self.getShadowJoint():
@@ -3779,28 +3779,28 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.compassNode.setEffect(ce)
             if base.options.getCharacterDetailSetting() == PiratesGlobals.CD_LOW and not self.isLocal():
                 self.compassNode.stash()
-            
-        
 
-    
+
+
+
     def considerEnableMovement(self):
         self.motionFSM.on()
 
-    
+
     def getMinimapObject(self):
         if not (self.minimapObj) and not self.isDisabled():
             self.minimapObj = MinimapBattleAvatar(self)
-        
+
         return self.minimapObj
 
-    
+
     def destroyMinimapObject(self):
         if self.minimapObj:
             self.minimapObj.removeFromMap()
             self.minimapObj = None
-        
 
-    
+
+
     def setIsTracked(self, questId):
         self.isTracked = False
         if questId:
@@ -3811,47 +3811,47 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                         self.isTracked = True
                         if localAvatar.questIndicator.indicatorNode:
                             localAvatar.questIndicator.indicatorNode.requestTargetRefresh(0)
-                        
+
                         break
                         continue
-                
-            
-        
+
+
+
         if self.minimapObj:
             self.minimapObj.setIsTracked(self.isTracked)
-        
 
-    
+
+
     def setVisZone(self, visZone):
         self.visZone = visZone
         self.handleLocalAvatarVisZoneChanged()
 
-    
+
     def getVisZone(self):
         return self.visZone
 
-    
+
     def d_setVisZone(self, visZone):
         self.sendUpdate('setVisZone', [
             visZone])
 
-    
+
     def b_setVisZone(self, visZone):
         self.setVisZone(visZone)
         self.d_setVisZone(visZone)
 
-    
+
     def handleLocalAvatarVisZoneChanged(self):
         if self.trackStats:
             while self.doId in base.visList:
                 base.visList.remove(self.doId)
-        
+
         if hasattr(self.getParentObj(), 'builder'):
             self.getParentObj().builder.handleLighting(self, self.visZone)
             if self.getParentObj().builder.isVisible(self.visZone):
                 if self.trackStats:
                     base.visList.append(self.doId)
-                
+
                 self.visShow()
             else:
                 self.visHide()
@@ -3862,61 +3862,61 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             onScreenDebug.add('Avatar Vis Count', base.visCount)
             self.pstatsTotal.setLevel(base.npcCount - base.visCount + 1)
             self.pstatsVisible.setLevel(base.visCount)
-        
 
-    
+
+
     def visHide(self):
         self.hide(invisibleBits = PiratesGlobals.INVIS_VISZONE)
 
-    
+
     def visShow(self):
         self.show(invisibleBits = PiratesGlobals.INVIS_VISZONE)
 
-    
+
     def getAvatarType(self):
         return self.avatarType
 
-    
+
     def hide(self, drawMask = None, invisibleBits = None):
         if invisibleBits:
             self.invisibleMask |= invisibleBits
-        
+
         if drawMask:
             DistributedReputationAvatar.hide(self, drawMask)
             if invisibleBits and not invisibleBits.isZero():
                 DistributedReputationAvatar.hide(self)
-            
+
         else:
             DistributedReputationAvatar.hide(self)
 
     hide = report(types = [
         'frameCount',
         'args'], dConfigParam = 'jail')(hide)
-    
+
     def show(self, drawMask = None, invisibleBits = None):
         if invisibleBits:
             self.invisibleMask &= ~invisibleBits
-        
+
         if drawMask:
             DistributedReputationAvatar.show(self, drawMask)
         elif self.invisibleMask.isZero():
             DistributedReputationAvatar.show(self)
-        
+
 
     show = report(types = [
         'frameCount',
         'args'], dConfigParam = 'jail')(show)
-    
+
     def getSkillRankBonus(self, skillId):
         upgradeAmt = WeaponGlobals.getAttackUpgrade(skillId)
         realSkillId = WeaponGlobals.getLinkedSkillId(skillId)
         if not realSkillId:
             realSkillId = skillId
-        
+
         rank = self.getSkillRank(realSkillId)
         if WeaponGlobals.getSkillTrack(skillId) != WeaponGlobals.PASSIVE_SKILL_INDEX:
             rank -= 1
-        
+
         statBonus = 0
         if rank > 5:
             statBonus = 5 * upgradeAmt
@@ -3925,38 +3925,38 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             statBonus = rank * upgradeAmt
         return statBonus
 
-    
+
     def getSkillRank(self, skillId):
         if self.isNpc:
             return 0
-        
+
         skillLvl = 0
         inv = self.getInventory()
         if inv:
             skillLvl = max(0, inv.getStackQuantity(skillId) - 1)
             skillLvl += ItemGlobals.getWeaponBoosts(self.currentWeaponId, skillId)
             skillLvl += ItemGlobals.getWeaponBoosts(self.getCurrentCharm(), skillId)
-        
+
         return skillLvl
 
-    
+
     def enablePotionFx(self):
         if base.config.GetBool('want-potion-game', 0):
             self.potionStatusEffectManager = PotionStatusEffectManager(self)
-        
 
-    
+
+
     def disablePotionFx(self):
         if base.config.GetBool('want-potion-game', 0):
             self.potionStatusEffectManager.disable()
             self.potionStatusEffectManager = None
-        
 
-    
+
+
     def switchVisualMode(self, mode):
         pass
 
-    
+
     def requestEmote(self, emoteId):
         gamestate = self.getGameState()
         emote = self.getEmote(emoteId)
@@ -3964,15 +3964,15 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             emote_gender = EmoteGlobals.getEmoteGender(emoteId)
             if emote_gender and self.style.gender != emote_gender:
                 return False
-            
+
         else:
             return False
         if self.getGameState() in ('Injured', 'Dying', 'Healing'):
             return False
-        
+
         if self.getGameState() in ('Emote', 'Battle'):
             self.b_setGameState('LandRoam')
-        
+
         if self.isWeaponDrawn:
             return True
         elif gamestate in ('ShipPilot', 'Cannon', 'WaterRoam', 'WaterTreasureRoam', 'ParlorGame', 'NPCInteract', 'DinghyInteract', 'TentacleAlive'):
@@ -3986,7 +3986,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             self.b_setGameState('Emote')
             return True
 
-    
+
     def playEmote(self, emoteId):
         if self.getGameState() not in [
             'Emote',
@@ -3994,14 +3994,14 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             'WeaponReceive',
             'NPCInteract']:
             return None
-        
+
         emote = self.getEmote(emoteId)
         if not emote:
             return None
-        
+
         if EmoteGlobals.getEmoteAnim(emoteId) == None:
             return None
-        
+
         self.cleanupEmote()
         self.emoteTrack = Parallel()
         propId = EmoteGlobals.getEmoteProp(emoteId)
@@ -4010,33 +4010,33 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
             if prop:
                 if 'grenade' in propId:
                     prop.setScale(0.65000000000000002)
-                
+
                 motion_blur = prop.find('**/motion_blur')
                 if not motion_blur.isEmpty():
                     motion_blur.stash()
-                
+
                 handNode = self.rightHandNode
                 if handNode:
                     prop.flattenStrong()
                     prop.reparentTo(handNode)
                     self.emoteProp = prop
                     self.emoteProp.stash()
-                
+
                 propSeq = Sequence()
                 waitProp = EmoteGlobals.getWaitProp(emoteId)
                 if waitProp:
                     propSeq.append(Wait(waitProp))
-                
+
                 propSeq.append(Func(self.emoteProp.unstash))
                 durProp = EmoteGlobals.getDurProp(emoteId)
                 if durProp:
                     propSeq.append(Wait(durProp))
                     propSeq.append(Func(self.emoteProp.stash))
-                
+
                 self.emoteTrack.append(propSeq)
             else:
                 self.notify.warning('emote %s could not find prop %s, verify it is in the proper phase' % (emoteId, propId))
-        
+
         looping = EmoteGlobals.getEmoteLoop(emoteId)
         if EmoteGlobals.getEmoteSfx(emoteId):
             sfx = base.loadSfx(EmoteGlobals.getEmoteSfx(emoteId))
@@ -4044,7 +4044,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.emoteTrack.append(SoundInterval(sfx, node = self, loop = True))
             else:
                 self.emoteTrack.append(SoundInterval(sfx, node = self))
-        
+
         self.emoteEffect = EmoteGlobals.getEmoteVfx(emoteId)
         if self.emoteEffect:
             self.emoteEffect.reparentTo(self.rightHandNode)
@@ -4052,7 +4052,7 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                 self.emoteTrack.append(Func(self.emoteEffect.startLoop))
             else:
                 self.emoteTrack.append(Func(self.emoteEffect.play))
-        
+
         anim = EmoteGlobals.getEmoteAnim(emoteId)
         if looping:
             self.emoteTrack.append(Func(self.loop, anim))
@@ -4064,58 +4064,58 @@ class DistributedBattleAvatar(DistributedReputationAvatar, WeaponBase, Teamable)
                     'NPCInteract',
                     'OOBEmote']:
                     tempIval.append(Func(self.b_setGameState, 'LandRoam'))
-                
+
             else:
                 tempIval.append(Func(self.setGameState, 'LandRoam'))
             self.emoteTrack.append(tempIval)
         self.emoteTrack.start()
 
-    
+
     def cleanupEmote(self):
         if self.emoteTrack:
             self.emoteTrack.pause()
             self.emoteTrack = None
-        
+
         if self.emoteAnimIval:
             self.emoteAnimIval.finish()
             self.emoteAnimIval = None
-        
+
         if self.emoteProp:
             self.emoteProp.removeNode()
             self.emoteProp = None
-        
+
         if self.emoteEffect:
             self.emoteEffect.stopLoop()
             self.emoteEffect = None
-        
 
-    
+
+
     def getEmote(self, emoteId):
         return EmoteGlobals.emotes.get(emoteId)
 
-    
+
     def setEmote(self, emoteId):
         self.emoteId = emoteId
 
-    
+
     def d_setEmote(self, emoteId):
         self.setEmote(emoteId)
         self.b_setEmote(emoteId)
 
-    
+
     def b_setEmote(self, emoteId):
         self.sendUpdate('setEmote', [
             emoteId])
 
-    
+
     def canIdleSplashEver(self):
         return False
 
-    
+
     def canIdleSplash(self):
         return self.canIdleSplashEver()
 
-    
+
     def getQuestIndicatorOffset(self):
         return base.cr.npcManager.getNpcData(self.uniqueId).get('rolOffset', Point3(0, 0, 0))
 
@@ -4125,7 +4125,7 @@ class MinimapBattleAvatar(GridMinimapObject):
     ICON = None
     ICON_TRACKED = None
     DEFAULT_COLOR = VBase4(1.0, 0.0, 0.0, 1)
-    
+
     def __init__(self, avatar):
         if not MinimapBattleAvatar.ICON:
             gui = loader.loadModel('models/gui/compass_main')
@@ -4140,7 +4140,7 @@ class MinimapBattleAvatar(GridMinimapObject):
             MinimapBattleAvatar.ICON_TRACKED.flattenStrong()
             MinimapBattleAvatar.ICON_TRACKED.setColorScaleOff(1)
             MinimapBattleAvatar.ICON_TRACKED.setColorScale(Vec4(1, 1, 0, 1), 1)
-        
+
         GridMinimapObject.__init__(self, avatar.getName(), avatar, MinimapBattleAvatar.ICON)
         self.trackedNode = NodePath(avatar.getName())
         self.trackedIcon = MinimapBattleAvatar.ICON_TRACKED.copyTo(self.trackedNode)
@@ -4148,11 +4148,11 @@ class MinimapBattleAvatar(GridMinimapObject):
         self.trackedIcon.hide()
         self.isTracked = avatar.isTracked
 
-    
+
     def _addedToMap(self, map):
         self.setIconColor()
 
-    
+
     def _updateOnMap(self, map):
         GridMinimapObject._updateOnMap(self, map)
         if self.worldNode.isInvisibleGhost() or localAvatar.guiMgr.invasionScoreboard:
@@ -4160,7 +4160,7 @@ class MinimapBattleAvatar(GridMinimapObject):
         else:
             self.mapGeom.show()
 
-    
+
     def setIsTracked(self, isTracked):
         self.isTracked = isTracked
         if self.isTracked:
@@ -4169,7 +4169,7 @@ class MinimapBattleAvatar(GridMinimapObject):
             self.trackedIcon.hide()
         self.setIconColor()
 
-    
+
     def setIconColor(self, color = None):
         if not color:
             pass

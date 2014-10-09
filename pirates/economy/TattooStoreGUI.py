@@ -63,7 +63,7 @@ BUYING = 0
 SELLING = 1
 
 class TattooStoreTab(LeftTab):
-    
+
     def __init__(self, tabBar, name, **kw):
         optiondefs = (('modelName', 'general_frame_d', None), ('borderScale', 0.38, None), ('bgBuffer', 0.14999999999999999, None))
         self.defineoptions(kw, optiondefs)
@@ -73,14 +73,14 @@ class TattooStoreTab(LeftTab):
 
 
 class TattooStoreTabBar(TabBar):
-    
+
     def refreshTabs(self):
         for (x, name) in enumerate(self.tabOrder):
             tab = self.tabs[name]
             tab.reparentTo(self.bParent)
             tab.setPos(-0.070000000000000007, 0, 1.1000000000000001 - 0.10000000000000001 * (x + self.offset))
             (tab.setScale(0.20000000000000001, 1, 0.20000000000000001),)
-        
+
         self.activeIndex = max(0, min(self.activeIndex, len(self.tabOrder) - 1))
         if len(self.tabOrder):
             name = self.tabOrder[self.activeIndex]
@@ -88,16 +88,16 @@ class TattooStoreTabBar(TabBar):
             tab.reparentTo(self.fParent)
             tab.setX(-0.080000000000000002)
             tab.setScale(0.20000000000000001, 1, 0.22)
-        
 
-    
+
+
     def makeTab(self, name, **kw):
         return TattooStoreTab(self, name, **None)
 
 
 
 class TattooStoreCartList(DirectScrolledFrame):
-    
+
     def __init__(self, parent, width, height, itemWidth, itemHeight):
         self.width = width + PiratesGuiGlobals.ScrollbarSize
         self.listItemHeight = itemHeight
@@ -118,31 +118,31 @@ class TattooStoreCartList(DirectScrolledFrame):
         self.itemColor = Vec4(0.20000000000000001, 0.20000000000000001, 0.20000000000000001, 1.0)
         charGui.removeNode()
 
-    
+
     def destroy(self):
         self.ignoreAll()
         for panel in self.panels:
             panel.destroy()
-        
+
         del self.panels
         del self.purchases
         DirectScrolledFrame.destroy(self)
 
-    
+
     def setItemColor(self, color):
         self.itemColor = color
 
-    
+
     def repackPanels(self):
         z = self.listItemHeight
         i = 0
         for i in range(len(self.panels)):
             self.panels[i].setPos(0.01, 0, -z * (i + 1))
             self.panels[i].origionalPos = self.panels[i].getPos(render2d)
-        
+
         self['canvasSize'] = (0, self.listItemWidth - 0.089999999999999997, -z * (i + 1), 0)
 
-    
+
     def addPanel(self, data, repack = 1):
         uid = data[1]
         tattooId = data[2]
@@ -150,7 +150,7 @@ class TattooStoreCartList(DirectScrolledFrame):
         itemText = PLocalizer.getItemName(uid)
         if self.parent.mode == 1:
             itemCost = int(itemCost * ItemGlobals.GOLD_SALE_MULTIPLIER)
-        
+
         maxLength = 23 - len(str(itemCost))
         isDisabled = 0
         panel = DirectButton(parent = self, relief = None, text = itemText[:maxLength], text_fg = self.itemColor, text_align = TextNode.ALeft, text_scale = PiratesGuiGlobals.TextScaleMed, text_shadow = PiratesGuiGlobals.TextShadow, text_pos = (0.059999999999999998, 0.0), command = self.removePanel, extraArgs = [
@@ -167,19 +167,19 @@ class TattooStoreCartList(DirectScrolledFrame):
         self.purchases.append(data)
         if repack:
             self.repackPanels()
-        
 
-    
+
+
     def highlightStart(self, item, event = None):
         item['text_fg'] = PiratesGuiGlobals.TextFG6
         item.costLabel['text_fg'] = PiratesGuiGlobals.TextFG6
 
-    
+
     def highlightStop(self, item, event = None):
         item['text_fg'] = self.itemColor
         item.costLabel['text_fg'] = self.itemColor
 
-    
+
     def removePanel(self, data, repack = 1):
         for panel in self.panels:
             if panel.data == data:
@@ -189,46 +189,46 @@ class TattooStoreCartList(DirectScrolledFrame):
                 panel.destroy()
                 if repack:
                     self.repackPanels()
-                
+
                 self.parent.updateBalance()
                 return None
                 continue
-        
 
-    
+
+
     def hasPanel(self, data):
         for panel in self.panels:
             if panel.data == data:
                 return True
                 continue
-        
+
         return False
 
-    
+
     def removeAllPanels(self):
         for panel in self.panels:
             panel.destroy()
-        
+
         self.panels = []
         self.purchases = []
         self.repackPanels()
 
-    
+
     def show(self):
         DirectScrolledFrame.show(self)
 
-    
+
     def hide(self):
         DirectScrolledFrame.hide(self)
 
-    
+
     def getItemQuantity(self, itemId):
         counter = 0
         for panel in self.panels:
             if panel.data[0] == itemId:
                 counter += panel.data[1]
                 continue
-        
+
         return counter
 
 
@@ -239,7 +239,7 @@ class TattooStoreGUI(DirectFrame):
     height = 1.5
     columnWidth = PiratesGuiGlobals.InventoryItemGuiWidth + PiratesGuiGlobals.ScrollbarSize + 0.050000000000000003
     holidayIdList = []
-    
+
     def __init__(self, npc, shopId, **kw):
         optiondefs = (('relief', None, None), ('framSize', (0, self.width, 0, self.height), None), ('sortOrder', 20, None))
         self.defineoptions(kw, optiondefs)
@@ -278,12 +278,12 @@ class TattooStoreGUI(DirectFrame):
         self.pvpMode = 0
         if shopId == PiratesGlobals.PRIVATEER_TATTOOS:
             self.pvpMode = 1
-        
+
         if localAvatar.gameFSM.camIval is not None:
             if localAvatar.gameFSM.camIval.isPlaying():
                 localAvatar.gameFSM.camIval.finish()
-            
-        
+
+
         self.initialCamPos = camera.getPos()
         self.initialCamHpr = camera.getHpr()
         self.initialPirateH = 0
@@ -342,7 +342,7 @@ class TattooStoreGUI(DirectFrame):
         if not localAvatar.guiMgr.trackedQuestLabel.isHidden():
             localAvatar.guiMgr.hideTrackedQuestInfo()
             self.showQuestLabel = True
-        
+
         self.equipRequests = {
             ZONE1: None,
             ZONE2: None,
@@ -356,14 +356,14 @@ class TattooStoreGUI(DirectFrame):
         self.updateBalance()
         self.lastRun = 0
 
-    
+
     def showRedeemCodeGUI(self):
         if self.redeemCodeGUI:
             self.redeemCodeGUI.showCode()
         else:
             self.redeemCodeGUI = RedeemCodeGUI.RedeemCodeGUI(self)
 
-    
+
     def rotatePirate(self, slider):
         if self.pirate and slider:
             value = slider.getValue()
@@ -372,10 +372,10 @@ class TattooStoreGUI(DirectFrame):
                 h = diff * 360.0 + self.pirate.getH()
                 self.pirate.setH(h)
                 self.rotateSliderOrigin = value
-            
-        
 
-    
+
+
+
     def destroy(self):
         DirectFrame.destroy(self)
         self._stopMouseReadTask()
@@ -383,51 +383,51 @@ class TattooStoreGUI(DirectFrame):
             self.camIval.finish()
             self.camIval = None
             camera.setHpr(0, 0, 0)
-        
+
         self.rotateSlider.destroy()
         self.unloadPirate()
         if self.model:
             self.model.removeNode()
             self.model = None
-        
+
         if self.CoinImage:
             self.CoinImage.removeNode()
             self.CoinImage = None
-        
+
         if self.ParchmentIcon:
             self.ParchmentIcon.removeNode()
             self.ParchmentIcon = None
-        
+
         if self.ShirtIcon:
             self.ShirtIcon.removeNode()
             self.ShirtIcon = None
-        
+
         if self.alertDialog:
             self.alertDialog.destroy()
-        
+
         if self.TattooIcons:
             self.TattooIcons.removeNode()
             self.TattooIcons = None
-        
+
         if self.LockIcon:
             self.LockIcon.removeNode()
             self.LockIcon = None
-        
+
         if self.questIcon:
             self.questIcon.removeNode()
             self.questIcon = None
-        
+
         if self.redeemCodeGUI:
             self.redeemCodeGUI.destroy()
-        
+
         if len(localAvatar.guiMgr.trackedQuestLabel['text']):
             if self.showQuestLabel:
                 localAvatar.guiMgr.showTrackedQuestInfo()
-            
-        
+
+
         localAvatar.guiMgr.chatPanel.hide()
 
-    
+
     def createPirate(self):
         if self.pirate is None:
             self.pirate = DynamicHuman.DynamicHuman()
@@ -453,24 +453,24 @@ class TattooStoreGUI(DirectFrame):
             self.pirate.style.setClothesCoat(0)
             self.pirate.style.setClothesVest(0)
             self.pirate.model.handleClothesHiding()
-        
+
         self.pirate.show()
         localAvatar.stash()
 
-    
+
     def focusCamera(self, cameraId = BODY_CAMERA):
         if localAvatar.gameFSM.camIval is not None:
             if localAvatar.gameFSM.camIval.isPlaying():
                 localAvatar.gameFSM.camIval.finish()
-            
-        
+
+
         if self.camIval:
             self.camIval.finish()
             self.camIval = None
-        
+
         if self.pirate is None:
             self.createPirate()
-        
+
         self.pirate.setH(self.initialPirateH)
         self.rotateSlider['value'] = 0.5
         self.rotateSliderOrigin = 0.5
@@ -510,10 +510,10 @@ class TattooStoreGUI(DirectFrame):
         h = camHpr[0] % 360
         if camH > h:
             h += 360
-        
+
         if h - camH > 180:
             h -= 360
-        
+
         camHpr.setX(h)
         camera.setH(camH)
         t = 1.5
@@ -521,17 +521,17 @@ class TattooStoreGUI(DirectFrame):
         localAvatar.cameraFSM.request('Control')
         self.camIval.start()
 
-    
+
     def unloadPirate(self):
         if self.pirate:
             self.pirate.detachNode()
             self.pirate.cleanupHuman()
             self.pirate.delete()
             self.pirate = None
-        
+
         localAvatar.unstash()
 
-    
+
     def closePanel(self):
         messenger.send('exitStore')
         self.ignoreAll()
@@ -546,28 +546,28 @@ class TattooStoreGUI(DirectFrame):
             offsetIndex = 6
         self.unloadPirate()
 
-    
+
     def purchaseConfirmation(self):
         pass
 
-    
+
     def handleCommitPurchase(self):
         if self.purchaseInventory == []:
             base.localAvatar.guiMgr.createWarning(PLocalizer.EmptyPurchaseWarning, PiratesGuiGlobals.TextFG6)
             return None
-        
+
         inventory = base.localAvatar.getInventory()
         myMoney = inventory.getGoldInPocket()
         if inventory:
             if myMoney < self.balance:
                 base.localAvatar.guiMgr.createWarning(PLocalizer.NotEnoughMoneyWarning, PiratesGuiGlobals.TextFG6)
                 return None
-            
+
             if self.balance < 0 and myMoney + self.balance > self.getMaxMoney(inventory):
                 base.localAvatar.guiMgr.createWarning(PLocalizer.CannotHoldGoldWarning, PiratesGuiGlobals.TextFG6)
                 return None
-            
-        
+
+
         purchaseArgList = []
         sellArgList = []
         for item in self.purchaseInventory.purchases:
@@ -577,7 +577,7 @@ class TattooStoreGUI(DirectFrame):
             purchaseArgList.append([
                 uid,
                 item[3]])
-        
+
         for item in self.sellInventory.purchases:
             uid = item[1]
             type = item[0]
@@ -591,22 +591,22 @@ class TattooStoreGUI(DirectFrame):
                 tattooId]:
                 self.equipRequests[type] = None
                 continue
-        
+
         self.purchaseInventory.removeAllPanels()
         self.sellInventory.removeAllPanels()
         self.npc.sendRequestTattoo(purchaseArgList, sellArgList)
 
-    
+
     def updateBalance(self, extraArgs = None):
         self.myGold['text'] = str(self.getMoney())
         self.balanceValue['text_fg'] = PiratesGuiGlobals.TextFG2
         self.balance = 0
         for item in self.purchaseInventory.panels:
             self.balance += item.price
-        
+
         for item in self.sellInventory.panels:
             self.balance -= item.price
-        
+
         transactions = len(self.purchaseInventory.purchases) + len(self.sellInventory.purchases)
         if self.balance > 0:
             self.balanceTitle['text'] = PLocalizer.Total
@@ -623,7 +623,7 @@ class TattooStoreGUI(DirectFrame):
         if self.balance > self.getMoney() or transactions == 0:
             if self.balance > self.getMoney():
                 self.balanceValue['text_fg'] = PiratesGuiGlobals.TextFG6
-            
+
             self.commitButton['state'] = DGG.DISABLED
         elif self.balance < 0:
             self.balanceValue['text_fg'] = PiratesGuiGlobals.TextFG4
@@ -638,31 +638,31 @@ class TattooStoreGUI(DirectFrame):
                 self.commitButton['frameColor'] = PiratesGuiGlobals.ButtonColor3
             else:
                 self.commitButton['frameColor'] = PiratesGuiGlobals.ButtonColor4
-        
 
-    
+
+
     def checkPanel(self, panel, inventory, itemId):
         purchaseQty = self.purchaseInventory.getItemQuantity(itemId)
         panel.checkPlayerInventory(itemId, purchaseQty)
 
-    
+
     def initTabs(self):
         self.tabBar = TattooStoreTabBar(parent = self, backParent = self.backTabParent, frontParent = self.frontTabParent, offset = 0)
         self.pageNames = []
         self.createTabs()
         if len(self.pageNames) > 0:
             self.setPage(self.pageNames[0])
-        
 
-    
+
+
     def createTabs(self):
         for item in TattooZones:
             if not self.isPageAdded(item[0]):
                 self.addTab(item[0])
                 continue
-        
 
-    
+
+
     def addTab(self, id):
         newTab = self.tabBar.addTab(id, command = self.setPage, extraArgs = [
             id])
@@ -685,11 +685,11 @@ class TattooStoreGUI(DirectFrame):
         newTab.nameTag = DirectLabel(parent = newTab, relief = None, state = DGG.DISABLED, pos = (0.0, 0, 0.0), image = tabIcon, image_scale = tabScale)
         self.pageNames.append(id)
 
-    
+
     def isPageAdded(self, pageName):
         return self.pageNames.count(pageName) > 0
 
-    
+
     def nextPage(self):
         if self.tattooAmount - self.buttonIndex + self.buttonsPerPage > 0:
             startIndex = self.buttonIndex + self.buttonsPerPage
@@ -697,7 +697,7 @@ class TattooStoreGUI(DirectFrame):
         else:
             self.setPage(self.currentPage, 0, False)
 
-    
+
     def previousPage(self):
         if self.buttonIndex > 0:
             startIndex = self.buttonIndex - self.buttonsPerPage
@@ -710,13 +710,13 @@ class TattooStoreGUI(DirectFrame):
                 startIndex = self.tattooAmount - self.buttonsPerPage
             self.setPage(self.currentPage, startIndex, False)
 
-    
+
     def addToCart(self, button, type, uid, location = 0):
         tattooId = ItemGlobals.getMaleModelId(uid)
         inventory = base.localAvatar.getInventory()
         if not inventory:
             return None
-        
+
         data = [
             type,
             uid,
@@ -733,7 +733,7 @@ class TattooStoreGUI(DirectFrame):
                         InventoryType.ItemTypeTattoo,
                         dataId,
                         0]))
-                
+
                 locatables.append(InvItem([
                     InventoryType.ItemTypeTattoo,
                     uid,
@@ -744,7 +744,7 @@ class TattooStoreGUI(DirectFrame):
                         base.localAvatar.guiMgr.createWarning(PLocalizer.InventoryFullWarning, PiratesGuiGlobals.TextFG6)
                         return None
                         continue
-                
+
                 self.purchaseInventory.addPanel(data)
                 button.addToCart['text'] = PLocalizer.TailorRemove
                 button.addToCart.buyState = 0
@@ -761,11 +761,11 @@ class TattooStoreGUI(DirectFrame):
                     if itemId == dataId:
                         itemCount += 1
                         continue
-                
+
                 if inventory.getItemQuantity(InventoryType.ItemTypeTattoo, itemId) < itemCount:
                     base.localAvatar.guiMgr.createWarning(PLocalizer.DoNotOwnEnoughWarning, PiratesGuiGlobals.TextFG6)
                     return None
-                
+
                 self.sellInventory.addPanel(data)
                 button.addToCart['text'] = PLocalizer.TailorRemove
                 button.addToCart.buyState = 0
@@ -773,10 +773,10 @@ class TattooStoreGUI(DirectFrame):
                 button.addToCart['text'] = PLocalizer.TailorSell
                 button.addToCart.buyState = 1
                 self.sellInventory.removePanel(data)
-        
+
         self.updateBalance()
 
-    
+
     def updateButton(self, data, buyState):
         for item in self.buttons:
             if item.tattooUID == data[1] and item.tattooLocation == data[3]:
@@ -784,20 +784,20 @@ class TattooStoreGUI(DirectFrame):
                     item.addToCart['text'] = PLocalizer.TailorAddToCart
                 elif self.mode == SELLING:
                     item.addToCart['text'] = PLocalizer.TailorSell
-                
+
                 item.addToCart.buyState = 1
                 return None
                 continue
-        
 
-    
+
+
     def changeMode(self, mode, refresh = False):
         if self.mode == mode and not refresh:
             return None
         elif self.mode == mode and refresh:
             self.setPage(self.currentPage, 0, refreshWardrobe = refresh)
             return None
-        
+
         if self.mode == BUYING:
             self.prevIdx = self.buttonIndex
             idx = 0
@@ -806,15 +806,15 @@ class TattooStoreGUI(DirectFrame):
         self.mode = mode
         self.setPage(self.currentPage, idx, refreshWardrobe = refresh)
 
-    
+
     def setWardrobe(self, tattoos):
         if self.currentWardrobe:
             self.currentWardrobe = []
-        
+
         self.currentWardrobe = tattoos
         self.setPage(self.currentPage, refreshWardrobe = False)
 
-    
+
     def reloadPirateDNA(self):
         gender = localAvatar.style.getGender()
         if gender == 'm':
@@ -834,11 +834,11 @@ class TattooStoreGUI(DirectFrame):
                 self.pirate.model.tattoos[ZONE3] = list(localAvatar.style.getTattooZone3())
             elif zone == ZONE4:
                 self.pirate.model.tattoos[ZONE4] = list(localAvatar.style.getTattooZone4())
-            
-            self.pirate.model.updateTattoo(zone)
-        
 
-    
+            self.pirate.model.updateTattoo(zone)
+
+
+
     def sortItems(self, item1, item2):
         if item1[1] == True:
             return -1
@@ -862,9 +862,9 @@ class TattooStoreGUI(DirectFrame):
                 return 1
             else:
                 return 0
-        
 
-    
+
+
     def applyTattoo(self, pirate, zone, uid):
         gender = localAvatar.style.getGender()
         tattooId = ItemGlobals.getMaleModelId(uid)
@@ -880,7 +880,7 @@ class TattooStoreGUI(DirectFrame):
         (offsetx, offsety, scale, rotate) = ItemGlobals.getOrientation(orientation)
         if not hasattr(pirate, 'model'):
             return None
-        
+
         pirate.model.tattoos[zone][TYPE] = tattooId
         S = Vec2(1 / float(scale), 1 / float(scale))
         Iv = Vec2(offsetx, offsety)
@@ -900,24 +900,24 @@ class TattooStoreGUI(DirectFrame):
                 pirate.play('map_look_arm_left')
             elif zone == ZONE3:
                 pirate.play('map_look_arm_right')
-            
-            self.lastRun = currTime
-        
 
-    
+            self.lastRun = currTime
+
+
+
     def setPage(self, pageName, startIndex = 0, refreshWardrobe = True):
         self.tabBar.unstash()
-        self.titleLabel['text'] = '\x1smallCaps\x1' + self.rootTitle + ' - ' + TattooZones[pageName][1] + '\x2'
+        self.titleLabel['text'] = 'smallCaps' + self.rootTitle + ' - ' + TattooZones[pageName][1]
         previousPage = self.currentPage
         if self.currentPage != pageName:
             self.prevIdx = 0
-        
+
         self.currentPage = pageName
         tattooType = pageName
         self.reloadPirateDNA()
         if self.currentPage != previousPage:
             self.focusCamera(self.currentPage)
-        
+
         if localAvatar.style.getGender() == 'm':
             GENDER = 'MALE'
             offsetIndex = 5
@@ -927,7 +927,7 @@ class TattooStoreGUI(DirectFrame):
         gender = localAvatar.style.getGender()
         if refreshWardrobe:
             self.npc.sendRequestTattooList()
-        
+
         if self.equipRequests[ZONE1] is None:
             currentZONE1 = localAvatar.style.getTattooChest()
         else:
@@ -966,10 +966,10 @@ class TattooStoreGUI(DirectFrame):
                             id,
                             holiday,
                             location])
-                    
+
                 holiday in TattooStoreGUI.holidayIdList
-            
-        
+
+
         if self.mode == SELLING:
             if self.currentWardrobe:
                 for itemInfo in self.currentWardrobe:
@@ -984,7 +984,7 @@ class TattooStoreGUI(DirectFrame):
                         location = location
                         if location in range(Locations.RANGE_EQUIP_TATTOO[0], Locations.RANGE_EQUIP_TATTOO[1]):
                             equipped = True
-                        
+
                         tattoos.append([
                             id,
                             equipped,
@@ -993,13 +993,13 @@ class TattooStoreGUI(DirectFrame):
                             holiday,
                             location])
                         continue
-                
-            
-        
+
+
+
         tattoos.sort(self.sortItems)
         for item in self.buttons:
             item.destroy()
-        
+
         startPos = Vec3(0.34999999999999998, 0.0, 1.05)
         buttonScale = Vec3(0.59999999999999998, 0.59999999999999998, 0.59999999999999998)
         self.buttons = []
@@ -1017,7 +1017,7 @@ class TattooStoreGUI(DirectFrame):
             buttonColorA = Vec4(0.94999999999999996, 0.69999999999999996, 0.69999999999999996, 1.0)
             buttonColorB = Vec4(0.65000000000000002, 0.40000000000000002, 0.40000000000000002, 1.0)
             self.sellInventory.setItemColor(Vec4(0.94999999999999996, 0.29999999999999999, 0.29999999999999999, 1.0))
-        
+
         regionData = []
         for tattoo in tattoos:
             if self.tattooAmount - startIndex < self.buttonsPerPage and self.tattooAmount >= startIndex:
@@ -1051,12 +1051,12 @@ class TattooStoreGUI(DirectFrame):
                     helpText = desc
                 if self.mode == SELLING:
                     cost = int(cost * ItemGlobals.GOLD_SALE_MULTIPLIER)
-                
+
                 for item in self.currentWardrobe:
                     if uid == item:
                         owned = True
                         continue
-                
+
                 if self.mode == SELLING:
                     buttonState = DGG.DISABLED
                 else:
@@ -1070,7 +1070,7 @@ class TattooStoreGUI(DirectFrame):
                     tattooButton['text'] = desc
                     tattooButton['text_wordwrap'] = 5
                     tattooButton['text_align'] = TextNode.ACenter
-                
+
                 if tex:
                     cm = CardMaker('mapTexture')
                     cm.setFrame(-0.22, -0.040000000000000001, -0.071999999999999995, 0.078)
@@ -1086,7 +1086,7 @@ class TattooStoreGUI(DirectFrame):
                         geom.setScale(1.0, 1.0, 1.0 / scale)
                         geom.setPos(0.0, 0.0, 0.01)
                     geom.reparentTo(tattooButton)
-                
+
                 tattooButton.helpWatcher.setPos(tattooButton.getPos())
                 tattooButton.itemText = DirectFrame(parent = tattooButton, relief = None, text = '', text_fg = PiratesGuiGlobals.TextFG1, text_align = TextNode.ACenter, text_scale = PiratesGuiGlobals.TextScaleSmall, text_shadow = PiratesGuiGlobals.TextShadow, textMayChange = True, pos = (-0.13, 0, -0.085000000000000006))
                 if self.mode == BUYING and not owned:
@@ -1103,7 +1103,7 @@ class TattooStoreGUI(DirectFrame):
                     tattooButton.itemText['image_color'] = Vec4(1, 1, 0, 1)
                     tattooButton.itemText['image_scale'] = 0.20000000000000001
                     tattooButton.itemText['image_pos'] = (-0.12, 0, 0.14999999999999999)
-                
+
                 tattooButton.addToCart = GuiButton.GuiButton(command = self.addToCart, parent = tattooButton, text_fg = PiratesGuiGlobals.TextFG2, text_pos = (0.0, -0.01), text_scale = PiratesGuiGlobals.TextScaleLarge, text_align = TextNode.ACenter, text_shadow = PiratesGuiGlobals.TextShadow, image_color = buttonColorB, pos = (0.16, 0.0, 0.055))
                 tattooButton.addToCart['extraArgs'] = [
                     tattooButton,
@@ -1122,9 +1122,9 @@ class TattooStoreGUI(DirectFrame):
                         tattooButton['text'] = infamyText
                         tattooButton['text_fg'] = PiratesGuiGlobals.TextFG6
                         tattooButton['text_pos'] = (-0.02, 0.050000000000000003)
-                    
+
                     tattooButton.cost = DirectFrame(parent = tattooButton, relief = None, text = str(cost), text_fg = PiratesGuiGlobals.TextFG2, text_align = TextNode.ARight, text_scale = PiratesGuiGlobals.TextScaleLarge, text_pos = (-0.055, 0.0), text_shadow = PiratesGuiGlobals.TextShadow, textMayChange = 0, image = self.CoinImage, image_scale = 0.14999999999999999, image_pos = (-0.025000000000000001, 0, 0.014999999999999999), pos = (0.25, 0, -0.050000000000000003))
-                
+
                 if not self.paid:
                     tattooButton.addToCart['geom'] = self.LockIcon
                     tattooButton.addToCart['geom_scale'] = 0.20000000000000001
@@ -1133,7 +1133,7 @@ class TattooStoreGUI(DirectFrame):
                     tattooButton.addToCart['extraArgs'] = [
                         'JEWELRY_CANNOT_BUY-SELL',
                         10]
-                
+
                 data = [
                     type,
                     uid,
@@ -1154,7 +1154,7 @@ class TattooStoreGUI(DirectFrame):
                             pass
                         if not seaInfamyRequired:
                             tattooButton.addToCart.show()
-                        
+
                     elif self.mode == SELLING and self.sellInventory.hasPanel(data):
                         tattooButton.addToCart.buyState = 0
                         tattooButton.addToCart['state'] = DGG.NORMAL
@@ -1169,10 +1169,10 @@ class TattooStoreGUI(DirectFrame):
                             if self.pvpMode:
                                 if landInfamyRequired or seaInfamyRequired:
                                     tattooButton.addToCart.hide()
-                                
+
                         elif self.mode == SELLING:
                             tattooButton.addToCart['text'] = PLocalizer.TailorSell
-                        
+
                 startPos -= Vec3(0.0, 0.0, tattooButton.getHeight() - 0.02)
                 tattooButton.tattooType = tattooType
                 tattooButton.tattooUID = uid
@@ -1180,50 +1180,50 @@ class TattooStoreGUI(DirectFrame):
                 tattooButton.equipped = equipped
                 tattooButton.questDrop = questDrop
                 self.buttons.append(tattooButton)
-            
+
             self.tattooAmount += 1
-        
+
         if not len(tattoos):
             tattooButton = GuiButton.GuiButton(parent = self.panel, state = DGG.DISABLED, text = PLocalizer.TailorEmptyWardrobe, text_fg = PiratesGuiGlobals.TextFG2, text_pos = (0.0, 0.0), text_scale = PiratesGuiGlobals.TextScaleLarge, text_align = TextNode.ACenter, text_shadow = PiratesGuiGlobals.TextShadow, pos = startPos, image_scale = buttonScale, image_color = buttonColorA)
             tattooButton.tattooType = -1
             tattooButton.tattooUID = -1
             self.buttons.append(tattooButton)
-        
+
         if self.tattooAmount <= self.buttonsPerPage:
             self.nextPageButton['state'] = DGG.DISABLED
             self.prevPageButton['state'] = DGG.DISABLED
-        
+
         if startIndex:
             self.prevPageButton['state'] = DGG.NORMAL
-        
+
         if startIndex + self.buttonsPerPage < self.tattooAmount:
             self.nextPageButton['state'] = DGG.NORMAL
             self.prevPageButton['state'] = DGG.NORMAL
-        
+
         if self.tattooAmount > self.buttonsPerPage:
             numPages = float(self.tattooAmount) / float(self.buttonsPerPage)
             remainder = numPages - int(numPages)
             if remainder > 0:
                 numPages += 1.0 - remainder
-            
+
             page = startIndex / self.buttonsPerPage + 1
         else:
             numPages = 1
             page = 1
         self.pageNumber['text'] = '%s %s / %s' % (PLocalizer.TailorPage, page, int(numPages))
 
-    
+
     def _stopMouseReadTask(self):
         taskMgr.remove('TattooStore-MouseRead')
 
-    
+
     def _startMouseReadTask(self):
         self._stopMouseReadTask()
         mouseData = base.win.getPointer(0)
         self.lastMousePos = (mouseData.getX(), mouseData.getY())
         taskMgr.add(self._mouseReadTask, 'TattooStore-MouseRead')
 
-    
+
     def _mouseReadTask(self, task):
         if not base.mouseWatcherNode.hasMouse():
             pass
@@ -1241,7 +1241,7 @@ class TattooStoreGUI(DirectFrame):
         self.rotateSlider['value'] = value
         return Task.cont
 
-    
+
     def showWardrobeLimitAlert(self, type):
         self.removeAlertDialog()
         limit = str(PiratesGlobals.WARDROBE_LIMIT_TATTOO)
@@ -1249,14 +1249,14 @@ class TattooStoreGUI(DirectFrame):
         self.alertDialog = PDialog.PDialog(text = text, text_align = TextNode.ACenter, style = OTPDialog.Acknowledge, pos = (-0.65000000000000002, 0.0, 0.0), command = self.removeAlertDialog)
         self.alertDialog.setBin('gui-fixed', 20, 20)
 
-    
+
     def removeAlertDialog(self, value = None):
         if self.alertDialog:
             self.alertDialog.destroy()
             self.alertDialog = None
-        
 
-    
+
+
     def getMoney(self):
         inventory = base.localAvatar.getInventory()
         if inventory:
@@ -1264,14 +1264,14 @@ class TattooStoreGUI(DirectFrame):
         else:
             return 0
 
-    
+
     def getMaxMoney(self, inventory):
         if inventory:
             return inventory.getStackLimit(InventoryType.PVPCurrentInfamy)
         else:
             return 0
 
-    
+
     def getTattooGlobalsType(self, id):
         itemType = ItemGlobals.getType(id)
         if itemType == ItemGlobals.CHEST:
@@ -1280,9 +1280,9 @@ class TattooStoreGUI(DirectFrame):
             return TattooGlobals.ZONE2
         elif itemType == ItemGlobals.FACE:
             return TattooGlobals.ZONE4
-        
 
-    
+
+
     def getItemGlobalsType(self, type):
         if type == TattooGlobals.ZONE1:
             return ItemGlobals.CHEST
@@ -1290,6 +1290,6 @@ class TattooStoreGUI(DirectFrame):
             return ItemGlobals.ARM
         elif type == TattooGlobals.ZONE4:
             return ItemGlobals.FACE
-        
+
 
 

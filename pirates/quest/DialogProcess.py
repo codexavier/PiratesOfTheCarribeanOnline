@@ -20,47 +20,47 @@ class DialogProcess(POD, DirectObject):
         'prereq': [],
         'dialogId': None,
         'delayCleanup': False }
-    
+
     def avCanParticipate(self, av):
         for prereq in self.prereq:
             if not prereq.avIsReady(av):
                 return False
                 continue
-        
+
         return True
 
-    
+
     def avCanParticipateAI(self, av):
         for prereq in self.prereq:
             if not prereq.avIsReadyAI(av):
                 return False
                 continue
-        
+
         return True
 
-    
+
     def handleEscapeKey(self):
         pass
 
-    
+
     def begin(self, npc, dialogId):
         self.accept('escape', self.handleEscapeKey)
         self.dialogId = dialogId
         self.npc = npc
 
-    
+
     def end(self):
         self.ignore('escape')
         messenger.send('DialogProcessEnded')
 
-    
+
     def cleanup(self):
         pass
 
 
 
 class Prereq(DialogProcess):
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         self.end()
@@ -70,15 +70,15 @@ class Prereq(DialogProcess):
 class NPCDialog(DialogProcess):
     DataSet = {
         'textId': None }
-    
+
     def _NPCDialog__getDialogText(self):
         return PLocalizer.DialogStringDict.get(self.dialogId).get(self.textId).get('dialog')
 
-    
+
     def _NPCDialog__getDialogEmotes(self):
         return PLocalizer.DialogStringDict.get(self.dialogId).get(self.textId).get('emotes')
 
-    
+
     def _NPCDialog__handleNextChatPage(self, pageNumber, elapsed):
         if pageNumber == base.localAvatar.guiMgr.dialogSubtitler.getNumChatPages() - 1:
             localAvatar.guiMgr.dialogSubtitler.confirmButton.hide()
@@ -87,35 +87,35 @@ class NPCDialog(DialogProcess):
         else:
             self._NPCDialog__playAnimation(pageNumber)
 
-    
+
     def _NPCDialog__playAnimation(self, index):
         if self.animationIval:
             self.animationIval.finish()
             self.animationIval = None
-        
+
         if self.dialogAnimSet:
             if len(self.dialogAnimSet) > index and self.dialogAnimSet[index]:
                 self.npc.gameFSM.request('Emote')
                 self.npc.playEmote(self.dialogAnimSet[index])
-            
-        
 
-    
+
+
+
     def cleanup(self):
         self.ignore('nextChatPage')
         self.ignore('doneChatPage')
         if self.dialogBox:
             self.dialogBox.removeNode()
-        
+
         if self.nametagLabel:
             self.nametagLabel.destroy()
-        
 
-    
+
+
     def handleEscapeKey(self):
         localAvatar.guiMgr.dialogSubtitler.advancePageNumber()
 
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         self.animationIval = None
@@ -130,7 +130,7 @@ class NPCDialog(DialogProcess):
         self.dialogBox.setBin('gui-fixed', 0)
         self.nametagLabel = DirectLabel(parent = aspect2d, relief = None, text = self.npc.getName(), text_font = PiratesGlobals.getPirateFont(), text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ARight, text_fg = PiratesGuiGlobals.TextFG8, text_scale = 0.055, pos = (0.29999999999999999, 0, -0.44))
         self.nametagLabel.setBin('gui-fixed', 1)
-        dialogStr = self._NPCDialog__getDialogText() + '\x7'
+        dialogStr = self._NPCDialog__getDialogText()
         self.dialogAnimSet = self._NPCDialog__getDialogEmotes()
         localAvatar.guiMgr.dialogSubtitler.setPageChat(dialogStr)
         self._NPCDialog__playAnimation(0)
@@ -140,12 +140,12 @@ class NPCDialog(DialogProcess):
             self.accept('nextChatPage', self._NPCDialog__handleNextChatPage)
             self.accept('doneChatPage', self.end)
 
-    
+
     def end(self):
         if self.animationIval:
             self.animationIval.finish()
             self.animationIval = None
-        
+
         DialogProcess.end(self)
 
 
@@ -153,15 +153,15 @@ class NPCDialog(DialogProcess):
 class PlayerDialog(DialogProcess):
     DataSet = {
         'textId': 0 }
-    
+
     def _PlayerDialog__getDialogText(self):
         return PLocalizer.DialogStringDict.get(self.dialogId).get(self.textId).get('dialog')
 
-    
+
     def _PlayerDialog__getDialogEmotes(self):
         return PLocalizer.DialogStringDict.get(self.dialogId).get(self.textId).get('emotes')
 
-    
+
     def _PlayerDialog__handleNextChatPage(self, pageNumber, elapsed):
         if pageNumber == base.localAvatar.guiMgr.dialogSubtitler.getNumChatPages() - 1:
             localAvatar.guiMgr.dialogSubtitler.confirmButton.hide()
@@ -170,38 +170,38 @@ class PlayerDialog(DialogProcess):
         else:
             self._PlayerDialog__playAnimation(pageNumber)
 
-    
+
     def _PlayerDialog__playAnimation(self, index):
         if self.animationIval:
             self.animationIval.finish()
             self.animationIval = None
-        
+
         if self.dialogAnimSet:
             if not self.defaultAnim:
                 self.defaultAnim = self.npc.getCurrentAnim()
-            
+
             if len(self.dialogAnimSet) > index and self.dialogAnimSet[index]:
                 localAvatar.playEmote(self.dialogAnimSet[index])
-            
-        
 
-    
+
+
+
     def cleanup(self):
         self.ignore('nextChatPage')
         self.ignore('doneChatPage')
         localAvatar.guiMgr.dialogSubtitler.clearText()
         if self.dialogBox:
             self.dialogBox.removeNode()
-        
+
         if self.nametagLabel:
             self.nametagLabel.destroy()
-        
 
-    
+
+
     def handleEscapeKey(self):
         localAvatar.guiMgr.dialogSubtitler.advancePageNumber()
 
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         self.animationIval = None
@@ -216,7 +216,7 @@ class PlayerDialog(DialogProcess):
         self.dialogBox.setBin('gui-fixed', 0)
         self.nametagLabel = DirectLabel(parent = aspect2d, relief = None, text = localAvatar.getName(), text_font = PiratesGlobals.getPirateFont(), text_shadow = PiratesGuiGlobals.TextShadow, text_align = TextNode.ALeft, text_fg = PiratesGuiGlobals.TextFG8, text_scale = 0.055, pos = (-0.59999999999999998, 0, -0.44))
         self.nametagLabel.setBin('gui-fixed', 1)
-        dialogStr = self._PlayerDialog__getDialogText() + '\x7'
+        dialogStr = self._PlayerDialog__getDialogText()
         self.dialogAnimSet = self._PlayerDialog__getDialogEmotes()
         localAvatar.guiMgr.dialogSubtitler.setPageChat(dialogStr)
         self._PlayerDialog__playAnimation(0)
@@ -231,7 +231,7 @@ class PlayerDialog(DialogProcess):
 class StepChoice(DialogProcess):
     DataSet = {
         'choices': tuple() }
-    
+
     def _StepChoice__getDialogChoiceText(self, stepId, index = 0):
         DialogDict = DialogDict
         import pirates.quest.DialogTree
@@ -241,24 +241,24 @@ class StepChoice(DialogProcess):
         else:
             return PLocalizer.DialogStringDict.get(self.dialogId).get(textId).get('dialog')
 
-    
+
     def highlightIcon(self, buttonIndex, event):
         self.choiceButtons[buttonIndex]['image_color'] = PiratesGuiGlobals.TextFG8
 
-    
+
     def unhighlightIcon(self, buttonIndex, event):
         self.choiceButtons[buttonIndex]['image_color'] = PiratesGuiGlobals.TextFG2
 
-    
+
     def buttonClicked(self, stepId):
         messenger.send('SwitchStep', [
             stepId])
 
-    
+
     def handleEscapeKey(self):
         pass
 
-    
+
     def displayStepChoices(self):
         DialogDict = DialogDict
         import pirates.quest.DialogTree
@@ -285,24 +285,24 @@ class StepChoice(DialogProcess):
                     i])
                 self.choiceButtons.append(choiceButton)
                 continue
-        
 
-    
+
+
     def cleanUpStepChoices(self):
         for button in self.choiceButtons:
             button.destroy()
-        
+
         self.choiceButtons = []
 
-    
+
     def cleanup(self):
         self.cleanUpStepChoices()
         if self.dialogBox:
             self.dialogBox.removeNode()
             self.dialogBox = None
-        
 
-    
+
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         self.dialogBox = loader.loadModel('models/gui/pir_m_gui_frm_questChat')
@@ -323,7 +323,7 @@ class SwitchStep(DialogProcess):
 
 
 class ExitDialog(DialogProcess):
-    
+
     def begin(self, npc, dialogId):
         npc.requestExit()
         self.end()
@@ -333,19 +333,19 @@ class ExitDialog(DialogProcess):
 class OfferQuest(DialogProcess):
     DataSet = {
         'questId': None }
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         self.acceptOnce('setDialogQuestOffer', self._OfferQuest__gotQuestOffer)
         npc.requestDialogQuestOffer(self.questId, dialogId)
 
-    
+
     def _OfferQuest__gotQuestOffer(self):
-        
+
         def handleOption(option):
             if option == PLocalizer.Accept:
                 self.npc.assignDialogQuestOffer()
-            
+
             self.end()
 
         self.npc.showDialogQuestOffer()
@@ -353,7 +353,7 @@ class OfferQuest(DialogProcess):
             PLocalizer.Decline,
             PLocalizer.Accept], callback = handleOption)
 
-    
+
     def handleEscapeKey(self):
         pass
 
@@ -362,20 +362,20 @@ class OfferQuest(DialogProcess):
 class AssignQuest(DialogProcess):
     DataSet = {
         'questId': None }
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         self.acceptOnce('setDialogQuestOffer', self._AssignQuest__gotQuestAssigned)
         npc.requestDialogQuestAssignment(self.questId, dialogId)
 
-    
+
     def end(self):
         self.npc.cleanUpQuestDetails()
         DialogProcess.end(self)
 
-    
+
     def _AssignQuest__gotQuestAssigned(self):
-        
+
         def handleOption(option):
             self.end()
 
@@ -383,7 +383,7 @@ class AssignQuest(DialogProcess):
         localAvatar.guiMgr.dialogSubtitler.setPageChat('', options = [
             PLocalizer.Accept], callback = handleOption)
 
-    
+
     def handleEscapeKey(self):
         pass
 
@@ -392,7 +392,7 @@ class AssignQuest(DialogProcess):
 class AdvanceQuest(DialogProcess):
     DataSet = {
         'questId': None }
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         npc.requestDialogQuestAdvancement(self.questId, dialogId)
@@ -401,18 +401,18 @@ class AdvanceQuest(DialogProcess):
 
 
 class ShowGivenQuest(DialogProcess):
-    
+
     def begin(self, npc, dialogId):
         npc.displayNewQuests()
 
-    
+
     def handleEscapeKey(self):
         pass
 
 
 
 class ShowRewards(DialogProcess):
-    
+
     def begin(self, npc, dialogId):
         npc.showQuestRewards()
         self.end()
@@ -420,7 +420,7 @@ class ShowRewards(DialogProcess):
 
 
 class HideRewards(DialogProcess):
-    
+
     def begin(self, npc, dialogId):
         npc.hideQuestRewards()
         self.end()
@@ -430,7 +430,7 @@ class HideRewards(DialogProcess):
 class MakeNPCHostile(DialogProcess):
     DataSet = {
         'npcId': None }
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         npc.requestNPCHostile(self.npcId, dialogId)
@@ -441,7 +441,7 @@ class MakeNPCHostile(DialogProcess):
 class PlayCombatEffectOnNPC(DialogProcess):
     DataSet = {
         'effectId': None }
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         combatEffect = CombatEffect.CombatEffect(self.effectId, attacker = localAvatar)
@@ -453,7 +453,7 @@ class PlayCombatEffectOnNPC(DialogProcess):
 
 
 class FadeOutGhost(DialogProcess):
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         npc.fadeOutGhost()
@@ -464,16 +464,16 @@ class FadeOutGhost(DialogProcess):
 class Delay(DialogProcess):
     DataSet = {
         'duration': 0 }
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         taskMgr.doMethodLater(self.duration, self.endWaitTask, 'endDialogProcess')
 
-    
+
     def endWaitTask(self, task):
         self.end()
 
-    
+
     def cleanup(self):
         taskMgr.remove('endDialogProcess')
 
@@ -483,7 +483,7 @@ class SwitchVisualModeNPC(DialogProcess):
     DataSet = {
         'mode': None,
         'skipHide': False }
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         npc.switchVisualMode(self.mode, self.skipHide)
@@ -495,13 +495,13 @@ class PlayNPCEmote(DialogProcess):
     DataSet = {
         'emoteId': None,
         'npcId': None }
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         if self.npcId:
             npcDoId = base.cr.uidMgr.getDoId(self.npcId)
             self.npc = base.cr.doId2do.get(npcDoId)
-        
+
         self.npc.gameFSM.request('Emote')
         self.npc.playEmote(self.emoteId)
         self.end()
@@ -511,7 +511,7 @@ class PlayNPCEmote(DialogProcess):
 class PlayPlayerEmote(DialogProcess):
     DataSet = {
         'emoteId': None }
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         localAvatar.playEmote(self.emoteId)
@@ -520,7 +520,7 @@ class PlayPlayerEmote(DialogProcess):
 
 
 class PlayerDrawPistolAndAim(DialogProcess):
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         weaponId = 2001
@@ -529,24 +529,24 @@ class PlayerDrawPistolAndAim(DialogProcess):
         localAvatar.dialogProp = Pistol.Pistol(weaponId)
         self.animIval = Sequence(localAvatar.dialogProp.getDrawIval(localAvatar), Func(localAvatar.loop, 'gun_aim_idle'), Func(self.end)).start()
 
-    
+
     def end(self):
         if self.animIval:
             self.animIval.pause()
             self.animIval = None
-        
+
         DialogProcess.end(self)
 
-    
+
     def cleanup(self):
         if localAvatar.dialogProp:
             localAvatar.dialogProp.detachNode()
-        
+
 
 
 
 class PlayerHidePistol(DialogProcess):
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         self.animIval = None
@@ -555,19 +555,19 @@ class PlayerHidePistol(DialogProcess):
         else:
             self.end()
 
-    
+
     def end(self):
         if self.animIval:
             self.animIval.pause()
             self.animIval = None
-        
+
         localAvatar.dialogProp = None
         DialogProcess.end(self)
 
 
 
 class PlayChickenFly(DialogProcess):
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         self.npc.play('fly', startFrame = 20)
@@ -580,7 +580,7 @@ class PlaySfx(DialogProcess):
         'sfxId': None }
     sfxList = {
         SoundGlobals.SFX_SKILL_CLEANSE: loadSfx(SoundGlobals.SFX_SKILL_CLEANSE) }
-    
+
     def begin(self, npc, dialogId):
         DialogProcess.begin(self, npc, dialogId)
         sfx = self.sfxList.get(self.sfxId)

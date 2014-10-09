@@ -1209,7 +1209,7 @@ ControlShapes = {
 
 class PirateFemale(DirectObject.DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('PirateFemale')
-    
+
     def __init__(self, pirate, dna):
         self.pirate = pirate
         self.texDict = { }
@@ -1312,23 +1312,23 @@ class PirateFemale(DirectObject.DirectObject):
             NodePathCollection()]
         self.newAvatars = base.config.GetBool('want-new-avatars', 1)
 
-    
+
     def delete(self):
         del self.pirate
         del self.dna
         del self.dnaZomb
 
-    
+
     def setHairBaseColor(self):
         dna = self.pirate.style
         if self.pirate.zombie:
             dna = self.dnaZomb
-        
+
         baseColor = dna.getHairBaseColor()
         self.currentClothingModels['HAIR'].setColorScale(baseColor)
         self.eyeBrows.setColorScale(baseColor)
 
-    
+
     def setupTattoos(self):
         self.tattoos[0] = self.pirate.style.getTattooChest()
         self.tattoos[1] = self.pirate.style.getTattooZone2()
@@ -1350,13 +1350,13 @@ class PirateFemale(DirectObject.DirectObject):
             tma = TexMatrixAttrib.make(self.tattooStage, t)
             tattooArea.setAttrib(tma)
             tattooArea.setTexture(self.tattooStage, tex)
-        
 
-    
+
+
     def updateTattoo(self, index):
         if index > 3:
             return None
-        
+
         tattoo = self.tattoos[index]
         tattooArea = self.currentTattooZones[index]
         (tex, scale) = TattooGlobals.getTattooImage(tattoo[0])
@@ -1368,9 +1368,9 @@ class PirateFemale(DirectObject.DirectObject):
         tattooArea.setAttrib(tma)
         tattooArea.setTexture(self.tattooStage, tex)
 
-    
+
     def setupHairMultiTexture(self):
-        
+
         def setupMultiTexture(parts):
             for i in range(0, len(parts)):
                 if not parts[i].isEmpty():
@@ -1382,7 +1382,7 @@ class PirateFemale(DirectObject.DirectObject):
                                 tc.removeTextureStage(tc[k])
                                 break
                                 continue
-                        
+
                         for k in range(0, tc.getNumTextureStages()):
                             if tc[k].getTexcoordName().getName().find('Light') != -1:
                                 tc[k].setMode(TextureStage.MBlend)
@@ -1391,33 +1391,33 @@ class PirateFemale(DirectObject.DirectObject):
                             if tc[k].getTexcoordName().getName().find('Dark') != -1:
                                 tc[k].setSort(0)
                                 continue
-                        
-                    
-            
+
+
+
 
         setupMultiTexture(self.hairPieces)
         setupMultiTexture(self.eyeBrows)
 
-    
+
     def showHair(self):
         for i in range(0, len(self.hairs[self.hairIdx])):
             if not self.hairPieces[self.hairs[self.hairIdx][i]].isEmpty():
                 self.hairPieces[self.hairs[self.hairIdx][i]].unstash()
                 continue
-        
 
-    
+
+
     def hideHair(self):
         for i in range(0, len(self.hairs[self.hairIdx])):
             if not self.hairPieces[self.hairs[self.hairIdx][i]].isEmpty():
                 self.hairPieces[self.hairs[self.hairIdx][i]].stash()
-            
+
             if not self.hairCuts[self.hairs[self.hairIdx][i]].isEmpty():
                 self.hairCuts[self.hairs[self.hairIdx][i]].stash()
                 continue
-        
 
-    
+
+
     def handleHeadHiding(self):
         hairIdx = [
             self.pirate.style.getHairHair(),
@@ -1444,21 +1444,21 @@ class PirateFemale(DirectObject.DirectObject):
                 for base in (0, 2, 4):
                     currentHat[base].setTexture(self.texDict[texInfo[0]], 3)
                     currentHat[base + 1].setTexture(self.texDict[texInfo[1]], 4)
-                
+
             else:
                 currentHat.setTexture(self.texDict[texInfo[0]])
             currentHat.setColorScale(hatColor)
-        
+
         self.currentClothingModels['HAT'] = currentHat
         if hatIdx[0] > 0:
             currentHat.setColorScale(hatColor)
             if 14 not in self.hairs[hairIdx[0]]:
                 currentHat.unstash()
-            
-        
+
+
         self.setHairBaseColor()
 
-    
+
     def setupHead(self, lodName = '2000'):
         geom = self.pirate.getGeomNode()
         self.faceZomb = geom.findAllMatches('**/gh_master_face')
@@ -1477,7 +1477,7 @@ class PirateFemale(DirectObject.DirectObject):
             for i in xrange(faceSet.getNumPaths()):
                 faceSet[i].clearColorScale()
                 faceSet[i].copyTo(flattenMe)
-            
+
             faceParts = flattenMe.findAllMatches('**/+GeomNode')
             lodNP.findAllMatches('**/body_master_face').detach()
             lodNP.findAllMatches('**/eyelid*').detach()
@@ -1487,7 +1487,7 @@ class PirateFemale(DirectObject.DirectObject):
             eyeballs = lodNP.findAllMatches('**/eye_ball*')
             for i in xrange(eyeballs.getNumPaths()):
                 eyeballs[i].copyTo(flattenMe)
-            
+
             flattenMe.flattenStrong()
             eyeBallParts = flattenMe.findAllMatches('**/+GeomNode')
             lodNP.findAllMatches('**/eye_ball*').detach()
@@ -1497,13 +1497,13 @@ class PirateFemale(DirectObject.DirectObject):
             flattenMe = NodePath('flattenMe')
             for i in xrange(irisSet.getNumPaths()):
                 irisSet[i].copyTo(flattenMe)
-            
+
             flattenMe.flattenStrong()
             lodNP.findAllMatches('**/eye_iris*').detach()
             irisParts = flattenMe.findAllMatches('**/+GeomNode')
             irisParts.reparentTo(lodNP.getChild(0))
             irisData.addPathsFrom(irisParts)
-        
+
         self.faces.append(faceData)
         self.irises = irisData
         self.eyeBalls = eyeData
@@ -1514,7 +1514,7 @@ class PirateFemale(DirectObject.DirectObject):
         self.tooths.append(geom.findAllMatches('**/teeth_*'))
         if base.config.GetBool('want-gen-pics-buttons'):
             self.eyes = self.pirate.findAllMatches('**/eye_*')
-        
+
         self.eyeBrowIdx = 0
         self.eyeBrows = NodePathCollection()
         for lod in [
@@ -1525,13 +1525,13 @@ class PirateFemale(DirectObject.DirectObject):
             flattenMe = NodePath('flattenMe')
             for i in xrange(eyebrows.getNumPaths()):
                 eyebrows[i].copyTo(flattenMe)
-            
+
             flattenMe.flattenStrong()
             geoms = flattenMe.findAllMatches('**/+GeomNode')
             self.pirate.getLOD(lod).findAllMatches('**/hair_eyebrow_*').detach()
             geoms.reparentTo(self.pirate.getLOD(lod).getChild(0))
             self.eyeBrows.addPathsFrom(geoms)
-        
+
         self.eyeBrows.stash()
         self.hair = geom.findAllMatches('**/hair*')
         self.hairPieces = []
@@ -1725,9 +1725,9 @@ class PirateFemale(DirectObject.DirectObject):
                 '1000',
                 '2000']:
                 itemInfo[lod] = self.pirate.getLOD(lod).findAllMatches(item)
-            
+
             self.hairLODs.append(itemInfo)
-        
+
         for item in hairCutList:
             itemInfo = { }
             for lod in [
@@ -1735,9 +1735,9 @@ class PirateFemale(DirectObject.DirectObject):
                 '1000',
                 '2000']:
                 itemInfo[lod] = self.pirate.getLOD(lod).findAllMatches(item)
-            
+
             self.hairCutLODs.append(itemInfo)
-        
+
         self.generateHairSets()
         self.hair.stash()
         self.eyeBrows.unstash()
@@ -1749,25 +1749,25 @@ class PirateFemale(DirectObject.DirectObject):
         self.jewelryFaceParts = []
         for name in jewelry_geos_face:
             self.jewelryFaceParts.append(self.pirate.findAllMatches('**/%s' % name))
-        
+
         self.jewelryBodyParts = []
         for name in jewelry_geos_body:
             self.jewelryBodyParts.append(self.pirate.findAllMatches('**/%s' % name))
-        
+
         for npc in self.jewelryFaceParts:
             length = npc.getNumPaths()
             for i in range(length):
                 node = npc[i]
                 node.showThrough(OTPRender.GlowCameraBitmask)
-            
-        
+
+
         for npc in self.jewelryBodyParts:
             length = npc.getNumPaths()
             for i in range(length):
                 node = npc[i]
                 node.showThrough(OTPRender.GlowCameraBitmask)
-            
-        
+
+
         self.accBody = geom.findAllMatches('**/acc_body*')
         self.numBodyJewelry = self.accBody.getNumPaths()
         self.accFace = geom.findAllMatches('**/acc_face*')
@@ -1792,14 +1792,14 @@ class PirateFemale(DirectObject.DirectObject):
                     primary.addPathsFrom(parts[piece[0]])
                     for idx in range(1, length):
                         secondary.addPathsFrom(parts[piece[idx]])
-                    
-                
+
+
                 data = [
                     primary,
                     secondary]
                 self.jewelrySets[key].append(data)
-            
-        
+
+
         self.currentJewelry = {
             'LEar': [
                 0,
@@ -1834,12 +1834,12 @@ class PirateFemale(DirectObject.DirectObject):
                 0,
                 0] }
 
-    
+
     def setBlendValue(self, val, attr):
         self.pirate.setBlendValue(0.0, self.blendShapes[attr][0])
         if len(self.blendShapes[attr]) > 1:
             self.pirate.setBlendValue(0.0, self.blendShapes[attr][1])
-        
+
         if val >= 0.0:
             if len(self.blendShapes[attr]) > 1:
                 blendName = self.blendShapes[attr][1]
@@ -1850,7 +1850,7 @@ class PirateFemale(DirectObject.DirectObject):
             val = -val
         self.pirate.setBlendValue(val, blendName)
 
-    
+
     def setupBody(self, lodName = '2000'):
         geom = self.pirate.getGeomNode()
         self.bodys = []
@@ -1860,14 +1860,14 @@ class PirateFemale(DirectObject.DirectObject):
         for i in xrange(self.body.getNumPaths()):
             if self.body[i].getName().find('master_face') >= 0:
                 faceParts.append(self.body[i])
-            
-        
+
+
         for part in faceParts:
             self.body.removePath(part)
-        
+
         if self.newAvatars:
             self.stripTexture(self.body)
-        
+
         self.bodyPiecesToGroup = {
             0: 0,
             1: 0,
@@ -1981,9 +1981,9 @@ class PirateFemale(DirectObject.DirectObject):
                 '1000',
                 '500']:
                 bodyParts[lod] = self.pirate.getLOD(lod).find(part)
-            
+
             self.layerBodyLODs.append(bodyParts)
-        
+
         chest = NodePathCollection()
         leftArm = NodePathCollection()
         rightArm = NodePathCollection()
@@ -1996,7 +1996,7 @@ class PirateFemale(DirectObject.DirectObject):
             self.currentTattooZones[i[1]].addPath(self.layerBodyLODs[i[0]]['2000'])
             self.currentTattooZones[i[1]].addPath(self.layerBodyLODs[i[0]]['1000'])
             self.currentTattooZones[i[1]].addPath(self.layerBodyLODs[i[0]]['500'])
-        
+
         self.bodys.append(geom.findAllMatches('**/body_neck1'))
         self.bodys.append(geom.findAllMatches('**/body_neck2'))
         self.bodys.append(geom.findAllMatches('**/body_neck_back'))
@@ -2032,7 +2032,7 @@ class PirateFemale(DirectObject.DirectObject):
         self.bodys.append(geom.findAllMatches('**/body_armpit_right'))
         for part in self.bodys:
             part.stash()
-        
+
         self.currentBody = NodePathCollection()
         self.bodyTextures = loader.loadModel('models/misc/female_body.bam')
         self.notify.debug('loaded body textures %s' % self.bodyTextures)
@@ -2061,24 +2061,24 @@ class PirateFemale(DirectObject.DirectObject):
                     self.texDict[texName] = tex
                 else:
                     self.texDict[texName] = None
-            
-        
+
+
         for texName in face_textures:
             tex = self.bodyTextures.findTexture(texName)
             if tex:
                 self.texDict[texName] = tex
             else:
                 self.texDict[texName] = None
-        
+
         for texName in face_textures:
             tex = self.faceTextures.findTexture(texName)
             if tex:
                 self.faceTexturesSet.append(tex)
             else:
                 self.notify.error('missing texture')
-        
 
-    
+
+
     def setupClothing(self, lodName = '2000'):
         geom = self.pirate.getGeomNode()
         self.clothing = self.pirate.findAllMatches('**/clothing_*')
@@ -2229,9 +2229,9 @@ class PirateFemale(DirectObject.DirectObject):
                 '1000',
                 '2000']:
                 itemInfo[lod] = self.pirate.getLOD(lod).findAllMatches(item)
-            
+
             self.layer1LODs.append(itemInfo)
-        
+
         self.partLayer['SHIRT'] = self.clothingsLayer1
         self.partLayer['PANT'] = self.clothingsLayer1
         self.partLayer['SHOE'] = self.clothingsLayer1
@@ -2247,10 +2247,10 @@ class PirateFemale(DirectObject.DirectObject):
                             self.texDict[texName] = tex
                             continue
                         self.texDict[texName] = None
-                    
-                
-            
-        
+
+
+
+
         self.texDict['FP_none'] = None
         self.clothingsShirt.append([
             [
@@ -2636,7 +2636,7 @@ class PirateFemale(DirectObject.DirectObject):
                 'BELT': self.clothingsLayer2[5:],
                 'SHOE': self.clothingsLayer1[22:26] + self.clothingsLayer1[27:28],
                 'HAT': self.clothingsLayer1[28:] }
-        
+
         self.partLayer['VEST'] = self.clothingsLayer2
         self.partLayer['BELT'] = self.clothingsLayer2
         self.clothingsVest.append([
@@ -2851,9 +2851,9 @@ class PirateFemale(DirectObject.DirectObject):
                     '1000',
                     '2000']:
                     itemInfo[lod] = self.pirate.getLOD(lod).findAllMatches(item)
-                
+
                 self.layer2LODs.append(itemInfo)
-            
+
             self.generateVestSets()
             self.generateBeltSets()
             self.layer3LODs = []
@@ -2864,20 +2864,20 @@ class PirateFemale(DirectObject.DirectObject):
                     '1000',
                     '2000']:
                     itemInfo[lod] = self.pirate.getLOD(lod).findAllMatches(item)
-                
+
                 self.layer3LODs.append(itemInfo)
-            
+
             self.generateCoatSets()
-        
+
         self.generateHatSets()
         self.clothing.stash()
 
-    
+
     def setupSelectionChoices(self, type, versionFilter = None, rarityFilter = None, isFromLoot = True, isFromShop = True, isFromQuest = True, isFromPromo = True, isFromPVP = True, isFromNPC = True, holidayFilter = None):
         data = ClothingGlobals.SELECTION_CHOICES.get(type, None)
         if not data:
             return None
-        
+
         choices = data['FEMALE']
         self.choices = { }
         self.choices['FACE'] = choices.get('FACE', [])
@@ -2895,13 +2895,13 @@ class PirateFemale(DirectObject.DirectObject):
             toBeAdded = True
             if versionFilter is not None:
                 toBeAdded = ItemGlobals.getVersion(hatId) == versionFilter
-            
+
             if toBeAdded and rarityFilter is not None:
                 toBeAdded = ItemGlobals.getRarity(hatId) == rarityFilter
-            
+
             if toBeAdded and holidayFilter is not None:
                 toBeAdded = ItemGlobals.getHoliday(hatId) == holidayFilter
-            
+
             if not isFromLoot or ItemGlobals.isFromLoot(hatId):
                 if not isFromShop or ItemGlobals.isFromShop(hatId):
                     if not isFromQuest or ItemGlobals.isFromQuest(hatId):
@@ -2915,7 +2915,7 @@ class PirateFemale(DirectObject.DirectObject):
                     texId,
                     canDyeItem]
                 continue
-        
+
         choiceHats[0] = [
             0,
             0,
@@ -2930,13 +2930,13 @@ class PirateFemale(DirectObject.DirectObject):
             toBeAdded = True
             if versionFilter is not None:
                 toBeAdded = ItemGlobals.getVersion(shirtId) == versionFilter
-            
+
             if toBeAdded and rarityFilter is not None:
                 toBeAdded = ItemGlobals.getRarity(shirtId) == rarityFilter
-            
+
             if toBeAdded and holidayFilter is not None:
                 toBeAdded = ItemGlobals.getHoliday(shirtId) == holidayFilter
-            
+
             if not isFromLoot or ItemGlobals.isFromLoot(shirtId):
                 if not isFromShop or ItemGlobals.isFromShop(shirtId):
                     if not isFromQuest or ItemGlobals.isFromQuest(shirtId):
@@ -2950,13 +2950,13 @@ class PirateFemale(DirectObject.DirectObject):
                     texId,
                     canDyeItem]
                 continue
-        
+
         if type == 'NPC':
             choiceShirts[0] = [
                 0,
                 0,
                 0]
-        
+
         self.choices['SHIRT'] = choiceShirts
         vests = ItemGlobals.getGenderType(ItemGlobals.VEST, 'f', mapClothing)
         choiceVests = { }
@@ -2967,13 +2967,13 @@ class PirateFemale(DirectObject.DirectObject):
             toBeAdded = True
             if versionFilter is not None:
                 toBeAdded = ItemGlobals.getVersion(vestId) == versionFilter
-            
+
             if toBeAdded and rarityFilter is not None:
                 toBeAdded = ItemGlobals.getRarity(vestId) == rarityFilter
-            
+
             if toBeAdded and holidayFilter is not None:
                 toBeAdded = ItemGlobals.getHoliday(vestId) == holidayFilter
-            
+
             if not isFromLoot or ItemGlobals.isFromLoot(vestId):
                 if not isFromShop or ItemGlobals.isFromShop(vestId):
                     if not isFromQuest or ItemGlobals.isFromQuest(vestId):
@@ -2987,7 +2987,7 @@ class PirateFemale(DirectObject.DirectObject):
                     texId,
                     canDyeItem]
                 continue
-        
+
         choiceVests[0] = [
             0,
             0,
@@ -3002,13 +3002,13 @@ class PirateFemale(DirectObject.DirectObject):
             toBeAdded = True
             if versionFilter is not None:
                 toBeAdded = ItemGlobals.getVersion(coatId) == versionFilter
-            
+
             if toBeAdded and rarityFilter is not None:
                 toBeAdded = ItemGlobals.getRarity(coatId) == rarityFilter
-            
+
             if toBeAdded and holidayFilter is not None:
                 toBeAdded = ItemGlobals.getHoliday(coatId) == holidayFilter
-            
+
             if not isFromLoot or ItemGlobals.isFromLoot(coatId):
                 if not isFromShop or ItemGlobals.isFromShop(coatId):
                     if not isFromQuest or ItemGlobals.isFromQuest(coatId):
@@ -3022,7 +3022,7 @@ class PirateFemale(DirectObject.DirectObject):
                     texId,
                     canDyeItem]
                 continue
-        
+
         choiceCoats[0] = [
             0,
             0,
@@ -3037,13 +3037,13 @@ class PirateFemale(DirectObject.DirectObject):
             toBeAdded = True
             if versionFilter is not None:
                 toBeAdded = ItemGlobals.getVersion(pantId) == versionFilter
-            
+
             if toBeAdded and rarityFilter is not None:
                 toBeAdded = ItemGlobals.getRarity(pantId) == rarityFilter
-            
+
             if toBeAdded and holidayFilter is not None:
                 toBeAdded = ItemGlobals.getHoliday(pantId) == holidayFilter
-            
+
             if not isFromLoot or ItemGlobals.isFromLoot(pantId):
                 if not isFromShop or ItemGlobals.isFromShop(pantId):
                     if not isFromQuest or ItemGlobals.isFromQuest(pantId):
@@ -3057,13 +3057,13 @@ class PirateFemale(DirectObject.DirectObject):
                     texId,
                     canDyeItem]
                 continue
-        
+
         if type == 'NPC':
             choicePants[0] = [
                 0,
                 0,
                 0]
-        
+
         self.choices['PANT'] = choicePants
         belts = ItemGlobals.getGenderType(ItemGlobals.BELT, 'f', mapClothing)
         choiceBelts = { }
@@ -3074,13 +3074,13 @@ class PirateFemale(DirectObject.DirectObject):
             toBeAdded = True
             if versionFilter is not None:
                 toBeAdded = ItemGlobals.getVersion(beltId) == versionFilter
-            
+
             if toBeAdded and rarityFilter is not None:
                 toBeAdded = ItemGlobals.getRarity(beltId) == rarityFilter
-            
+
             if toBeAdded and holidayFilter is not None:
                 toBeAdded = ItemGlobals.getHoliday(beltId) == holidayFilter
-            
+
             if not isFromLoot or ItemGlobals.isFromLoot(beltId):
                 if not isFromShop or ItemGlobals.isFromShop(beltId):
                     if not isFromQuest or ItemGlobals.isFromQuest(beltId):
@@ -3094,7 +3094,7 @@ class PirateFemale(DirectObject.DirectObject):
                     texId,
                     canDyeItem]
                 continue
-        
+
         choiceBelts[0] = [
             0,
             0,
@@ -3109,13 +3109,13 @@ class PirateFemale(DirectObject.DirectObject):
             toBeAdded = True
             if versionFilter is not None:
                 toBeAdded = ItemGlobals.getVersion(shoeId) == versionFilter
-            
+
             if toBeAdded and rarityFilter is not None:
                 toBeAdded = ItemGlobals.getRarity(shoeId) == rarityFilter
-            
+
             if toBeAdded and holidayFilter is not None:
                 toBeAdded = ItemGlobals.getHoliday(shoeId) == holidayFilter
-            
+
             if not isFromLoot or ItemGlobals.isFromLoot(shoeId):
                 if not isFromShop or ItemGlobals.isFromShop(shoeId):
                     if not isFromQuest or ItemGlobals.isFromQuest(shoeId):
@@ -3129,32 +3129,32 @@ class PirateFemale(DirectObject.DirectObject):
                     texId,
                     canDyeItem]
                 continue
-        
+
         choiceShoes[0] = [
             0,
             0,
             0]
         self.choices['SHOE'] = choiceShoes
 
-    
+
     def setClothesTexture(self, tex, listParts, layer, color = None):
         for i in range(0, len(listParts)):
             parts = layer[listParts[i]]
             if tex:
                 parts.setTexture(tex, 1)
-            
+
             if color:
                 parts.setColorScale(color)
                 continue
-        
 
-    
+
+
     def setPartTexture(self, part, geomIdx, texIdx, pieces):
         length = len(clothes_textures[part][geomIdx])
         if length == 0 or texIdx >= length:
             self.notify.debug('returning early')
             return None
-        
+
         texture = clothes_textures[part][geomIdx][texIdx]
         texName = texture[0].split('+')
         lowLODColor = texture[1]
@@ -3168,32 +3168,32 @@ class PirateFemale(DirectObject.DirectObject):
             if len(pieces) > 2:
                 self.setClothesTexture(tex, [
                     pieces[2]], self.partLayer[part], lowLODColor)
-            
+
             tex = self.clothesTextures.findTexture(texName[1])
             self.setClothesTexture(tex, [
                 pieces[1]], self.partLayer[part], lowLODColor)
 
-    
+
     def getTextureName(self, partIdx, idx, texIdx):
-        
+
         try:
             return clothes_textures[partIdx][idx][texIdx]
         except:
             return None
 
 
-    
+
     def handleClothesHiding(self):
         if not self.newAvatars:
             self.handleClothesHidingOld()
             self.setupTattoos()
             return None
-        
+
         self.notify.debug('should never get here in MAP with want-new-avatars turned on')
         dna = self.pirate.style
         if self.pirate.zombie and 0:
             dna = self.dnaZomb
-        
+
         bodySet = [
             set(),
             set(),
@@ -3210,11 +3210,11 @@ class PirateFemale(DirectObject.DirectObject):
             shirtIdx = self.dnaZomb.getClothesShirt()
             vestIdx = self.dnaZomb.getClothesVest()
             pantIdx = self.dnaZomb.getClothesPant()
-        
+
         style2Pant = 'neither'
         if shirtIdx[0] > 3:
             style2pant = 'belt'
-        
+
         if beltIdx[0] != 0:
             style1 = 'belt'
             style2Pant = 'belt'
@@ -3239,7 +3239,7 @@ class PirateFemale(DirectObject.DirectObject):
             style3Shirt = 'neither'
             if shirtIdx[0] > 3:
                 style2Pant = 'belt'
-            
+
         if coatIdx[0] > 0:
             style2Shirt = 'coat'
         else:
@@ -3290,7 +3290,7 @@ class PirateFemale(DirectObject.DirectObject):
             pantColor = dna.lookupClothesBotColor()[0]
             currentPant.setTexture(self.texDict[texInfo[0]])
             currentPant.setColorScale(pantColor)
-        
+
         self.currentClothingModels['SHOE'].stash()
         currentShoe.unstash()
         self.currentClothingModels['SHOE'] = currentShoe
@@ -3298,7 +3298,7 @@ class PirateFemale(DirectObject.DirectObject):
         if self.texDict[texInfo[0]]:
             shoeColor = dna.lookupClothesBotColor()[2]
             currentShoe.setTexture(self.texDict[texInfo[0]])
-        
+
         self.currentClothingModels['SHIRT'].stash()
         self.currentClothingModels['SHIRT'] = currentShirt
         if vestIdx[0] <= 2 and coatIdx[0] not in (3, 4):
@@ -3308,12 +3308,12 @@ class PirateFemale(DirectObject.DirectObject):
                 currentShirt.setTexture(self.texDict[texInfo[0]])
                 shirtColor = dna.lookupClothesTopColor()[0]
                 currentShirt.setColorScale(shirtColor)
-            
+
             self.currentClothingModels['SHIRT'] = currentShirt
             for i in layerShirt[1:]:
                 bodySet[self.bodyPiecesToGroup[-i]].add(-i)
-            
-        
+
+
         self.currentClothingModels['VEST'].stash()
         if coatIdx[0] not in (3, 4):
             currentVest.unstash()
@@ -3323,11 +3323,11 @@ class PirateFemale(DirectObject.DirectObject):
                 vestColor = dna.lookupClothesTopColor()[1]
                 currentVest.setTexture(self.texDict[texInfo[0]])
                 currentVest.setColorScale(vestColor)
-            
+
             for i in layerVest[1:]:
                 bodySet[self.bodyPiecesToGroup[-i]].add(-i)
-            
-        
+
+
         self.handleHeadHiding()
         self.currentClothingModels['BELT'][0].stash()
         self.currentClothingModels['BELT'][1].stash()
@@ -3342,26 +3342,26 @@ class PirateFemale(DirectObject.DirectObject):
                 tex2 = self.texDict[texNames[1]]
                 if tex1:
                     currentBelt[0].setTexture(tex1)
-                
+
                 if tex2:
                     currentBelt[1].setTexture(tex2)
-                
+
             else:
                 tex1 = self.texDict[texNames[0]]
                 if tex1:
                     currentBelt[0].setTexture(tex1)
                     currentBelt[1].setTexture(tex1)
-                
+
             beltColor = dna.lookupClothesBotColor()[1]
             for i in [
                 0,
                 1]:
                 currentBelt[i].setColorScale(beltColor)
-            
+
             for i in layerBelt[1:]:
                 bodySet[self.bodyPiecesToGroup[-i]].add(-i)
-            
-        
+
+
         self.currentClothingModels['COAT'].stash()
         currentCoat.unstash()
         self.currentClothingModels['COAT'] = currentCoat
@@ -3370,21 +3370,18 @@ class PirateFemale(DirectObject.DirectObject):
             coatColor = dna.lookupClothesTopColor()[2]
             currentCoat.setTexture(self.texDict[texInfo[0]])
             currentCoat.setColorScale(coatColor)
-        
+
         for partSet in [
             layerCoat,
             layerPant,
             layerShoe]:
             for i in partSet[1:]:
                 bodySet[self.bodyPiecesToGroup[-i]].add(-i)
-            
-        
-        continue
+
         bodyList = [ list(x) for x in bodySet ]
         for pieces in bodyList:
             pieces.sort()
-        
-        continue
+
         bodyTuple = [ tuple(x) for x in bodyList ]
         for i in xrange(3):
             if bodyTuple[i] not in self.bodySets[i]:
@@ -3395,17 +3392,14 @@ class PirateFemale(DirectObject.DirectObject):
                         if j not in bodySet[i]:
                             self.layerBodyLODs[j][lod].copyTo(flattenMe)
                             continue
-                    
                     flattenMe.flattenStrong()
                     lodParts = flattenMe.findAllMatches('**/+GeomNode')
                     self.stripTexture(lodParts)
                     lodParts.reparentTo(self.pirate.getLOD(lod).getChild(0))
                     flattenedSet.addPathsFrom(lodParts)
-                
+
                 self.bodySets[i][bodyTuple[i]] = flattenedSet
-                continue
-            []
-        
+
         if self.pirate.zombie:
             bodyTexIdx = ZOMB_BODY_TEXTURE
         else:
@@ -3421,7 +3415,7 @@ class PirateFemale(DirectObject.DirectObject):
         currentBody.addPathsFrom(currentRightArm)
         if tex:
             currentBody.setTexture(tex)
-        
+
         if self.pirate.zombie:
             skinColor = VBase4(1, 1, 1, 1)
         elif hasattr(self.pirate, 'crazyColorSkin') and self.pirate.crazyColorSkin == True:
@@ -3441,14 +3435,14 @@ class PirateFemale(DirectObject.DirectObject):
             self.faces[0]]
         self.setupTattoos()
 
-    
+
     def handleClothesHidingOld(self):
         self.clothing.stash()
         self.body.unstash()
         dna = self.pirate.style
         if self.pirate.zombie:
             dna = self.dnaZomb
-        
+
         shirtIdx = dna.getClothesShirt()
         vestIdx = dna.getClothesVest()
         coatIdx = dna.getClothesCoat()
@@ -3461,62 +3455,62 @@ class PirateFemale(DirectObject.DirectObject):
         parts = NodePathCollection()
         if self.clothesTextures != None:
             self.setPartTexture('PANT', pantIdx[0], pantIdx[1], layerPant[0])
-        
+
         for j in range(0, len(layerPant[0])):
             parts = self.clothingsLayer1[layerPant[0][j]]
             if parts.getNumPaths():
                 parts.unstash()
                 continue
-        
+
         self.handleLayer1Hiding(layerPant)
         layerShoe = self.clothingsShoe[shoeIdx[0]]
         parts = NodePathCollection()
         if self.clothesTextures != None:
             self.setPartTexture('SHOE', shoeIdx[0], shoeIdx[1], layerShoe[0])
-        
+
         for j in range(0, len(layerShoe[0])):
             parts = self.clothingsLayer1[layerShoe[0][j]]
             if parts.getNumPaths():
                 parts.unstash()
                 continue
-        
+
         self.handleLayer1Hiding(layerShoe)
         if shoeIdx[0] == 4:
             self.handleLayer2Hiding(self.clothingsLayer1, layerPant, 'knee', 'uppercalf')
             if pantIdx[0] == 2:
                 self.handleLayer2Hiding(self.clothingsLayer1, layerShoe, 'top')
-            
-        
+
+
         layerShirt = self.clothingsShirt[shirtIdx[0]]
         parts = NodePathCollection()
         if vestIdx[0] < 3:
             if self.clothesTextures != None:
                 self.setPartTexture('SHIRT', shirtIdx[0], shirtIdx[1], layerShirt[0])
-            
+
             for j in range(0, len(layerShirt[0])):
                 parts = self.clothingsLayer1[layerShirt[0][j]]
                 if parts.getNumPaths():
                     parts.unstash()
                     continue
-            
+
             if parts.getNumPaths():
                 self.handleLayer1Hiding(layerShirt)
-            
+
             if shirtIdx[0] > 3:
                 self.handleLayer2Hiding(self.clothingsLayer1, layerPant, 'belt')
-            
-        
+
+
         layerVest = self.clothingsVest[vestIdx[0]]
         parts = NodePathCollection()
         if self.clothesTextures != None:
             self.setPartTexture('VEST', vestIdx[0], vestIdx[1], layerVest[0])
-        
+
         for j in range(0, len(layerVest[0])):
             parts = self.clothingsLayer2[layerVest[0][j]]
             if parts.getNumPaths():
                 parts.unstash()
                 continue
-        
+
         if parts.getNumPaths():
             if vestIdx[0] == 1:
                 self.handleLayer2Hiding(self.clothingsLayer1, layerShirt, 'base', 'low_vcut', 'front')
@@ -3533,35 +3527,35 @@ class PirateFemale(DirectObject.DirectObject):
             else:
                 self.handleLayer2Hiding(self.clothingsLayer1, layerPant, 'belt')
                 self.handleLayer1Hiding(layerVest)
-        
+
         self.handleHeadHiding()
         layerBelt = self.clothingsBelt[beltIdx[0]]
         parts = NodePathCollection()
         if self.clothesTextures != None:
             self.setPartTexture('BELT', beltIdx[0], beltIdx[1], layerBelt[0])
-        
+
         for j in range(0, len(layerBelt[0])):
             parts = self.clothingsLayer2[layerBelt[0][j]]
             if parts.getNumPaths():
                 parts.unstash()
                 continue
-        
+
         if parts.getNumPaths():
             self.handleLayer2Hiding(self.clothingsLayer1, layerShirt, 'belt')
             self.handleLayer2Hiding(self.clothingsLayer1, layerPant, 'belt')
             self.handleLayer2Hiding(self.clothingsLayer2, layerVest, 'belt')
-        
+
         layerCoat = self.clothingsCoat[coatIdx[0]]
         parts = NodePathCollection()
         if self.clothesTextures != None:
             self.setPartTexture('COAT', coatIdx[0], coatIdx[1], layerCoat[0])
-        
+
         for j in range(0, len(layerCoat[0])):
             parts = self.clothingsLayer3[layerCoat[0][j]]
             if parts.getNumPaths():
                 parts.unstash()
                 continue
-        
+
         if coatIdx[0] == 3:
             self.handleLayer3Hiding(self.clothingsLayer2, layerVest, layerShirt, True)
             self.handleLayer3Hiding(self.clothingsLayer2, layerBelt, None, True)
@@ -3578,43 +3572,43 @@ class PirateFemale(DirectObject.DirectObject):
             if pantIdx[0] == 2:
                 if coatIdx[0] == 1:
                     self.handleLayer2Hiding(self.clothingsLayer1, layerPant, 'side', 'longcoat', 'tails')
-                
+
                 if coatIdx[0] == 2:
                     self.handleLayer2Hiding(self.clothingsLayer1, layerPant, 'side', 'interior', 'back')
-                
+
             else:
                 self.handleLayer2Hiding(self.clothingsLayer1, layerPant, 'interior')
             self.handleLayer1Hiding(layerCoat)
-        
+
         self.pirate.generateColor()
         self.pirate.generateClothesColor()
 
-    
+
     def handleClothesGui(self, type, texIdx):
         clothing = self.currentClothing[type]
         if texIdx >= len(clothes_textures[type][clothing[0]]):
             self.currentClothing[type][1] = 0
-        
+
         if texIdx < 0:
             self.currentClothing[type][1] = len(clothes_textures[type][clothing[0]]) - 1
-        
+
         self.pirate.setClothesByType(type, clothing[0], clothing[1])
         self.handleClothesHiding()
 
-    
+
     def getTextureChoices(self, clothesIdx):
         return clothes_textures[clothesIdx]
 
-    
+
     def handleLayer1Hiding(self, element):
         parts = self.bodys
         for i in range(1, len(element)):
             idx = element[i]
             parts[-idx].stash()
             self.notify.debug('hiding %s' % parts[-idx][0].getName())
-        
 
-    
+
+
     def handleLayer2Hiding(self, clothingLayer, layer1Element, hide1 = 'base', hide2 = None, hide3 = None, hide4 = None):
         for i in range(0, len(layer1Element[0])):
             parts = clothingLayer[layer1Element[0][i]]
@@ -3635,10 +3629,10 @@ class PirateFemale(DirectObject.DirectObject):
                     parts[j].stash()
                     self.notify.debug('hiding %s' % parts[j].getName())
                     continue
-            
-        
 
-    
+
+
+
     def handleLayer3Hiding(self, clothingLayer, layer2Element, layer1Element, hideAll = False):
         for i in range(0, len(layer2Element[0])):
             parts = clothingLayer[layer2Element[0][i]]
@@ -3651,11 +3645,11 @@ class PirateFemale(DirectObject.DirectObject):
                     parts[j].stash()
                     self.notify.debug('hiding %s' % parts[j].getName())
                     continue
-            
-        
+
+
         if layer1Element == None:
             return None
-        
+
         for i in range(0, len(layer1Element[0])):
             parts = self.clothingsLayer1[layer1Element[0][i]]
             for j in range(0, parts.getNumPaths()):
@@ -3665,24 +3659,24 @@ class PirateFemale(DirectObject.DirectObject):
                 if parts[j].getName().find('front') < 0:
                     if parts[j].getName().find('vcut') < 0:
                         parts[j].stash()
-                    
-                parts[j].getName().find('vcut') < 0
-            
-        
 
-    
+                parts[j].getName().find('vcut') < 0
+
+
+
+
     def getTattooBaseTexture(self):
         return 'female_tattoomap'
 
-    
+
     def handleTattooMapping(self):
         parts = self.body.getNumPaths()
         (tex, scale) = TattooGlobals.getTattooImage(0)
         for i in range(parts):
             self.body.getPath(i).setTexture(self.tattooStage, tex)
-        
 
-    
+
+
     def hideAllJewelry(self):
         self.jewelryLEarIdx = [
             0,
@@ -3719,7 +3713,7 @@ class PirateFemale(DirectObject.DirectObject):
         self.accFace.stash()
         self.accBody.stash()
 
-    
+
     def handleJewelryHiding(self):
         jewelryDNA = {
             'LEar': self.pirate.style.getJewelryZone1(),
@@ -3737,7 +3731,7 @@ class PirateFemale(DirectObject.DirectObject):
             newIdx = jewelryDNA[key][0]
             for np in self.jewelrySets[key][oldIdx]:
                 np.stash()
-            
+
             for npIdx in range(len(self.jewelrySets[key][newIdx])):
                 np = self.jewelrySets[key][newIdx][npIdx]
                 np.unstash()
@@ -3747,11 +3741,11 @@ class PirateFemale(DirectObject.DirectObject):
                 if secondaryColor:
                     np.setColor(secondaryColor)
                     continue
-            
-            self.currentJewelry[key] = jewelryDNA[key]
-        
 
-    
+            self.currentJewelry[key] = jewelryDNA[key]
+
+
+
     def handleJewelryOptions(self, key, increment = True):
         options = jewelry_options[key]
         idx = self.currentJewelry[key][0]
@@ -3764,24 +3758,24 @@ class PirateFemale(DirectObject.DirectObject):
             length = len(self.jewelrySets[key])
             if idx >= length:
                 idx = 0
-            
+
         else:
             idx -= 1
             length = len(self.jewelrySets[key])
             if idx < length:
                 idx = length - 1
-            
+
         self.jewelrySets[key][idx][0].unstash()
         if primaryColor:
             self.jewelrySets[key][idx][0].setColorScale(primaryColor)
-        
+
         self.jewelrySets[key][idx][1].unstash()
         if secondaryColor:
             self.jewelrySets[key][idx][1].setColorScale(secondaryColor)
-        
+
         self.currentJewelry[key][0] = idx
 
-    
+
     def initialParts(self):
         self.clothing.stash()
         self.hair.stash()
@@ -3793,7 +3787,7 @@ class PirateFemale(DirectObject.DirectObject):
         self.accBody.stash()
         self.accFace.stash()
 
-    
+
     def setFromDNA(self):
         zombie = self.pirate.zombie
         self.notify.debug('Zombie? %s' % zombie)
@@ -3805,13 +3799,13 @@ class PirateFemale(DirectObject.DirectObject):
             self.bodys[11].stash()
         elif zombie:
             self.makeZombie()
-        
+
         self.handleClothesHiding()
         self.hairIdx = self.pirate.style.getHairHair()
         self.handleJewelryHiding()
         self.handleHeadHiding()
 
-    
+
     def makeZombie(self):
         self.dnaZomb.setHairColor(ZOMB_HAIR_COLOR)
         self.dnaZomb.setClothesShirt(ZOMB_SHIRT, ZOMB_SHIRT_TEXTURE)
@@ -3823,11 +3817,11 @@ class PirateFemale(DirectObject.DirectObject):
         self.dnaZomb.setClothesTopColor(0, 0, 0)
         self.dnaZomb.setClothesBotColor(0, 0, 0)
 
-    
+
     def generatePantSets(self):
         self.pantSets = []
         tex = self.clothesTextures.findTexture(clothes_textures['PANT'][1][0][0])
-        
+
         def getBasicData():
             return {
                 'tallBoot': {
@@ -3888,131 +3882,131 @@ class PirateFemale(DirectObject.DirectObject):
                         tallBoot = False
                         if name.find('interior') < 0:
                             anyCoat = True
-                        
+
                         if name.find('side') < 0:
                             if name.find('longcoat') < 0 and name.find('tails') < 0:
                                 longCoat = True
-                            
+
                             if name.find('navyCoat') < 0:
                                 navyCoat = True
-                            
+
                             if anyCoat and name.find('back') < 0:
                                 shortCoat = True
-                            
-                        
+
+
                         if name.find('belt') < 0:
                             belt = True
                             if name.find('_abs') < 0:
                                 lowVest = True
-                            
-                        
+
+
                         if name.find('knee') < 0 and name.find('uppercalf') < 0:
                             tallBoot = True
-                        
+
                         pantData['shortBoot']['neither']['noCoat'].addPath(piece)
                         if skirt:
                             if longCoat:
                                 pantData['shortBoot']['neither']['longCoat'].addPath(piece)
-                            
+
                             if shortCoat:
                                 pantData['shortBoot']['neither']['shortCoat'].addPath(piece)
-                            
+
                             if navyCoat:
                                 pantData['shortBoot']['neither']['navyCoat'].addPath(piece)
-                            
+
                         elif anyCoat:
                             pantData['shortBoot']['neither']['longCoat'].addPath(piece)
                             pantData['shortBoot']['neither']['shortCoat'].addPath(piece)
                             pantData['shortBoot']['neither']['navyCoat'].addPath(piece)
-                        
+
                         if belt:
                             pantData['shortBoot']['belt']['noCoat'].addPath(piece)
                             if skirt:
                                 if longCoat:
                                     pantData['shortBoot']['belt']['longCoat'].addPath(piece)
-                                
+
                                 if shortCoat:
                                     pantData['shortBoot']['belt']['shortCoat'].addPath(piece)
-                                
+
                                 if navyCoat:
                                     pantData['shortBoot']['belt']['navyCoat'].addPath(piece)
-                                
+
                             elif anyCoat:
                                 pantData['shortBoot']['belt']['longCoat'].addPath(piece)
                                 pantData['shortBoot']['belt']['shortCoat'].addPath(piece)
                                 pantData['shortBoot']['belt']['navyCoat'].addPath(piece)
-                            
-                        
+
+
                         if lowVest:
                             pantData['shortBoot']['lowVest']['noCoat'].addPath(piece)
                             if skirt:
                                 if longCoat:
                                     pantData['shortBoot']['lowVest']['longCoat'].addPath(piece)
-                                
+
                                 if shortCoat:
                                     pantData['shortBoot']['lowVest']['shortCoat'].addPath(piece)
-                                
+
                             elif anyCoat:
                                 pantData['shortBoot']['lowVest']['longCoat'].addPath(piece)
                                 pantData['shortBoot']['lowVest']['shortCoat'].addPath(piece)
                                 pantData['shortBoot']['lowVest']['navyCoat'].addPath(piece)
-                            
-                        
+
+
                         if tallBoot:
                             pantData['tallBoot']['neither']['noCoat'].addPath(piece)
                             if skirt:
                                 if longCoat:
                                     pantData['tallBoot']['neither']['longCoat'].addPath(piece)
-                                
+
                                 if shortCoat:
                                     pantData['tallBoot']['neither']['shortCoat'].addPath(piece)
-                                
+
                                 if navyCoat:
                                     pantData['tallBoot']['neither']['navyCoat'].addPath(piece)
-                                
+
                             elif anyCoat:
                                 pantData['tallBoot']['neither']['longCoat'].addPath(piece)
                                 pantData['tallBoot']['neither']['shortCoat'].addPath(piece)
                                 pantData['tallBoot']['neither']['navyCoat'].addPath(piece)
-                            
+
                             if belt:
                                 pantData['tallBoot']['belt']['noCoat'].addPath(piece)
                                 if skirt:
                                     if longCoat:
                                         pantData['tallBoot']['belt']['longCoat'].addPath(piece)
-                                    
+
                                     if shortCoat:
                                         pantData['tallBoot']['belt']['shortCoat'].addPath(piece)
-                                    
+
                                     if navyCoat:
                                         pantData['tallBoot']['belt']['navyCoat'].addPath(piece)
-                                    
+
                                 elif anyCoat:
                                     pantData['tallBoot']['belt']['longCoat'].addPath(piece)
                                     pantData['tallBoot']['belt']['shortCoat'].addPath(piece)
                                     pantData['tallBoot']['belt']['navyCoat'].addPath(piece)
-                                
-                            
+
+
                             if lowVest:
                                 pantData['tallBoot']['lowVest']['noCoat'].addPath(piece)
                                 if skirt:
                                     if longCoat:
                                         pantData['tallBoot']['lowVest']['longCoat'].addPath(piece)
-                                    
+
                                     if shortCoat:
                                         pantData['tallBoot']['lowVest']['shortCoat'].addPath(piece)
-                                    
+
                                     if navyCoat:
                                         pantData['tallBoot']['lowVest']['navyCoat'].addPath(piece)
-                                    
+
                                 elif anyCoat:
                                     pantData['tallBoot']['lowVest']['longCoat'].addPath(piece)
                                     pantData['tallBoot']['lowVest']['shortCoat'].addPath(piece)
                                     pantData['tallBoot']['lowVest']['navyCoat'].addPath(piece)
-                                
-                            
-                    
-                
+
+
+
+
                 for style1 in [
                     'shortBoot',
                     'tallBoot']:
@@ -4028,14 +4022,14 @@ class PirateFemale(DirectObject.DirectObject):
                             data = pantData[style1][style2][style3]
                             geomSet = self.flattenData(data, lod, tex)
                             flattenedSet[style1][style2][style3].addPathsFrom(geomSet)
-                        
-                    
-                
-            
-            self.pantSets.append(flattenedSet)
-        
 
-    
+
+
+
+            self.pantSets.append(flattenedSet)
+
+
+
     def generateHatSets(self):
         self.hatSets = []
         for hatIdx in xrange(len(self.clothingsHat)):
@@ -4057,15 +4051,15 @@ class PirateFemale(DirectObject.DirectObject):
                     for i in xrange(pieceSet.getNumPaths()):
                         piece = pieceSet[i]
                         hatData.addPath(piece)
-                    
+
                     geomSet = self.flattenHatData(hatData, lod)
                     flattenedSet.addPathsFrom(geomSet)
-                
-            
-            self.hatSets.append(flattenedSet)
-        
 
-    
+
+            self.hatSets.append(flattenedSet)
+
+
+
     def generateShoeSets(self):
         self.shoeSets = []
         for shoeIdx in xrange(len(self.clothingsShoe)):
@@ -4095,27 +4089,27 @@ class PirateFemale(DirectObject.DirectObject):
                         if shoeIdx == 4:
                             if piece.getName().find('top') < 0:
                                 shoeData['skirt'].addPath(piece)
-                            
-                        
+
+
                         shoeData['pants'].addPath(piece)
-                    
-                
+
+
                 data = shoeData
                 if shoeIdx == 4:
                     geomSet = self.flattenData(data['skirt'], lod, tex)
                     flattenedSet['skirt'].addPathsFrom(geomSet)
-                
+
                 geomSet = self.flattenData(data['pants'], lod, tex)
                 flattenedSet['pants'].addPathsFrom(geomSet)
-            
-            self.shoeSets.append(flattenedSet)
-        
 
-    
+            self.shoeSets.append(flattenedSet)
+
+
+
     def generateShirtSets(self):
         self.shirtSets = []
         tex = self.clothesTextures.findTexture(clothes_textures['SHIRT'][1][0][0])
-        
+
         def getBasicData():
             return {
                 'belt': {
@@ -4160,26 +4154,26 @@ class PirateFemale(DirectObject.DirectObject):
                         shirtData['nobelt']['noCoat'].addPath(piece)
                         if coat:
                             shirtData['nobelt']['coat'].addPath(piece)
-                        
+
                         if belt:
                             shirtData['belt']['noCoat']['neither'].addPath(piece)
                             if vest1:
                                 shirtData['belt']['noCoat']['vest1'].addPath(piece)
-                            
+
                             if vest2:
                                 shirtData['belt']['noCoat']['vest2'].addPath(piece)
-                            
+
                             if coat:
                                 shirtData['belt']['coat']['neither'].addPath(piece)
                                 if vest1:
                                     shirtData['belt']['coat']['vest1'].addPath(piece)
-                                
+
                                 if vest2:
                                     shirtData['belt']['coat']['vest2'].addPath(piece)
-                                
-                            
-                    
-                
+
+
+
+
                 for style2 in [
                     'coat',
                     'noCoat']:
@@ -4190,22 +4184,22 @@ class PirateFemale(DirectObject.DirectObject):
                         data = shirtData['belt'][style2][style3]
                         geomSet = self.flattenData(data, lod, tex)
                         flattenedSet['belt'][style2][style3].addPathsFrom(geomSet)
-                    
-                
+
+
                 for style2 in [
                     'coat',
                     'noCoat']:
                     data = shirtData['nobelt'][style2]
                     geomSet = self.flattenData(data, lod, tex)
                     flattenedSet['nobelt'][style2].addPathsFrom(geomSet)
-                
-            
-            self.shirtSets.append(flattenedSet)
-        
 
-    
+
+            self.shirtSets.append(flattenedSet)
+
+
+
     def generateVestSets(self):
-        
+
         def getBasicData():
             return {
                 'belt': {
@@ -4245,35 +4239,35 @@ class PirateFemale(DirectObject.DirectObject):
                         coat = name.find('front') >= 0
                         if pants:
                             vestData['nobelt']['noCoat']['pants'].addPath(piece)
-                        
+
                         if skirt:
                             vestData['nobelt']['noCoat']['skirt'].addPath(piece)
-                        
+
                         if coat:
                             if pants:
                                 vestData['nobelt']['coat']['pants'].addPath(piece)
-                            
+
                             if skirt:
                                 vestData['nobelt']['coat']['skirt'].addPath(piece)
-                            
-                        
+
+
                         if belt:
                             if pants:
                                 vestData['belt']['noCoat']['pants'].addPath(piece)
-                            
+
                             if skirt:
                                 vestData['belt']['noCoat']['skirt'].addPath(piece)
-                            
+
                             if coat:
                                 if pants:
                                     vestData['belt']['coat']['pants'].addPath(piece)
-                                
+
                                 if skirt:
                                     vestData['belt']['coat']['skirt'].addPath(piece)
-                                
-                            
-                    
-                
+
+
+
+
                 for style1 in [
                     'belt',
                     'nobelt']:
@@ -4286,14 +4280,14 @@ class PirateFemale(DirectObject.DirectObject):
                             data = vestData[style1][style2][style3]
                             geomSet = self.flattenData(data, lod, tex)
                             flattenedSet[style1][style2][style3].addPathsFrom(geomSet)
-                        
-                    
-                
-            
-            self.vestSets.append(flattenedSet)
-        
 
-    
+
+
+
+            self.vestSets.append(flattenedSet)
+
+
+
     def generateCoatSets(self):
         self.coatSets = []
         for coatIdx in xrange(len(self.clothingsCoat)):
@@ -4307,11 +4301,11 @@ class PirateFemale(DirectObject.DirectObject):
                 '500']:
                 geomSet = self.flattenSet(coat[0], self.layer3LODs, lod, tex)
                 flattenedSet.addPathsFrom(geomSet)
-            
-            self.coatSets.append(flattenedSet)
-        
 
-    
+            self.coatSets.append(flattenedSet)
+
+
+
     def generateBeltSets(self):
         self.beltSets = []
         tex = self.clothesTextures.findTexture(clothes_textures['VEST'][1][0][0].split('+')[0])
@@ -4346,7 +4340,7 @@ class PirateFemale(DirectObject.DirectObject):
                     if name.find('_cloth') < 0 and name.find('interior') < 0:
                         beltData['coat3'][0].addPath(piece)
                         continue
-                
+
                 if len(belt[0]) > 2:
                     idx3 = belt[0][2]
                     pieceSet3 = self.layer2LODs[idx3][lod]
@@ -4357,8 +4351,8 @@ class PirateFemale(DirectObject.DirectObject):
                         if name.find('_cloth') < 0 and name.find('interior') < 0:
                             beltData['coat3'][0].addPath(piece)
                             continue
-                    
-                
+
+
                 if len(belt[0]) > 1:
                     idx2 = belt[0][1]
                     pieceSet2 = self.layer2LODs[idx2][lod]
@@ -4369,8 +4363,8 @@ class PirateFemale(DirectObject.DirectObject):
                         if name.find('_cloth') < 0 and name.find('interior') < 0:
                             beltData['coat3'][0].addPath(piece)
                             continue
-                    
-                
+
+
                 for style in [
                     'full',
                     'coat3']:
@@ -4382,7 +4376,7 @@ class PirateFemale(DirectObject.DirectObject):
                         for j in xrange(data[i].getNumPaths()):
                             nc = data[i][j]
                             nc.copyTo(flattenNode)
-                        
+
                         flattenNode.flattenStrong()
                         geomSet = flattenNode.findAllMatches('**/+GeomNode')
                         geomSet.reparentTo(self.pirate.getLOD(lod).getChild(0))
@@ -4390,13 +4384,13 @@ class PirateFemale(DirectObject.DirectObject):
                         geomSet.stash()
                         flattenNode.removeNode()
                         flattenedSet[style][i].addPathsFrom(geomSet)
-                    
-                
-            
-            self.beltSets.append(flattenedSet)
-        
 
-    
+
+
+            self.beltSets.append(flattenedSet)
+
+
+
     def generateHairSets(self):
         cuts = [
             '',
@@ -4423,12 +4417,12 @@ class PirateFemale(DirectObject.DirectObject):
             'cut_c',
             'cut_c',
             'cut_c']
-        
+
         def getBasicData():
             data = []
             for i in xrange(len(self.hats)):
                 data.append(NodePathCollection())
-            
+
             return data
 
         dreads = self.hairPieces[14]
@@ -4436,7 +4430,7 @@ class PirateFemale(DirectObject.DirectObject):
             if dreads[i].getName().find('acc') >= 0:
                 dreads[i].setColorScaleOff(10)
                 continue
-        
+
         nonCutOpts = { }
         self.hairSets = []
         dataCache = {
@@ -4473,16 +4467,16 @@ class PirateFemale(DirectObject.DirectObject):
                                     hairCutIndices.add(partIdx)
                                     hairData.addPath(hairCut[j])
                                     cutFound = 1
-                                
+
                             hairCut[j].getName().find(cuts[hatIdx + 1]) >= 0
-                        
+
                         if not cutFound:
                             if partIdx == 2:
                                 hairIndices.add(partIdx)
                                 hairData.addPathsFrom(hair)
-                            
+
                         partIdx == 2
-                    
+
                     hl = list(hairIndices)
                     hl.sort()
                     t1 = tuple(hl)
@@ -4499,47 +4493,47 @@ class PirateFemale(DirectObject.DirectObject):
                         geomSet = self.flattenData(hairData, lod, False)
                     flattenedSet[hatIdx].addPathsFrom(geomSet)
                     dataCache[lod][(hatIdx, t1, t2)] = geomSet
-                
-            
+
+
             self.hairSets.append(flattenedSet)
-        
+
         self.dataCache = dataCache
 
-    
+
     def flattenSet(self, parts, layerSet, lod, texStrip = True):
         flattenMe = NodePath('flattenMe')
         for i in parts:
             geomData = layerSet[i][lod]
             for j in xrange(geomData.getNumPaths()):
                 geomData[j].copyTo(flattenMe)
-            
-        
+
+
         flattenMe.flattenStrong()
         geomSet = flattenMe.findAllMatches('**/+GeomNode')
         if texStrip:
             self.stripTexture(geomSet)
-        
+
         geomSet.reparentTo(self.pirate.getLOD(lod).getChild(0))
         geomSet.stash()
         return geomSet
 
-    
+
     def flattenData(self, geomData, lod, texStrip = True, overrideNode = None, flattenStrong = True):
         flattenMe = NodePath('flattenMe')
         for i in xrange(geomData.getNumPaths()):
             geomData[i].copyTo(flattenMe)
-        
+
         if flattenStrong:
             flattenMe.flattenStrong()
-        
+
         if lod == '500':
             gr = SceneGraphReducer()
             gr.makeCompatibleFormat(flattenMe.node(), 0)
-        
+
         geomSet = flattenMe.findAllMatches('**/+GeomNode')
         if texStrip:
             self.stripTexture(geomSet)
-        
+
         if overrideNode:
             overrideNP = self.pirate.getLOD(lod).getChild(0).attachNewNode(overrideNode)
             geomSet.reparentTo(overrideNP)
@@ -4550,7 +4544,7 @@ class PirateFemale(DirectObject.DirectObject):
         geomSet.stash()
         return geomSet
 
-    
+
     def flattenHatData(self, geomData, lod):
         flattenMe = NodePath('flattenMe')
         for i in xrange(geomData.getNumPaths()):
@@ -4563,26 +4557,26 @@ class PirateFemale(DirectObject.DirectObject):
                     if geomState.getAttrib(TextureAttrib.getClassType()).getTexture():
                         if geomState.getAttrib(TextureAttrib.getClassType()).getTexture().getName().find('feather') < 0:
                             geomNode.setGeomState(j, geomState.removeAttrib(TextureAttrib.getClassType()))
-                        
-                    
+
+
                 geomState.getAttrib(TextureAttrib.getClassType()).getTexture()
-            
-        
+
+
         geomSet = flattenMe.findAllMatches('**/+GeomNode')
         for i in xrange(geomSet.getNumPaths()):
             geomSet.reparentTo(self.pirate.getLOD(lod).getChild(0))
             geomSet.stash()
-        
+
         return geomSet
 
-    
+
     def stripTexture(self, geomSet):
         for i in xrange(geomSet.getNumPaths()):
             geomNode = geomSet[i].node()
             for j in xrange(geomNode.getNumGeoms()):
                 geomState = geomNode.getGeomState(j)
                 geomNode.setGeomState(j, geomState.removeAttrib(TextureAttrib.getClassType()))
-            
-        
+
+
 
 

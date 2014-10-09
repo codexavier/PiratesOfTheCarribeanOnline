@@ -26,7 +26,7 @@ from direct.controls.SwimWalker import SwimWalker
 from direct.controls.TwoDWalker import TwoDWalker
 from otp.nametag.Nametag import Nametag
 from otp.ai.MagicWordGlobal import *
-from toontown.toonbase import ToontownGlobals
+
 
 class LocalAvatar(DistributedAvatar.DistributedAvatar, DistributedSmoothNode.DistributedSmoothNode):
     notify = DirectNotifyGlobal.directNotify.newCategory('LocalAvatar')
@@ -1230,59 +1230,3 @@ class LocalAvatar(DistributedAvatar.DistributedAvatar, DistributedSmoothNode.Dis
 
     def canChat(self):
         return 0
-
-@magicWord(category=CATEGORY_MOBILITY)
-def run():
-    """Toggle "running", which makes you move much faster."""
-    inputState.set('debugRunning', inputState.isSet('debugRunning') != True)
-
-@magicWord(category=CATEGORY_MOBILITY)
-def collisionsOff():
-    """Turn off collisions. This allows you to run through things, and walk in air."""
-    if not base.localAvatar:
-        return 'No localAvatar!'
-    base.localAvatar.collisionsOff()
-
-@magicWord(category=CATEGORY_MOBILITY)
-def collisionsOn():
-    """Re-enable collisions."""
-    if not base.localAvatar:
-        return 'No localAvatar!'
-    base.localAvatar.collisionsOn()
-    
-@magicWord(category=CATEGORY_MOBILITY)
-def enableAFGravity():
-    """Turn on Estate April Fools gravity."""
-    if not base.localAvatar:
-        return 'No localAvatar!'
-    base.localAvatar.controlManager.currentControls.setGravity(ToontownGlobals.GravityValue * 0.75)
-    
-@magicWord(category=CATEGORY_MOBILITY, types=[int, bool])
-def setGravity(gravityValue, overrideWarning=False):
-    """Set your gravity value!"""
-    if not base.localAvatar:
-        return 'No localAvatar!'
-    if gravityValue < 1 and not overrideWarning:
-        return 'A value lower than 1 may crash your client.'
-    base.localAvatar.controlManager.currentControls.setGravity(gravityValue)
-    
-@magicWord(category=CATEGORY_MOBILITY)
-def normalGravity():
-    """Turn off Estate April Fools gravity."""
-    if not base.localAvatar:
-        return 'No localAvatar!'
-    base.localAvatar.controlManager.currentControls.setGravity(ToontownGlobals.GravityValue * 2.0)
-    
-@magicWord(category=CATEGORY_DEBUG)
-def getPos():
-    """Get current position of your toon."""
-    if not base.localAvatar:
-        return 'No localAvatar!'
-    return base.localAvatar.getPos()
-    
-@magicWord(category=CATEGORY_DEBUG, types=[float, float, float])
-def setPos(toonX, toonY, toonZ):
-    """Set position of your toon."""
-    if not base.localAvatar:
-        return 'No localAvatar!'
-    base.localAvatar.setPos(toonX, toonY, toonZ)

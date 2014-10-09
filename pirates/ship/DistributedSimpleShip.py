@@ -95,7 +95,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
     ShipRockDist = config.GetInt('ship-rock-dist', 1000)
     threatIconDict = None
     hunterIcon = None
-    
+
     def __init__(self, cr):
         self.actorNode = ActorNode('simpleShip-physicsActor')
         self.shipClass = 0
@@ -189,13 +189,13 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.rammingSfx = None
         if not self.sailTearSfx:
             DistributedSimpleShip.sailTearSfx = (loadSfx(SoundGlobals.SFX_SHIP_SAIL_TEAR),)
-        
+
         if not self.woodBreakSfx:
             DistributedSimpleShip.woodBreakSfx = (loadSfx(SoundGlobals.SFX_FX_WOOD_IMPACT_01), loadSfx(SoundGlobals.SFX_FX_WOOD_IMPACT_02), loadSfx(SoundGlobals.SFX_FX_WOOD_IMPACT_03), loadSfx(SoundGlobals.SFX_FX_WOOD_IMPACT_04))
-        
+
         if not self.distantBreakSfx:
             DistributedSimpleShip.distantBreakSfx = (loadSfx(SoundGlobals.SFX_WEAPON_CANNON_DIST_FIRE_01), loadSfx(SoundGlobals.SFX_WEAPON_CANNON_DIST_FIRE_02), loadSfx(SoundGlobals.SFX_WEAPON_CANNON_DIST_FIRE_03), loadSfx(SoundGlobals.SFX_WEAPON_CANNON_DIST_FIRE_04), loadSfx(SoundGlobals.SFX_WEAPON_CANNON_DIST_FIRE_05), loadSfx(SoundGlobals.SFX_WEAPON_CANNON_DIST_FIRE_06), loadSfx(SoundGlobals.SFX_WEAPON_CANNON_DIST_FIRE_07), loadSfx(SoundGlobals.SFX_WEAPON_CANNON_DIST_FIRE_08), loadSfx(SoundGlobals.SFX_WEAPON_CANNON_DIST_FIRE_09), loadSfx(SoundGlobals.SFX_WEAPON_CANNON_DIST_FIRE_10))
-        
+
         self.threatCounter = 0
         self.speedboost = 0
         self.speednerf = 0
@@ -229,8 +229,8 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                     tg = TextGraphic(icon, -0.25, 0.75, -0.31, 0.68999999999999995)
                     tpMgr.setGraphic(iconKey, tg)
                     continue
-            
-        
+
+
         if not self.hunterIcon:
             threatCard = loader.loadModel('models/gui/ship_threat_icons')
             tpMgr = TextPropertiesManager.getGlobalPtr()
@@ -242,15 +242,15 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 self.hunterIcon = icon
                 tg = TextGraphic(icon, -0.25, 0.75, -0.31, 0.68999999999999995)
                 tpMgr.setGraphic(iconKey, tg)
-            
-        
 
-    
+
+
+
     def generate(self):
         DistributedMovingObject.generate(self)
         self.shipSunkEvent = self.uniqueName('shipSunk')
 
-    
+
     def announceGenerate(self):
         DistributedSimpleShip.ActiveShips.add(self)
         self._DistributedSimpleShip__initDistance()
@@ -267,16 +267,16 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.model.demandMastStates(self.mastStates, self.maxMastHealth)
         if self.model:
             self.model.setOwner(self)
-        
+
         self.gameFSM = GameFSMShip(self)
         if self.initialGameState:
             self.requestGameState(self.initialGameState[0], *self.initialGameState[1])
             self.initialGameState = None
-        
+
         modelRoot = self.getTransNode()
         if modelRoot:
             modelRoot.reparentTo(self)
-        
+
         self.deckName = self.uniqueName('deck')
         self.railingName = self.uniqueName('railing')
         self.loadInterface()
@@ -295,7 +295,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.setupSmoothing()
         if self.model:
             self.model.computeDimensions()
-        
+
         self.avCannonNode = None
         self.avCannonRotate = None
         self.avCannonView = None
@@ -308,7 +308,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             self.avCannonView = self.avCannonRotate.attachNewNode(ModelNode('avCannonView'))
             self.avCannonPivot = self.avCannonRotate.attachNewNode(ModelNode('avCannonPivot'))
             self.interactionCollisions = modelRoot.attachNewNode(ModelNode('interactCol'))
-        
+
         self.lookAtDummy = self.attachNewNode('lookAtDummy')
         self.bow = None
         self.stern = None
@@ -319,7 +319,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             ShipGlobals.SKEL_WARSHIPL3,
             ShipGlobals.SKEL_INTERCEPTORL3]:
             self.model.playStormEffect()
-        
+
         self.updateShipEffects()
         DistributedMovingObject.announceGenerate(self)
         if self.sailsDown:
@@ -330,27 +330,27 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.accept('localAvatar-BoardedShip', self.handleLocalBoarded)
         self.handleLocalBoarded(localAvatar.boardedShip)
 
-    
+
     def requestShow(self, hideMask = None):
         if hideMask:
             old = self.hideMask
             self.hideMask = self.hideMask ^ hideMask
-        
+
         if self.hideMask == BitMask32.allOff():
             self.show()
-        
 
-    
+
+
     def requestHide(self, hideMask = None):
         if hideMask:
             old = self.hideMask
             self.hideMask = self.hideMask | hideMask
-        
+
         if self.hideMask != BitMask32.allOff():
             self.hide()
-        
 
-    
+
+
     def handleLocalBoarded(self, hideBoarded):
         if hideBoarded != self.hideBoarded:
             self.hideBoarded = hideBoarded
@@ -358,12 +358,12 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 self.requestHide(PiratesGlobals.INVIS_EFFECIENCY)
             else:
                 self.requestShow(PiratesGlobals.INVIS_EFFECIENCY)
-        
+
         if localAvatar.doId in self.crew and localAvatar.doId in self.boarders or self.localOnboard:
             self.requestShow(PiratesGlobals.INVIS_EFFECIENCY)
-        
 
-    
+
+
     def setupRocking(self):
         if config.GetInt('ships-rock', 1) > 0 and self.allowedToRock():
             self._rocker.reset()
@@ -372,7 +372,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             self._samplePoints = self.attachNewNode('samplePoints')
             if showSamplePoints:
                 axis = loader.loadModel('models/misc/xyzAxis')
-            
+
             (gx, gy) = ShipGlobals.SamplePointOffsets[self.modelClass][0]
             for sp in ShipGlobals.SamplePoints:
                 np = self._samplePoints.attachNewNode(ShipGlobals.SamplePoints.getString(sp))
@@ -382,11 +382,11 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 if showSamplePoints:
                     axis.instanceTo(np)
                     continue
-            
-            self._maxSampleDistance = abs(self._sampleNPs[ShipGlobals.SamplePoints.C].getY() - self._sampleNPs[ShipGlobals.SamplePoints.F].getY())
-        
 
-    
+            self._maxSampleDistance = abs(self._sampleNPs[ShipGlobals.SamplePoints.C].getY() - self._sampleNPs[ShipGlobals.SamplePoints.F].getY())
+
+
+
     def createShipTube(self, tubeName, bitmask, tangible = 0):
         tubeSize = ShipGlobals.getBoardingSphereScale(self.modelClass)
         unboardTube = CollisionTube(0, -tubeSize, tubeSize * 0.40000000000000002, 0, tubeSize, tubeSize * 0.40000000000000002, tubeSize)
@@ -401,13 +401,13 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             cSphereNode,
             unboardTubeNodePath]
 
-    
+
     def disable(self):
         if self.model.sinkTrack:
             self.model.sinkTrack.pause()
             self.model.sinkTrack = None
             self.model.endSinkEffects()
-        
+
         DistributedSimpleShip.ActiveShips.discard(self)
         self.distanceToLocalShip = 9999999
         self._registerLocalDistance()
@@ -418,24 +418,24 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if self.controlManager:
             self.controlManager.delete()
             self.controlManager = None
-        
+
         if self.pendingCannons:
             self.cr.relatedObjectMgr.abortRequest(self.pendingCannons)
             self.pendingCannons = None
-        
+
         if self.pendingDoMovie:
             self.cr.relatedObjectMgr.abortRequest(self.pendingDoMovie)
             self.pendingDoMovie = None
-        
+
         if self.pendingLandedGrapples:
             self.cr.relatedObjectMgr.abortRequest(self.pendingLandedGrapples)
             self.pendingLandedGrapples = None
-        
+
         self.stopAnimateLandedGrappleTask()
         if self.boardingPanel:
             self.boardingPanel.destroy()
             self.boardingPanel = None
-        
+
         self.cleanUpShipEffects()
         self.ignoreAll()
         self.stopAutoSailing()
@@ -448,7 +448,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if self._samplePoints:
             self._samplePoints.removeNode()
             self._samplePoints = None
-        
+
         DistributedMovingObject.disable(self)
         self.unloadInterface()
         self.steeringAvId = 0
@@ -456,24 +456,24 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if self.zoneDistance:
             self.cr.removeInterest(self.zoneDistance)
             self.zoneDistance = None
-        
 
-    
+
+
     def delete(self):
         if self.model:
             self.model.cleanup()
             self.model = None
-        
+
         self.repairSpots = { }
         self.deleteNametag3d()
         if self.iconNodePath:
             self.iconNodePath.removeNode()
             self.iconNodePath = None
-        
+
         if self.lookAtDummy:
             self.lookAtDummy.removeNode()
             self.lookAtDummy = None
-        
+
         self.curAttackAnim = None
         self.broadside = None
         self.cannons = { }
@@ -489,7 +489,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.gameFSM = None
         DistributedFlagship.delete(self)
 
-    
+
     def setHullInfo(self, hullTextures, hullColors, stripeTextures, stripeColors, patternTextures, patternColors):
         self.hullInfo = [
             [
@@ -502,105 +502,105 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 patternTextures,
                 patternColors]]
 
-    
+
     def getSpawnPos(self):
         boardingSpots = []
         if self.model:
             boardingSpots = self.model.findAllMatches('**/boarding_spot_*;+s').asList()
-        
+
         if len(boardingSpots) > 0:
             return boardingSpots[0].getPos() + Vec3(1, 0, 0)
         else:
             return Vec3(20, 0, 0)
 
-    
+
     def localAvatarIncoming(self):
         if self.model:
             self.model.unstashPlaneCollisions()
-        
 
-    
+
+
     def getOpenPort(self):
         return 0
 
-    
+
     def getThreatLevel(self):
         return 0
 
-    
+
     def getHunterLevel(self):
         return 0
 
-    
+
     def stopProcessVisibility(self):
         base.cr.activeWorld.worldGrid.stopProcessVisibility()
 
-    
+
     def handleChildLeave(self, child, zone):
         DistributedMovingObject.handleChildLeave(self, child, zone)
         if self.model:
             self.model.stashPlaneCollisions()
-        
+
         child.leftShip(self)
 
-    
+
     def handleOutOfRange(self, entry):
         print '[DistributedSimpleShip] handleOutOfRange'
         if self.redirectTrack:
             self.redirectTrack.pause()
             self.redirectTrack = None
-        
+
         oldHpr = self.getHpr()
         self.lookAt(0, 0, 0)
         newHpr = self.getHpr()
         self.redirectTrack = Sequence(LerpHprInterval(self, 5, newHpr, startHpr = oldHpr))
         self.redirectTrack.start()
 
-    
+
     def setCrew(self, crewArray):
         if self.crew != crewArray:
             messenger.send('setShipCrew-%s' % self.getDoId(), [
                 crewArray,
                 self.maxCrew])
-        
+
         self.crew = crewArray
         self.updatePickable()
 
     setCrew = report(types = [
         'frameCount',
         'deltaStamp'], dConfigParam = 'shipboard')(setCrew)
-    
+
     def getCrew(self):
         return self.crew
 
-    
+
     def setBoarders(self, boarders):
         self.boarders = boarders
 
-    
+
     def startSteering(self, pilotId):
         print '[DistributedSimpleShip] startSteering %s' % pilot
         if localAvatar.doId == pilotId:
             localAvatar.b_setGameState('ShipPilot', [
                 self])
             self.accept(self.exitWorldEvent, self.handleOutOfRange)
-        
 
-    
+
+
     def canTakeWheel(self, wheel, avId = None):
         if self.pilot:
             return False
-        
+
         return True
 
-    
+
     def sinkingBegin(self):
         self.minimapObj.removeFromMap()
         messenger.send(self.uniqueName('shipSinking'))
         if self.model:
             self.model.sinkTimeScale = self.sinkTimeScale
             self.model.sinkingBegin()
-        
+
         self.removeTarget()
         self.stopShipRocking()
         self.hideNametag()
@@ -608,32 +608,32 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             ShipGlobals.SKEL_WARSHIPL3,
             ShipGlobals.SKEL_INTERCEPTORL3]:
             self.model.stopStormEffect()
-        
+
         if self.isInCrew(localAvatar.doId):
             self.disableOnDeckInteractions()
-        
 
-    
+
+
     def sinkingEnd(self):
         if self.model:
             self.model.sinkingEnd()
-        
+
         self.unloadInterface()
         messenger.send(self.shipSunkEvent)
 
-    
+
     def setLevel(self, level):
         self.level = level
 
-    
+
     def getLevel(self):
         return self.level
 
-    
+
     def buildShip(self):
         self.model = base.shipFactory.getShip(self.shipClass, self.getStyle(), self.getLogo(), detailLevel = base.options.terrain_detail_level)
 
-    
+
     def calculateLook(self):
         stats = ShipGlobals.getShipConfig(self.shipClass)
         if not self.styleOverride:
@@ -643,27 +643,27 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             pass
         self.logo = stats['sailLogo']
 
-    
+
     def getStyle(self):
         return self.style
 
-    
+
     def getLogo(self):
         return self.logo
 
-    
+
     def setLogoOverride(self, logoOverride):
         if logoOverride != ShipGlobals.Logos.Undefined:
             self.logoOverride = logoOverride
-        
 
-    
+
+
     def setStyleOverride(self, styleOverride):
         if styleOverride != ShipGlobals.Styles.Undefined:
             self.styleOverride = styleOverride
-        
 
-    
+
+
     def setGameState(self, stateName, avId, timeStamp, localChange = 0):
         if stateName == 'ClientSteering':
             s = MiniLogSentry(self.miniLog, 'setGameState', stateName, avId, timeStamp)
@@ -679,14 +679,14 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         'args'], dConfigParam = [
         'shipboard',
         'shipsink'])(setGameState)
-    
+
     def requestGameState(self, state, *args):
         if self.gameFSM:
             self.gameFSM.request(state, *args)
         else:
             self.initialGameState = (state, args)
 
-    
+
     def getGameState(self):
         if self.gameFSM:
             return self.gameFSM.state
@@ -695,117 +695,117 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         else:
             return None
 
-    
+
     def stash(self, *args, **kw):
         if not self:
             return None
-        
+
         DistributedMovingObject.stash(self, *args, **args)
 
-    
+
     def unstash(self, *args, **kw):
         if not self:
             return None
-        
+
         DistributedMovingObject.unstash(self, *args, **args)
 
-    
+
     def getActorNode(self):
         pass
 
-    
+
     def registerMainBuiltFunction(self, func, extraArgs = [], extraKwArgs = { }):
         func(*extraArgs, **extraArgs)
 
-    
+
     def removeTarget(self, shipId = 0):
         pass
 
-    
+
     def isInCrew(self, avId):
         return avId in self.getCrew()
 
-    
+
     def isInBoarders(self, avId):
         return avId in self.boarders
 
-    
+
     def onThisShip(self, avId):
         if not self.isInCrew(avId):
             pass
         return self.isInBoarders(avId)
 
-    
+
     def createWake(self):
         if self.model and not self.model.hasWake():
             self.model.createWake()
-        
 
-    
+
+
     def removeWake(self):
         if self.model and self.model.hasWake():
             self.model.removeWake()
-        
 
-    
+
+
     def findLocators(self, name):
         if self.model:
             return self.model.locators.findAllMatches(name)
         else:
             return NodePath()
 
-    
+
     def findLocator(self, name):
         if self.model:
             return self.model.locators.find(name)
         else:
             return NodePath()
 
-    
+
     def getModelRoot(self):
         if self.model:
             return self.model.modelRoot
         else:
             return NodePath()
 
-    
+
     def getShipRoot(self):
         if self.model:
             return self.model.shipRoot
         else:
             return NodePath()
 
-    
+
     def getLODRoot(self):
         if self.model:
             return self.model.lod
         else:
             return NodePath()
 
-    
+
     def getTransNode(self):
         if self.model:
             return self.model.transRoot
         else:
             return NodePath()
 
-    
+
     def hideSmoke(self):
         pass
 
-    
+
     def showSmoke(self):
         pass
 
-    
+
     def listenForFloorEvents(self, on):
         pass
 
-    
+
     def getInventory(self):
         pass
 
-    
+
     def printExpText(self, totalExp, colorSetting, basicPenalty, crewBonus, doubleXPbonus, holidayBonus, potionBonus):
         taskMgr.doMethodLater(0.5, self.showHpText, self.taskName('printExp'), [
             totalExp,
@@ -819,11 +819,11 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             holidayBonus,
             potionBonus])
 
-    
+
     def showHpText(self, number, bonus = 0, duration = 2.0, scale = 1.0, pos = None, basicPenalty = 0, crewBonus = 0, doubleXPBonus = 0, holidayBonus = 0, potionBonus = 0, itemEffects = []):
         if self.isEmpty():
             return None
-        
+
         distance = camera.getDistance(self)
         scale *= max(1.0, distance / 25.0)
         posAndScale = self.getDebugNamePosScale()
@@ -833,55 +833,55 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if pos:
             startPos = pos
             destPos = (pos[0], pos[1], pos[2] + height / 4)
-        
+
         newEffect = None
-        
+
         def cleanup():
             if newEffect in self.textEffects:
                 self.textEffects.remove(newEffect)
-            
+
 
         mods = { }
         if basicPenalty > 0:
             mods[TextEffect.MOD_BASICPENALTY] = basicPenalty
-        
+
         if crewBonus > 0:
             mods[TextEffect.MOD_CREWBONUS] = crewBonus
-        
+
         if doubleXPBonus > 0:
             mods[TextEffect.MOD_2XPBONUS] = doubleXPBonus
-        
+
         if holidayBonus > 0:
             mods[TextEffect.MOD_HOLIDAYBONUS] = holidayBonus
-        
+
         if ItemGlobals.CRITICAL in itemEffects:
             scale *= 1.5
-        
+
         effect = TextEffect.genTextEffect(self, self.HpTextGenerator, number, bonus, self.isNpc, Functor(self.removeEffect, newEffect), startPos, destPos, scale, modifiers = mods, effects = itemEffects)
         if effect:
             self.textEffects.append(effect)
-        
 
-    
+
+
     def removeEffect(self, effect):
         if effect in self.textEffects:
             self.textEffects.remove(effect)
-        
 
-    
+
+
     def addGrappleTarget(self, target, locator, offset):
         modelRoot = self.getModelRoot()
         if modelRoot:
             target.setPos(locator.getPos())
             target.setX(target.getX() - offset)
             target.reparentTo(modelRoot)
-        
 
-    
+
+
     def getBuildComplete(self):
         return True
 
-    
+
     def enableOnDeckInteractions(self):
         self.notify.debug('enableOnDeckInteractions')
         for cannon in self.cannons.values():
@@ -890,21 +890,21 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 cannon[1].checkInUse()
                 cannon[1].refreshState()
                 continue
-        
+
         if self.wheel:
             if self.wheel[1]:
                 self.wheel[1].setAllowInteract(1)
                 self.wheel[1].checkInUse()
                 self.wheel[1].refreshState()
-            
-        
+
+
         for spot in self.repairSpots.values():
             spot.setAllowInteract(1)
             spot.checkInUse()
             spot.refreshState()
-        
 
-    
+
+
     def disableOnDeckInteractions(self):
         self.notify.debug('disableOnDeckInteractions')
         for cannon in self.cannons.values():
@@ -912,45 +912,45 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 cannon[1].setAllowInteract(0, forceOff = True)
                 cannon[1].refreshState()
                 continue
-        
+
         if self.wheel:
             if self.wheel[1]:
                 self.wheel[1].setAllowInteract(0, forceOff = True)
                 self.wheel[1].refreshState()
-            
-        
+
+
         for spot in self.repairSpots.values():
             spot.setAllowInteract(0, forceOff = True)
             spot.refreshState()
-        
 
-    
+
+
     def setupFloatTask(self):
         if base.cr.activeWorld:
             self.startShipRocking(startOffset = random.uniform(0, 360))
-        
 
-    
+
+
     def cleanupFloatTask(self, water = None):
         self.stopShipRocking()
 
-    
+
     def startShipRocking(self, startOffset = 0, wantRocking = 1):
         if self.rockingTask:
             return None
-        
+
         task = taskMgr.add(self.shipRockingTask, self.uniqueName('shipRocking'), priority = 24)
         task.sRockT = random.random() * 1000.0
         self.rockingTask = task
 
-    
+
     def stopShipRocking(self):
         if self.rockingTask:
             self.rockingTask.remove()
             self.rockingTask = None
-        
 
-    
+
+
     def shipRockingTask(self, task):
         if config.GetInt('ships-rock', 1):
             pass
@@ -958,24 +958,24 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if (shipsRock == 0 or shipsRock == 2) and localAvatar.ship is not self:
             if config.GetBool('want-compass-task', 1):
                 loadPrcFileData('', '%s %s' % ('want-compass-task', 0))
-            
+
             return Task.cont
-        
+
         transNode = self.getTransNode()
         if transNode == None:
             return Task.cont
-        
+
         if not self._sampleNPs:
             self.setupRocking()
-        
+
         world = self.cr.getActiveWorld()
         water = None
         if world:
             water = world.getWater()
-        
+
         if not water:
             return task.again
-        
+
         lrAngle = [
             0.0]
         fbAngle = [
@@ -983,7 +983,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         avgWaveHeight = [
             0.0]
         shipModelHeightOffset = self.getShipModelHeightOffset()
-        
+
         def calcWithoutWaves():
             shipsRock = config.GetInt('ships-rock-without-waves', 1)
             if (shipsRock == 1 or shipsRock == 2) and localAvatar.ship is self:
@@ -1013,7 +1013,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 lrAngle[0] = sineMagnitude * math.sin(lrTheta) + sineMagnitude2 * math.sin(lrTheta2)
                 avgWaveHeight[0] = 0.10000000000000001 * (sineMagnitude * math.sin(udTheta) + sineMagnitude2 * math.sin(udTheta2))
                 return True
-            
+
             return False
 
         avgLRheight = [
@@ -1024,21 +1024,21 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             0.0,
             0.0,
             0.0]
-        
+
         def calcWithWaves():
             for (sp, node) in self._sampleNPs.items():
                 height = water.calcFilteredHeight(minWaveLength = 3.0 * self._maxSampleDistance, node = node)
                 if height == 0:
                     if config.GetBool('ships-rock-fakely', 0):
                         calcWithoutWaves()
-                    
+
                     return False
-                
+
                 avgWaveHeight[0] += height
                 (lrIndex, fbIndex) = DistributedSimpleShip.Sp2indices[sp]
                 avgLRheight[lrIndex] += height
                 avgFBheight[fbIndex] += height
-            
+
             avgWaveHeight[0] /= len(self._sampleNPs)
             fl = self._sampleNPs[ShipGlobals.SamplePoints.FL]
             lrDist = abs(fl.getX())
@@ -1056,7 +1056,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             rocking = calcWithoutWaves()
         else:
             rocking = calcWithWaves()
-        
+
         def capRocking(targetP = 0, targetR = 0, targetZ = 0):
             maxAdjustP = 0.38
             maxAdjustR = 0.52000000000000002
@@ -1074,7 +1074,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if not rocking:
             capRocking(targetZ = shipModelHeightOffset)
             return Task.cont
-        
+
         maxSpd = 40.0
         velVec = self.actorNode.getPhysicsObject().getVelocity()
         speed = velVec.length()
@@ -1087,7 +1087,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         tiltMult = lerp(0.90000000000000002, 0.40000000000000002, normSpeed)
         if (not hasattr(base, 'localAvatar') or base.localAvatar.ship == self) and self.steeringAvId != localAvatar.doId:
             tiltMult *= 0.10000000000000001
-        
+
         if self.gameFSM.state == 'KrakenPinned':
             rollAngle = self.kraken.getRollAngle()
             tiltMult *= 1 - self.kraken.getDampenAmount()
@@ -1097,7 +1097,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         capRocking(tiltMult * fbAngle[0], tiltMult * (lrAngle[0] + rollAngle), avgWaveHeight[0] + shipModelHeightOffset)
         return Task.cont
 
-    
+
     def getShipModelHeightOffset(self):
         rockInfo = ShipGlobals.SamplePointOffsets.get(self.modelClass, [])
         if len(rockInfo) > 2:
@@ -1105,40 +1105,40 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         else:
             return 0
 
-    
+
     def debugFunc(self, lrAvg, fbAvg, lrDist, fbDist):
         return (-math.atan(lrAvg / lrDist) * 180.0 / math.pi, math.atan(fbAvg / fbDist) * 180.0 / math.pi)
 
     debugFunc = exceptionLogged()(debugFunc)
-    
+
     def forceZoneLevel(self, level):
         pass
 
-    
+
     def turnOn(self):
         pass
 
-    
+
     def disableAllLODSpheres(self):
         pass
 
-    
+
     def enableAllLODSpheres(self):
         pass
 
-    
+
     def clearAllEnabled(self, resetLastZoneLevel = False):
         pass
 
-    
+
     def setZoneLevel(self, level, entry = None):
         pass
 
-    
+
     def registerBuildCompleteFunction(self, func, extraArgs = [], extraKwArgs = { }):
         func(*extraArgs, **extraArgs)
 
-    
+
     def setArmorStates(self, rear, left, right):
         self.armorStates = [
             rear,
@@ -1149,11 +1149,11 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.adjustArmorDisplay()
         self.updateShipEffects()
 
-    
+
     def getArmorStates(self):
         return self.armorStates
 
-    
+
     def setHealthState(self, health):
         self.healthState = health
         self.Hp = self.maxHp * (self.healthState / 100.0)
@@ -1163,14 +1163,14 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if self.shipTargetPanel:
             self.shipTargetPanel.hpMeter['range'] = self.maxHp
             self.shipTargetPanel.hpMeter['value'] = self.Hp
-        
+
         self.updateShipEffects()
 
-    
+
     def getHealthState(self):
         return self.healthState
 
-    
+
     def setMastStates(self, mainMast1, mainMast2, mainMast3, aftMast, foreMast):
         newMastStates = [
             mainMast1,
@@ -1182,7 +1182,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             self.mastStates = newMastStates
         elif newMastStates == self.mastStates:
             return None
-        
+
         for i in range(5):
             if self.maxMastHealth[i]:
                 newVal = newMastStates[i]
@@ -1192,10 +1192,10 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                         self.model.breakMast(i)
                     elif oldVal == 0:
                         self.model.restoreMast(i)
-                    
-                
+
+
             newVal != oldVal
-        
+
         self.mastStates = newMastStates
         continue
         self.mastHealth = [ x[0] * (x[1] / 100.0) for x in zip(self.maxMastHealth, self.mastStates) ]
@@ -1203,58 +1203,58 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if self.shipTargetPanel:
             self.shipTargetPanel.speedMeter['range'] = self.maxSp
             self.shipTargetPanel.speedMeter['value'] = self.Sp
-        
+
         messenger.send('setShipSp-%s' % self.getDoId(), [
             self.Sp,
             self.maxSp])
         self.calcModifiedStats()
         messenger.send(self.uniqueName('update-mast-health'), self.mastHealth)
 
-    
+
     def getMastStates(self):
         return self.mastStates
 
-    
+
     def setIsFlagship(self, isFlagship):
         if isFlagship != self.isFlagship:
             self.isFlagship = isFlagship
-        
 
-    
+
+
     def queryGameState(self):
         return self.gameFSM.getCurrentOrNextState()
 
-    
+
     def isSailable(self):
         return self.queryGameState() not in ('FadeOut', 'Sunk', 'Sinking', 'PutAway', 'Off')
 
-    
+
     def setUniqueId(self, uid):
         if self.uniqueId != '' and uid != self.uniqueId:
             base.cr.uidMgr.removeUid(self.uniqueId)
-        
+
         self.uniqueId = uid
         base.cr.uidMgr.addUid(self.uniqueId, self.getDoId())
 
-    
+
     def getUniqueId(self):
         return self.uniqueId
 
-    
+
     def setMovie(self, mode, avId, fromShipId, instant, timestamp):
         self.notify.debug('setMovie %s, %s, %s, %s, %s' % (mode, avId, fromShipId, instant, timestamp))
-        
+
         def doMovie(args):
             fromShip = None
             av = None
             if type(args) == list:
                 if args[0] == None or args[1] == None:
                     return None
-                
+
                 (av, fromShip) = args
             elif args == None:
                 return None
-            
+
             av = args
             if timestamp is None:
                 ts = 0.0
@@ -1265,19 +1265,19 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 boardMode = ShipGlobals.SHIP_BOARD_FROM_WALK
                 if currentState == 'WaterRoam':
                     boardMode = ShipGlobals.SHIP_BOARD_FROM_SWIM
-                
+
                 av.gameFSM.request('ShipBoarding', [
                     self,
                     fromShip,
                     boardMode,
                     instant,
                     ts])
-            
+
 
         if self.pendingDoMovie:
             self.cr.relatedObjectMgr.abortRequest(self.pendingDoMovie)
             self.pendingDoMovie = None
-        
+
         if fromShipId != 0:
             self.pendingDoMovie = self.cr.relatedObjectMgr.requestObjects([
                 avId,
@@ -1290,54 +1290,54 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         'frameCount',
         'deltaStamp',
         'args'], dConfigParam = 'shipboard')(setMovie)
-    
+
     def localAvatarBoardShip(self):
         if self.model:
             self.model.unstashPlaneCollisions()
-        
+
         self.setupControls()
         if self.nametag:
             self.hideName()
-        
+
         if self.gameFSM:
             self.gameFSM.startCurrentMusic()
-        
+
         messenger.send('islandPlayerBarrier', [
             0])
         modelRoot = self.getModelRoot()
         if modelRoot:
             localAvatar.setP(modelRoot.getP())
             localAvatar.setR(modelRoot.getR())
-        
+
         localAvatar._setShip(self)
         if self.getTeam() == PiratesGlobals.PLAYER_TEAM:
             self.enableOnDeckInteractions()
-        
+
         self.oldZoom = base.localAvatar.guiMgr.radarGui.zoomFSM.state
         base.localAvatar.guiMgr.radarGui.zoomFSM.request('Zoom3')
         messenger.send(self.uniqueName('localAvBoardedShip'))
         print 'tut #%s' % base.localAvatar.getTutorialState()
         if base.localAvatar.getTutorialState() >= 3:
             base.cr.timeOfDayManager.setEnvironment(TODGlobals.ENV_SAILING, { })
-        
+
 
     localAvatarBoardShip = report(types = [
         'frameCount',
         'deltaStamp'], dConfigParam = 'shipboard')(localAvatarBoardShip)
-    
+
     def localAvatarExitShip(self, boardingFlagship = 0):
         self.sendUpdate('leave', [
             self.getDoId()])
         if self.gameFSM:
             self.gameFSM.stopCurrentMusic()
-        
+
         if self.nametag and not (base.cr.tutorial):
             self.showName()
-        
+
         self.hideStatusDisplay()
         if self.model:
             self.model.stashPlaneCollisions()
-        
+
         if self.oldZoom:
             newZoom = self.oldZoom
         else:
@@ -1347,7 +1347,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if self.controlManager:
             self.controlManager.delete()
             self.controlManager = None
-        
+
         DistributedFlagship.localAvatarExitShip(self, boardingFlagship)
 
     localAvatarExitShip = report(types = [
@@ -1355,62 +1355,62 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         'deltaStamp'], dConfigParam = [
         'shipboard',
         'shipsink'])(localAvatarExitShip)
-    
+
     def boardingInit(self, av, ship):
         self.notify.debug('%s boardingInit' % self.doId)
         if av.isLocal():
             if self.cr and self.cr.activeWorld and self.cr.activeWorld.getWater():
                 self.cr.activeWorld.getWater().hideWaterFloor()
-            
-        
+
+
 
     boardingInit = report(types = [
         'frameCount',
         'deltaStamp'], dConfigParam = 'shipboard')(boardingInit)
-    
+
     def boardingLeaveShip(self, av):
         self.notify.debug('%s boardingLeaveShip' % self.doId)
         if av.isLocal():
             self.localAvatarExitShip(1)
-        
+
 
     boardingLeaveShip = report(types = [
         'frameCount',
         'deltaStamp'], dConfigParam = 'shipboard')(boardingLeaveShip)
-    
+
     def boardingFinish(self, av, pos, showMovie = True):
         if showMovie == False:
             base.transitions.fadeIn(1.0)
-        
+
         self.notify.debug('%s boardingFinish' % self.doId)
         if av.isLocal():
             av.placeOnShip(self)
             self.boardingInProgress = 0
-        
+
         if av.rope:
             av.rope.detachNode()
-        
+
         if av.ropeEndNode:
             av.ropeEndNode.detachNode()
-        
+
         modelRoot = self.getModelRoot()
         if modelRoot:
             av.wrtReparentTo(modelRoot)
-        
+
         if av.isLocal():
             av.controlManager.currentControls.oneTimeCollide()
-        
+
         if pos:
             av.setPos(pos)
-        
+
         if av.isLocal():
             av.b_setGameState('LandRoam')
-        
+
 
     boardingFinish = report(types = [
         'frameCount',
         'deltaStamp'], dConfigParam = 'shipboard')(boardingFinish)
-    
+
     def getRope(self, thickness = 0.14999999999999999):
         rope = Rope.Rope()
         rope.ropeNode.setRenderMode(RopeNode.RMTube)
@@ -1430,22 +1430,22 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
     getRope = report(types = [
         'frameCount',
         'deltaStamp'], dConfigParam = 'shipboard')(getRope)
-    
+
     def grappledShip(self, ship):
         self.engagedFlagship()
         if self.isInCrew(localAvatar.doId):
             localAvatar.guiMgr.messageStack.addTextMessage(PLocalizer.FlagshipGrappleLerpingInstructions)
-        
 
-    
+
+
     def setLandedGrapples(self, landedGrapples):
-        
+
         def doGrapples(ship, landedGrapples = landedGrapples):
             for grapple in landedGrapples:
                 if grapple not in self.landedGrapples:
                     self.createLandedGrapple(grapple[0], grapple[1])
                     continue
-            
+
             self.landedGrapples = landedGrapples
             self.startAnimateLandedGrappleTask()
 
@@ -1456,12 +1456,12 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             if self.pendingLandedGrapples:
                 self.cr.relatedObjectMgr.abortRequest(self.pendingLandedGrapples)
                 self.pendingLandedGrapples = None
-            
+
             self.pendingLandedGrapples = self.cr.relatedObjectMgr.requestObjects([
                 self.boardableShipId], eachCallback = doGrapples, timeout = 60)
-        
 
-    
+
+
     def createLandedGrapple(self, shipId, targetId):
         if shipId:
             ship = self.cr.doId2do.get(shipId)
@@ -1471,7 +1471,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 anchorOffset = Vec3(0, 0, -1)
                 if shipRelX < 0:
                     grappleStr = '**/grapple_left*'
-                
+
                 myLocators = self.findLocators(grappleStr)
                 anchorNode = random.choice(myLocators)
                 anchorPos = anchorNode.getPos(self.getModelRoot()) + anchorOffset
@@ -1479,7 +1479,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 targetStr = '**/grapple_right_'
                 if targetRelX < 0:
                     targetStr = '**/grapple_left_'
-                
+
                 if targetId >= 0:
                     targetStr += str(targetId)
                     locator = ship.findLocator(targetStr)
@@ -1499,7 +1499,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 if targetStr.find('right') > 0:
                     hpr = (90, -40, -180)
                     pos = (1, 0, -1.5)
-                
+
                 grapple.setHpr(*hpr)
                 grapple.setPos(*pos)
                 grapple.wrtReparentTo(ship.getModelRoot())
@@ -1514,10 +1514,10 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                     locator,
                     rope])
                 self.accept(ship.getDisableEvent(), self.stopAnimateLandedGrappleTask)
-            
-        
 
-    
+
+
+
     def removeLandedGrapples(self):
         for (ship, grapple, anchorNode, sagNode, locator, rope) in self.landedGrappleNodes:
             grapple.removeNode()
@@ -1529,21 +1529,21 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             del sagNode
             del locator
             del rope
-        
+
         self.landedGrappleNodes = []
         self.landedGrapples = []
 
-    
+
     def startAnimateLandedGrappleTask(self):
         self.sagDist = 0
         taskMgr.add(self.animateLandedGrappleTask, self.uniqueName('animateGrapple'))
 
-    
+
     def stopAnimateLandedGrappleTask(self):
         taskMgr.remove(self.uniqueName('animateGrapple'))
         self.removeLandedGrapples()
 
-    
+
     def animateLandedGrappleTask(self, task):
         ship = None
         for (ship, grapple, anchorNode, sagNode, locator, rope) in self.landedGrappleNodes:
@@ -1553,14 +1553,14 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             if ship.queryGameState() != 'GrappleLerping':
                 if self.sagDist < 20:
                     self.sagDist += 1
-                
+
                 sagPos.setZ(sagPos[2] - self.sagDist)
-            
+
             sagNode.setPos(sagPos)
-        
+
         return Task.cont
 
-    
+
     def setSinkTimer(self, duration, timestamp):
         self.sinkTime = duration
         self.sinkTimestamp = timestamp
@@ -1574,17 +1574,17 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 self.shipTargetPanel.timer.countdown(self.sinkTime - dt)
             else:
                 self.shipTargetPanel.stopTimer()
-        
 
-    
+
+
     def rammingOn(self):
         base.cTrav.addCollider(self.rammingSphereNodePath, self.collHandler)
 
-    
+
     def rammingOff(self):
         base.cTrav.removeCollider(self.rammingSphereNodePath)
 
-    
+
     def setupRammingCollisions(self):
         enterCollEvent = self.uniqueName('enterRammingEvent')
         exitCollEvent = self.uniqueName('exitRammingEvent')
@@ -1602,11 +1602,11 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             self.collHandler = CollisionHandlerEvent()
             self.collHandler.addInPattern(enterCollEvent)
             self.collHandler.addOutPattern(exitCollEvent)
-        
+
         self.accept(enterCollEvent, self.enterShipEvent)
         self.accept(exitCollEvent, self.exitShipEvent)
 
-    
+
     def cleanupRammingCollisions(self, stash = False):
         enterCollEvent = self.uniqueName('enterRammingEvent')
         exitCollEvent = self.uniqueName('exitRammingEvent')
@@ -1616,42 +1616,42 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             if self.collHandler:
                 base.cTrav.removeCollider(self.rammingSphereNodePath)
                 self.collHandler = None
-            
+
             if self.rammingSphereNodePath:
                 self.rammingSphereNodePath.remove()
                 self.rammingSphereNodePath = None
-            
-        
 
-    
+
+
+
     def isRamming(self):
         for buffKeyId in self.skillEffects.keys():
             buffId = self.skillEffects[buffKeyId][0]
             if WeaponGlobals.C_RAM == buffId:
                 return True
                 continue
-        
+
         return False
 
-    
+
     def clientSteeringBegin(self, avId):
         self.steeringAvId = avId
         av = self.cr.doId2do.get(self.steeringAvId)
         if not av:
             return None
-        
+
         if av.isLocal() and self.wheel:
             s = MiniLogSentry(self.miniLog, 'clientSteeringBegin', avId)
             self.calcModifiedStats()
             if base.options.terrain_detail_level != 2:
                 self.model.forceLOD(1)
-            
+
             if self.broadside:
                 if self.broadside[1]:
                     self.broadside[1].setLocalAvatarUsingWeapon(1)
                     self.broadside[1].av = av
-                
-            
+
+
             self.wheel[1].acceptInteraction()
             base.localAvatar.guiMgr.setIgnoreEscapeHotKey(True)
             localAvatar.b_setGameState('ShipPilot', [
@@ -1667,41 +1667,41 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 if not (cMask & PiratesGlobals.CameraBitmask).isZero():
                     cMask ^= PiratesGlobals.CameraBitmask
                     disabledBits |= PiratesGlobals.CameraBitmask
-                
+
                 if not (cMask & PiratesGlobals.FloorBitmask).isZero():
                     cMask ^= PiratesGlobals.FloorBitmask
                     disabledBits |= PiratesGlobals.FloorBitmask
-                
+
                 if not disabledBits.isZero():
                     np.node().setIntoCollideMask(cMask)
                     self.disabledCollisionBits[np] = disabledBits
                     continue
-            
+
             if self.broadside:
                 if self.broadside[1]:
                     self.broadside[1].localPirate = 1
-                
-            
+
+
             self.checkAbleDropAnchor()
             self.accept('w', self.startAutoSailing)
             self.accept('arrow_up', self.startAutoSailing)
             av.stopSmooth()
             base.avatarPhysicsMgr.attachPhysicalNode(self.actorNode)
-        
+
 
     clientSteeringBegin = report(types = [
         'frameCount',
         'deltaStamp'], dConfigParam = 'shipboard')(clientSteeringBegin)
-    
+
     def clientSteeringEnd(self):
         if not self.steeringAvId:
             return None
-        
+
         av = base.cr.doId2do.get(self.steeringAvId)
         if not av:
             self.notify.warning('avId: %s not found' % self.steeringAvId)
             return None
-        
+
         if av.isLocal():
             self.stopAutoSailing()
             self.model.clearForceLOD()
@@ -1709,8 +1709,8 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 if self.broadside[1]:
                     self.broadside[1].setLocalAvatarUsingWeapon(0)
                     self.broadside[1].av = None
-                
-            
+
+
             base.localAvatar.guiMgr.setIgnoreEscapeHotKey(False)
             self.ignore('escape')
             self.ignore(self.stopSteeringEvent)
@@ -1723,33 +1723,33 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             if self.shipStatusDisplay:
                 self.shipStatusDisplay.disableAnchorButton()
                 self.shipStatusDisplay.hideWrongPort()
-            
+
             if localAvatar.getGameState() == 'ShipPilot':
                 localAvatar.b_setGameState(localAvatar.gameFSM.defaultState)
-            
+
             for (np, disabledBits) in self.disabledCollisionBits.items():
                 cMask = np.node().getIntoCollideMask()
                 cMask |= disabledBits
                 np.node().setIntoCollideMask(cMask)
-            
+
             self.disabledCollisionBits = { }
             if self.broadside:
                 if self.broadside[1]:
                     self.broadside[1].localPirate = 0
-                
-            
+
+
             modelRoot = self.getModelRoot()
             if modelRoot:
                 av.wrtReparentTo(modelRoot)
-            
+
             av.startSmooth()
             wheelpost = self.findLocator('**/location_wheel;+s')
             if modelRoot:
                 av.setPos(wheelpost.getPos(modelRoot) - Vec3(0.56000000000000005, 3.0, 0))
                 av.setH(0)
-            
+
             base.avatarPhysicsMgr.removePhysicalNode(self.actorNode)
-        
+
         self.steeringAvId = 0
         self.ignore('arrow_up')
         self.ignore('w')
@@ -1759,21 +1759,21 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         'deltaStamp'], dConfigParam = [
         'shipboard',
         'shiksink'])(clientSteeringEnd)
-    
+
     def handleZoneChanged(self, avObj, parentId, zoneId):
         if avObj != self:
             return None
-        
+
         self.b_setLocation(parentId, zoneId)
 
-    
+
     def enableShipControls(self):
         base.cr.activeWorld.worldGrid.visAvatar = self
         self.accept('avatarZoneChanged', self.handleZoneChanged)
         localAvatar.controlManager.stop()
         if not self.controlManager:
             self.setupControls()
-        
+
         self.controlManager.enable()
         self.controlManager.use('ship', self)
         self.controlManager.currentControls.enableAvatarControls()
@@ -1784,13 +1784,13 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         camParams = self.retrieveCamParams()
         if not camParams:
             camParams = ShipCameraParams.ShipModelClass2CameraParams[self.modelClass]
-        
+
         camParams.applyTo(localAvatar.cameraFSM.orbitCamera)
         localAvatar.cameraFSM.orbitCamera.popToIdealDistance()
         base.localAvatar.guiMgr.combatTray.initCombatTray(InventoryType.SailingRep)
         base.localAvatar.guiMgr.combatTray.skillTray.updateSkillTray(rep = InventoryType.SailingRep, weaponMode = WeaponGlobals.SAILING)
 
-    
+
     def disableShipControls(self):
         if localAvatar.cameraFSM.getOrbitCamera().getSubject():
             curParams = localAvatar.cameraFSM.orbitCamera.popParams()
@@ -1800,29 +1800,29 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         controls = self.controlManager.currentControls
         if controls:
             controls.disableAvatarControls()
-        
+
         self.controlManager.disable()
         if base.cr.activeWorld.worldGrid:
             base.cr.activeWorld.worldGrid.visAvatar = localAvatar
-        
+
         self.ignore('avatarZoneChanged')
         base.localAvatar.guiMgr.combatTray.skillTray.hideSkillTray()
         base.localAvatar.guiMgr.combatTray.initCombatTray(localAvatar.currentWeaponId)
 
-    
+
     def loadInterface(self):
         self.stopSteeringEvent = self.uniqueName('stopSteering')
         self.stopCannonEvent = self.uniqueName('stopCannon')
 
-    
+
     def loadShipStatusDisplay(self):
         if self.shipStatusDisplay or base.cr.tutorial:
             return None
-        
+
         if base.config.GetBool('want-sea-infamy', 0) and not (self.renownDisplay):
             self.renownDisplay = PVPRankGui.PVPRankGui(parent = base.a2dBottomRight, displayType = PVPRankGui.SHIP_RENOWN_DISPLAY)
             self.renownDisplay.reparentTo(base.a2dBottomRight, sort = -1)
-        
+
         if base.cr.hasOwnerViewDoId(self.getDoId()) and self.isFishing:
             pass
         self.shipStatusDisplay = ShipStatusDisplay(parent = base.a2dTopLeft, shipId = self.getDoId(), shipName = (self.name, self.getTeam()), shipClass = self.shipClass, shipHp = (self.Hp, self.maxHp), shipSp = (self.Sp, self.maxSp), shipCargo = (self.cargo, self.maxCargo), shipCrew = (self.crew, self.maxCrew), ownShip = self.isCaptain(localAvatar.getDoId()))
@@ -1830,89 +1830,89 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.shipStatusDisplay.hide()
         if self.renownDisplay:
             self.renownDisplay.hide()
-        
+
         self.refreshStatusTray()
 
-    
+
     def loadShipTargetPanel(self):
         if self.shipTargetPanel or base.cr.tutorial:
             return None
-        
+
         self.loadShipStatusDisplay()
         self.shipTargetPanel = ShipTargetPanel.ShipTargetPanel(self)
         self.shipTargetPanel.hide()
         self.adjustArmorDisplay()
 
-    
+
     def showStatusDisplay(self):
         self.loadShipStatusDisplay()
         self.isStatusDisplayVisible += 1
         self._DistributedSimpleShip__checkStatusDisplayVisible()
 
-    
+
     def hideStatusDisplay(self):
         self.isStatusDisplayVisible = max(self.isStatusDisplayVisible - 1, 0)
         self._DistributedSimpleShip__checkStatusDisplayVisible()
 
-    
+
     def _DistributedSimpleShip__checkStatusDisplayVisible(self):
         if self.shipStatusDisplay:
             if self.isStatusDisplayVisible > 0:
                 self.shipStatusDisplay.show()
                 if self.getSiegeTeam() and self.renownDisplay:
                     self.renownDisplay.show()
-                
+
             else:
                 self.shipStatusDisplay.hide()
                 if self.renownDisplay:
                     self.renownDisplay.hide()
-                
-                self.hideBoardingChoice()
-        
 
-    
+                self.hideBoardingChoice()
+
+
+
     def showTargets(self):
         if self.targets:
             self.targets.show()
-        
 
-    
+
+
     def hideTargets(self):
         if self.targets:
             self.targets.hide()
-        
 
-    
+
+
     def unloadInterface(self):
         if self.target:
             self.target.destroy()
             self.target = None
-        
+
         if self.shipTargetPanel:
             self.shipTargetPanel.destroy()
             self.shipTargetPanel = None
-        
+
         if self.shipStatusDisplay:
             self.shipStatusDisplay.destroy()
             self.shipStatusDisplay = None
-        
+
         if self.renownDisplay:
             self.renownDisplay.destroy()
             self.renownDisplay = None
-        
 
-    
+
+
     def addDeckInterest(self):
         self.zoneLocalShip = self.cr.addInterest(self.getDoId(), PiratesGlobals.ShipZoneOnDeck, self.uniqueName('localShip'))
 
-    
+
     def removeDeckInterest(self):
         if self.zoneLocalShip is not None:
             self.cr.removeInterest(self.zoneLocalShip, self.uniqueName('localShip'))
             self.zoneLocalShip = None
-        
 
-    
+
+
     def handleChildArrive(self, child, zoneId):
         DistributedMovingObject.handleChildArrive(self, child, zoneId)
         if isinstance(child, DistributedBattleAvatar.DistributedBattleAvatar):
@@ -1922,8 +1922,8 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 modelRoot = self.getModelRoot()
                 if modelRoot:
                     child.wrtReparentTo(modelRoot)
-                
-            
+
+
             if child.isLocal():
                 base.enableZoneLODs(render)
                 self.addDeckInterest()
@@ -1934,7 +1934,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                     if currAv and currAv is not localAvatar:
                         currAv.onShipWithLocalAv(True)
                         continue
-                
+
                 self.gameFSM.initAudio()
                 ocean = self.getParentObj()
                 minimap = ocean.getMinimap()
@@ -1947,11 +1947,11 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                     self.localOnboard = True
                     localAvatar.setEfficiency(True)
                     localAvatar.setBoardedShip(True)
-                
-            
-        
 
-    
+
+
+
+
     def handleChildLeave(self, child, zoneId):
         if isinstance(child, DistributedBattleAvatar.DistributedBattleAvatar):
             child.stopCompassEffect()
@@ -1963,62 +1963,62 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                     self.localOnboard = False
                     localAvatar.setEfficiency(False)
                     localAvatar.setBoardedShip(False)
-                
+
                 self.removeDeckInterest()
                 localAvatar.guiMgr.combatTray.skillTray.removePowerRechargeEffect()
                 if self.model:
                     self.model.sinkingEnd()
-                
+
                 for currAvId in self.crew + self.boarders:
                     currAv = self.cr.doId2do.get(currAvId)
                     if currAv and currAv is not localAvatar:
                         currAv.onShipWithLocalAv(False)
                         continue
-                
+
                 self.gameFSM.clearAudio()
                 ocean = self.getParentObj()
                 minimap = ocean.getMinimap()
                 localAvatar.guiMgr.clearMinimap(minimap)
-            
-        
+
+
         DistributedMovingObject.handleChildLeave(self, child, zoneId)
 
-    
+
     def enterShipEvent(self, entry):
         eventObject = entry.getIntoNodePath()
         objType = eventObject.getNetTag('objType')
         if not objType:
             return None
-        
+
         objType = int(objType)
         if objType == PiratesGlobals.COLL_NEWSHIP and self.isRamming():
             targetId = eventObject.getNetPythonTag('ship').doId
             pos = entry.getSurfacePoint(self)
             self.composeRequestShipRam(targetId, pos)
-        
 
-    
+
+
     def exitShipEvent(self, entry):
         eventObject = entry.getIntoNodePath()
         objType = eventObject.getNetTag('objType')
         if not objType:
             return None
-        
+
         objType = int(objType)
         if objType == PiratesGlobals.COLL_NEWSHIP:
             pass
         1
 
-    
+
     def composeRequestShipRam(self, targetId, pos):
         target = self.cr.doId2do.get(targetId)
         if not target:
             return None
-        
+
         if not TeamUtils.damageAllowed(target, self):
             localAvatar.guiMgr.createWarning(PLocalizer.FriendlyFireWarning, PiratesGuiGlobals.TextFG6)
             return None
-        
+
         for buffKeyId in self.skillEffects.keys():
             buffId = self.skillEffects[buffKeyId][0]
             if WeaponGlobals.C_RAM == buffId:
@@ -2030,14 +2030,14 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                     if buffId == WeaponGlobals.C_RAM:
                         deleteMe.append((buffKeyId, buffId, attackerId))
                         continue
-                
+
                 for (buffKeyId, buffId, attackerId) in deleteMe:
                     del self.skillEffects[buffKeyId]
                     self.removeStatusEffect(buffId, attackerId)
-                
+
                 self.refreshStatusTray()
                 continue
-        
+
         self.addShipTarget(target, 2)
         if self.isInCrew(base.localAvatar.doId):
             cameraShakerEffect = CameraShaker()
@@ -2048,9 +2048,9 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             cameraShakerEffect.numShakes = 4
             cameraShakerEffect.scalePower = 1
             cameraShakerEffect.play(500.0)
-        
 
-    
+
+
     def sendRequestShipRam(self, targetId, pos):
         timestamp32 = globalClockDelta.getFrameNetworkTime(bits = 32)
         self.sendUpdate('requestShipRam', [
@@ -2061,7 +2061,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 pos[2]],
             timestamp32])
 
-    
+
     def useShipRam(self, pos):
         power = 1000
         if pos != [
@@ -2074,7 +2074,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             dot = pos.dot(Vec3.right())
             if dot < 0.0:
                 power = -power
-            
+
         else:
             (x, y, z, s) = ShipGlobals.getRammingSphereScale(self.modelClass)
             pos = Vec3(x, y, z)
@@ -2084,8 +2084,8 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 shipSplintersAEffect.reparentTo(self)
                 shipSplintersAEffect.setPos(self, pos)
                 shipSplintersAEffect.play()
-            
-        
+
+
         if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsLow:
             smokeCloudEffect = SmokeCloud.getEffect()
             if smokeCloudEffect:
@@ -2095,8 +2095,8 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 smokeCloudEffect.spriteScale = 4.0
                 smokeCloudEffect.radius = 10.0
                 smokeCloudEffect.play()
-            
-        
+
+
         if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsHigh:
             shockwaveRingEffect = ShockwaveHit.getEffect()
             if shockwaveRingEffect:
@@ -2104,8 +2104,8 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 shockwaveRingEffect.setPos(self, pos)
                 shockwaveRingEffect.size = 200
                 shockwaveRingEffect.play()
-            
-        
+
+
         if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsLow:
             if self.isInCrew(base.localAvatar.doId):
                 cameraShakerEffect = CameraShaker()
@@ -2116,13 +2116,13 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 cameraShakerEffect.numShakes = 4
                 cameraShakerEffect.scalePower = 1
                 cameraShakerEffect.play(500.0)
-            
-        
+
+
         self.setRockTarget(power)
         soundFx = random.choice(getRamSfx())
         base.playSfx(soundFx, node = self, cutoff = 2500)
 
-    
+
     def setupAggroCollisions(self):
         self.cAggro = CollisionSphere(0, 0, 0, self.getInstantAggroSphereSize())
         self.cAggro.setTangible(0)
@@ -2133,7 +2133,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.cAggroNodePath = self.attachNewNode(self.cAggroNode)
         if base.config.GetBool('show-aggro-radius', 0):
             self.cAggroNodePath.show()
-        
+
         self.cHighAggro = CollisionSphere(0, 0, 0, self.getInstantAggroSphereSize())
         self.cHighAggro.setTangible(0)
         self.cHighAggroNode = CollisionNode(self.uniqueName('HighAggroSphere'))
@@ -2155,32 +2155,32 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         else:
             print 'Setting Collisions for low threat'
 
-    
+
     def cleanupAggroCollisions(self):
         if self.cAggroNodePath:
             base.cTrav.removeCollider(self.cAggroNodePath)
             self.cAggroNodePath.removeNode()
             self.cAggroNodePath = None
-        
+
         if self.cAggroNode:
             self.cAggroNode = None
-        
+
         if self.cAggro:
             self.cAggro = None
-        
+
         if self.cHighAggroNodePath:
             base.cTrav.removeCollider(self.cHighAggroNodePath)
             self.cHighAggroNodePath.removeNode()
             self.cHighAggroNodePath = None
-        
+
         if self.cHighAggroNode:
             self.cHighAggroNode = None
-        
+
         if self.cHighAggro:
             self.cHighAggro = None
-        
 
-    
+
+
     def _handleThreatLevelChange(self, threatLevel):
         if threatLevel >= EnemyGlobals.SHIP_THREAT_CALL_FOR_HELP:
             self.cHighAggroNodePath.unstash()
@@ -2189,11 +2189,11 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             self.cHighAggroNodePath.stash()
             self.cAggroNodePath.unstash()
 
-    
+
     def _handleEnterHighAggroSphere(self, collEntry):
         self._handleEnterAggroSphere(collEntry)
 
-    
+
     def _handleEnterAggroSphere(self, collEntry):
         otherCollNode = collEntry.getFromNodePath()
         myCollNode = collEntry.getIntoNodePath()
@@ -2203,21 +2203,21 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             PiratesGlobals.SPANISH_UNDEAD_TEAM,
             PiratesGlobals.VOODOO_ZOMBIE_TEAM]:
             self.sendRequestClientAggro()
-        
 
-    
+
+
     def getInstantAggroSphereSize(self):
         return EnemyGlobals.SHIP_INSTANT_AGGRO_RADIUS
 
-    
+
     def getInstantHighAggroSphereSize(self):
         return EnemyGlobals.SHIP_INSTANT_HIGH_AGGRO_RADIUS
 
-    
+
     def sendRequestClientAggro(self):
         self.sendUpdate('requestClientAggro', [])
 
-    
+
     def getForwardVelocity(self):
         velocity = 0
         if hasattr(self, 'worldVelocity'):
@@ -2225,27 +2225,27 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 rotMat = Mat3.rotateMatNormaxis(self.getH(), Vec3.up())
                 fwdVec = rotMat.xform(Vec3.forward())
                 velocity = self.worldVelocity.dot(fwdVec)
-            
+
             velocity += self.smoother.getSmoothForwardVelocity()
-        
+
         return velocity
 
-    
+
     def getRotationalVelocity(self):
         return self.currentTurning + self.smoother.getSmoothRotationalVelocity()
 
-    
+
     def loadStats(self):
         if self.stats:
             return None
-        
+
         if not self.shipClass:
             return None
-        
+
         if self.getTeam() == PiratesGlobals.INVALID_TEAM:
             self.notify.warning('Tried to load ship stats without a team %s' % self)
             return None
-        
+
         self.stats = ShipGlobals.getShipConfig(self.shipClass)
         self.acceleration = self.stats['acceleration']
         self.maxSpeed = self.stats['maxSpeed']
@@ -2267,16 +2267,16 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.baseMaxTurn = self.maxTurn
         self.maxTurn *= self.baseSpeedMod
 
-    
+
     def autoFireCannons(self, side):
         if self.broadside:
             if self.broadside[1]:
                 target = self.autoAimBroadside(side)
                 self.broadside[1].fireBroadside(side, target)
-            
-        
 
-    
+
+
+
     def playProjectileHitSfx(self, ammoSkillId, hitSail):
         if not hitSail:
             if localAvatar.ship == self:
@@ -2289,11 +2289,11 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             sfx = random.choice(self.sailTearSfx)
             base.playSfx(sfx, node = self, cutoff = 2000)
 
-    
+
     def projectileWeaponHit(self, skillId, ammoSkillId, skillResult, targetEffects, pos, normal, codes, attacker, itemEffects = []):
         if not codes:
             codes = (255, 255, 0)
-        
+
         (hullCode, mastCode, hitSail) = codes
         self.playProjectileHitSfx(ammoSkillId, hitSail)
         if attacker:
@@ -2308,17 +2308,17 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 localAvatar.guiMgr.radarGui.flashRadarObjectTimed(attackShip.doId)
             elif attackShip.isInCrew(localAvatar.doId):
                 localAvatar.addShipTarget(self, 2)
-            
-        
+
+
         if mastCode != 255:
             self.model.mastHit(mastCode)
-        
 
-    
+
+
     def damage(self, damage, pos, attackerId, itemEffects):
         if attackerId and localAvatar.doId == attackerId and damage != 0:
             self.showHpText(damage, pos = pos, itemEffects = itemEffects)
-        
+
         offset = Vec3(*pos)
         offset.setZ(0.0)
         distance = offset.length()
@@ -2326,10 +2326,10 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         power = abs(damage) / 20.0
         if dot < 0.0:
             power = -power
-        
+
         self.setRockTarget(power)
 
-    
+
     def setRockTarget(self, power, timestamp = None):
         if timestamp == None:
             ts = 0.0
@@ -2337,32 +2337,32 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             ts = globalClockDelta.localElapsedTime(timestamp)
         self.addRoll(-power)
 
-    
+
     def addRoll(self, roll):
         self._rocker.addRoll(roll)
 
-    
+
     def adjustArmorDisplay(self):
         (rear, left, right) = self.getArmorStates()
         if self.shipStatusDisplay:
             self.shipStatusDisplay.setArmorStatus(ShipGlobals.ARMOR_LEFT, 1 - left / 100.0)
             self.shipStatusDisplay.setArmorStatus(ShipGlobals.ARMOR_RIGHT, 1 - right / 100.0)
             self.shipStatusDisplay.setArmorStatus(ShipGlobals.ARMOR_REAR, 1 - rear / 100.0)
-        
+
         if self.shipTargetPanel:
             self.shipTargetPanel.setArmorStatus(ShipGlobals.ARMOR_LEFT, 1 - left / 100.0)
             self.shipTargetPanel.setArmorStatus(ShipGlobals.ARMOR_RIGHT, 1 - right / 100.0)
             self.shipTargetPanel.setArmorStatus(ShipGlobals.ARMOR_REAR, 1 - rear / 100.0)
-        
+
         if hasattr(base, 'localAvatar') and self.getCaptainId() == base.localAvatar.getDoId():
             if left <= 0.0:
                 base.localAvatar.sendRequestContext(InventoryType.BrokenHull, 1)
             elif right <= 0.0:
                 base.localAvatar.sendRequestContext(InventoryType.BrokenHull, 2)
-            
-        
 
-    
+
+
+
     def checkAbleDropAnchor(self):
         if self.isLocalCaptain():
             if self.shipStatusDisplay:
@@ -2371,46 +2371,46 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 else:
                     self.shipStatusDisplay.disableAnchorButton()
                     self.shipStatusDisplay.hideWrongPort()
-            
-        
 
-    
+
+
+
     def requestDropAnchor(self):
         self.sendUpdate('dropAnchor', [
             localAvatar.getPort()])
 
-    
+
     def setBoardableShipId(self, shipId):
         self.boardableShipId = shipId
         if shipId == 0:
             self.clearedFlagship()
-        
+
         if self.isInCrew(localAvatar.getDoId()):
             self.notify.debug('ship %s is boardable' % shipId)
-        
 
-    
+
+
     def swingLocalAvatarToGrappledShip(self, grappledShipId):
         grappledShip = base.cr.doId2do.get(grappledShipId)
         if grappledShip:
             currentInteractive = base.cr.interactionMgr.getCurrentInteractive()
             if currentInteractive:
                 currentInteractive.requestExit()
-            
+
             if localAvatar.gameFSM.getCurrentOrNextState() == 'Battle':
                 localAvatar.b_setGameState('LandRoam')
-            
+
             grappledShip.boardingInProgress = 1
             grappledShip.sendUpdate('requestBoard', [
                 localAvatar.getDoId()])
-        
 
-    
+
+
     def d_requestBoardFlagship(self, flagshipId):
         self.sendUpdate('requestBoardFlagship', [
             flagshipId])
 
-    
+
     def getRopeAnchorNode(self, av, ropeEndNode):
         rightHand = av.rightHandNode
         ropeAnchorNode = self.attachNewNode('ropeAnchorNode')
@@ -2419,7 +2419,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         ropeEndNode.setPos(rhp[0] - 100, rhp[1], rhp[2] + 130)
         return ropeAnchorNode
 
-    
+
     def setBadge(self, titleId, rank):
         if titleId < 0 or rank < 0:
             self.badge = None
@@ -2427,61 +2427,61 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             self.badge = (titleId, rank)
         self.updateNametag()
 
-    
+
     def setName(self, name):
         if name == self.name:
             return None
-        
+
         self.name = name
         messenger.send('setName-%s' % self.getDoId(), [
             self.name,
             self.getTeam()])
         self.checkMakeNametag(self.isGenerated())
 
-    
+
     def checkMakeNametag(self, generated):
         if not self.shipClass:
             return None
-        
+
         if not self.name:
             return None
-        
+
         if not generated:
             return None
-        
+
         if not self.nametag:
             self.createNametag(self.name)
             self.updateNametag()
             if self.initializeNametag3d():
                 self.addActive()
-            
+
             if base.hideShipNametags:
                 self.hideNametag()
             else:
                 self.showNametag()
             return None
-        
 
-    
+
+
     def updateNametag(self):
         badgeText = ''
         threatText = ''
         if self.badge:
             if base.config.GetBool('want-land-infamy', 0) or base.config.GetBool('want-sea-infamy', 0):
-                badgeText = ' \x1white\x1\x5badge-%s-%s\x5\x2 ' % (self.badge[0], self.badge[1])
-            
+                badgeText = ' whitebadge-%s-%s ' % (self.badge[0], self.badge[1])
+
         if base.config.GetBool('want-ship-threat', 1) and not self.getSiegeTeam():
             if self.getThreatLevel():
-                threatText = '\x1white\x1\x5threat-%s\x5\x2\n\n' % self.getThreatLevel()
+                threatText = 'whitethreat-%s\n\n' % self.getThreatLevel()
             elif self.getHunterLevel():
                 hunterName = HighSeasGlobals.HUNTER_LEVEL_NAME_DICT.get(self.getHunterLevel(), '')
-                threatText = '\x1white\x1\x5hunterTAG\x5\x2 \x1red\x1%s\x2\n\n' % hunterName
-            
-        
+                threatText = 'whitehunterTAG red%s\n\n' % hunterName
+
+
         if self.nametag:
             self.nametag.setName(self.name + badgeText + threatText)
             self.nametag.setDisplayName('        ')
-        
+
         if self.nametag3d:
             if self.nameText:
                 self.nameText['text'] = threatText + badgeText + self.name
@@ -2489,64 +2489,64 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                     self.nameText.setPos(0, 2)
                 else:
                     self.nameText.setPos(0, 0)
-            
+
             if self.classNameText:
                 className = PLocalizer.ShipClassNames.get(self.modelClass)
                 if self.getTeam() != PiratesGlobals.PLAYER_TEAM:
                     self.classNameText['text'] = PLocalizer.Lv + str(self.level) + ' ' + className
                 else:
                     self.classNameText['text'] = className
-            
-        
 
-    
+
+
+
     def getName(self):
         return self.name
 
-    
+
     def getNameVisible(self):
         return self._DistributedSimpleShip__nameVisible
 
-    
+
     def setNameVisible(self, bool):
         self._DistributedSimpleShip__nameVisible = bool
         if bool:
             self.showName()
-        
+
         if not bool:
             self.hideName()
-        
 
-    
+
+
     def hideName(self):
         if not self.nametag:
             return None
-        
+
         self.nametag.getNametag3d().setContents(Nametag.CSpeech | Nametag.CThought)
 
-    
+
     def showName(self):
         if not self.nametag:
             return None
-        
+
         if self._DistributedSimpleShip__nameVisible:
             self.nametag.getNametag3d().setContents(Nametag.CName | Nametag.CSpeech | Nametag.CThought)
-        
 
-    
+
+
     def updatePickable(self):
         if self.isInCrew(base.localAvatar.doId):
             self.setPickable(0)
         else:
             self.setPickable(1)
 
-    
+
     def setPickable(self, flag):
         if self.nametag:
             self.nametag.setActive(flag)
-        
 
-    
+
+
     def clickedNametag(self):
         if localAvatar.chatMgr.active and base.config.GetBool('allow-doid-paste', 0):
             currTxt = localAvatar.chatMgr.whiteListEntry.get()
@@ -2557,13 +2557,13 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 separator = ''
             localAvatar.chatMgr.whiteListEntry.set(currTxt + separator + str(self.doId))
             localAvatar.chatMgr.whiteListEntry.setCursorPosition(len(localAvatar.chatMgr.whiteListEntry.get()))
-        
 
-    
+
+
     def initializeNametag3d(self):
         if not self.nametag:
             return 0
-        
+
         self.deleteNametag3d()
         nametagNode = self.nametag.getNametag3d().upcastToPandaNode()
         self.nametag3d.attachNewNode(nametagNode)
@@ -2572,13 +2572,13 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if self.iconNodePath.isEmpty():
             self.notify.warning('empty iconNodePath in initializeNametag3d')
             return 0
-        
+
         if self.nameText:
             self.nameText.reparentTo(self.iconNodePath)
-        
+
         if self.classNameText:
             self.classNameText.reparentTo(self.iconNodePath)
-        
+
         if self.isFlagship:
             modelPath = EnemyGlobals.getFlagshipIconModelPath(self.getTeam())
             if modelPath:
@@ -2587,37 +2587,37 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 flagshipIcon.setScale(1.5)
                 flagshipIcon.reparentTo(self.iconNodePath)
                 flagshipIcon.flattenLight()
-            
-        
+
+
         return 1
 
-    
+
     def deleteNametag3d(self):
         if self.nametag3d:
             children = self.nametag3d.getChildren()
             for i in range(children.getNumPaths()):
                 children[i].removeNode()
-            
-        
 
-    
+
+
+
     def addActive(self):
         if base.wantNametags and self.nametag:
             self.nametag.manage(base.marginManager)
             self.accept(self.nametag.getUniqueId(), self.clickedNametag)
-        
 
-    
+
+
     def removeActive(self):
         if base.wantNametags and self.nametag:
             self.nametag.unmanage(base.marginManager)
-        
 
-    
+
+
     def createNametag(self, name):
         if self.shipClass == ShipGlobals.STUMPY_SHIP:
             return None
-        
+
         self._DistributedSimpleShip__nameVisible = 1
         self.nametag = NametagGroup()
         self.nametag.setAvatar(self)
@@ -2652,96 +2652,96 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.classNameText.setLightOff()
         self.classNameText.setFogOff()
 
-    
+
     def removeNametag(self):
         if self.nametag:
             self.classNameText.removeNode()
             self.nameText.removeNode()
             self.nametag = None
             self.nametag3d.removeNode()
-        
 
-    
+
+
     def getNametagScale(self):
         return self.nametagScale
 
-    
+
     def setNametagScale(self, scale):
         self.nametagScale = scale
         if self.nametag3d:
             self.nametag3d.setScale(scale)
-        
 
-    
+
+
     def setPlayerType(self, playerType):
         self.playerType = playerType
         if self.nametag:
             self.nametag.setColorCode(self.playerType)
-        
 
-    
+
+
     def setShipClass(self, val):
         self.shipClass = val
         self.modelClass = ShipGlobals.getModelClass(val)
         self.setupLocalStats()
         self._tiltFakeMass = ShipGlobals.TiltFakeMass[self.modelClass]
 
-    
+
     def getHp(self):
         return self.Hp
 
-    
+
     def getMaxHp(self):
         return self.maxHp
 
-    
+
     def setCargo(self, cargo):
         self.cargo = cargo
         messenger.send('setShipCargo-%s' % self.getDoId(), [
             self.cargo,
             self.maxCargo])
 
-    
+
     def setMaxCargo(self, maxCargo):
         self.maxCargo = maxCargo
 
-    
+
     def getMaxCargo(self):
         return self.maxCargo
 
-    
+
     def setMaxCrew(self, val):
         self.maxCrew = val
 
-    
+
     def getMaxCrew(self):
         return self.maxCrew
 
-    
+
     def getMaxCrew(self):
         return self.maxCrew
 
-    
+
     def getSp(self):
         return self.Sp
 
-    
+
     def getMaxSp(self):
         return self.maxSp
 
-    
+
     def getNPCship(self):
         return False
 
-    
+
     def notifyReceivedLoot(self, lootList):
         if self.getCrew().count(base.localAvatar.doId):
             if base.localAvatar.style.getTutorial() >= PiratesGlobals.TUT_MET_JOLLY_ROGER:
                 base.localAvatar.guiMgr.messageStack.showLoot(lootList)
-            
-        
 
-    
+
+
+
     def setBaseSpeedMod(self, mod):
         self.baseSpeedMod = mod
         self.maxSpeed = self.baseMaxSpeed * mod
@@ -2751,26 +2751,26 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.turnRate = self.baseTurnRate * mod
         self.maxTurn = self.baseMaxTurn * mod
 
-    
+
     def setLockSails(self, val):
         self.lockedSails = val
 
-    
+
     def b_setLocation(self, parentId, zoneId):
         if self.isGenerated():
             self.cnode.setCurrL(zoneId)
-        
+
         DistributedMovingObject.b_setLocation(self, parentId, zoneId)
 
-    
+
     def stopSmooth(self):
         if self.smoothStarted:
             taskName = self.taskName('smooth')
             taskMgr.remove(taskName)
             self.smoothStarted = 0
-        
 
-    
+
+
     def getDebugNamePosScale(self):
         if self.modelClass == ShipGlobals.INTERCEPTORL1 and self.modelClass == ShipGlobals.MERCHANTL1 or self.modelClass == ShipGlobals.WARSHIPL1:
             return [
@@ -2797,7 +2797,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 (0, 0, 50),
                 2.0]
 
-    
+
     def useShipSkill(self, skillId, ammoSkillId, skillResult, targetId, attackerEffects, targetEffects, timestamp, localSignal = 0):
         effectId = WeaponGlobals.getSkillEffectFlag(skillId)
         newPriority = WeaponGlobals.getBuffPriority(effectId)
@@ -2810,28 +2810,28 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 if newPriority < priority and category == newCategory:
                     return None
                     continue
-            
-        
+
+
         helmsman = self.cr.doId2do.get(self.steeringAvId)
         if helmsman:
             if helmsman.isNpc:
                 return None
-            
+
             if not helmsman.isLocal() or localSignal:
                 self.playSkillMovie(skillId, ammoSkillId)
-            
+
             if helmsman.isLocal():
                 if self.broadside:
                     if skillId == InventoryType.SailBroadsideRight:
                         self.autoFireCannons(ShipGlobals.BROADSIDE_RIGHT)
                     elif skillId == InventoryType.SailBroadsideLeft:
                         self.autoFireCannons(ShipGlobals.BROADSIDE_LEFT)
-                    
-                
-            
-        
 
-    
+
+
+
+
+
     def playSkillMovie(self, skillId, ammoSkillId):
         skillInfo = WeaponGlobals.getSkillAnimInfo(skillId)
         anim = skillInfo[WeaponGlobals.PLAYABLE_INDEX]
@@ -2839,14 +2839,14 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         if helmsman:
             if helmsman.isNpc:
                 return None
-            
-        
+
+
         self.curAttackAnim = getattr(self.cr.combatAnims, anim)(helmsman, skillId, ammoSkillId)
         if self.curAttackAnim:
             self.curAttackAnim.start()
-        
 
-    
+
+
     def setSkillEffects(self, buffs):
         for (effectId, attackerId, timestamp, duration, timeLeft, recur, buffData) in buffs:
             buffKeyId = '%s-%s' % (effectId, attackerId)
@@ -2863,7 +2863,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             effect = self.skillEffects[buffKeyId]
             effect[3] = timeLeft
             effect[4] = timestamp
-        
+
         killList = []
         for buffKeyId in self.skillEffects.keys():
             foundEntry = 0
@@ -2872,18 +2872,18 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 if buffKeyId == id:
                     foundEntry = 1
                     continue
-            
+
             if not foundEntry:
                 killList.append((buffKeyId, self.skillEffects[buffKeyId][0], self.skillEffects[buffKeyId][1]))
                 continue
-        
+
         for (buffKeyId, effectId, attackerId) in killList:
             del self.skillEffects[buffKeyId]
             self.removeStatusEffect(effectId, attackerId)
-        
+
         self.refreshStatusTray()
 
-    
+
     def getSkillEffects(self):
         buffIds = []
         for buffKeyId in self.skillEffects.keys():
@@ -2891,10 +2891,10 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             if buffId not in buffIds:
                 buffIds.append(buffId)
                 continue
-        
+
         return buffIds
 
-    
+
     def addStatusEffect(self, effectId, attackerId, duration = 0, timeLeft = 0, timestamp = 0, buffData = [
         0]):
         if effectId == WeaponGlobals.C_FULLSAIL:
@@ -2904,18 +2904,18 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                         pass
                     else:
                         self.startAutoSailing()
-                
-            
+
+
             if self.fullsailSfx:
                 base.playSfx(self.fullsailSfx, node = self, cutoff = 2000)
-            
+
             if self.model:
                 self.model.playFullSailEffect()
-            
+
         elif effectId == WeaponGlobals.C_COMEABOUT:
             if self.model:
                 self.model.playComeAboutEffect()
-            
+
         elif effectId == WeaponGlobals.C_RAM:
             if self.isLocalCaptain():
                 self.rammingOn()
@@ -2924,101 +2924,101 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                         pass
                     else:
                         self.startAutoSailing()
-                
-            
+
+
             if self.rammingSfx:
                 base.playSfx(self.rammingSfx, node = self, cutoff = 2000)
-            
+
             if self.model:
                 self.model.playRamEffect()
-            
+
         elif effectId == WeaponGlobals.C_RECHARGE:
             if self.isInCrew(localAvatar.doId):
                 localAvatar.guiMgr.combatTray.skillTray.addPowerRechargeEffect()
                 if localAvatar.cannon:
                     localAvatar.cannon.updateReloadBar()
-                
-            
+
+
             if self.model:
                 self.model.playRechargeEffect()
-            
+
         elif effectId == WeaponGlobals.C_SPAWN:
             if self.model:
                 self.model.playSpawnEffect()
-            
+
         elif effectId == WeaponGlobals.C_TAKECOVER:
             if self.model:
                 self.model.playTakeCoverEffect()
-            
+
         elif effectId == WeaponGlobals.C_OPENFIRE:
             if self.model:
                 self.model.playOpenFireEffect()
-            
-        
+
+
         self.calcModifiedStats()
 
-    
+
     def removeStatusEffect(self, effectId, attackerId):
         if self.findAllBuffCopyKeys(effectId):
             return None
-        
+
         if effectId == WeaponGlobals.C_RAM:
             if self.model:
                 self.model.stopRamEffect()
-            
+
             if self.isLocalCaptain():
                 self.rammingOff()
-            
+
         elif effectId == WeaponGlobals.C_RECHARGE:
             if self.isInCrew(localAvatar.doId):
                 localAvatar.guiMgr.combatTray.skillTray.removePowerRechargeEffect()
                 if localAvatar.cannon:
                     localAvatar.cannon.updateReloadBar()
-                
-            
+
+
             if self.model:
                 self.model.stopRechargeEffect()
-            
+
         elif effectId == WeaponGlobals.C_SPAWN:
             if self.model:
                 self.model.stopSpawnEffect()
-            
+
         elif effectId == WeaponGlobals.C_TAKECOVER:
             if self.model:
                 self.model.stopTakeCoverEffect()
-            
+
         elif effectId == WeaponGlobals.C_OPENFIRE:
             if self.model:
                 self.model.stopOpenFireEffect()
-            
-        
+
+
         slowDown = True
         for buffKeyId in self.skillEffects.keys():
             buffId = self.skillEffects[buffKeyId][0]
             if WeaponGlobals.C_FULLSAIL == buffId or WeaponGlobals.C_RAM == buffId:
                 slowDown = False
                 continue
-        
+
         self.calcModifiedStats()
 
-    
+
     def findAllBuffCopyKeys(self, effectId):
         buffCopies = []
         for buffKeyId in self.skillEffects.keys():
             if self.skillEffects[buffKeyId][0] == effectId:
                 buffCopies.append(buffKeyId)
                 continue
-        
+
         return buffCopies
 
-    
+
     def startAutoSailing(self):
         if self.enableAutoSail:
             return None
-        
+
         if not self.sailsReady:
             return None
-        
+
         self.enableAutoSail = 1
         self.setIsAutoSailing(1)
         self.accept('arrow_down', self.stopAutoSailing)
@@ -3027,19 +3027,19 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         taskMgr.remove(self.getReadySailsTaskName())
         taskMgr.doMethodLater(self.SAIL_READY_DELAY, self._DistributedSimpleShip__readySails, self.getReadySailsTaskName())
 
-    
+
     def stopAutoSailing(self):
         if not self.enableAutoSail:
             return None
-        
+
         if not self.sailsReady:
             return None
-        
+
         for buffId in self.getSkillEffects():
             if WeaponGlobals.C_RAM == buffId:
                 return None
                 continue
-        
+
         self.enableAutoSail = 0
         self.setIsAutoSailing(0)
         self.ignore('arrow_down')
@@ -3048,11 +3048,11 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         taskMgr.remove(self.getReadySailsTaskName())
         taskMgr.doMethodLater(self.SAIL_READY_DELAY, self._DistributedSimpleShip__readySails, self.getReadySailsTaskName())
 
-    
+
     def setIsAutoSailing(self, value):
         if self.lockedSails:
             return None
-        
+
         self.autoSailing = value
         if value:
             self.sailsDown = True
@@ -3061,7 +3061,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 True])
             if base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsHigh:
                 localAvatar.enableCloudScudEffect()
-            
+
         else:
             self.sailsDown = False
             self.l_rollupSails()
@@ -3069,23 +3069,23 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 False])
             localAvatar.disableCloudScudEffect()
 
-    
+
     def getIsAutoSailing(self):
         return self.autoSailing
 
-    
+
     def l_rolldownSails(self):
         if self.model:
             self.model.startSailing()
-        
 
-    
+
+
     def l_rollupSails(self):
         if self.model:
             self.model.stopSailing()
-        
 
-    
+
+
     def setSailsDown(self, down):
         if down:
             self.sailsDown = True
@@ -3094,13 +3094,13 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             self.sailsDown = False
             self.l_rollupSails()
 
-    
+
     def refreshStatusTray(self):
         if self.shipStatusDisplay:
             self.shipStatusDisplay.updateStatusEffects(self.skillEffects)
-        
 
-    
+
+
     def calcModifiedStats(self):
         self.stats = None
         self.loadStats()
@@ -3109,7 +3109,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             if WeaponGlobals.getSkillTrack(skillId) == WeaponGlobals.PASSIVE_SKILL_INDEX:
                 passiveSkills.append(skillId)
                 continue
-        
+
         spPercent = max(1, self.Sp) / float(max(1, self.maxSp))
         speedModifier = spPercent * 0.25 + 0.75
         turnModifier = spPercent * 0.25 + 0.75
@@ -3127,10 +3127,10 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 if inventory:
                     for skillId in passiveSkills:
                         self.addPassiveSkill(skillId, inventory)
-                    
-                
-            
-        
+
+
+
+
         for buffKeyId in self.skillEffects:
             buffId = self.skillEffects[buffKeyId][0]
             if WeaponGlobals.C_RAM == buffId:
@@ -3147,9 +3147,9 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 self.acceleration += ShipGlobals.defaultAcceleration * 0.5
                 self.maxSpeed += ShipGlobals.defaultMaxSpeed * 0.5
                 continue
-        
 
-    
+
+
     def addPassiveSkill(self, skillId, inventory):
         skillLvl = max(0, inventory.getStackQuantity(skillId) - 1)
         effects = WeaponGlobals.getShipEffects(skillId)
@@ -3166,9 +3166,9 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             self.maxReverseSpeed += self.baseMaxReverseSpeed * effects[3] * skillLvl
             self.turnRate += self.baseTurnRate * effects[4] * skillLvl
             self.maxTurn += self.baseMaxTurn * effects[5] * skillLvl
-        
 
-    
+
+
     def setupControls(self):
         if not self.controlManager:
             self.controlManager = ControlManager.ControlManager(enable = False)
@@ -3179,21 +3179,21 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             wallBitMask = PiratesGlobals.ShipCollideBitmask | PiratesGlobals.GoldBitmask
             if self.respectDeployBarriers:
                 wallBitMask |= PiratesGlobals.ShipDeployBitmask
-            
+
             controls.setWallBitMask(wallBitMask)
             controls.setFloorBitMask(BitMask32().allOff())
             self.controlManager.add(controls, 'ship')
-        
 
-    
+
+
     def getReadySailsTaskName(self):
         return 'readySails-%s' % self.doId
 
-    
+
     def _DistributedSimpleShip__readySails(self, args = None):
         self.sailsReady = 1
 
-    
+
     def generateBroadsidePoints(self):
         for side in self.broadside[0]:
             minY = 1000
@@ -3207,22 +3207,22 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                     pos = port.locator.getPos(self)
                     if minY > pos[1]:
                         minY = pos[1]
-                    
+
                     if maxY < pos[1]:
                         maxY = pos[1]
-                    
+
                     avgX += pos[0]
                     avgZ += pos[2]
                     continue
-            
+
             avgX /= float(bCount)
             avgZ /= float(bCount)
             self.broadsidePoints.append([
                 Vec3(avgX, minY, avgZ),
                 Vec3(avgX, maxY, avgZ)])
-        
 
-    
+
+
     def autoAimBroadside(self, side):
         targetList = { }
         for shipId in base.localAvatar.shipList:
@@ -3233,19 +3233,19 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                         dist = self.checkBroadsideAlignment(ship, side)
                         if dist:
                             targetList[dist] = shipId
-                        
-                    
-                
+
+
+
             ship.getHp() > 0
-        
+
         if targetList:
             keys = targetList.keys()
             keys.sort()
             return targetList[keys[0]]
-        
+
         return 0
 
-    
+
     def visualizeBroadsides(self):
         cm = CardMaker('cm')
         cm.setFrame(-0.001, 0.001, 0, 1)
@@ -3298,23 +3298,23 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         d1.setZ(5)
         self.d1 = d1
 
-    
+
     def checkBroadsideAlignment(self, target, side):
         if self.lookAtDummy == None:
             return 0
-        
+
         if not target:
             return 0
-        
+
         withinLeft = False
         withinRight = False
         if not self.broadsidePoints:
             self.generateBroadsidePoints()
-        
+
         distToTgt = self.getDistance(target)
         if distToTgt > ShipGlobals.BROADSIDE_MAX_AUTOAIM_DIST:
             return 0
-        
+
         self.lookAtDummy.setPos(0, 0, 0)
         (bow, port, starboard, stern) = target.model.getPartNodes()
         if bow and stern:
@@ -3328,40 +3328,40 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                     targetHeading = self.lookAtDummy.getH()
                     if targetHeading > minHeading:
                         withinLeft = True
-                    
+
                     self.lookAtDummy.lookAt(stern)
                     targetHeading = self.lookAtDummy.getH()
                     if targetHeading > minHeading:
                         withinLeft = True
-                    
+
                     self.lookAtDummy.setPos(points[0])
                     self.lookAtDummy.lookAt(bow)
                     targetHeading = self.lookAtDummy.getH()
                     if targetHeading < maxHeading:
                         withinRight = True
-                    
+
                     self.lookAtDummy.lookAt(stern)
                     targetHeading = self.lookAtDummy.getH()
                     if targetHeading < maxHeading:
                         withinRight = True
-                    
+
                 else:
                     self.lookAtDummy.lookAt(bow)
                     targetHeading = self.lookAtDummy.getH(self.getModelRoot())
                     if targetHeading > minHeading:
                         withinLeft = True
-                    
+
                     if targetHeading < maxHeading:
                         withinRight = True
-                    
+
                     self.lookAtDummy.lookAt(stern)
                     targetHeading = self.lookAtDummy.getH(self.getModelRoot())
                     if targetHeading > minHeading:
                         withLeft = True
-                    
+
                     if targetHeading < maxHeading:
                         withinRight = True
-                    
+
             elif side == ShipGlobals.BROADSIDE_RIGHT:
                 minHeading = -115
                 maxHeading = -65
@@ -3376,41 +3376,41 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                         targetHeading = self.lookAtDummy.getH()
                         if targetHeading > minHeading:
                             withinLeft = True
-                        
+
                         self.lookAtDummy.setPos(points[1])
                         self.lookAtDummy.lookAt(bow)
                         targetHeading = self.lookAtDummy.getH()
                         if targetHeading < maxHeading:
                             withinRight = True
-                        
+
                         self.lookAtDummy.lookAt(stern)
                         targetHeading = self.lookAtDummy.getH()
                         if targetHeading < maxHeading:
                             withinRight = True
-                        
-                    
+
+
                 else:
                     self.lookAtDummy.lookAt(bow)
                     targetHeading = self.lookAtDummy.getH(self.getModelRoot())
                     if targetHeading > minHeading:
                         withinLeft = True
-                    
+
                     if targetHeading < maxHeading:
                         withinRight = True
-                    
+
                     self.lookAtDummy.lookAt(stern)
                     targetHeading = self.lookAtDummy.getH(self.getModelRoot())
                     if targetHeading > minHeading:
                         withLeft = True
-                    
+
                     if targetHeading < maxHeading:
                         withinRight = True
-                    
+
             else:
                 self.notify.error('bad broadside setup')
             if withinRight and withinLeft:
                 return distToTgt
-            
+
         else:
             self.lookAtDummy.lookAt(target)
             targetHeading = self.lookAtDummy.getH(self.getModelRoot())
@@ -3418,35 +3418,35 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 return distToTgt
             elif (targetHeading < -65 or targetHeading > -115) and side == ShipGlobals.BROADSIDE_RIGHT:
                 return distToTgt
-            
+
         return 0
 
-    
+
     def setRepairCount(self, val):
         self.repairCount = val
 
-    
+
     def getRepairCount(self):
         return self.repairCount
 
-    
+
     def setCaptainId(self, val):
         self.captainId = val
 
-    
+
     def getCaptainId(self):
         return self.captainId
 
-    
+
     def isCaptain(self, avId):
         return avId == self.captainId
 
-    
+
     def getClosestBoardingPos(self):
         allBoardingSpots = self.findLocators('**/boarding_spot_*;+s')
         if not allBoardingSpots:
             return None
-        
+
         closestBoardingSpot = allBoardingSpots[0]
         for locator in allBoardingSpots:
             dist = locator.getDistance(base.localAvatar)
@@ -3454,21 +3454,21 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             if dist < currentClosestDist:
                 closestBoardingSpot = locator
                 continue
-        
+
         return closestBoardingSpot.getPos() + Vec3(1, 0, 5)
 
     getClosestBoardingPos = report(types = [
         'frameCount',
         'deltaStamp'], dConfigParam = 'shipboard')(getClosestBoardingPos)
-    
+
     def getClosestBoardingPosH(self):
         if not self.isGenerated():
             self.notify.error('getClosestBoardingPosH: not generated')
-        
+
         allBoardingSpots = self.findLocators('**/boarding_spot_*;+s')
         if not allBoardingSpots:
             return (Vec3(0, 0, 0), 0)
-        
+
         closestBoardingSpot = allBoardingSpots[0]
         for locator in allBoardingSpots:
             dist = locator.getDistance(base.localAvatar)
@@ -3476,25 +3476,25 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             if dist < currentClosestDist:
                 closestBoardingSpot = locator
                 continue
-        
+
         return (closestBoardingSpot.getPos() + Vec3(0, 0, 6), closestBoardingSpot.getH() + 180)
 
     getClosestBoardingPosH = report(types = [
         'frameCount',
         'deltaStamp'], dConfigParam = 'shipboard')(getClosestBoardingPosH)
-    
+
     def setRespectDeployBarriers(self, respect, barrierId):
         self.respectDeployBarriers = respect
         if not self.controlManager:
             return None
-        
+
         controls = self.controlManager.get('ship')
         if controls:
             if respect:
                 controls.adjustWallBitMask(BitMask32.allOff(), PiratesGlobals.ShipDeployBitmask)
             else:
                 controls.adjustWallBitMask(PiratesGlobals.ShipDeployBitmask, BitMask32.allOff())
-        
+
 
     setRespectDeployBarriers = report(types = [
         'frameCount',
@@ -3502,20 +3502,20 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         'args'], dConfigParam = [
         'shipdeploy',
         'shipboard'])(setRespectDeployBarriers)
-    
+
     def getRespectDeployBarriers(self):
         return self.respectDeployBarriers
 
-    
+
     def placeAvatarAtWheel(self, av):
         modelRoot = self.getModelRoot()
         if modelRoot:
             wheelpost = self.getLocator('**/location_wheel')
             av.setPos(wheelpost.getPos(modelRoot) - Vec3(0.0, 2.0, 0))
             av.setHpr(0, 0, 0)
-        
 
-    
+
+
     def setClientController(self, avId):
         self.clientController = avId
         if avId != 0 and avId == localAvatar.doId:
@@ -3533,14 +3533,14 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             if self.controlManager:
                 shipControls = self.controlManager.get('ship')
                 shipControls.setShip(None)
-            
+
             self.startSmooth()
 
     setClientController = report(types = [
         'frameCount',
         'deltaStamp',
         'args'], dConfigParam = 'shipboard')(setClientController)
-    
+
     def sendCrewToIsland(self, islandId, posH):
         island = base.cr.doId2do.get(islandId)
         localAvatar.removeFromShip(self)
@@ -3555,7 +3555,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         'frameCount',
         'deltaStamp',
         'args'], dConfigParam = 'shipboard')(sendCrewToIsland)
-    
+
     def getShipInfo(self):
         return [
             self.doId,
@@ -3563,7 +3563,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             self.shipClass,
             ShipGlobals.getMastSetup(self.shipClass)]
 
-    
+
     def showBoardingChoice(self, shipToBoard):
         if not self.boardingPanel:
             shipInfo = shipToBoard.getShipInfo()
@@ -3571,52 +3571,52 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             time = shipToBoard.sinkTime - dt
             self.boardingPanel = ShipFrameBoard.ShipFrameBoard(shipName = shipInfo[1], shipClass = shipInfo[2], mastInfo = shipInfo[3], parent = base.a2dTopCenter, pos = (-0.45000000000000001, 0, -0.5), time = time, command = self._DistributedSimpleShip__handleBoardingChoice)
             self._boardingTimer = taskMgr.doMethodLater(time, self._boardingChoiceTimeout, 'boardingTimer')
-        
+
         self.boardingPanel.show()
 
-    
+
     def _boardingChoiceTimeout(self, task):
         self.removeBoardingChoice()
 
-    
+
     def hideBoardingChoice(self):
         if self.boardingPanel:
             self.boardingPanel.hide()
-        
 
-    
+
+
     def removeBoardingChoice(self):
         if self.boardingPanel:
             self.boardingPanel.destroy()
             self.boardingPanel = None
-        
+
         if self._boardingTimer:
             self._boardingTimer.remove()
             self._boardingTimer = None
-        
 
-    
+
+
     def _DistributedSimpleShip__handleBoardingChoice(self, wishToBoard):
         self.removeBoardingChoice()
         if wishToBoard:
             self.d_requestBoardFlagship(self.boardableShipId)
-        
 
-    
+
+
     def confirmSameCrewTeleport(self, toFrom, incomingAvId = 0, bandMgrId = 0, bandId = 0, guildId = 0):
         if toFrom == 'from':
             return True
         elif not self.isGenerated():
             self.notify.warning('confirmSameCrewTeleport(%s)' % localAvatar.getShipString())
             return False
-        
+
         return False
 
     confirmSameCrewTeleport = report(types = [
         'frameCount',
         'deltaStamp',
         'args'], dConfigParam = 'shipboard')(confirmSameCrewTeleport)
-    
+
     def confirmOnShipTeleport(self, toFrom, incomingAvId = 0, bandMgrId = 0, bandId = 0, guildId = 0):
         if toFrom == 'from':
             if self.getSiegeTeam() and localAvatar.avId == self.ownerId:
@@ -3630,7 +3630,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         'frameCount',
         'deltaStamp',
         'args'], dConfigParam = 'shipboard')(confirmOnShipTeleport)
-    
+
     def confirmSiegeCaptainTeleport(self, toFrom, incomingAvId = 0, bandMgrId = 0, bandId = 0, guildId = 0):
         if toFrom == 'from':
             if not not self.getSiegeTeam():
@@ -3643,50 +3643,50 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         'frameCount',
         'deltaStamp',
         'args'], dConfigParam = 'shipboard')(confirmSiegeCaptainTeleport)
-    
+
     def hasSpace(self, avId = 0, bandMgrId = 0, bandId = 0, guildId = 0):
         return False
 
-    
+
     def hideNametag(self):
         if self.nametag3d:
             self.nametag3d.stash()
-        
 
-    
+
+
     def showNametag(self):
         if self.nametag3d:
             self.nametag3d.unstash()
-        
 
-    
+
+
     def setBandId(self, bandManagerId, bandId):
         self.bandId = (bandManagerId, bandId)
 
-    
+
     def getBandId(self):
         return self.bandId
 
-    
+
     def resetMiniLog(self, name = None):
         if name:
             pass
         self.miniLog = MiniLog(name)
 
-    
+
     def requestShipSkill(self, skillId, ammoSkillId):
         self.sendUpdate('requestSkillEvent', [
             skillId,
             ammoSkillId])
 
-    
+
     def recordSkillEvent(self, skillId, ammoSkillId):
         if self.isInCrew(localAvatar.doId):
             localAvatar.skillDiary.startRecharging(skillId, ammoSkillId)
             localAvatar.guiMgr.combatTray.skillTray.updateSkillIval(skillId)
-        
 
-    
+
+
     def setupKrakenLocators(self):
         if not (self.krakenLocators) and self.kraken:
             self.findAllMatches('**/kraken-*').detach()
@@ -3712,52 +3712,52 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
                 rangeParent.setPos(rPos)
                 rangeParent.setScale(VBase3(rScale, rScale, 1))
                 self.krakenLocators.append(locator)
-            
-        
 
-    
+
+
+
     def getKrakenGrabberLocator(self, locatorId):
         self.setupKrakenLocators()
         return self.krakenLocators[locatorId]
 
-    
+
     def getKrakenHolderLocator(self, locatorId):
         return self.model.locators.find('**/holder_%s' % locatorId)
 
-    
+
     def getKrakenRangeParent(self, locatorId):
         locator = self.getKrakenGrabberLocator(locatorId)
         return locator
 
-    
+
     def setKraken(self, kraken):
         self.kraken = kraken
 
-    
+
     def addShipTarget(self, ship, priority = 0):
         if self.getBuildComplete() and ship.getBuildComplete():
             self.targets.add(ship.getTarget(), priority)
-        
 
-    
+
+
     def getTarget(self):
         if not self.target:
             self.target = Target(self)
-        
+
         return self.target
 
-    
+
     def getTargetPanel(self):
         if not self.shipTargetPanel:
             self.loadShipTargetPanel()
-        
+
         return self.shipTargetPanel
 
-    
+
     def isLocalCaptain(self):
         return self.steeringAvId == localAvatar.doId
 
-    
+
     def setupSmoothing(self):
         self.activateSmoothing(1, 0)
         self.smoother.setDelay(OTPGlobals.NetworkLatency * 1.5)
@@ -3767,219 +3767,219 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.smoother.setDefaultToStandingStill(False)
         self.setSmoothWrtReparents(True)
 
-    
+
     def getLocator(self, locatorName):
         if self.model:
             return self.model.locators.find('**/%s;+s' % locatorName)
         else:
             return NodePath()
 
-    
+
     def getLocatorTransform(self, locatorName):
         if self.model:
             return self.getLocator(locatorName).getTransform(self.getModelRoot())
         else:
             return None
 
-    
+
     def getModelCollisionRoot(self):
         if self.model:
             return self.model.modelCollisions
         else:
             return NodePath()
 
-    
+
     def getLowDetail(self):
         if self.model:
             return self.model.modelRoot
         else:
             return NodePath()
 
-    
+
     def getMediumDetail(self):
         if self.model:
             return self.model.modelRoot
         else:
             return NodePath()
 
-    
+
     def getHighDetail(self):
         if self.model:
             return self.model.modelRoot
         else:
             return NodePath()
 
-    
+
     def isSimple(self):
         return True
 
-    
+
     def setWheelInUse(self, wheelInUse):
         pass
 
-    
+
     def storeCamParams(self, shipCamParams):
         self._shipCamParams = shipCamParams
 
-    
+
     def retrieveCamParams(self):
         return self._shipCamParams
 
-    
+
     def setGuildId(self, guildId):
         self.guildId = guildId
 
-    
+
     def getGuildId(self):
         return self.guildId
 
-    
+
     def engagedFlagship(self):
         if self.isInCrew(localAvatar.doId):
             localAvatar.b_setTeleportFlag(PiratesGlobals.TFFlagshipBattle)
-        
 
-    
+
+
     def clearedFlagship(self):
         if self.isInCrew(localAvatar.doId):
             localAvatar.b_clearTeleportFlag(PiratesGlobals.TFFlagshipBattle)
-        
 
-    
+
+
     def _isShip(self):
         return True
 
-    
+
     def getMinimapObject(self):
         if not (self.minimapObj) and not self.isDisabled():
             self.minimapObj = MinimapShip(self)
-        
+
         return self.minimapObj
 
-    
+
     def destroyMinimapObject(self):
         if self.minimapObj:
             self.minimapObj.removeFromMap()
             self.minimapObj = None
-        
 
-    
+
+
     def setOwnerId(self, doId):
         self.ownerId = doId
 
-    
+
     def getOwnerId(self):
         return self.ownerId
 
-    
+
     def rollupSails(self):
         if self.model:
             self.model.stopSailing()
-        
 
-    
+
+
     def getInteractCollisionRoot(self):
         if self.model:
             return self.model.modelCollisions
         else:
             return NodePath()
 
-    
+
     def getWallCollisions(self):
         if self.model:
             return self.model.shipCollWall
         else:
             return NodePath()
 
-    
+
     def hideMasts(self):
         self.model.hideMasts()
 
-    
+
     def showMasts(self):
         self.model.showMasts()
 
-    
+
     def recoverFromSunk(self):
         self.getParentObj().minimap.addObject(self.minimapObj)
         if self.isStatusDisplayVisible > 0:
             self.loadShipStatusDisplay()
             self._DistributedSimpleShip__checkStatusDisplayVisible()
-        
+
         self.target = Target(self)
         self._undoSinking()
         self.createWake()
         if self.kraken and self.kraken.doomTentacle:
             self.kraken.doomTentacle.detachNode()
             self.kraken.doomTentacle = None
-        
+
         if self.isInCrew(localAvatar.doId):
             base.localAvatar.b_setGameState('LandRoam')
             base.transitions.fadeIn()
             base.cr.loadingScreen.hide()
-        
+
         self.enableOnDeckInteractions()
 
-    
+
     def _undoSinking(self):
         if self.model:
             self.model.undoSinking()
-        
+
         self.showNametag()
         self.classNameText.setColorScale(Vec4(1, 1, 1, 1))
         self.nameText.setColorScale(Vec4(1, 1, 1, 1))
 
-    
+
     def enableFloors(self):
         pass
 
-    
+
     def ignoreFloors(self):
         pass
 
-    
+
     def stashPlaneCollisions(self):
         if self.model:
             self.model.stashPlaneCollisions()
-        
 
-    
+
+
     def unstashPlaneCollisions(self):
         if self.model:
             self.model.unstashPlaneCollisions()
-        
 
-    
+
+
     def enableWheelInteraction(self):
         if self.wheel:
             if self.wheel[1]:
                 self.wheel[1].setAllowInteract(1)
                 self.wheel[1].checkInUse()
-            
-        
 
-    
+
+
+
     def disableWheelInteraction(self):
         if self.wheel:
             if self.wheel[1]:
                 self.wheel[1].setAllowInteract(0, forceOff = True)
                 self.wheel[1].refreshState()
-            
-        
 
-    
+
+
+
     def getWake(self):
         if self.model:
             return self.model.wake
         else:
             return NodePath()
 
-    
+
     def playTextEffect(self, message):
         if self.shoutTextEffect:
             self.shoutTextEffect.finish()
             self.shoutTextEffect = None
-        
+
         self.HpTextGenerator.setFont(PiratesGlobals.getPirateOutlineFont())
         duration = 4.0
         self.HpTextGenerator.setText(message)
@@ -4011,14 +4011,14 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.shoutTextEffect = Sequence(trackParallel, Func(self.cleanupTextEffect, hpTextDummy))
         self.shoutTextEffect.start()
 
-    
+
     def cleanupTextEffect(self, hpTextDummy):
         if hpTextDummy:
             hpTextDummy.hide()
             hpTextDummy.removeNode()
-        
 
-    
+
+
     def setupLocalStats(self):
         shipStats = ShipGlobals.getShipConfig(self.shipClass)
         self.maxHp = shipStats['hp'] * self.hpModifier
@@ -4028,93 +4028,93 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.setMaxCargo(shipStats['maxCargo'])
         self.setMaxCrew(shipStats['maxCrew'])
 
-    
+
     def setCannons(self, cannons, broadsideId):
         self.cannonIds = cannons
         self.broadsideId = broadsideId
         if cannons or broadsideId:
             self.pendingCannons = self.cr.relatedObjectMgr.requestObjects(self.cannonIds + [
                 self.broadsideId], allCallback = self.cannonsArrived)
-        
 
-    
+
+
     def cannonsArrived(self, cannonList):
         self.pendingCannons = None
         self.mybroadside = cannonList[-1]
         self.mycannons = cannonList[:-1]
         self.model.setupCannons(self.cannons, self.broadside, base.options.terrain_detail_level)
 
-    
+
     def isInInvasion(self):
         return False
 
-    
+
     def getArmorScale(self):
         return 1.0
 
-    
+
     def updateShipEffects(self):
         if self.model:
             self.model.updateDamageEffects(self.healthState, self.armorStates[0], self.armorStates[1], self.armorStates[2])
-        
 
-    
+
+
     def cleanUpShipEffects(self):
         for currTextEffect in self.textEffects:
             if currTextEffect:
                 currTextEffect.finish()
                 continue
-        
+
         self.textEffects = []
         if self.shoutTextEffect:
             self.shoutTextEffect.finish()
             self.shoutTextEffect = None
-        
+
         if self.model:
             self.model.cleanUpDamageEffects()
-        
 
-    
+
+
     def enterCannonVis(self):
         self.cannonVis = True
 
-    
+
     def exitCannonVis(self):
         self.cannonVis = False
 
-    
+
     def startDistanceChecks(self):
-        
+
         def checkDistances(task = None):
             for currShip in self.ActiveShips:
                 currShip._calcLocalDistance(self)
-            
+
             return Task.again
 
         self.stopDistanceChecks()
         checkDistances()
         self.shipDistanceCheck = taskMgr.doMethodLater(base.config.GetInt('ship-dist-delay', 5), checkDistances, self.uniqueName('shipDistanceCheck'))
 
-    
+
     def stopDistanceChecks(self):
         if self.shipDistanceCheck:
             taskMgr.remove(self.shipDistanceCheck)
             self.shipDistanceCheck = None
-        
 
-    
+
+
     def _DistributedSimpleShip__initDistance(self):
         if hasattr(base, 'localAvatar') and base.localAvatar.ship:
             self._calcLocalDistance(base.localAvatar.ship)
-        
 
-    
+
+
     def _calcLocalDistance(self, otherShip):
         prevDist = self.distanceToLocalShip
         self.distanceToLocalShip = self.getDistance(otherShip)
         self._registerLocalDistance()
 
-    
+
     def _registerLocalDistance(self):
         if self.showWake():
             self.createWake()
@@ -4129,43 +4129,43 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         else:
             base.localAvatar.shipList.discard(self.doId)
 
-    
+
     def getDistanceToLocalShip(self):
         return self.distanceToLocalShip
 
-    
+
     def showCannonsFiring(self, broadsides = False):
         if (broadsides or self.distanceToLocalShip < DistributedSimpleShip.CannonFireBroadsideDist) and not broadsides:
             pass
         return self.distanceToLocalShip < DistributedSimpleShip.CannonFireDist
 
-    
+
     def showWake(self):
         if self.distanceToLocalShip < DistributedSimpleShip.ShipWakeDist and self.gameFSM:
             pass
         return self.isSailable()
 
-    
+
     def showRocking(self):
         if self.distanceToLocalShip < DistributedSimpleShip.ShipRockDist and self.gameFSM:
             pass
         return self.isSailable()
 
-    
+
     def allowedToRock(self):
         if not base.options.getSpecialEffectsSetting() >= base.options.SpecialEffectsMedium:
             pass
         return self.onThisShip(localAvatar.doId)
 
-    
+
     def canAimBroadside(self):
         return self.distanceToLocalShip <= ShipGlobals.BROADSIDE_MAX_AUTOAIM_DIST + 1000.0
 
-    
+
     def validateMastCode(self, mastCode):
         if mastCode == 255:
             return None
-        
+
         if self.maxMastHealth[mastCode] > 0:
             return True
         else:
@@ -4177,7 +4177,7 @@ class MinimapShip(GridMinimapObject):
     ICON = None
     ICON_TRACKED = None
     DEFAULT_COLOR = VBase4(1.0, 0.0, 0.0, 1)
-    
+
     def __init__(self, ship):
         if not MinimapShip.ICON:
             gui = loader.loadModel('models/gui/gui_main')
@@ -4190,7 +4190,7 @@ class MinimapShip(GridMinimapObject):
             MinimapShip.ICON_TRACKED.setScale(1.25)
             MinimapShip.ICON_TRACKED.setColorScale(Vec4(1, 1, 0, 1), 1)
             MinimapShip.ICON_TRACKED.flattenStrong()
-        
+
         GridMinimapObject.__init__(self, ship.getName(), ship, MinimapShip.ICON)
         self.trackedNode = NodePath(ship.getName())
         self.trackedIcon = MinimapShip.ICON_TRACKED.copyTo(self.trackedNode)
@@ -4201,7 +4201,7 @@ class MinimapShip(GridMinimapObject):
         self.siegeTeam = 0
         self.refreshIconColor()
 
-    
+
     def setIsTracked(self, isTracked):
         self.isTracked = isTracked
         if self.isTracked:
@@ -4209,12 +4209,12 @@ class MinimapShip(GridMinimapObject):
         else:
             self.trackedIcon.hide()
 
-    
+
     def setAsLocalAvShip(self, isLocalAvShip):
         self.isLocalAvShip = isLocalAvShip
         self.refreshIconColor()
 
-    
+
     def refreshIconColor(self):
         if PVPGlobals.FrenchTeam == self.siegeTeam:
             self.setIconColor(PiratesGuiGlobals.TextFG5, PiratesGuiGlobals.TextFG2, PiratesGuiGlobals.TextFG6)
@@ -4225,7 +4225,7 @@ class MinimapShip(GridMinimapObject):
         else:
             self.setIconColor()
 
-    
+
     def setIconColor(self, top = None, mid = None, bot = None):
         if not top:
             pass
@@ -4242,7 +4242,7 @@ class MinimapShip(GridMinimapObject):
 
     setIconColor = report(types = [
         'args'], dConfigParam = 'shipdeploy')(setIconColor)
-    
+
     def _zoomChanged(self, radius):
         self.mapGeom.setScale(radius / 1000.0)
 

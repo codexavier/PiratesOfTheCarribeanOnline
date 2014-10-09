@@ -1,5 +1,3 @@
-# File: P (Python 2.4)
-
 import types
 import random
 import gc
@@ -13,7 +11,7 @@ from direct.gui.DirectGui import *
 base.loadingScreen.tick()
 from pandac.PandaModules import *
 base.loadingScreen.tick()
-from libotp import NametagGlobals
+from otp.nametag import NametagGlobals
 base.loadingScreen.tick()
 from direct.interval.IntervalGlobal import *
 base.loadingScreen.tick()
@@ -51,9 +49,11 @@ from otp.distributed import OtpDoGlobals
 from otp.otpbase import OTPGlobals
 from otp.friends import FriendSecret
 from otp.uberdog.AccountDetailRecord import AccountDetailRecord, SubDetailRecord
+'''
 from otp.otpgui import OTPDialog
-from pirates.login.AvatarChooser import AvatarChooser
+from pirates.login.AvatarChooser import AvatarChooser #TODO
 from pirates.makeapirate.MakeAPirate import MakeAPirate
+'''
 from pirates.pirate import HumanDNA
 from pirates.pirate import MasterHuman, Human
 from pirates.pirate import AvatarTypes
@@ -99,7 +99,7 @@ class PiratesClientRepository(OTPClientRepository):
     SupportTutorial = 0
     GameGlobalsId = OTP_DO_ID_PIRATES
     StopVisibilityEvent = 'pirates-stop-visibility'
-    
+
     def __init__(self, serverVersion, launcher = None):
         self.loadingScreen = base.loadingScreen
         self.loadingScreen.parent = self
@@ -191,7 +191,7 @@ class PiratesClientRepository(OTPClientRepository):
             self.humanLow[i].getLOD('1000').detachNode()
             self.humanLow[i].getLODNode().clearSwitches()
             self.humanLow[i].getLODNode().addSwitch(10000, 0)
-        
+
         if base.options.getCharacterDetailSetting() == 0:
             self.human = self.humanLow
         else:
@@ -221,11 +221,11 @@ class PiratesClientRepository(OTPClientRepository):
                 'cannonSplash': [
                     'CannonSplash'] }
             self.effectToggles = { }
-        
+
         self.cannonballCollisionDebug = 1
         self.npcManager = NPCManager.NPCManager()
 
-    
+
     def gotoFirstScreen(self):
         base.loadingScreen.beginStep('PrepLogin', 9, 0.14000000000000001)
         self.startReaderPollTask()
@@ -238,63 +238,63 @@ class PiratesClientRepository(OTPClientRepository):
     gotoFirstScreen = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(gotoFirstScreen)
-    
+
     def getOldWorld(self):
         return self.oldWorld
 
-    
+
     def getActiveWorld(self):
         return self.activeWorld
 
-    
+
     def preloadCutscene(self, name):
         if name not in self.preloadedCutscenes:
             newCutscene = Cutscene.Cutscene(self, name)
             self.preloadedCutscenes[name] = newCutscene
-        
 
-    
+
+
     def getPreloadedCutsceneInfo(self, name):
         return self.preloadedCutscenes.get(name)
 
-    
+
     def cleanupPreloadedCutscene(self, name):
         plCutscene = self.preloadedCutscenes.get(name)
         if plCutscene:
             if not plCutscene.isEmpty():
                 plCutscene.destroy()
-            
-            del self.preloadedCutscenes[name]
-        
 
-    
+            del self.preloadedCutscenes[name]
+
+
+
     def setActiveWorld(self, world):
         if self.activeWorld != world:
             self.oldWorld = self.activeWorld
-        
+
         self.activeWorld = world
 
     setActiveWorld = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(setActiveWorld)
-    
+
     def getWaterHeight(self, node):
         if self.wantSeapatch and self.activeWorld:
             water = self.activeWorld.getWater()
             if water:
                 return water.calcHeight(node = node)
-            
+
         else:
             return 0.0
 
-    
+
     def isOceanEnabled(self):
         if self.wantSeapatch and self.activeWorld and self.activeWorld.hasWater():
             return self.activeWorld.getWater().enabled
-        
+
         return 0
 
-    
+
     def enterChooseAvatar(self, avList):
         base.loadingScreen.beginStep('AvChooser', 14, 10)
         self.sendSetAvatarIdMsg(0)
@@ -314,10 +314,10 @@ class PiratesClientRepository(OTPClientRepository):
                         base.cr.avatarManager.sendRequestPlayAvatar(potAv.id, config_subId)
                         self.handleAvatarChoice('chose', config_subId, config_slot)
                         return None
-                    
-                
-            
-        
+
+
+
+
         self.avChoiceDoneEvent = 'avatarChooserDone'
         self.avChoice = AvatarChooser(self.loginFSM, self.avChoiceDoneEvent)
         base.loadingScreen.tick()
@@ -332,14 +332,14 @@ class PiratesClientRepository(OTPClientRepository):
     enterChooseAvatar = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(enterChooseAvatar)
-    
+
     def __handleAvatarChooserDone(self, doneStatus):
         done = doneStatus['mode']
         if done == 'exit':
             self.notify.info('handleAvatarChooserDone: shutting down')
             self.loginFSM.request('shutdown')
             return None
-        
+
         (subId, slot) = self.avChoice.getChoice()
         self.avChoice.exit()
         self.handleAvatarChoice(done, subId, slot)
@@ -347,7 +347,7 @@ class PiratesClientRepository(OTPClientRepository):
     _PiratesClientRepository__handleAvatarChooserDone = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(__handleAvatarChooserDone)
-    
+
     def handleAvatarChoice(self, done, subId, slot):
         access = self.accountDetailRecord.subDetails[subId].subAccess
         base.setEmbeddedFrameMode(access)
@@ -365,25 +365,25 @@ class PiratesClientRepository(OTPClientRepository):
                 self.avList[subId],
                 slot,
                 subId])
-        
 
-    
+
+
     def exitChooseAvatar(self):
         self.handler = None
         if self.avChoice:
             self.avChoice.exit()
             self.avChoice.unload()
             self.avChoice = None
-        
+
         if self.avChoiceDoneEvent:
             self.ignore(self.avChoiceDoneEvent)
             self.avChoiceDoneEvent = None
-        
+
 
     exitChooseAvatar = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(exitChooseAvatar)
-    
+
     def enterCreateAvatar(self, avList, index, subId):
         self.handler = self.handleCreateAvatar
         if self.skipTutorial:
@@ -408,7 +408,7 @@ class PiratesClientRepository(OTPClientRepository):
     enterCreateAvatar = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(enterCreateAvatar)
-    
+
     def handleAvatarCreated(self, newPotAv, avatarId, subId):
         newPotAv.id = avatarId
         self.loginFSM.request('waitForSetAvatarResponse', [
@@ -417,7 +417,7 @@ class PiratesClientRepository(OTPClientRepository):
     handleAvatarCreated = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(handleAvatarCreated)
-    
+
     def __handleMakeAPirate(self):
         done = self.avCreate.getDoneStatus()
         if done == 'cancel':
@@ -432,7 +432,7 @@ class PiratesClientRepository(OTPClientRepository):
     _PiratesClientRepository__handleMakeAPirate = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(__handleMakeAPirate)
-    
+
     def exitCreateAvatar(self):
         if self.skipTutorial:
             self.ignore('makeAPirateComplete')
@@ -442,13 +442,13 @@ class PiratesClientRepository(OTPClientRepository):
             self.avCreate.unload()
             self.avCreate = None
             self.handler = None
-        
+
         self.ignore('createdNewAvatar')
 
     exitCreateAvatar = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(exitCreateAvatar)
-    
+
     def handleCreateAvatar(self, msgType, di):
         if msgType == CLIENT_CREATE_AVATAR_RESP:
             self.handleCreateAvatarResponseMsg(di)
@@ -458,7 +458,7 @@ class PiratesClientRepository(OTPClientRepository):
     handleCreateAvatar = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(handleCreateAvatar)
-    
+
     def handleCreateAvatarResponseMsg(self, di):
         echoContext = di.getUint16()
         returnCode = di.getUint8()
@@ -477,7 +477,7 @@ class PiratesClientRepository(OTPClientRepository):
     handleCreateAvatarResponseMsg = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(handleCreateAvatarResponseMsg)
-    
+
     def sendGetAvatarsMsg(self):
         self.accept('avatarListFailed', self.avatarListFailed)
         self.accept('avatarList', self.avatarList)
@@ -486,7 +486,7 @@ class PiratesClientRepository(OTPClientRepository):
     sendGetAvatarsMsg = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(sendGetAvatarsMsg)
-    
+
     def avatarListFailed(self, reason):
         self.ignore('avatarListFailed')
         self.ignore('avatarList')
@@ -498,7 +498,7 @@ class PiratesClientRepository(OTPClientRepository):
     avatarListFailed = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(avatarListFailed)
-    
+
     def __handleAvatarListFailedAck(self):
         self.ignore('avatarListFailedAck')
         self.avatarListFailedBox.cleanup()
@@ -507,7 +507,7 @@ class PiratesClientRepository(OTPClientRepository):
     _PiratesClientRepository__handleAvatarListFailedAck = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(__handleAvatarListFailedAck)
-    
+
     def avatarList(self, avatars):
         self.ignore('avatarListFailed')
         self.ignore('avatarList')
@@ -533,8 +533,8 @@ class PiratesClientRepository(OTPClientRepository):
                 aName = 0
                 pa = PotentialAvatar(av['id'], avNames, av['dna'], av['slot'], aName, av['creator'] == self.accountDetailRecord.playerAccountId, av['shared'], av['online'], wishState = av['wishState'], wishName = av['wishName'], defaultShard = av['defaultShard'], lastLogout = av['lastLogout'])
                 data.append(pa)
-            
-        
+
+
         if self.loginFSM.getCurrentState().getName() == 'chooseAvatar':
             self.avChoice.updateAvatarList()
         else:
@@ -544,21 +544,21 @@ class PiratesClientRepository(OTPClientRepository):
     avatarList = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(avatarList)
-    
+
     def handleGetAvatarsRespMsg(self, di):
         pass
 
     handleGetAvatarsRespMsg = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(handleGetAvatarsRespMsg)
-    
+
     def handleGetAvatarsResp2Msg(self, di):
         pass
 
     handleGetAvatarsResp2Msg = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(handleGetAvatarsResp2Msg)
-    
+
     def handleAvatarResponseMsg(self, di):
         self.loadingScreen.endStep('waitForAv')
         self.cleanupWaitingForDatabase()
@@ -573,7 +573,7 @@ class PiratesClientRepository(OTPClientRepository):
             localAvatar.dclass = dclass
             if __dev__:
                 __builtins__['lu'] = self.getDo
-            
+
             localAvatar.doId = avatarId
             self.localAvatarDoId = avatarId
             self.doId2do[avatarId] = localAvatar
@@ -591,8 +591,8 @@ class PiratesClientRepository(OTPClientRepository):
                 if config_location and config_location_uid:
                     locUID = config_location_uid
                     localAvatar.setReturnLocation(locUID)
-                
-            
+
+
             if locUID:
                 self.loadingScreen.showTarget(locUID)
                 self.loadingScreen.showHint(locUID)
@@ -608,21 +608,21 @@ class PiratesClientRepository(OTPClientRepository):
     handleAvatarResponseMsg = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(handleAvatarResponseMsg)
-    
+
     def enterWaitForDeleteAvatarResponse(self, potentialAvatar):
         raise StandardError, 'This should be handled within AvatarChooser.py'
 
     enterWaitForDeleteAvatarResponse = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(enterWaitForDeleteAvatarResponse)
-    
+
     def exitWaitForDeleteAvatarResponse(self):
         raise StandardError, 'This should be handled within AvatarChooser.py'
 
     exitWaitForDeleteAvatarResponse = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(exitWaitForDeleteAvatarResponse)
-    
+
     def sendUpdateToGlobalDoId(self, dclassName, fieldName, doId, args):
         dcfile = self.getDcFile()
         dclass = dcfile.getClassByName(dclassName)
@@ -632,18 +632,18 @@ class PiratesClientRepository(OTPClientRepository):
     sendUpdateToGlobalDoId = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(sendUpdateToGlobalDoId)
-    
+
     def sendMsgToTravelAgent(self, fieldName, args):
         self.sendUpdateToGlobalDoId('DistributedTravelAgent', fieldName, OtpDoGlobals.OTP_DO_ID_PIRATES_TRAVEL_AGENT, args)
 
     sendMsgToTravelAgent = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(sendMsgToTravelAgent)
-    
+
     def enterPlayingGame(self):
         OTPClientRepository.enterPlayingGame(self)
         if __dev__ and config.GetDouble('want-dev-hotkeys', 0):
-            
+
             def toggleKraken():
                 if base.localAvatar:
                     if base.localAvatar.ship:
@@ -651,23 +651,23 @@ class PiratesClientRepository(OTPClientRepository):
                             '~kraken',
                             base.localAvatar.getDoId(),
                             base.localAvatar.zoneId])
-                    
-                
+
+
 
             self.accept(PiratesGlobals.KrakenHotkey, toggleKraken)
-        
-        
+
+
         def logout():
             if not base.config.GetBool('location-kiosk', 0) and hasattr(base, 'localAvatar') and localAvatar.getCanLogout():
                 self._userLoggingOut = True
                 self.gameFSM.request('closeShard', [
                     'waitForAvatarList'])
-            
+
 
         self._userLoggingOut = False
         self.accept(PiratesGlobals.LogoutHotkey, logout)
         if __dev__ and config.GetDouble('want-dev-hotkeys', 0):
-            
+
             def deployShip():
                 messenger.send('magicWord', [
                     '~deployShip',
@@ -675,7 +675,7 @@ class PiratesClientRepository(OTPClientRepository):
                     base.localAvatar.zoneId])
 
             self.accept(PiratesGlobals.ShipHotkey, deployShip)
-        
+
         if localAvatar.style.getTutorial() < PiratesGlobals.TUT_MET_JOLLY_ROGER and self.skipTutorial == 0:
             localAvatar.teleportToType = PiratesGlobals.INSTANCE_TUTORIAL
             localAvatar.teleportToName = WorldGlobals.PiratesTutorialSceneFileBase
@@ -701,7 +701,7 @@ class PiratesClientRepository(OTPClientRepository):
         'args',
         'deltaStamp',
         'module'], dConfigParam = 'teleport')(enterPlayingGame)
-    
+
     def playingGameLocReceived(self, shardId, zoneId):
         self.gameFSM.request('waitOnEnterResponses', [
             shardId,
@@ -712,7 +712,7 @@ class PiratesClientRepository(OTPClientRepository):
     playingGameLocReceived = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(playingGameLocReceived)
-    
+
     def exitPlayingGame(self):
         self.notify.info('exitPlayingGame')
         ivalMgr.interrupt()
@@ -722,23 +722,23 @@ class PiratesClientRepository(OTPClientRepository):
             self.ignore(PiratesGlobals.KrakenHotkey)
             self.ignore(PiratesGlobals.ShipHotkey)
             self.ignore(PiratesGlobals.LogoutHotkey)
-        
+
         self.uidMgr.reset()
         if self.distributedDistrict:
             self.distributedDistrict.worldCreator.cleanupAllAreas()
-        
+
         for (doId, obj) in self.doId2do.items():
             if not isinstance(obj, LocalPirate) and not isinstance(obj, DistributedDistrict.DistributedDistrict):
                 if hasattr(self, 'disableObject'):
                     self.disableObject(doId)
-                
+
             hasattr(self, 'disableObject')
-        
+
         if hasattr(base, 'localAvatar'):
             camera.reparentTo(render)
             camera.setPos(0, 0, 0)
             camera.setHpr(0, 0, 0)
-        
+
         base.transitions.noTransitions()
         if self._userLoggingOut:
             self.detectLeaks(okTasks = [
@@ -753,20 +753,20 @@ class PiratesClientRepository(OTPClientRepository):
                 'close_main_window',
                 'open_main_window',
                 PiratesGlobals.LogoutHotkey])
-        
+
         OTPClientRepository.exitPlayingGame(self)
 
     exitPlayingGame = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(exitPlayingGame)
-    
+
     def enterTutorialQuestion(self, hoodId, zoneId, avId):
         self._PiratesClientRepository__requestTutorial(hoodId, zoneId, avId)
 
     enterTutorialQuestion = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(enterTutorialQuestion)
-    
+
     def handleTutorialQuestion(self, msgType, di):
         if msgType == CLIENT_CREATE_OBJECT_REQUIRED:
             self.handleGenerateWithRequired(di)
@@ -779,7 +779,7 @@ class PiratesClientRepository(OTPClientRepository):
         elif msgType == CLIENT_OBJECT_DISABLE_OWNER:
             self.handleDisableOwner(di)
         elif msgType == CLIENT_OBJECT_DELETE_RESP:
-            self.handleDelete(di)
+             self.handleDelete(di)
         elif msgType == CLIENT_GET_AVATAR_DETAILS_RESP:
             self.handleGetAvatarDetailsResp(di)
         else:
@@ -788,7 +788,7 @@ class PiratesClientRepository(OTPClientRepository):
     handleTutorialQuestion = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(handleTutorialQuestion)
-    
+
     def exitTutorialQuestion(self):
         self.handler = None
         self.handlerArgs = None
@@ -798,7 +798,7 @@ class PiratesClientRepository(OTPClientRepository):
     exitTutorialQuestion = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(exitTutorialQuestion)
-    
+
     def __requestTutorial(self, hoodId, zoneId, avId):
         self.acceptOnce('startTutorial', self._PiratesClientRepository__handleStartTutorial, [
             avId])
@@ -807,8 +807,6 @@ class PiratesClientRepository(OTPClientRepository):
     _PiratesClientRepository__requestTutorial = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(__requestTutorial)
-    
+
     def __handleStartTutorial(self, avId, zoneId):
-        self.gameFSM.request('playGame', [
-            Tutorial,
-            z
+        pass # TODO

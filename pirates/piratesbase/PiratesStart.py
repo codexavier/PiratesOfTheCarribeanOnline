@@ -1,6 +1,5 @@
-# File: P (Python 2.4)
 from pandac.PandaModules import *
-loadPrcFile("config/Config.prc")
+loadPrcFile("config/general.prc")
 import PiratesPreloader
 print 'PiratesStart: Starting the game.'
 import __builtin__
@@ -18,13 +17,10 @@ import __builtin__
 import gc
 gc.disable()
 
-try:
-    pass
-except:
-    print 'Creating PiratesDummyLauncher'
-    from pirates.launcher.PiratesDummyLauncher import PiratesDummyLauncher
-    launcher = PiratesDummyLauncher()
-    __builtin__.launcher = launcher
+print 'Creating PiratesDummyLauncher'
+from pirates.launcher.PiratesDummyLauncher import PiratesDummyLauncher
+launcher = PiratesDummyLauncher()
+__builtin__.launcher = launcher
 
 from direct.gui import DirectGuiGlobals
 import PiratesGlobals
@@ -77,5 +73,4 @@ if base.options:
         run()
     elif __name__ == '__main__':
         run()
-    
 
