@@ -41,13 +41,13 @@ flickerTracks = []
 def LightDynamic(levelObj, parent = render, drawIcon = True, modular = False):
     if levelObj is None:
         levelObj = WorldGlobals.LevelObject('', { })
-    
+
     color = None
     if levelObj.data.has_key('Visual'):
         if levelObj.data['Visual'].has_key('Color'):
             color = levelObj.data['Visual']['Color']
-        
-    
+
+
     attenuation = None
     if levelObj.data.has_key('Attenuation'):
         quadAtten = float(levelObj.data['Attenuation'])
@@ -56,7 +56,7 @@ def LightDynamic(levelObj, parent = render, drawIcon = True, modular = False):
     if levelObj.data.has_key('QuadraticAttenuation'):
         quadAtten = float(levelObj.data['QuadraticAttenuation'])
         quadAtten = quadAtten * quadAtten / 100.0
-    
+
     if levelObj.data.has_key('ConstantAttenuation'):
         constantAtten = float(levelObj.data['ConstantAttenuation'])
     else:
@@ -69,7 +69,7 @@ def LightDynamic(levelObj, parent = render, drawIcon = True, modular = False):
     intensity = None
     if levelObj.data.has_key('Intensity'):
         intensity = float(levelObj.data['Intensity'])
-    
+
     coneAngle = None
     dropOff = None
     if levelObj.data.has_key('ConeAngle'):
@@ -77,22 +77,22 @@ def LightDynamic(levelObj, parent = render, drawIcon = True, modular = False):
         if coneAngle == 0.0:
             levelObj.data['ConeAngle'] = '60.0'
             coneAngle = 60.0
-        
-    
+
+
     if levelObj.data.has_key('DropOff'):
         dropOff = float(levelObj.data['DropOff'])
-    
+
     exponent = None
     flickering = False
     if not modular or config.GetBool('allow-cave-flicker', 0):
         if levelObj.data.get('Flickering', False):
             flickering = True
-        
+
         flickRate = 1.0
         if levelObj.data.has_key('FlickRate'):
             flickRate = float(levelObj.data['FlickRate'])
-        
-    
+
+
     lightType = DynamicLight.DYN_LIGHT_POINT
     if levelObj.data.has_key('LightType'):
         typeString = levelObj.data['LightType']
@@ -102,30 +102,30 @@ def LightDynamic(levelObj, parent = render, drawIcon = True, modular = False):
             lightType = DynamicLight.DYN_LIGHT_DIRECTIONAL
         elif typeString == 'SPOT':
             lightType = DynamicLight.DYN_LIGHT_SPOT
-        
-    
+
+
     light = DynamicLight.DynamicLight(type = lightType, parent = parent, pos = levelObj.transform.getPos(), hpr = levelObj.transform.getHpr(), color = color, atten = attenuation, exp = exponent, flicker = flickering, drawIcon = drawIcon, modular = modular)
     if not modular:
         light.turnOff()
-    
+
     if intensity:
         light.setIntensity(intensity)
-    
+
     if coneAngle:
         light.setConeAngle(coneAngle)
-    
+
     if dropOff:
         light.setDropOff(dropOff)
-    
+
     if not modular or config.GetBool('allow-cave-flicker', 0):
         light.setFlickRate(flickRate)
-    
+
     if not modular:
         light.turnOn()
         if hasattr(base, 'pe'):
             base.pe.dynamicLights.append(light)
-        
-    
+
+
     return light
 
 
@@ -148,7 +148,7 @@ def CreateBomberZombie():
 def CreateAnimal(species = None):
     if not species:
         species = 'Pig'
-    
+
     exec 'animal = %s()' % species
     animal.setAvatarType(eval('AvatarTypes.%s' % species))
     return animal
@@ -183,7 +183,7 @@ CREATURE_CLASS_DICT = {
 def CreateCreature(species = None):
     if not species:
         species = 'Crab'
-    
+
     exec 'creature = %s()' % CREATURE_CLASS_DICT[species]
     creature.show()
     avatarTypeFunc = AvatarTypes.NPC_SPAWNABLES[species][AvatarTypes.AVATAR_TYPE_IDX]
@@ -202,12 +202,12 @@ def CreateEffectProjector(type = 'CausticsProjector', drawIcon = True):
     if type == 'CausticsProjector':
         projector = CausticsProjector.CausticsProjector()
         projector.enableEffect()
-    
+
     if drawIcon and projector:
         newModel = loader.loadModel('models/misc/smiley')
         newModel.setColor(0, 0.65000000000000002, 0, 1)
         newModel.reparentTo(projector)
-    
+
     return projector
 
 
@@ -225,15 +225,15 @@ def CreateEntity(entityType, objData = None, parent = None):
     newEntity = entityType()
     if parent:
         newEntity.reparentTo(parent)
-    
+
     if objData:
         properties = objData.get('properties')
         if properties:
             for key in properties:
                 newEntity.setProperty(key, properties[key])
-            
-        
-    
+
+
+
     return newEntity
 
 GREETING_ANIMATIONS = [
@@ -252,7 +252,7 @@ GREETING_ANIMATIONS = [
     'crazy_ned_day_interact']
 
 class ShipNP(NodePath):
-    
+
     def __init__(self, shipObj):
         NodePath.__init__(self, 'ShipModel')
         self.shipObj = shipObj
@@ -268,7 +268,7 @@ def getShipEnumerations():
     for shipClass in shipClasses:
         shipStr = str(shipClass) + ': ' + PLocalizerEnglish.ShipClassNames[shipClass]
         enums.append(shipStr)
-    
+
     return enums
 
 
@@ -276,7 +276,6 @@ def getStyleEnumerations():
     styleInfo = PLocalizerEnglish.ShipStyleNames
     styles = styleInfo.keys()
     styles.sort()
-    continue
     return _[1] + [ str(x) + ': ' + styleInfo[x] for x in styles ]
 
 
@@ -284,7 +283,6 @@ def getLogoEnumerations():
     logoInfo = PLocalizerEnglish.ShipLogoNames
     logos = logoInfo.keys()
     logos.sort()
-    continue
     return _[1] + [ str(x) + ': ' + logoInfo[x] for x in logos ]
 
 
@@ -296,18 +294,18 @@ def getShipInfo(objectData):
         level = objectData.get('Level')
         if level:
             level = int(level)
-        
+
         teamStr = 'Player'
         specifiedTeam = objectData.get('Team')
         if specifiedTeam:
             teamStr = specifiedTeam
-        
+
         teamId = PiratesGlobals.teamStr2TeamId(teamStr)
         shipClass = ShipGlobals.WARSHIPL3
         newShipClass = None
         if hasattr(ShipGlobals, typeStr):
             newShipClass = eval('ShipGlobals.' + typeStr)
-        
+
         if newShipClass:
             shipClass = newShipClass
         elif (typeStr == 'NavyMerchant' or typeStr == 'Merchant') and teamId and teamId == PiratesGlobals.NAVY_TEAM:
@@ -325,7 +323,7 @@ def getShipInfo(objectData):
             shipClass = ShipGlobals.STUMPY_SHIP
         elif typeStr == 'TutorialEnemyShip':
             shipClass = ShipGlobals.SKEL_SHADOW_CROW_FR
-        
+
     style = objectData.get('StyleOverride', '%s:Default' % ShipGlobals.Styles.Undefined)
     logo = objectData.get('LogoOverride', '%s:Default' % ShipGlobals.Logos.Undefined)
     style = int(style.split(':')[0])

@@ -1196,27 +1196,26 @@ for fish in allFishData:
         'ship',
         'both']:
         rarityPool['ship'][fish['depth']][fish['rarity']].append(fish)
-    
+
     if fish['location'] in [
         'dock',
         'both']:
         rarityPool['dock'][fish['depth']][fish['rarity']].append(fish)
-    
+
 
 
 def giveMeAFish(location, depth, fishHisto):
     rarity = DropGlobals.rollDistribution(fishRarityDistribution)
-    continue
-    potentialFish = _[1]
+    potentialFish = [1]
     if potentialFish:
         return random.choice(potentialFish)
-    
+
     for x in range(3):
         if x != rarity:
             continue
-        _[1][x]
+        [1][x]
         continue
-    
+
 
 CollectionToData = { }
 for fish in allFishData:
@@ -1238,10 +1237,8 @@ def getFishData(collectionId):
 def inFishingCollection(value):
     return value in CollectionToData
 
-continue
-legendaryFishDistribution = _[1]([ x['chanceThisFishAppears'] for x in legendaryFishData ], legendaryFishData)
-continue
-modelToLegendaryFishData = _[1]([ (x['model'], x) for x in legendaryFishData ])
+legendaryFishDistribution = ([ x['chanceThisFishAppears'] for x in legendaryFishData ], legendaryFishData)
+modelToLegendaryFishData = ([ (x['model'], x) for x in legendaryFishData ])
 
 def getALegendaryFish(model = None):
     if model:

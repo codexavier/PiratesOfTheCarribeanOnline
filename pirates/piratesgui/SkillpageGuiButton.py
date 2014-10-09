@@ -103,12 +103,12 @@ SkillComboReq = {
 
 class SkillpageGuiButton(DirectButton):
     SkillIcons = None
-    
+
     def __init__(self, callback, skillId, skillRank):
         if not SkillpageGuiButton.SkillIcons:
             SkillpageGuiButton.SkillIcons = loader.loadModel('models/textureCards/skillIcons')
             SkillpageGuiButton.Image = (SkillpageGuiButton.SkillIcons.find('**/base'), SkillpageGuiButton.SkillIcons.find('**/base_down'), SkillpageGuiButton.SkillIcons.find('**/base_over'))
-        
+
         asset = RadialMenu.getSkillIconName(skillId, 0)
         geom = SkillpageGuiButton.SkillIcons.find('**/%s' % asset)
         DirectButton.__init__(self, relief = None, pos = (0, 0, 0), image = SkillpageGuiButton.Image, image_scale = 0.12, geom = geom, geom_scale = 0.12, command = callback, textMayChange = 1, sortOrder = 70, extraArgs = [
@@ -122,11 +122,11 @@ class SkillpageGuiButton(DirectButton):
         self.bind(DGG.ENTER, self.showDetails)
         self.bind(DGG.EXIT, self.hideDetails)
 
-    
+
     def createHelpbox(self, args = None):
         if self.helpBox:
             return None
-        
+
         baseRank = max(self.skillRank, 1)
         lvlDamageMod = WeaponGlobals.getLevelDamageModifier(localAvatar.getLevel())
         buff = WeaponGlobals.getSkillEffectFlag(self.skillId)
@@ -163,10 +163,10 @@ class SkillpageGuiButton(DirectButton):
             reduceDamMod = WeaponGlobals.getAttackSelfHP(self.skillId) * baseRank
             if reduceDamMod < 1:
                 reduceDamMod *= 100
-            
+
             if effect < 1:
                 effect *= 100
-            
+
             rechargeMod = WeaponGlobals.getAttackRechargeTime(self.skillId) * baseRank * 100
             shipTurningMod = WeaponGlobals.getShipTurnRate(self.skillId) * baseRank * 100
             shipSpeedMod = WeaponGlobals.getShipMaxSpeed(self.skillId) * baseRank * 100
@@ -177,10 +177,10 @@ class SkillpageGuiButton(DirectButton):
         if self.skillId == InventoryType.StaffSpiritLore:
             import pdb as pdb
             pdb.set_trace()
-        
+
         skillInfo = PLocalizer.SkillDescriptions.get(self.skillId)
         skillTitle = PLocalizer.InventoryTypeNames.get(self.skillId)
-        skillType = '\x1slant\x1' + skillInfo[0] + '\x2\n\n'
+        skillType = 'slant' + skillInfo[0] + '\n\n'
         description = skillInfo[1]
         if damage < 0:
             description += ' ' + PLocalizer.DealsDamage
@@ -189,29 +189,29 @@ class SkillpageGuiButton(DirectButton):
                 description += ' ' + PLocalizer.HealsDamageRange
             else:
                 description += ' ' + PLocalizer.HealsDamage
-        
+
         if mpDamage < 0:
             description += ' ' + PLocalizer.DealsMpDamage
-        
+
         effectId = WeaponGlobals.getSkillEffectFlag(self.skillId)
         if effectId:
             description += ' ' + SkillEffectDescriptions.get(effectId)[0]
-        
+
         if (self.skillId == InventoryType.SailBroadsideLeft or self.skillId == InventoryType.SailBroadsideRight) and damageMod > 0:
             description += ' ' + PLocalizer.BroadsideDesc
-        
+
         if self.skillId == InventoryType.CannonShoot and rechargeMod:
             description += ' ' + PLocalizer.CannonShootDesc
-        
+
         if self.skillId == InventoryType.DollAttune:
             description += ' ' + PLocalizer.MultiAttuneDesc
-        
+
         if WeaponGlobals.getSkillInterrupt(self.skillId):
             description += ' ' + PLocalizer.InterruptDesc
-        
+
         if WeaponGlobals.getSkillUnattune(self.skillId):
             description += ' ' + PLocalizer.UnattuneDesc
-        
+
         upgradeInfo = ''
         if self.showUpgrade and self.skillRank < 5:
             if self.skillRank > 0:
@@ -221,10 +221,10 @@ class SkillpageGuiButton(DirectButton):
                         upgradeInfo += PLocalizer.UpgradesDamage
                     elif damage > 0:
                         upgradeInfo += PLocalizer.UpgradesHealing
-                    
+
                     if mpDamage < 0:
                         upgradeInfo += ' ' + PLocalizer.UpgradesMpDamage
-                    
+
                     if effectId:
                         entry = SkillEffectDescriptions.get(effectId)
                         if len(entry) > 1:
@@ -233,79 +233,79 @@ class SkillpageGuiButton(DirectButton):
                             else:
                                 upgradeInfo += ' ' + PLocalizer.And
                             upgradeInfo += ' ' + entry[1]
-                        
-                    
+
+
                     upgradeInfo += '!'
-                
+
             elif len(upgradeInfo) >= 4:
                 upgradeInfo = skillInfo[3]
             else:
                 upgradeInfo = PLocalizer.ClickToLearn
-        
+
         if self.skillId in SkillComboReq and SkillComboReq[self.skillId] and self.skillRank <= 1:
             description += ' ' + SkillComboReq[self.skillId]
-        
-        skillDesc = '\x1gold\x1\x1smallCaps\x1' + skillTitle + '\x2\x2\n' + skillType + description + '\n\x1green\x1' + upgradeInfo + '\x2'
+
+        skillDesc = 'goldsmallCaps' + skillTitle + '\n' + skillType + description + '\ngreen' + upgradeInfo + ''
         stats = []
         if manaCost:
             stats.append(abs(manaCost))
-        
+
         if damage and loDamage:
             stats.append(abs(loDamage))
             stats.append(abs(damage))
         elif damage:
             stats.append(abs(damage))
-        
+
         if mpDamage:
             stats.append(abs(mpLoDamage))
             stats.append(abs(mpDamage))
-        
+
         if buff == WeaponGlobals.C_CURSE:
             stats.append(WeaponGlobals.CURSED_DAM_AMP * 100)
-        
+
         if buff == WeaponGlobals.C_ATTUNE and baseRank > 1:
             stats.append(baseRank)
-        
+
         if buff == WeaponGlobals.C_WEAKEN:
             stats.append(WeaponGlobals.WEAKEN_PENALTY * 100)
-        
+
         if effect > 0:
             stats.append(effect)
-        
+
         if dodge:
             stats.append(abs(dodge))
-        
+
         if accuracy:
             stats.append(abs(accuracy))
-        
+
         if damageMod:
             stats.append(abs(damageMod))
-        
+
         if reduceDamMod:
             stats.append(abs(reduceDamMod))
-        
+
         if rechargeMod:
             stats.append(abs(rechargeMod))
-        
+
         if shipTurningMod:
             stats.append(abs(shipTurningMod))
-        
+
         if shipSpeedMod:
             stats.append(abs(shipSpeedMod))
-        
+
         if chargeMod:
             stats.append(abs(chargeMod))
-        
+
         if rangeMod:
             stats.append(abs(rangeMod))
-        
+
         if self.skillId == InventoryType.SailTreasureSense:
             stats.append(abs(treasureSenseMod))
-        
+
         stats = tuple(stats)
         if self.skillRank:
-            self.rankText = DirectFrame(parent = self, relief = None, text = ('\x1gold\x1\x1smallCaps\x1' + PLocalizer.Rank + ' %d' + '\x2\x2') % self.skillRank, text_align = TextNode.ARight, text_scale = PiratesGuiGlobals.TextScaleSmall, text_fg = PiratesGuiGlobals.TextFG2, text_wordwrap = 15, text_shadow = (0, 0, 0, 1), pos = (0.45000000000000001, 0, 0), textMayChange = 1, sortOrder = 92, state = DGG.DISABLED)
-        
+            self.rankText = DirectFrame(parent = self, relief = None, text = ('goldsmallCaps' + PLocalizer.Rank + ' %d' + '') % self.skillRank, text_align = TextNode.ARight, text_scale = PiratesGuiGlobals.TextScaleSmall, text_fg = PiratesGuiGlobals.TextFG2, text_wordwrap = 15, text_shadow = (0, 0, 0, 1), pos = (0.45000000000000001, 0, 0), textMayChange = 1, sortOrder = 92, state = DGG.DISABLED)
+
         self.helpText = DirectFrame(parent = self, relief = None, text = skillDesc % stats, text_align = TextNode.ALeft, text_scale = PiratesGuiGlobals.TextScaleSmall, text_fg = PiratesGuiGlobals.TextFG2, text_wordwrap = 15, text_shadow = (0, 0, 0, 1), textMayChange = 1, sortOrder = 91, state = DGG.DISABLED)
         height = -(self.helpText.getHeight() + 0.01)
         self.helpBox = BorderFrame(parent = self, frameSize = (-0.040000000000000001, 0.5, height, 0.050000000000000003), pos = (0, 0, -0.12), sortOrder = 90, state = DGG.DISABLED)
@@ -313,29 +313,29 @@ class SkillpageGuiButton(DirectButton):
         self.helpText.reparentTo(self.helpBox)
         if self.skillRank:
             self.rankText.reparentTo(self.helpBox)
-        
 
-    
+
+
     def destroy(self):
         if self.quantity:
             self.quantity.destroy()
             self.quantity = None
-        
+
         self.ignoreAll()
         DirectButton.destroy(self)
 
-    
+
     def showDetails(self, event):
         self.createHelpbox()
 
-    
+
     def hideDetails(self, event):
         if self.helpBox:
             self.helpBox.destroy()
             self.helpBox = None
-        
 
-    
+
+
     def attachQuantity(self, quantity):
         if self.quantity:
             self.quantity['text'] = 'x%s' % quantity

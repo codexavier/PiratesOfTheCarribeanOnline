@@ -19,7 +19,7 @@ from pirates.piratesgui import QuestTitleTiers
 from pirates.piratesbase import Freebooter
 
 class QuestTitleNode:
-    
+
     def __init__(self, questDNA, hideButton = False):
         self.questDNA = questDNA
         self.hideButton = hideButton
@@ -29,7 +29,7 @@ class QuestTitleNode:
             self.questId = None
         self.children = { }
 
-    
+
     def getChildren(self):
         if isinstance(self.questDNA, QuestLadderDNA.QuestBranchDNA):
             firstQuestId = self.questDNA.getFirstQuestId()
@@ -39,17 +39,17 @@ class QuestTitleNode:
                 return self.children.values()
             elif firstChild in children:
                 children.remove(firstChild)
-            
+
             return [
                 firstChild] + children
-        
+
         return self.children.values()
 
-    
+
     def hasChild(self, questId):
         return questId in self.children
 
-    
+
     def addChild(self, node):
         return self.children.setdefault(node.questId, node)
 
@@ -61,18 +61,18 @@ class QuestTitleList(DirectScrolledFrame):
     chapter4Lockout = False
     questButton = None
     questButtonSelected = None
-    
+
     def __init__(self):
         self.width = 0.94999999999999996
         self.height = 0.54000000000000004
         self.loadButtonGui()
         if not base.config.GetBool('enable-next-chapter', 0):
             self.chapter4Lockout = True
-        
+
         if not self.charGui:
             self.charGui = loader.loadModel('models/gui/char_gui')
             self.compassGui = loader.loadModel('models/gui/compass_main')
-        
+
         DirectScrolledFrame.__init__(self, relief = None, state = DGG.NORMAL, manageScrollBars = 0, autoHideScrollBars = 1, frameSize = (0, self.width, 0, self.height), canvasSize = (0, self.width - 0.050000000000000003, 0.025000000000000001, self.height - 0.025000000000000001), verticalScroll_relief = None, verticalScroll_image = self.charGui.find('**/chargui_slider_small'), verticalScroll_frameSize = (0, PiratesGuiGlobals.ScrollbarSize, 0, self.height), verticalScroll_image_scale = (self.height + 0.050000000000000003, 1, 0.75), verticalScroll_image_hpr = (0, 0, 90), verticalScroll_image_pos = (self.width - PiratesGuiGlobals.ScrollbarSize * 0.5 - 0.0040000000000000001, 0, self.height * 0.5), verticalScroll_image_color = (0.60999999999999999, 0.59999999999999998, 0.59999999999999998, 1), verticalScroll_thumb_image = (self.charGui.find('**/chargui_slider_node'), self.charGui.find('**/chargui_slider_node_down'), self.charGui.find('**/chargui_slider_node_over')), verticalScroll_thumb_relief = None, verticalScroll_thumb_image_scale = 0.40000000000000002, verticalScroll_resizeThumb = 0, horizontalScroll_relief = None, sortOrder = 5)
         self.initialiseoptions(QuestTitleList)
         self.verticalScroll.incButton.destroy()
@@ -86,36 +86,36 @@ class QuestTitleList(DirectScrolledFrame):
         self.accept('press-wheel_up-%s' % self.guiId, self.mouseWheelUp)
         self.accept('press-wheel_down-%s' % self.guiId, self.mouseWheelDown)
 
-    
+
     def mouseWheelUp(self, task = None):
         if self.verticalScroll.isHidden():
             return None
-        
+
         amountScroll = 0.050000000000000003
         if self.verticalScroll['value'] > 0:
             self.verticalScroll['value'] -= amountScroll
-        
 
-    
+
+
     def mouseWheelDown(self, task = None):
         if self.verticalScroll.isHidden():
             return None
-        
+
         amountScroll = 0.050000000000000003
         if self.verticalScroll['value'] < 1.0:
             self.verticalScroll['value'] += amountScroll
-        
 
-    
+
+
     def destroy(self):
         del self.trees
         for button in self.buttons:
             button.destroy()
-        
+
         del self.buttons
         DirectScrolledFrame.destroy(self)
 
-    
+
     def repack(self):
         z = 0
         for button in self.buttons:
@@ -124,10 +124,10 @@ class QuestTitleList(DirectScrolledFrame):
             else:
                 z -= 0.042000000000000003
             button.setPos(0, 0, z)
-        
+
         self['canvasSize'] = (0, self.width - 0.050000000000000003, z, 0)
 
-    
+
     def update(self, questIdList, quest, newQuest):
         if quest and isinstance(quest, Quest.Quest):
             if newQuest:
@@ -135,13 +135,13 @@ class QuestTitleList(DirectScrolledFrame):
                 container = localAvatar.questStatus.getContainer(quest.questId)
                 if not container:
                     container = localAvatar.getQuestById(quest.questId)
-                
+
                 container.viewedInGUI = False
-            
-        
+
+
         for button in self.buttons:
             button.destroy()
-        
+
         self.buttons = []
         self.trees = { }
         for questId in questIdList:
@@ -160,14 +160,14 @@ class QuestTitleList(DirectScrolledFrame):
             path = [
                 QuestDB.QuestDict.get(questId)]
             self.trees[questId] = self._QuestTitleList__makeTree(path, tree = None)
-        
+
         treeList = self.orderTrees()
         for tree in treeList:
             self._QuestTitleList__makeButtons(self.getCanvas(), tree)
-        
+
         self.repack()
 
-    
+
     def orderTrees(self):
         newList = []
         qTier1 = []
@@ -206,7 +206,7 @@ class QuestTitleList(DirectScrolledFrame):
                 qTier7.append(treeObject)
                 continue
             qTier8.append(treeObject)
-        
+
         newList.extend(qTier1)
         newList.extend(qTier1b)
         newList.extend(qTier2)
@@ -218,11 +218,11 @@ class QuestTitleList(DirectScrolledFrame):
         newList.extend(qTier8)
         return newList
 
-    
+
     def _QuestTitleList__makeTree(self, path, tree):
         if not tree:
             tree = QuestTitleNode(None)
-        
+
         parent = tree
         for node in path:
             if node:
@@ -231,33 +231,33 @@ class QuestTitleList(DirectScrolledFrame):
                 else:
                     parent = parent.addChild(QuestTitleNode(node, node.hideButton))
             node.getQuestId() == 'c4.1visitValentina'
-        
+
         return tree
 
-    
+
     def _QuestTitleList__graphWalker(self, node, indent = -1):
         yield (node, indent)
         for child in node.getChildren():
             if child.hideButton:
                 for result in self._QuestTitleList__graphWalker(child, indent):
                     yield result
-                
+
             for result in self._QuestTitleList__graphWalker(child, indent + 1):
                 yield result
-            
-        
 
-    
+
+
+
     def _QuestTitleList__getContainer(self, questId):
         localAvatar.questStatus.forceInit()
         container = localAvatar.questStatus.getContainer(questId)
         if container:
             return container
-        
+
         quest = localAvatar.getQuestById(questId)
         return quest
 
-    
+
     def _QuestTitleList__getText(self, indent, questId, isContainer = False):
         text = '    ' * (indent - 1)
         localizerText = None
@@ -268,7 +268,7 @@ class QuestTitleList(DirectScrolledFrame):
             else:
                 text += questId
         elif indent == 0:
-            format = '\x1questTitle2\x1%s\x2'
+            format = 'questTitle2%s'
         else:
             format = '%s'
         localizerText = PLocalizer.QuestStrings.get(questId)
@@ -280,19 +280,19 @@ class QuestTitleList(DirectScrolledFrame):
         container = localAvatar.questStatus.getContainer(questId)
         if not container:
             container = localAvatar.getQuestById(questId)
-        
+
         if not container:
             return text
-        
+
         if container.isComplete(showComplete = True):
             quest = localAvatar.getQuestById(container.getQuestId())
             if quest and quest.getTasks() and not filter(lambda x: isinstance(quest.getTasks()[0], x), [
                 VisitTaskDNA,
                 DeliverItemTaskDNA]):
-                text += '   \x1questComplete\x1' + PLocalizer.QuestTitleComplete + '\x2'
-            
+                text += '   questComplete' + PLocalizer.QuestTitleComplete + ''
+
         elif not container.viewedInGUI:
-            text += '   \x1questNew\x1' + PLocalizer.QuestTitleNew + '\x2'
+            text += '   questNew' + PLocalizer.QuestTitleNew + ''
         elif not isContainer:
             progressList = container.getTaskProgress()
             for prog in progressList:
@@ -301,48 +301,46 @@ class QuestTitleList(DirectScrolledFrame):
                 if progress < goal:
                     quest = localAvatar.getQuestById(container.getQuestId())
                     if goal > 1 and quest and quest.getTasks() and not isinstance(quest.getTasks()[0], DowsingRodTaskDNA):
-                        text += '   \x1questPercent\x1%d of %d\x2' % (progress, goal)
-                    
+                        text += '   questPercent%d of %d' % (progress, goal)
+
                 not isinstance(quest.getTasks()[0], DowsingRodTaskDNA)
-                text += '   \x1questComplete\x1' + PLocalizer.QuestTitleComplete + '\x2'
-            
+                text += '   questComplete' + PLocalizer.QuestTitleComplete + ''
+
         elif container.isChoice():
             (count, total, length) = container.getProgress(showComplete = True)
             if total == length:
-                text += '   \x1questPercent\x1%d of %d\x2' % (count, total)
+                text += '   questPercent%d of %d' % (count, total)
             else:
-                text += '   \x1questPercent\x1%d of %d (of %d)\x2' % (count, total, length)
-            format = ' \x1questPercent\x1%s\x2'
+                text += '   questPercent%d of %d (of %d)' % (count, total, length)
+            format = ' questPercent%s'
             if localizerText:
                 text += format % localizerText.get('items', 'Items')
             else:
                 text += format % 'Items'
         else:
-            for None in localAvatar.getQuests():
-                quest = None
+            for quest in localAvatar.getQuests():
                 if container.hasQuest(quest.getQuestId()):
                     questId = quest.getQuestId()
                     break
-                    continue
-            
+
             (compCont, cont) = QuestLadderDB.getPercentComplete(container.getName(), questId)
             compNum = 0
             if compCont > 0 and cont > 0:
                 compNum = int((float(compCont) / float(cont)) * 100.0)
-                text += '   \x1questPercent\x1%d%%\x2' % compNum
-            
+                text += '   questPercent%d%%' % compNum
+
         return text
 
-    
+
     def _QuestTitleList__makeButtons(self, guiParent, tree):
         i = 0
         for (node, indent) in self._QuestTitleList__graphWalker(tree):
             if not node.questId:
                 continue
-            
+
             if node.hideButton:
                 continue
-            
+
             isContainer = isinstance(node.questDNA, QuestLadderDNA.QuestContainerDNA)
             text = self._QuestTitleList__getText(indent, node.questId, isContainer)
             text_scale = PiratesGuiGlobals.TextScaleLarge
@@ -351,7 +349,7 @@ class QuestTitleList(DirectScrolledFrame):
             textFg = PiratesGuiGlobals.TextFG1
             if indent == 0:
                 text_pos = (0.01, 0.01)
-            
+
             button = DirectButton(parent = guiParent, relief = None, frameSize = frameSize, borderWidth = (0.0050000000000000001, 0.0050000000000000001), text = text, text_fg = textFg, text_scale = text_scale, text_align = TextNode.ALeft, text_shadow = PiratesGuiGlobals.TextShadow, text_pos = text_pos, command = self.select, extraArgs = [
                 node.questId])
             questDNA = QuestDB.QuestDict.get(node.questId)
@@ -361,9 +359,9 @@ class QuestTitleList(DirectScrolledFrame):
                         subCard = loader.loadModel('models/gui/toplevel_gui')
                         appendMe = DirectFrame(parent = button, relief = None, pos = (self.width - 0.97999999999999998, 0, -0.029999999999999999), state = DGG.DISABLED, geom = subCard.find('**/pir_t_gui_gen_key_subscriber'), geom_scale = 0.10000000000000001, geom_pos = (0.059999999999999998, 0, 0.059999999999999998))
                         subCard.removeNode()
-                    
-                
-            
+
+
+
             button.accept('press-wheel_up-%s' % button.guiId, self.mouseWheelUp)
             button.accept('press-wheel_down-%s' % button.guiId, self.mouseWheelDown)
             button.indent = indent
@@ -371,16 +369,16 @@ class QuestTitleList(DirectScrolledFrame):
             self.updateButton(button)
             self.buttons.append(button)
             i += 1
-        
 
-    
+
+
     def updateButton(self, button, selected = False):
         titleTextLen = len(PLocalizer.QuestStrings.get(button.questId).get('title'))
         indentLen = 4 * button.indent
         button['image'] = QuestTitleList.questButtonSelected
         if not selected:
             button['image'] = QuestTitleList.questButton
-        
+
         button['image_color'] = Vec4(0.5, 0.080000000000000002, 0.017999999999999999, 1)
         if not indentLen:
             button['image_scale'] = (titleTextLen * 0.057000000000000002, 0.38, 0.38)
@@ -389,7 +387,7 @@ class QuestTitleList(DirectScrolledFrame):
             button['image_scale'] = (titleTextLen * 0.051999999999999998, 0.35999999999999999, 0.35999999999999999)
             button['image_pos'] = ((titleTextLen + indentLen) * 0.01, 0, 0.023)
 
-    
+
     def showTracked(self, questId):
         for button in self.buttons:
             if button.questId == questId:
@@ -399,42 +397,42 @@ class QuestTitleList(DirectScrolledFrame):
                 button['geom_pos'] = (0.02, 0, 0.025000000000000001)
                 continue
             button['geom'] = None
-        
 
-    
+
+
     def select(self, questId):
         messenger.send('questGuiSelect', [
             questId])
         if self.selectedButton:
             self.updateButton(self.selectedButton, selected = False)
             self.selectedButton = None
-        
+
         for button in self.buttons:
             if button.questId == questId:
                 self.updateButton(button, selected = True)
                 self.selectedButton = button
                 break
                 continue
-        
+
         if self.selectedButton is None:
             return None
-        
+
         container = localAvatar.questStatus.getContainer(questId)
         if not container:
             container = localAvatar.getQuestById(questId)
-        
+
         if container:
             if not container.viewedInGUI:
                 container.viewedInGUI = True
                 self.selectedButton['text'] = self._QuestTitleList__getText(self.selectedButton.indent, questId)
-            
-        
 
-    
+
+
+
     def loadButtonGui(self):
         if QuestTitleList.questButton:
             return None
-        
+
         gui = loader.loadModel('models/gui/toplevel_gui')
         buttons = (gui.find('**/pir_t_gui_but_quest'), gui.find('**/pir_t_gui_but_quest_down'), gui.find('**/pir_t_gui_but_quest_over'))
         QuestTitleList.questButton = (None, buttons[1], buttons[2])

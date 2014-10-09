@@ -1,0 +1,2 @@
+class CLerpSeaPatchInterval:
+    pass # TODO

@@ -2626,7 +2626,7 @@ class GuiManager(FSM.FSM):
 
 
     def setMoney(self, money):
-        self.moneyDisplay['text'] = '\x1white\x1%s\x2' % money
+        self.moneyDisplay['text'] = 'white%s' % money
 
 
     def setUIScale(self, scale):
