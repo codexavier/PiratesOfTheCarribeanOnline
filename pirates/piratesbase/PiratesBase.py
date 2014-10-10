@@ -846,16 +846,8 @@ class PiratesBase(OTPBase):
             self.cleanupDownloadWatcher()
         else:
             self.acceptOnce('launcherAllPhasesComplete', self.cleanupDownloadWatcher)
-        gameServer = base.config.GetString('game-server', '')
-        if gameServer:
-            self.notify.info('Using game-server from Configrc: %s ' % gameServer)
-        elif launcher.getGameServer():
-            gameServer = launcher.getGameServer()
-            self.notify.info('Using gameServer from launcher: %s ' % gameServer)
-        else:
-            gameServer = 'localhost'
-            self.notify.info('Using gameServer localhost')
-        serverPort = base.config.GetInt('server-port', 6667)
+        gameServer = base.config.GetString('game-server', '127.0.0.1')
+        serverPort = base.config.GetInt('server-port', 7199)
         debugQuests = base.config.GetBool('debug-quests', True)
         self.wantTattoos = base.config.GetBool('want-tattoos', 0)
         self.wantSocks = base.config.GetBool('want-socks', 0)
@@ -886,8 +878,7 @@ class PiratesBase(OTPBase):
                     continue
 
 
-        cr.loginFSM.request('connect', [
-            serverList])
+        cr.loginFSM.request('connect', [serverList])
         self.musicMgr = MusicManager.MusicManager()
         self.ambientMgr = PiratesAmbientManager.PiratesAmbientManager()
 
