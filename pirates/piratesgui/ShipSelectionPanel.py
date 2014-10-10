@@ -28,15 +28,15 @@ class ShipSelectionPanel(GuiPanel.GuiPanel):
         GUILD: PLocalizer.DinghyGuildShip,
         PUBLIC: PLocalizer.DinghyPublicShip }
     charGui = None
-    
+
     def __init__(self, title, doneCallback, pages = [
         OWN]):
         self.titleText = title
         self.doneCallback = doneCallback
         self.pages = pages[:]
         self.scrollFrame = None
-        self.shipFrames = dict(lambda [outmost-iterable]: for page in [outmost-iterable]:
-(page, [])(self.pages))
+        self.shipFrames = {} #dict(lambda [outmost-iterable]: for page in [outmost-iterable]:
+#(page, [])(self.pages))
         self.closeButton = None
         self.page = -1
         self.tabBackParent = None
@@ -46,48 +46,48 @@ class ShipSelectionPanel(GuiPanel.GuiPanel):
         self.setPos(-1.21, 0, -0.68000000000000005)
         self.createGui()
 
-    
+
     def destroyGui(self):
         if getattr(self, 'title', 0):
             self.title.destroy()
             self.title = None
-        
+
         if getattr(self, 'scrollFrame', 0):
             self.scrollFrame.destroy()
             self.scrollFrame = None
-        
-        self.shipFrames = dict(lambda [outmost-iterable]: for page in [outmost-iterable]:
-(page, [])(self.pages))
+
+        self.shipFrames = {} #dict(lambda [outmost-iterable]: for page in [outmost-iterable]:
+#(page, [])(self.pages))
         if getattr(self, 'shipBar', 0):
             self.shipBar.destroy()
             self.shipBar = None
-        
+
         if self.tabBackParent:
             self.tabBackParent.removeNode()
             self.tabBackParent = None
-        
+
         if self.tabFrontParent:
             self.tabFrontParent.removeNode()
             self.tabFrontParent = None
-        
+
         if getattr(self, 'closeButton', 0):
             self.closeButton.destroy()
             self.closeButton = None
-        
 
-    
+
+
     def resetGui(self):
         self.destroyGui()
         self.createGui()
 
-    
+
     def destroy(self):
         self.destroyGui()
         self.titleText = None
         self.doneCallback = None
         GuiPanel.GuiPanel.destroy(self)
 
-    
+
     def createGui(self):
         self.destroyGui()
         box = loader.loadModel('models/gui/gui_title_box').find('**/gui_title_box_top')
@@ -97,7 +97,7 @@ class ShipSelectionPanel(GuiPanel.GuiPanel):
         box.flattenStrong()
         if not self.charGui:
             self.charGui = loader.loadModel('models/gui/char_gui')
-        
+
         self.title = DirectLabel(parent = self, relief = None, text = self.titleText, text_fg = PiratesGuiGlobals.TextFG1, text_font = PiratesGlobals.getPirateFont(), text_scale = PiratesGuiGlobals.TextScaleTitleSmall, text_shadow = PiratesGuiGlobals.TextShadow, pos = (self.width * 0.5, 0, 1.343))
         self.tabBackParent = self.attachNewNode('tabBackParent')
         self.tabBackParent.setZ(1.1100000000000001)
@@ -120,30 +120,30 @@ class ShipSelectionPanel(GuiPanel.GuiPanel):
         self.shipBar = ShipTabBar(self.tabBackParent, self.tabFrontParent, parent = self)
         for t in self.pages:
             self.addTab(t)
-        
+
         self.refreshTabStates()
 
-    
+
     def mouseWheelUp(self, task = None):
         if self.scrollFrame.verticalScroll.isHidden():
             return None
-        
+
         amountScroll = 0.050000000000000003
         if self.scrollFrame.verticalScroll['value'] > 0:
             self.scrollFrame.verticalScroll['value'] -= amountScroll
-        
 
-    
+
+
     def mouseWheelDown(self, task = None):
         if self.scrollFrame.verticalScroll.isHidden():
             return None
-        
+
         amountScroll = 0.050000000000000003
         if self.scrollFrame.verticalScroll['value'] < 1.0:
             self.scrollFrame.verticalScroll['value'] += amountScroll
-        
 
-    
+
+
     def repackScrollFrame(self):
         self.scrollFrame.getCanvas().getChildren().detach()
         frames = self.shipFrames.get(self.page, [])
@@ -155,92 +155,92 @@ class ShipSelectionPanel(GuiPanel.GuiPanel):
         canvasHeight = self.scrollBorder - padding
         for frame in frames:
             canvasHeight += frame.getHeight() + padding
-        
+
         self.scrollFrame['frameSize'] = (self.scrollBorder, ShipSelectionPanel.width, 0.14000000000000001, self.height - 0.26000000000000001)
         zStep = -padding
         for frame in frames:
             frame.reparentTo(self.scrollFrame.getCanvas())
             zStep += frame.getHeight() + padding
             frame.setPos(xOffset, 0, canvasHeight - zStep)
-        
+
         self.scrollFrame['canvasSize'] = (self.scrollBorder, ShipSelectionPanel.width - 0.089999999999999997, self.scrollBorder, canvasHeight)
         self.scrollFrame['verticalScroll_value'] = 0
 
     repackScrollFrame = report(types = [
         'args'], dConfigParam = [
         'shipdeploy'])(repackScrollFrame)
-    
+
     def closePanel(self):
         GuiPanel.GuiPanel.closePanel(self)
         if self.doneCallback:
             self.doneCallback()
-        
 
-    
+
+
     def _addFrame(self, pageId, shipFrame, index = None):
         list = self.shipFrames[pageId]
         if shipFrame in list and index is not None:
             list.remove(shipFrame)
-        
+
         if shipFrame not in list:
             if index is None:
                 list.append(shipFrame)
             else:
                 list.insert(index, shipFrame)
-        
+
         if self.page == pageId:
             self.repackScrollFrame()
         elif shipFrame not in self.shipFrames.get(self.page, []):
             shipFrame.detachNode()
-        
+
         if self.page == -1:
             self.setPage(pageId)
-        
+
         self.refreshTabStates()
 
     _addFrame = report(types = [
         'args'], dConfigParam = [
         'shipdeploy'])(_addFrame)
-    
+
     def addFrame(self, shipFrame, index = None):
         self._addFrame(self.OWN, shipFrame, index)
 
-    
+
     def addFrameOwn(self, shipFrame, index = None):
         self.addFrame(shipFrame, index)
 
     addFrameOwn = report(types = [
         'args'], dConfigParam = [
         'shipdeploy'])(addFrameOwn)
-    
+
     def addFrameCrew(self, shipFrame, index = None):
         self._addFrame(self.CREW, shipFrame, index)
 
     addFrameCrew = report(types = [
         'args'], dConfigParam = [
         'shipdeploy'])(addFrameCrew)
-    
+
     def addFrameFriend(self, shipFrame, index = None):
         self._addFrame(self.FRIEND, shipFrame, index)
 
     addFrameFriend = report(types = [
         'args'], dConfigParam = [
         'shipdeploy'])(addFrameFriend)
-    
+
     def addFrameGuild(self, shipFrame, index = None):
         self._addFrame(self.GUILD, shipFrame, index)
 
     addFrameGuild = report(types = [
         'args'], dConfigParam = [
         'shipdeploy'])(addFrameGuild)
-    
+
     def addFramePublic(self, shipFrame, index = None):
         self._addFrame(self.PUBLIC, shipFrame, index)
 
     addFramePublic = report(types = [
         'args'], dConfigParam = [
         'shipdeploy'])(addFramePublic)
-    
+
     def removeFrame(self, frame):
         removed = False
         for frameList in self.shipFrames.itervalues():
@@ -248,67 +248,67 @@ class ShipSelectionPanel(GuiPanel.GuiPanel):
                 frameList.remove(frame)
                 removed = True
                 continue
-        
+
         if removed:
             frame.destroy()
             self.repackScrollFrame()
             self.refreshTabStates()
-        
 
-    
+
+
     def hasFrame(self, shipDoId):
         return bool(self.getFrame(shipDoId))
 
-    
+
     def getFrame(self, shipDoId):
         for frameList in self.shipFrames.itervalues():
             for frame in frameList:
                 if frame['shipId'] == shipDoId:
                     return frame
                     continue
-            
-        
 
-    
+
+
+
     def getFrameIndex(self, frame):
         for frameList in self.shipFrames.itervalues():
             for (num, currFrame) in enumerate(frameList):
                 if currFrame is frame:
                     return num
                     continue
-            
-        
+
+
         return 0
 
-    
+
     def setPage(self, id):
         if id != self.page:
             for frame in self.shipFrames.get(self.page, []):
                 frame.detachNode()
-            
+
             self.page = id
             self.shipBar.selectTab(self.NameMap[id])
             for frame in self.shipFrames[self.page]:
                 self._addFrame(self.page, frame)
-            
+
             self.repackScrollFrame()
-        
+
 
     setPage = report(types = [
         'args'], dConfigParam = [
         'shipdeploy'])(setPage)
-    
+
     def addTab(self, id):
         self.shipBar.addTab(name = self.NameMap[id], command = self.setPage, extraArgs = [
             id], textpos = (0.10000000000000001, 0.029999999999999999, 0))
 
-    
+
     def refreshTabStates(self):
         for (id, frames) in self.shipFrames.iteritems():
             if frames:
                 self.shipBar.getTab(self.NameMap[id]).setTextBright(True)
                 continue
             self.shipBar.getTab(self.NameMap[id]).setTextBright(False)
-        
+
 
 

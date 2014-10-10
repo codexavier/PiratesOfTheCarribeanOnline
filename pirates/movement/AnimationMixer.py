@@ -351,8 +351,8 @@ class AnimationMixer:
 
     def __init__(self, actor):
         self.actor = actor
-        channelCount = [](_[1])
-        self.partMixers = self.sectionNames([](_[1], [ PartMixer(self, channelCount, actor, self.getPartsNameList(part)) for part in self.sectionNames ]))
+        channelCount = 0
+        self.partMixers =  [PartMixer(self, channelCount, actor, self.getPartsNameList(part)) for part in self.sectionNames]
         self.ownedIvals = []
 
 

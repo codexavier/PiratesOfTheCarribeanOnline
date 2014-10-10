@@ -33,7 +33,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
     notify = DirectNotifyGlobal.directNotify.newCategory('PiratesMagicWordManager')
     neverDisable = 1
     GameAvatarClass = DistributedPlayerPirate.DistributedPlayerPirate
-    
+
     def __init__(self, cr):
         MagicWordManager.MagicWordManager.__init__(self, cr)
         self.pendingCameraReparent = None
@@ -48,36 +48,36 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
         self.stormRing = None
         self.fishCamEnabled = False
 
-    
+
     def generate(self):
         MagicWordManager.MagicWordManager.generate(self)
         self.accept('magicWord', self.b_setMagicWord)
 
-    
+
     def doLoginMagicWords(self):
         MagicWordManager.MagicWordManager.doLoginMagicWords(self)
         if base.config.GetBool('want-chat', 0):
             self.d_setMagicWord('~chat', localAvatar.doId, 0)
-        
+
         if base.config.GetBool('want-run', 0) or base.config.GetBool('want-pirates-run', 0):
             self.toggleRun()
-        
+
         if base.config.GetBool('immortal-mode', 0):
             self.d_setMagicWord('~immortal', localAvatar.doId, 0)
-        
 
-    
+
+
     def disable(self):
         self.ignore('magicWord')
         MagicWordManager.MagicWordManager.disable(self)
         if self.pendingCameraReparent:
             base.cr.relatedObjectMgr.abortRequest(self.pendingCameraReparent)
             self.pendingCameraReparent = None
-        
 
-    
+
+
     def doMagicWord(self, word, avId, zoneId):
-        
+
         def wordIs(w, word = word):
             if not word[:len(w) + 1] == '%s ' % w:
                 pass
@@ -94,7 +94,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             for player in players:
                 playerText = '%s %s' % (player.getName(), player.doId)
                 base.talkAssistant.receiveGameMessage(playerText)
-            
+
         elif word == '~rocketman':
             if localAvatar.rocketOn == 0:
                 localAvatar.startRocketJumpMode()
@@ -121,7 +121,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             if hasattr(localAvatar, 'shipHat'):
                 localAvatar.shipHat.modelRoot.detachNode()
                 localAvatar.shipHat = None
-            
+
             if len(args) == 1:
                 ship = base.shipFactory.getShip(23)
             else:
@@ -149,12 +149,12 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 args = word.split()
                 if len(args) >= 2:
                     tgtDoId = int(args[1])
-                    
+
                     def doHeadsUp(task = None):
                         targetObj = self.cr.doId2do.get(tgtDoId)
                         if targetObj:
                             localAvatar.lookAt(targetObj)
-                        
+
                         return Task.cont
 
                     taskMgr.add(doHeadsUp, 'lookAtDude')
@@ -175,7 +175,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             localAvatar.toggleMario()
         elif wordIs('~islandShips'):
             args = word.split()
-            
+
             try:
                 if args[1] == '1':
                     localAvatar.getParentObj().setOceanVisEnabled(1)
@@ -196,12 +196,12 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 if self.fireflies:
                     self.fireflies.reparentTo(localAvatar)
                     self.fireflies.startLoop()
-                
+
                 self.groundFog = GroundFog()
                 if self.groundFog:
                     self.groundFog.reparentTo(localAvatar)
                     self.groundFog.startLoop()
-                
+
         elif wordIs('~darkfog'):
             if self.groundFog:
                 self.groundFog.destroy()
@@ -211,20 +211,20 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 if self.groundFog:
                     self.groundFog.reparentTo(localAvatar)
                     self.groundFog.startLoop()
-                
+
         elif wordIs('~dust'):
             effect = CeilingDust.getEffect()
             if effect:
                 effect.reparentTo(localAvatar)
                 effect.setPos(0, 0, 10)
                 effect.play()
-            
+
             effect = CeilingDebris.getEffect()
             if effect:
                 effect.reparentTo(localAvatar)
                 effect.setPos(0, 0, 20)
                 effect.play()
-            
+
             cameraShakerEffect = CameraShaker()
             cameraShakerEffect.reparentTo(localAvatar)
             cameraShakerEffect.setPos(0, 0, 0)
@@ -240,15 +240,15 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 if self.rainMist:
                     self.rainMist.stopLoop()
                     self.rainMist = None
-                
+
                 if self.rainSplashes:
                     self.rainSplashes.stopLoop()
                     self.rainSplashes = None
-                
+
                 if self.rainSplashes2:
                     self.rainSplashes2.stopLoop()
                     self.rainSplashes2 = None
-                
+
             else:
                 RainDrops = RainDrops
                 import pirates.effects.RainDrops
@@ -275,7 +275,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             if len(args) >= 2:
                 level = int(args[1])
                 base.cr.timeOfDayManager.skyGroup.transitionClouds(level).start()
-            
+
         elif wordIs('~storm'):
             if self.stormEye:
                 self.stormEye.stopLoop()
@@ -283,13 +283,13 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 if self.stormRing:
                     self.stormRing.stopLoop()
                     self.stormRing = None
-                
+
             else:
                 args = word.split()
                 grid = 0
                 if len(args) > 1:
                     grid = int(args[1])
-                
+
                 pos = Vec3(base.cr.doId2do[201100017].getZoneCellOrigin(grid)[0], base.cr.doId2do[201100017].getZoneCellOrigin(grid)[1], base.cr.doId2do[201100017].getZoneCellOrigin(grid)[2])
                 StormEye = StormEye
                 import pirates.effects.StormEye
@@ -307,25 +307,25 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             if len(args) > 3:
                 color = Vec4(float(args[1]), float(args[2]), float(args[3]), 1)
                 base.cr.timeOfDayManager.alight.node().setColor(color)
-            
+
         elif wordIs('~dlight'):
             args = word.split()
             if len(args) > 3:
                 color = Vec4(float(args[1]), float(args[2]), float(args[3]), 1)
                 base.cr.timeOfDayManager.dlight.node().setColor(color)
-            
+
         elif wordIs('~fog'):
             args = word.split()
             if len(args) > 3:
                 color = Vec4(float(args[1]), float(args[2]), float(args[3]), 1)
                 base.cr.timeOfDayManager.fog.setColor(color)
-            
+
             if len(args) > 4:
                 base.cr.timeOfDayManager.fog.setExpDensity(float(args[4]))
-            
+
             if len(args) == 2:
                 base.cr.timeOfDayManager.fog.setExpDensity(float(args[1]))
-            
+
         elif __dev__ and wordIs('~turbo'):
             localAvatar.toggleTurbo()
         elif __dev__ and wordIs('~joincrew'):
@@ -392,7 +392,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             args = word.split()
             if len(args) == 1:
                 self.cr.teleportMgr.initiateTeleport(PiratesGlobals.INSTANCE_TM, 'BlackpearlWorld')
-            
+
         elif wordIs('~scrimmage'):
             self.cr.teleportMgr.initiateTeleport(PiratesGlobals.INSTANCE_SCRIMMAGE, 'ScrimmageTestWorld')
         elif wordIs('~fireworks') or wordIs('~fw'):
@@ -402,22 +402,22 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 's']:
                 if len(args) >= 3:
                     showType = args[2]
-                
+
                 timestamp = 0.0
                 if len(args) >= 4:
                     timestamp = args[3]
-                
+
                 if base.cr.activeWorld:
                     localAvatar.getParentObj().fireworkShowType = int(showType)
                     localAvatar.getParentObj().beginFireworkShow(timeStamp = timestamp)
-                
+
             elif len(args) >= 2 and args[1] in [
                 'type',
                 't']:
                 fireworkType = 0
                 if len(args) >= 3:
                     fireworkType = int(args[2])
-                
+
                 Firework = Firework
                 import pirates.effects.Firework
                 firework = Firework(fireworkType)
@@ -431,29 +431,29 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 burstType = 0
                 if len(args) >= 3:
                     burstType = int(args[2])
-                
+
                 if len(args) >= 4:
                     trailType = int(args[3])
-                
+
                 FireworkEffect = FireworkEffect
                 import pirates.effects.FireworkEffect
                 firework = FireworkEffect(burstType, trailType)
                 firework.reparentTo(render)
                 firework.setPos(Point3(10525, 19000, 245))
                 firework.play()
-            
+
         elif wordIs('~te'):
             if localAvatar.gameFSM.getCurrentOrNextState() == 'LandRoam':
                 localAvatar.b_setGameState('TeleportOut')
             elif localAvatar.gameFSM.getCurrentOrNextState() == 'TeleportOut':
                 localAvatar.b_setGameState('LandRoam')
-            
+
         elif wordIs('~lfa'):
             args = word.split()
             activityName = None
             if len(args) >= 2:
                 activityName = args[1]
-            
+
             if activityName == 'blackjack':
                 localAvatar.requestActivity(PiratesGlobals.GAME_STYLE_BLACKJACK)
             elif activityName == 'poker':
@@ -466,7 +466,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 localAvatar.requestActivity(PiratesGlobals.GAME_TYPE_HSA)
             elif activityName == 'mmp':
                 self.cr.teleportMgr.initiateTeleport(PiratesGlobals.INSTANCE_MAIN, 'mainWorld')
-            
+
         elif wordIs('~term') or wordIs('terminator'):
             localAvatar.setEquippedWeapons([
                 10103,
@@ -483,7 +483,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 if command == 'resync':
                     localAvatar.battleRandom.resync()
                     self.notify.info('Client Battle random resynced, counter=0')
-                
+
             else:
                 response = 'Client Battle random attack counter=%s  main counter=%s' % (localAvatar.battleRandom.attackCounter, localAvatar.battleRandom.mainCounter)
                 self.setMagicWordResponse(response)
@@ -496,10 +496,10 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 csId = base.config.GetString('default-cutscene', '0')
             if int(csId) >= len(CutsceneData.CutsceneNames):
                 return None
-            
+
             name = CutsceneData.CutsceneNames[int(csId)]
             cs = PythonUtil.ScratchPad()
-            
+
             def destroyCutscene(cs = cs):
                 cs.cutscene.destroy()
 
@@ -510,7 +510,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
         elif wordIs('~forceLod'):
             for n in render.findAllMatches('**/+LODNode'):
                 n.node().forceSwitch(n.node().getHighestSwitch())
-            
+
         elif wordIs('~wave'):
             args = word.split()
             patch = base.cr.doFind('OceanGrid').water.patch
@@ -525,7 +525,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                             response = '%s\n%s NON-SINE-WAVE' % (response, num)
                         else:
                             response = '%s\n%s amp=%s len=%s spd=%s' % (response, num, patch.getWaveAmplitude(num), patch.getWaveLength(num), patch.getWaveSpeed(num))
-                    
+
                     num += 1
             else:
                 num = int(args[1])
@@ -549,7 +549,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 response = 'not on a ship'
             elif len(args) > 2:
                 localAvatar.ship._rocker.setFakeMass(float(args[2]))
-            
+
             localAvatar.ship.addRoll(float(args[1]))
             response = 'rolling!'
             self.setMagicWordResponse(response)
@@ -569,18 +569,18 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                 if not hasattr(base, 'oobeMode') or not (base.oobeMode):
                     base.oobe()
                     base.oobeCamera.wrtReparentTo(render)
-                
-            
+
+
         elif wordIs('~pvpmoney') or wordIs('~pvpinfamy'):
             if localAvatar.ship and localAvatar.ship.renownDisplay:
                 taskMgr.doMethodLater(2.0, localAvatar.ship.renownDisplay.loadRank, 'pvp-infamy-display', [])
-            
+
             if localAvatar.guiMgr and localAvatar.guiMgr.pvpPanel and hasattr(localAvatar.guiMgr.pvpPanel, 'renownDisplay') and localAvatar.guiMgr.pvpPanel.renownDisplay:
                 taskMgr.doMethodLater(2.0, localAvatar.guiMgr.pvpPanel.renownDisplay.loadRank, 'pvp-infamy-display', [])
-            
+
             if localAvatar.guiMgr and localAvatar.guiMgr.titlesPage:
                 taskMgr.doMethodLater(2.0, localAvatar.guiMgr.titlesPage.refresh, 'titles-refresh', [])
-            
+
         elif wordIs('~profileCard'):
             args = word.split()
             if len(args) >= 2:
@@ -593,7 +593,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             if len(args) < 2 and localAvatar.isGM():
                 response = PLocalizer.MAGICWORD_GMNAMETAG
                 self.setMagicWordResponse(response)
-            
+
             if len(args) >= 2 and localAvatar.isGM():
                 if args[1] == 'enable':
                     localAvatar.setGMNameTagState(1)
@@ -608,12 +608,12 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                         1
                         stringToSet = '%s %s' % (stringToSet, args[xCount])
                         xCount += 1
-                    
+
                     localAvatar.setGMNameTagString(stringToSet)
                 elif args[1] == 'setColor':
                     localAvatar.setGMNameTagColor(args[2])
-                
-            
+
+
         elif wordIs('~liveCam'):
             LiveCamTransforms = {
                 '1': [
@@ -649,7 +649,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             lodNodes = render.findAllMatches('**/+LODNode')
             for i in xrange(0, lodNodes.getNumPaths()):
                 lodNodes[i].node().forceSwitch(lodNodes[i].node().getHighestSwitch())
-            
+
             localAvatar.clearInterestNamed(None, [
                 'liveCam'])
             localAvatar.getParentObj().setOceanVisEnabled(0)
@@ -865,7 +865,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                     camParent.setHpr(camData[1])
                     camParent.setScale(10)
                     camModel.instanceTo(camParent)
-                
+
             else:
                 for camNum in range(3, 7):
                     camData = LiveCamTransforms[str(camNum)]
@@ -874,7 +874,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                     camParent.setHpr(camData[1])
                     camParent.setScale(10)
                     camModel.instanceTo(camParent)
-                
+
         elif wordIs('~hideCams'):
             render.findAllMatches('**/liveCamParent*').detach()
         elif wordIs('~dropBlockers'):
@@ -895,17 +895,17 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
         elif __dev__ and wordIs('~wantCompassTask'):
             self.configToggleBool('want-compass-task')
         elif __dev__ and wordIs('~wantPatchie'):
-            
+
             def turnOffSeapatch():
                 if hasattr(base.cr.activeWorld.worldGrid, 'cleanupWater'):
                     base.cr.activeWorld.worldGrid.cleanupWater()
-                
 
-            
+
+
             def turnOnSeapatch():
                 if hasattr(base.cr.activeWorld.worldGrid, 'setupWater'):
                     base.cr.activeWorld.worldGrid.setupWater()
-                
+
 
             self.configToggleBool('want-compass-task', offCode = turnOffSeapatch, onCode = turnOnSeapatch)
         elif __dev__ and wordIs('~wantShipColl'):
@@ -936,7 +936,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                     self.setMagicWordResponse('cannonball collisions set to Broadside ONLY ON')
                 elif base.cr.cannonballCollisionDebug == 3:
                     self.setMagicWordResponse('cannonball collisions set to Deck ONLY ON')
-                
+
             else:
                 self.setMagicWordResponse('get on a ship!')
         elif __dev__ and wordIs('~wantEventCollider'):
@@ -946,7 +946,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
         elif __dev__ and wordIs('~optimized1'):
             if not (localAvatar.ship):
                 self.setMagicWordResponse('get on a ship FIRST')
-            
+
             self.configWantFloorEventRay()
             self.configWantEventCollider()
             self.configWantWaterRippleRay()
@@ -958,7 +958,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
         elif __dev__ and wordIs('~optimized2'):
             if not (localAvatar.ship):
                 self.setMagicWordResponse('get on a ship FIRST')
-            
+
             self.configWantFloorEventRay()
             self.configWantEventCollider()
             self.configWantWaterRippleRay()
@@ -970,8 +970,8 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
                     type = 'broadside'
                 elif args[2] == 'deck':
                     type = 'deck'
-                
-            
+
+
             if len(args) > 1:
                 dist = int(args[1])
             elif type == 'broadside':
@@ -981,17 +981,17 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             if type == 'all' or type == 'deck':
                 DistributedSimpleShip.DistributedSimpleShip.CannonFireDist = dist
                 self.setMagicWordResponse('setting deck cannon visibility distance to %s' % dist)
-            
+
             if type == 'all' or type == 'broadside':
                 DistributedSimpleShip.DistributedSimpleShip.CannonFireBroadsideDist = dist
                 self.setMagicWordResponse('setting broadside cannon visibility distance to %s' % dist)
-            
+
         elif wordIs('~setWakeVis'):
             args = word.split()
             dist = config.GetInt('ship-wake-dist', 3800)
             if len(args) > 1:
                 dist = int(args[1])
-            
+
             DistributedSimpleShip.DistributedSimpleShip.ShipWakeDist = dist
             self.setMagicWordResponse('setting wake visibility distance to %s' % dist)
         elif wordIs('~setRockVis'):
@@ -999,7 +999,7 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             dist = config.GetInt('ship-rock-dist', 1000)
             if len(args) > 1:
                 dist = int(args[1])
-            
+
             DistributedSimpleShip.DistributedSimpleShip.ShipRockDist = dist
             self.setMagicWordResponse('setting rocking visibility distance to %s' % dist)
         elif __dev__ and wordIs('~wantReducedShipColl'):
@@ -1018,11 +1018,10 @@ class PiratesMagicWordManager(MagicWordManager.MagicWordManager):
             force = None
             if len(args) > 1:
                 force = int(args[1])
-            
+
             DistributedSimpleShip = DistributedSimpleShip
             import pirates.ship
-            clientShips = filter(lambda x: if isinstance(x, DistributedSimpleShip.DistributedSimpleShip):
-passx is not localAvatar.ship, base.cr.doId2do.values())
+            clientShips = []
             cleared = False
             for currShip in clientShips:
                 shipCollWall = currShip.hull[0].collisions.find('**/collision_hull')
@@ -1032,8 +1031,8 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
                     else:
                         shipCollWall.setCollideMask(shipCollWall.getCollideMask() ^ PiratesGlobals.ShipCollideBitmask)
                         cleared = True
-                
-            
+
+
             if cleared:
                 self.setMagicWordResponse('cleared ship collide bitmasks')
             else:
@@ -1130,8 +1129,8 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
             dist = 40
             if len(args) > 1:
                 dist = float(args[1])
-            
-            
+
+
             def spin(task = None):
                 localAvatar.cameraFSM.getCurrentCamera().setH(localAvatar.cameraFSM.getCurrentCamera().getH() + 1)
                 return Task.cont
@@ -1152,26 +1151,26 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
             for currInteractive in interactivesNear:
                 if isinstance(currInteractive, DistributedNPCTownfolk.DistributedNPCTownfolk):
                     self.b_setMagicWord('~hostilize ' + str(currInteractive.doId))
-                
-            
-        
 
-    
+
+
+
+
     def configEffects(self, args):
         effectCats = args[1:]
-        
+
         def toggleEffects(on = None):
             if effectCats:
                 for currEffectCat in effectCats:
                     if currEffectCat == 'clearCustom':
                         base.cr.effectToggles = { }
                         continue
-                    
+
                     if currEffectCat == 'listEffectCats':
                         response = 'known effect types are: \n%s' % base.cr.effectTypes.keys()
                         self.setMagicWordResponse(response)
                         continue
-                    
+
                     effectTypes = base.cr.effectTypes.get(currEffectCat, [
                         currEffectCat])
                     for currEffectType in effectTypes:
@@ -1179,9 +1178,9 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
                         base.cr.effectToggles[currEffectType] = newStatus
                         response = 'effect %s set to %s' % (currEffectType, choice(newStatus, 'ON', 'OFF'))
                         self.setMagicWordResponse(response)
-                    
-                
-            
+
+
+
             base.cr.wantSpecialEffects = base.config.GetBool('want-special-effects', 1)
             DistributedSimpleShip = DistributedSimpleShip
             import pirates.ship
@@ -1190,33 +1189,33 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
                 for ship in clientShips:
                     if base.cr.queryShowEffect('BlackSmoke'):
                         ship.startSmoke()
-                    
+
                     if base.cr.queryShowEffect('Fire'):
                         ship.startFire()
                         continue
-                
+
             elif not base.cr.queryShowEffect('BlackSmoke') or not base.cr.queryShowEffect('Fire'):
                 for ship in clientShips:
                     if not base.cr.queryShowEffect('BlackSmoke'):
                         ship.stopSmoke()
-                    
+
                     if not base.cr.queryShowEffect('Fire'):
                         ship.stopFire()
                         continue
-                
-            
+
+
 
         if effectCats:
             toggleEffects()
         else:
             self.configToggleBool('want-special-effects', offCode = lambda p1 = False: toggleEffects(p1), onCode = lambda p1 = True: toggleEffects(p1))
 
-    
+
     def configWantEventCollider(self):
         currControls = localAvatar.controlManager.currentControls
         if currControls == None:
             return None
-        
+
         if not base.shadowTrav.hasCollider(currControls.cEventSphereNodePath):
             pass
         colliderExists = currControls.cTrav.hasCollider(currControls.cEventSphereNodePath)
@@ -1233,7 +1232,7 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
             base.shadowTrav.addCollider(currControls.cEventSphereNodePath, currControls.event)
             self.setMagicWordResponse('event sphere ON')
 
-    
+
     def configWantFloorEventRay(self):
         if localAvatar.cTrav.hasCollider(localAvatar.cFloorNodePath):
             localAvatar.cTrav.removeCollider(localAvatar.cFloorNodePath)
@@ -1242,7 +1241,7 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
             localAvatar.cTrav.addCollider(localAvatar.cFloorNodePath, localAvatar.floorEventHandler)
             self.setMagicWordResponse('floor event ray ON')
 
-    
+
     def configWantWaterRippleRay(self):
         if localAvatar.cTrav.hasCollider(localAvatar.cWaterNodePath):
             localAvatar.cTrav.removeCollider(localAvatar.cWaterNodePath)
@@ -1251,7 +1250,7 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
             localAvatar.cTrav.addCollider(localAvatar.cWaterNodePath, localAvatar.waterEventHandler)
             self.setMagicWordResponse('water ripple ray ON')
 
-    
+
     def configWantShadowPlacer(self):
         if localAvatar.shadowPlacer.cTrav.hasCollider(localAvatar.shadowPlacer.cRayNodePath):
             localAvatar.shadowPlacer.cTrav.removeCollider(localAvatar.shadowPlacer.cRayNodePath)
@@ -1260,12 +1259,12 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
             localAvatar.shadowPlacer.cTrav.addCollider(localAvatar.shadowPlacer.cRayNodePath, localAvatar.shadowPlacer.lifter)
             self.setMagicWordResponse('shadow placer ray ON')
 
-    
+
     def configShipsRock(self, configIs, args):
         onlyPlayerRocks = False
         if len(args) > 1 and args[1] == 'playerOnly':
             onlyPlayerRocks = True
-        
+
         if config.GetInt(configIs, 1) == 1 or config.GetInt(configIs, 1) == 2:
             ConfigVariableInt(configIs).setValue(0)
             self.setMagicWordResponse('%s OFF (all ships)' % configIs)
@@ -1276,7 +1275,7 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
             ConfigVariableInt(configIs).setValue(1)
             self.setMagicWordResponse('%s ON (all ships)' % configIs)
 
-    
+
     def configToggleBool(self, configName, defaultVal = 1, offCode = None, onCode = None):
         currVal = not config.GetBool(configName, defaultVal)
         loadPrcFileData('', '%s %s' % (configName, currVal))
@@ -1285,9 +1284,9 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
             onCode()
         elif not currVal and offCode:
             offCode()
-        
 
-    
+
+
     def cameraFollowTgt(self, target, parentId):
         localAvatar.cTrav.removeCollider(localAvatar.cFloorNodePath)
         localAvatar.controlManager.use('observer', localAvatar)
@@ -1303,9 +1302,9 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
         if self.pendingCameraReparent:
             base.cr.relatedObjectMgr.abortRequest(self.pendingCameraReparent)
             self.pendingCameraReparent = None
-        
 
-    
+
+
     def cameraUnfollowTgt(self, target):
         localAvatar.cTrav.addCollider(localAvatar.cFloorNodePath, localAvatar.floorEventHandler)
         localAvatar.controlManager.currentControls.enableAvatarControls()
@@ -1315,38 +1314,38 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
         localAvatar.unstash()
         if hasattr(localAvatar, 'followTgt'):
             del localAvatar.followTgt
-        
 
-    
+
+
     def cameraReparent(self, targetId, targetParentId, zoneId):
         targetObj = base.cr.doId2do.get(targetParentId)
         if targetObj and not isinstance(targetObj, NodePath):
             return None
-        
+
         currParentObj = localAvatar.getParentObj()
         if self.originalLocation == None:
             self.originalLocation = [
                 localAvatar.getLocation(),
                 localAvatar.getPos(currParentObj)]
-        
+
         prevPos = None
         if targetId == 0 and targetParentId == 0 and zoneId == 0 and self.originalLocation:
             targetParentId = self.originalLocation[0][0]
             zoneId = self.originalLocation[0][1]
             prevPos = self.originalLocation[1]
             self.originalLocation = None
-        
+
         targetObj = base.cr.doId2do.get(targetParentId)
         if targetObj == None or not isinstance(targetObj, NodePath):
             self.notify.debug('Parent of target object to reparent avatar/camera to does not yet exist, skipping reparent request')
             return None
-        
+
         if currParentObj is not targetObj:
             currParentObj.stopProcessVisibility()
             if isinstance(targetObj, DistributedCartesianGrid.DistributedCartesianGrid):
                 targetObj.startProcessVisibility(localAvatar)
-            
-        
+
+
         if prevPos:
             newPos = prevPos
         else:
@@ -1362,11 +1361,11 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
         elif self.pendingCameraReparent:
             base.cr.relatedObjectMgr.abortRequest(self.pendingCameraReparent)
             self.pendingCameraReparent = None
-        
+
         self.cameraUnfollowTgt(targetObj)
         localAvatar.isGhosting = False
 
-    
+
     def shipCreated(self, shipId):
         return None
         print 'shipCreated(%s)' % shipId
@@ -1375,9 +1374,9 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
             print 'ship created: %s' % ship
             ship.localAvatarInstantBoard()
             ship.enableOnDeckInteractions()
-        
 
-    
+
+
     def toggleFishCam(self):
         self.fishCamEnabled = not (self.fishCamEnabled)
         if self.fishCamEnabled:
@@ -1410,7 +1409,7 @@ passx is not localAvatar.ship, base.cr.doId2do.values())
             del self.fishBackdrop
             base.oobe()
 
-    
+
     def doRequestFish(self, word, av, zoneId, senderId):
         args = word.split()
         doid = args[1]

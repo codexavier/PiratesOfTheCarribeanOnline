@@ -223,7 +223,7 @@ PlayerNames = [
 class MasterHuman(HumanBase.HumanBase, Biped.Biped):
     notify = DirectNotifyGlobal.directNotify.newCategory('Human')
     prebuiltAnimData = { }
-    
+
     def __init__(self, other = None):
         Biped.Biped.__init__(self, other, HumanAnimationMixer)
         self.model = None
@@ -269,10 +269,10 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         self.eyeFSM.enterInitialState()
         if other != None:
             self.copyHuman(other)
-        
+
         self.isPaid = False
 
-    
+
     def removeCopiedNodes(self):
         self.dropShadow = self.find('**/drop_shadow*')
         if not self.dropShadow.isEmpty():
@@ -280,17 +280,17 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         else:
             self.dropShadow = None
 
-    
+
     def flattenHuman(self):
         self.deleteNametag3d()
         self.getWeaponJoints()
 
-    
+
     def _MasterHuman__doneFlattenHuman(self, models):
         self.flattenPending = None
         self.getWeaponJoints()
 
-    
+
     def copyHuman(self, other):
         self.gender = other.gender
         self.loaded = other.loaded
@@ -298,9 +298,9 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         self.loadAnimatedHead = other.loadAnimatedHead
         self.model = None
 
-    
+
     def delete(self):
-        
+
         try:
             pass
         except:
@@ -308,20 +308,20 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             taskMgr.remove(self._MasterHuman__blinkName)
             if self.dropShadow and not self.dropShadow.isEmpty():
                 self.deleteDropShadow()
-            
+
             del self.eyeFSM
             self.controlShapes = None
             self.sliderNames = None
             if self.model:
                 self.model.delete()
                 del self.model
-            
+
             Biped.Biped.delete(self)
 
 
-    
+
     def isDeleted(self):
-        
+
         try:
             if self.Human_deleted == 1:
                 return True
@@ -329,7 +329,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             return False
 
 
-    
+
     def fixEyes(self):
         self.eyeLids = { }
         self.eyeBalls = { }
@@ -342,20 +342,20 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             self.eyeLids[lodName].stash()
             self.eyeBalls[lodName].unstash()
             self.eyeIris[lodName].unstash()
-        
 
-    
+
+
     def getCrazyColorSkinIndex(self):
         return self.crazyColorSkinIndex
 
-    
+
     def setCrazyColorSkinIndex(self, index):
         if len(HumanDNA.crazySkinColors) > index:
             self.crazyColorSkinIndex = index
         else:
             self.notify.warning('(MasterHuman)index: %d is out of bounds for crazyColorSkin: %d' % (index, len(HumanDNA.crazySkinColors)))
 
-    
+
     def generateSkinColor(self):
         skinColor = self.style.getSkinColor()
         lowColor = self.model.lowLODSkinColor
@@ -366,7 +366,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             if self.optimizeLOD:
                 self.model.currentBody[2].setColorScale(color)
                 self.model.faces[0][2].setColorScale(color)
-            
+
         else:
             numPaths = self.model.body.getNumPaths()
             medIdx = numPaths / 3
@@ -377,9 +377,9 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                     color = VBase4(121 / 255.0, 124 / 255.0, 103 / 255.0, 1.0)
                     for i in xrange(lowIdx, numPaths):
                         self.model.body[i].setColorScale(color)
-                    
+
                     self.model.faceZomb[2].setColorScale(color)
-                
+
             else:
                 self.model.body.setColorScale(skinColor)
                 lowColor = self.model.lowLODSkinColor
@@ -387,10 +387,10 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                     color = VBase4(lowColor[0] * skinColor[0], lowColor[1] * skinColor[1], lowColor[2] * skinColor[2], 1.0)
                     for i in xrange(lowIdx, numPaths):
                         self.model.body[i].setColorScale(color)
-                    
-                
 
-    
+
+
+
     def generateSkinTexture(self):
         bodyTextureIdx = self.style.body.skin
         if self.zombie:
@@ -398,7 +398,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                 bodyTextureIdx = PirateFemale.ZOMB_BODY_TEXTURE
             else:
                 bodyTextureIdx = PirateMale.ZOMB_BODY_TEXTURE
-        
+
         if self.gender == 'f':
             body_textures = PirateFemale.body_textures[self.style.body.shape]
         else:
@@ -413,11 +413,11 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                 numPaths = parts.getNumPaths()
                 for i in xrange(numPaths):
                     parts[i].setTexture(tex, 1)
-                
-            
-        
 
-    
+
+
+
+
     def generateFaceTexture(self, default):
         if default:
             faceTextureIdx = 0
@@ -425,16 +425,16 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             faceTextureIdx = self.style.head.texture
         if faceTextureIdx >= len(self.model.faceTexturesSet):
             faceTextureIdx = 0
-        
+
         self.model.faces[0].setTexture(self.model.faceTexturesSet[faceTextureIdx])
 
-    
+
     def generateHairColor(self, colorName = None, colorModel = None):
         self.model.setHairBaseColor()
 
-    
+
     def getTrySafe(self, list, idx):
-        
+
         try:
             if type(idx) == str:
                 lookup = idx.split('_cut')[0]
@@ -445,7 +445,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             return None
 
 
-    
+
     def generateEyesTexture(self):
         eyesTextureIdx = self.style.head.eyes.color
         if self.gender == 'f':
@@ -459,44 +459,44 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             return None
         if tex:
             self.model.irises.setTexture(tex, 1)
-        
 
-    
+
+
     def generateHatColor(self):
         style = self.model.dna
         if self.zombie:
             style = self.model.dnaZomb
-        
+
         hatColor = style.lookupHatColor()
         geom = self.getGeomNode()
         parts = geom.findAllMatches('**/hat_band*')
         parts.setColorScale(hatColor)
 
-    
+
     def generateClothesColor(self):
         style = self.model.dna
         if self.zombie:
             style = self.model.dnaZomb
-        
+
         clothesTopColor = style.lookupClothesTopColor()
         clothesBotColor = style.lookupClothesBotColor()
         geom = self.getGeomNode()
         if self.optimizeLOD:
-            
+
             def tempColorParts(parts, ct):
                 numPaths = parts.getNumPaths()
                 lowIdx = (numPaths / 3) * 2
                 for j in xrange(lowIdx):
                     parts[j].setColorScale(ct)
-                
+
                 for j in xrange(lowIdx, numPaths):
                     cl = parts[j].getColorScale()
                     compoundColor = VBase4(cl[0] * ct[0], cl[1] * ct[1], cl[2] * ct[2], 1.0)
                     parts[j].setColorScale(compoundColor)
-                
+
 
         else:
-            
+
             def tempColorParts(parts, ct):
                 parts.setColorScale(ct)
 
@@ -511,18 +511,18 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         colorParts(parts, clothesBotColor[0])
         del colorParts
 
-    
+
     def generateTexture(self):
         self.generateFaceTexture(not (self.useFaceTex))
         self.generateEyesTexture()
 
-    
+
     def generateColor(self):
         self.generateSkinColor()
         self.generateHairColor()
         self.generateHatColor()
 
-    
+
     def makeAnimDict(self, gender, animNames):
         self.animTable = []
         for currAnim in animNames:
@@ -531,22 +531,22 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                 self.animTable.append([
                     currAnimName,
                     currAnimName])
-            
-        
+
+
         self.reducedAnimList = self.animTable
 
-    
+
     def forceLoadAnimDict(self):
         for anim in self.animTable:
             self.getAnimControls(anim[0])
-        
 
-    
+
+
     def createAnimDict(self, customList = None):
         if self.reducedAnimList is None:
             self.animDict = self.prebuiltAnimData[self.gender + self.type]
             return None
-        
+
         if self.gender == 'f':
             filePrefix = 'models/char/f'
             genderPrefix = 'f'
@@ -557,7 +557,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         animList = self.reducedAnimList
         if animList is None:
             animList = AnimListDict[self.type]
-        
+
         self.animDict = { }
         for anim in animList:
             animSuffix = ''
@@ -566,15 +566,15 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                     animSuffix = '_' + genderPrefix + NewModelDict.get(self.type)
                     break
                     continue
-            
+
             self.animDict[anim[0]] = filePrefix + '_' + anim[1] + animSuffix
-        
+
         if self.reducedAnimList is None:
             self.animDict.pop('intro')
-        
+
         return filePrefix
 
-    
+
     def generateBody(self, copy = 1):
         if self.gender == 'm':
             filePrefix = 'models/char/mp'
@@ -586,12 +586,12 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         messenger.send('tick')
         if loader.loadModel(filePrefix + '_' + '1000', allowInstance = True) != None:
             lodString = '1000'
-        
+
         self.loadModel(filePrefix + '_' + lodString, 'modelRoot', '1000', copy)
         messenger.send('tick')
         if loader.loadModel(filePrefix + '_' + '500', allowInstance = True) != None:
             lodString = '500'
-        
+
         self.loadModel(filePrefix + '_' + lodString, 'modelRoot', '500', copy)
         messenger.send('tick')
         self.makeSubpart('head', [
@@ -605,7 +605,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         self.setSubpartsComplete(True)
         self.eyeIrisTextures = loader.loadModel('models/misc/eye_iris.bam')
 
-    
+
     def setLODs(self):
         self.setLODNode()
         avatarDetail = base.config.GetString('avatar-detail', 'high')
@@ -635,16 +635,16 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         if self.optimizeLOD:
             lowLOD = self.getLOD('500')
             lowLOD.setTransparency(0, 1000)
-        
+
         self.getLODNode().setCenter(Point3(0, 0, 5))
 
-    
+
     def showLOD(self, lodName):
         self.generateTexture()
         self.model.setFromDNA()
         tex = self.model.faces[0][2].findTexture('*face*')
 
-    
+
     def loadHuman(self, gender = 'm', other = None):
         self.gender = gender
         if self.gender == 'f':
@@ -679,7 +679,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         messenger.send('tick')
         if self.master:
             self.model.setupSelectionChoices('NPC')
-        
+
         self.showNormal()
         self.createAnimDict()
         messenger.send('tick')
@@ -713,35 +713,35 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             node = face.node()
             for i in range(node.getNumGeoms()):
                 face.node().setGeomState(i, RenderState.makeEmpty())
-            
-        
 
-    
+
+
+
     def initializeMiscNodes(self):
         self.initializeNametag3d()
         self.initializeDropShadow()
         if self.getLOD('2000') == None:
             return None
-        
+
         exposedHeadJoint = self.getLOD('2000').find('**/def_head01')
         if not exposedHeadJoint.isEmpty():
             idx = 0
             if self.gender == 'f':
                 idx = 1
-            
+
             exposedHeadJoint.setScale(1)
             self.headNode.reparentTo(exposedHeadJoint)
             self.headNode.setScale(HeadScales[idx][self.style.getBodyShape()])
-        
 
-    
+
+
     def undoControlJoints(self):
         self.getGeomNode().getParent().findAllMatches('def_*').detach()
         self.getGeomNode().getParent().findAllMatches('trs_*').detach()
         self.findAllMatches('def_*').detach()
         self.findAllMatches('trs_*').detach()
 
-    
+
     def cleanupHuman(self, gender = 'm'):
         self.eyeFSM.request('off')
         self.undoControlJoints()
@@ -752,15 +752,15 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         self.loaded = 0
         self.master = 0
 
-    
+
     def generateHuman(self, gender = 'm'):
         self.loadHuman(self.style.gender)
 
-    
+
     def getShadowJoint(self):
         return self
 
-    
+
     def getNametagJoints(self):
         joints = []
         for lodName in self.getLODNames():
@@ -769,14 +769,14 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             if joint:
                 joints.append(joint)
                 continue
-        
+
         return joints
 
-    
+
     def _MasterHuman__blinkOpenEyes(self, task):
         if self.eyeFSM.getCurrentState().getName() == 'closed':
             self.eyeFSM.request('open')
-        
+
         r = self.randGen.random()
         if r < 0.10000000000000001:
             t = 0.20000000000000001
@@ -785,7 +785,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         taskMgr.doMethodLater(t, self._MasterHuman__blinkCloseEyes, self._MasterHuman__blinkName)
         return Task.done
 
-    
+
     def _MasterHuman__blinkCloseEyes(self, task):
         if self.eyeFSM.getCurrentState().getName() != 'open':
             taskMgr.doMethodLater(4.0, self._MasterHuman__blinkCloseEyes, self._MasterHuman__blinkName)
@@ -794,38 +794,38 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             taskMgr.doMethodLater(0.125, self._MasterHuman__blinkOpenEyes, self._MasterHuman__blinkName)
         return Task.done
 
-    
+
     def startBlink(self):
         taskMgr.remove(self._MasterHuman__blinkName)
         if self.eyeLids:
             self.openEyes()
-        
+
         taskMgr.doMethodLater(self.randGen.random() * 4.0 + 1, self._MasterHuman__blinkCloseEyes, self._MasterHuman__blinkName)
 
-    
+
     def stopBlink(self):
         taskMgr.remove(self._MasterHuman__blinkName)
         if self.eyeLids:
             self.eyeFSM.request('open')
-        
 
-    
+
+
     def closeEyes(self):
         self.eyeFSM.request('closed')
 
-    
+
     def openEyes(self):
         self.eyeFSM.request('open')
 
-    
+
     def enterEyeFSMOff(self):
         pass
 
-    
+
     def exitEyeFSMOff(self):
         pass
 
-    
+
     def enterEyeFSMOpen(self):
         for lodName in self.getLODNames():
             if not self.eyeLids[lodName].isEmpty():
@@ -833,13 +833,13 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                 self.eyeBalls[lodName].show()
                 self.eyeIris[lodName].show()
                 continue
-        
 
-    
+
+
     def exitEyeFSMOpen(self):
         pass
 
-    
+
     def enterEyeFSMClosed(self):
         return None
         for lodName in self.getLODNames():
@@ -848,13 +848,13 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                 self.eyeBalls[lodName].hide()
                 self.eyeIris[lodName].hide()
                 continue
-        
 
-    
+
+
     def exitEyeFSMClosed(self):
         pass
 
-    
+
     def setControlValue(self, r, name):
         if self.style.getGender() == 'f':
             matrixF = FemaleHeadShapeControlJointMatrix
@@ -868,8 +868,8 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         if r < 0.0:
             if len(ctl) > 1:
                 slider = ctl[1]
-            
-        
+
+
         for i in range(0, len(slider)):
             jointName = slider[i][0]
             jointCtls = self.findAllMatches(jointName)
@@ -920,8 +920,8 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                         else:
                             self.notify.warning('scv:wrong element = %s' % jointSet[jointIdx][1])
                     jointSet[jointIdx][1] == TX
-                
-            
+
+
             self.notify.debug('scv: %s composite posDelta = %s' % (jointName, posDelta))
             posF.setX(posI[0] + posDelta[0])
             posF.setY(posI[1] + posDelta[1])
@@ -940,10 +940,10 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             for j in range(0, jointCtls.getNumPaths()):
                 jointCtl = jointCtls[j]
                 jointCtl.setPosHprScale(posF, hprF, sclF)
-            
-        
 
-    
+
+
+
     def applyBodyShaper(self):
         if self.style.getGender() == 'f':
             tjs = FemaleBodyShapeTranslateJoints
@@ -958,12 +958,12 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             transData = self.jointTrans[jointName]
             vector = matrix[jointName][type]
             self.joints[jointName].applyFreezeMatrix(vector, transData[1], transData[2])
-        
+
         for jointName in sjs:
             transData = self.jointTrans[jointName]
             vector = matrix[jointName][type]
             self.joints[jointName].applyFreezeMatrix(transData[0], transData[1], vector)
-        
+
         value = self.style.getHeadSize()
         mappedValue = 0.90000000000000002 + (1 + value) * 0.10000000000000001
         transData = self.jointTrans['def_extra_jt']
@@ -972,29 +972,29 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         idx = 0
         if self.style.gender == 'f':
             idx = 1
-        
+
         self.joints['def_head01'].applyFreezeMatrix(transData[0], transData[1], Vec3(HeadScales[idx][self.style.getBodyShape()]))
         self.setGlobalScale(self.calcBodyScale())
 
-    
+
     def undoBodyShaper(self):
         if self.style.getGender() == 'f':
             cjs = FemaleBodyShapeControlJoints
         else:
             cjs = MaleBodyShapeControlJoints
 
-    
+
     def applyHeadShaper(self):
         self.setHeadControlShapeValues()
 
-    
+
     def undoHeadShaper(self):
         if self.style.getGender() == 'f':
             cjs = FemaleHeadShapeControlJoints
         else:
             cjs = MaleHeadShapeControlJoints
 
-    
+
     def createControlJoints(self):
         if self.style.getGender() == 'f':
             cjs = FemaleHeadShapeControlJoints
@@ -1011,10 +1011,10 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                 if lodName == '500':
                     continue
                     continue
-            
-        
 
-    
+
+
+
     def initHeadControlShapes(self):
         if self.style.getGender() == 'f':
             cjs = FemaleHeadShapeControlJoints
@@ -1028,7 +1028,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             matrixIHelper = MaleHeadInitHelper
         if len(matrixF['initialized']) > 0:
             return None
-        
+
         initializedMatrixI = len(matrixI['initialized'])
         initializedMatrixF = len(matrixF['initialized'])
         for jointName in cjs:
@@ -1049,7 +1049,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                 scale[0],
                 scale[1],
                 scale[2]]
-        
+
         matrixI['initialized'].append('initialized')
         shapes = self.controlShapes
         names = self.sliderNames
@@ -1060,8 +1060,8 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                 if len(slider) > 1:
                     slider[1][k][4] = slider[1][k][2]
                     continue
-            
-        
+
+
         for i in xrange(0, len(shapes)):
             slider = shapes[names[i]]
             for k in xrange(0, len(slider[0])):
@@ -1077,7 +1077,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                     if len(slider) > 1:
                         jointCtl = slider[1][k]
                         jointCtl[4] = posDelta
-                    
+
                 len(slider) > 1
                 if jointCtl[1] > 2 and jointCtl[1] < 6:
                     hprDelta = jointCtl[4] - hpr[jointCtl[1] - 3]
@@ -1085,19 +1085,19 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                     if len(slider) > 1:
                         jointCtl = slider[1][k]
                         jointCtl[4] = hprDelta
-                    
+
                 len(slider) > 1
-                sclDelta = jointCtl[4] - scl[jointCtl[1] - 6]
+                sclDelta = 12 #jointCtl[4] - scl[jointCtl[1] - 6]
                 jointCtl[4] = sclDelta
                 if len(slider) > 1:
                     jointCtl = slider[1][k]
                     jointCtl[4] = sclDelta
                     continue
-            
-        
+
+
         matrixF['initialized'].append('initialized')
 
-    
+
     def setHeadControlShapeValues_old(self):
         value = self.style.getHeadSize()
         mappedValue = 0.90000000000000002 + (1 + value) * 0.10000000000000001
@@ -1127,11 +1127,11 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         self.setControlValue(self.style.getEarFlapAngle(), 'earFlap')
         self.setControlValue(self.style.getEarPosition(), 'earPosition')
 
-    
+
     def getGlobalScale(self):
         return self.scaleNode.getScale()
 
-    
+
     def setGlobalScale(self, scale):
         transData = self.jointTrans['def_head01']
         pos = Vec3(transData[0])
@@ -1139,30 +1139,30 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         self.joints['def_scale_jt'].applyFreezeMatrix(pos, transData[1], Vec3(scale))
         self.rootScale = scale
 
-    
+
     def calcBodyScale(self):
         idx = 0
         if self.gender == 'f':
             idx = 1
-        
+
         mappedValue = (0.80000000000000004 + (1 + self.style.getBodyHeight()) * 0.20000000000000001) * BodyScales[idx][self.style.getBodyShape()]
         return mappedValue
 
-    
+
     def showZombie(self):
         self.model.irises.stash()
         self.model.faces[0].stash()
         self.model.faceZomb.unstash()
         self.generateSkinTexture()
 
-    
+
     def showNormal(self):
         self.model.irises.unstash()
         self.model.faces[0].unstash()
         self.model.faceZomb.stash()
         self.generateSkinTexture()
 
-    
+
     def takeAwayTexture(self, geoms, omitFace = False):
         emptyRenderState = RenderState.makeEmpty()
         eyeIrisColor = VBase4(0, 0, 0, 1)
@@ -1172,15 +1172,15 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                 element.setColorScale(eyeIrisColor)
             elif omitFace and 'master_face' in element.getName():
                 continue
-            
+
             element.setTextureOff()
             geom = element.node()
             for j in range(0, geom.getNumGeoms()):
                 geom.setGeomState(j, emptyRenderState)
-            
-        
 
-    
+
+
+
     def optimizeMedLOD(self):
         medLOD = self.getLOD('1000')
         geoms = medLOD.findAllMatches('**/teeth*')
@@ -1191,7 +1191,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             self.medSkinGone = True
             geoms = medLOD.findAllMatches('**/body_*')
             self.takeAwayTexture(geoms, True)
-        
+
         geoms = medLOD.findAllMatches('**/hair_*')
         self.takeAwayTexture(geoms)
         if self.gender != 'f':
@@ -1199,7 +1199,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             self.takeAwayTexture(geoms)
             geoms = medLOD.findAllMatches('**/mustache_*')
             self.takeAwayTexture(geoms)
-        
+
         geoms = medLOD.findAllMatches('**/eye_*')
         self.takeAwayTexture(geoms)
         geoms = medLOD.findAllMatches('**/clothing_layer2_belt_*')
@@ -1207,7 +1207,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         geoms = medLOD.findAllMatches('**/clothing_layer1_shoe_*')
         self.takeAwayTexture(geoms)
 
-    
+
     def optimizeLowLOD(self):
         lowLOD = self.getLOD('500')
         geoms = lowLOD.findAllMatches('**/teeth*')
@@ -1215,7 +1215,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         geoms = lowLOD.findAllMatches('**/+GeomNode')
         self.takeAwayTexture(geoms)
 
-    
+
     def setHeadControlShapeValues(self):
         value = self.style.getHeadSize()
         mappedValue = 0.90000000000000002 + (1 + value) * 0.10000000000000001
@@ -1246,7 +1246,7 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         self.setControlValue_new(self.style.getEarPosition(), 'earPosition')
         self.postProcess_setHeadControlShapeValues()
 
-    
+
     def setControlValue_new(self, r, name):
         ctl = self.controlShapes[name]
         zeroindex = ctl[0]
@@ -1254,13 +1254,13 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
         if r < 0.0:
             if len(ctl) > 1:
                 sliders = ctl[1]
-            
-        
+
+
         for i in range(0, len(sliders)):
             zeroindex[i][5] = sliders[i][4] * r
-        
 
-    
+
+
     def postProcess_setHeadControlShapeValues(self):
         if self.style.getGender() == 'f':
             cjs = FemaleHeadShapeControlJoints
@@ -1277,16 +1277,16 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                     if sliderJoint[0] == jointName:
                         transList[sliderJoint[1]] += sliderJoint[5]
                         continue
-                
-            
-            self.joints[jointName].applyFreezeMatrix(Vec3(*transList[0:3]), Vec3(*transList[3:6]), Vec3(*transList[6:9]))
-        
 
-    
+
+            self.joints[jointName].applyFreezeMatrix(Vec3(*transList[0:3]), Vec3(*transList[3:6]), Vec3(*transList[6:9]))
+
+
+
     def quickGetJointTransform(self, jointName):
         return self.joints[jointName][0].getDefaultValue()
 
-    
+
     def storeJoints(self):
         if self.style.gender == 'm':
             bJoints = MaleBodyShapeControlJoints
@@ -1299,19 +1299,19 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
             self.joints[name] = joint[0]
             ts = TransformState.makeMat(joint[0].getDefaultValue())
             self.jointTrans[name] = (Vec3(ts.getPos()), Vec3(ts.getHpr()), Vec3(ts.getScale()))
-        
 
-    
+
+
     def setupAnimDicts(cls):
         for t in BodyDefs.maleFrames:
             cls.storeAnimDict('models/char/mp', 'm', t)
-        
+
         for t in BodyDefs.femaleFrames:
             cls.storeAnimDict('models/char/fp', 'f', t)
-        
+
 
     setupAnimDicts = classmethod(setupAnimDicts)
-    
+
     def storeAnimDict(cls, prefix, gender, type):
         qualifier = gender + type
         animList = AnimListDict[type]
@@ -1323,9 +1323,9 @@ class MasterHuman(HumanBase.HumanBase, Biped.Biped):
                     animSuffix = '_' + gender + NewModelDict.get(type)
                     break
                     continue
-            
+
             cls.prebuiltAnimData[qualifier][anim[0]] = prefix + '_' + anim[1] + animSuffix
-        
+
         cls.prebuiltAnimData[qualifier].pop('intro')
 
     storeAnimDict = classmethod(storeAnimDict)

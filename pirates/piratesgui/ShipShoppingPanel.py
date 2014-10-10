@@ -14,13 +14,13 @@ from pirates.distributed import InteractGlobals
 
 class ShipShoppingPanel(ShipSelectionPanel):
     notify = directNotify.newCategory('ShipShoppingPanel')
-    
+
     def __init__(self, title, doneCallback, mode):
         ShipSelectionPanel.__init__(self, title, doneCallback)
         self.initialiseoptions(ShipShoppingPanel)
         self.mode = mode
 
-    
+
     def updateShip(self, shipId):
         frame = self.getFrame(shipId)
         if frame is not None:
@@ -37,10 +37,10 @@ class ShipShoppingPanel(ShipSelectionPanel):
                         if shipOV is not None:
                             if shipOV.Hp < shipOV.maxHp:
                                 repairButtonState = DGG.NORMAL
-                            
+
                         shipOV.Hp < shipOV.maxHp
-                    
-                
+
+
                 for button in interactNPC.interactGUI.optionButtons:
                     if button['extraArgs'][0] == InteractGlobals.REPAIR:
                         if repairButtonState == DGG.NORMAL:
@@ -51,23 +51,22 @@ class ShipShoppingPanel(ShipSelectionPanel):
                             button['image_color'] = VBase4(0.80000000000000004, 0.80000000000000004, 0.80000000000000004, 1.0)
                         button['state'] = repairButtonState
                         continue
-                
-            
-        
 
-    
+
+
+
+
     def addOwnShip(self, shipId, callback, index = None, repaired = False):
         shipOV = base.cr.getOwnerView(shipId)
         if not shipOV:
             return None
-        
+
         shipFrame = ShipFrameShopping(parent = self.scrollFrame.getCanvas(), relief = None, shipId = shipId, shipName = shipOV.name, shipClass = shipOV.shipClass, mode = self.mode, command = callback, extraArgs = [
             shipId])
         if repaired:
             shipOV.setHealthState(100.0)
-            continue
-            _[1](*[ min(1, x) * 100 for x in shipOV.mastStates ])
-        
+            [ min(1, x) * 100 for x in shipOV.mastStates ]
+
         shipFrame.enableStatsOV(shipOV)
         self.addFrame(shipFrame, index)
 

@@ -7,3 +7,6 @@ model-path resources/phase_4
 model-path resources/phase_5
 
 default-model-extension .bam
+
+dc-file astron/dclass/pirates.dc
+dc-file astron/dclass/otp.dc

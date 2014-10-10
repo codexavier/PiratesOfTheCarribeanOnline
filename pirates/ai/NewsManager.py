@@ -50,7 +50,7 @@ messages = {
 class NewsManager(DistributedObject.DistributedObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('NewsManager')
     neverDisable = 1
-    
+
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
         self.holidays = { }
@@ -60,24 +60,24 @@ class NewsManager(DistributedObject.DistributedObject):
         base.cr.newsManager = self
         localAvatar.chatMgr.emoteEntry.updateEmoteList()
 
-    
+
     def delete(self):
         for holidayId in HolidayGlobals.getAllHolidayIds():
             taskMgr.remove('showHolidayMessage-holidayId:' + str(holidayId))
-        
+
         if localAvatar and localAvatar.guiMgr and localAvatar.guiMgr.mapPage:
             for waypointId in self.noteablePathList:
                 localAvatar.guiMgr.mapPage.removePath(waypointId)
-            
-        
+
+
         self.cr.newsManager = None
         DistributedObject.DistributedObject.delete(self)
 
-    
+
     def displayMessage(self, messageId):
         if not self.inNewsWorld():
             return None
-        
+
         message = None
         icon = ('admin', '')
         icon = ('admin', '')
@@ -85,7 +85,7 @@ class NewsManager(DistributedObject.DistributedObject):
             message = messages.get(messageId)
             if isinstance(message, list):
                 message = random.choice(message)
-            
+
             if message:
                 if messageId < 13:
                     location = PLocalizer.InvasionLocationPortRoyal
@@ -97,57 +97,57 @@ class NewsManager(DistributedObject.DistributedObject):
                     pass
                 else:
                     message = message % location
-            
+
             icon = ('admin', '')
             if self.inTutorial(level = PiratesGlobals.TUT_GOT_COMPASS):
                 return None
-            
-        
+
+
         if messageId >= 30 and messageId < 50:
             message = PLocalizer.FleetHolidayMsgs.get(messageId)
             icon = ('ship', '')
-        
+
         if messageId >= 50 and messageId < 60:
             message = PLocalizer.KrakenHolidayMsgs.get(messageId)
             icon = ('ship', '')
-        
+
         if messageId >= 60 and messageId < 70:
             message = PLocalizer.QueenAnnesHolidayMsgs.get(messageId)
             icon = ('ship', '')
-        
+
         if not message:
             return None
-        
+
         if isinstance(message, list):
             message = random.choice(message)
-        
+
         base.localAvatar.guiMgr.messageStack.addModalTextMessage(message, seconds = 45, priority = 0, color = PiratesGuiGlobals.TextFG14, icon = icon, modelName = 'general_frame_f')
         base.talkAssistant.receiveGameMessage(message)
 
     displayMessage = bpdb.bpCall()(displayMessage)
-    
+
     def playMusic(self, musicInfo):
         if musicInfo[-1] and not base.cr.getDo(musicInfo[-1]):
             return None
-        
+
         base.musicMgr.requestCurMusicFadeOut(duration = 1)
         base.musicMgr.request(musicInfo[0], priority = 2, looping = False)
         base.musicMgr.requestCurMusicFadeIn()
 
-    
+
     def showHolidayMessage(self, holidayId, msgType):
         self.notify.debug('showHolidayMessage-holidayId:' + str(holidayId))
         taskMgr.remove('showHolidayMessage-holidayId:' + str(holidayId))
         if not hasattr(base, 'localAvatar'):
             return None
-        
+
         paidStatus = Freebooter.getPaidStatus(localAvatar.getDoId(), checkHoliday = False)
         if base.localAvatar.getTutorialState() < PiratesGlobals.TUT_MET_JOLLY_ROGER or self.inNewsWorld() == None:
             taskMgr.doMethodLater(15, self.showHolidayMessage, 'showHolidayMessage-holidayId:' + str(holidayId), extraArgs = [
                 holidayId,
                 msgType])
             return None
-        
+
         if msgType == 1:
             (hours, minutes) = self.getTimeRemaining(holidayId)
             message = HolidayGlobals.getHolidayStartMsg(holidayId, paidStatus)
@@ -155,42 +155,41 @@ class NewsManager(DistributedObject.DistributedObject):
                 message = message % {
                     'hours': hours,
                     'minutes': minutes }
-            
+
             chatMessage = HolidayGlobals.getHolidayStartChatMsg(holidayId, paidStatus)
             if chatMessage and re.findall('%\\(hours\\)s', chatMessage) and re.findall('%\\(minutes\\)s', chatMessage):
                 chatMessage = chatMessage % {
                     'hours': hours,
                     'minutes': minutes }
-            
+
         elif msgType == 0:
             message = HolidayGlobals.getHolidayEndMsg(holidayId, paidStatus)
             chatMessage = HolidayGlobals.getHolidayEndChatMsg(holidayId, paidStatus)
-        
+
         if message:
             base.localAvatar.guiMgr.messageStack.addModalTextMessage(message, seconds = 45, priority = 0, color = PiratesGuiGlobals.TextFG14, icon = (HolidayGlobals.getHolidayIcon(holidayId), ''), modelName = 'general_frame_f')
-        
+
         if chatMessage:
             base.talkAssistant.receiveGameMessage(chatMessage)
-        
 
-    
+
+
     def setHoliday(self, holidayId, value):
         self.holidays[holidayId] = value
 
-    
+
     def getHoliday(self, holidayId):
         return self.holidays.get(holidayId)
 
-    
+
     def getHolidayList(self):
         return self.holidays
 
-    
-    def getActiveHolidayList(self):
-        continue
-        return _[1]
 
-    
+    def getActiveHolidayList(self):
+        return []
+
+
     def startHoliday(self, holidayId):
         if holidayId not in self.holidayIdList:
             self.notify.debug('setHolidayId: Starting Holiday %s' % holidayId)
@@ -209,26 +208,26 @@ class NewsManager(DistributedObject.DistributedObject):
                     self.displayMessage(3)
                 else:
                     self.displayMessage(2)
-            
+
             if holidayId == HolidayGlobals.ALLACCESSWEEKEND:
                 Freebooter.setAllAccess(True)
                 localAvatar.guiMgr.stashPrevPanel()
-            
+
             if holidayId == HolidayGlobals.APRILFOOLS:
                 messenger.send('moustacheFlip', [
                     1])
-            
+
             if holidayId == HolidayGlobals.HALFOFFCUSTOMIZATION:
                 paidStatus = Freebooter.getPaidStatus(localAvatar.getDoId())
                 if paidStatus:
                     self.divideAllAccessories(2)
-                
-            
+
+
             messenger.send('HolidayStarted', [
                 HolidayGlobals.getHolidayName(holidayId)])
-        
 
-    
+
+
     def endHoliday(self, holidayId):
         if holidayId in self.holidayIdList:
             self.notify.debug('setHolidayId: Ending Holiday %s' % holidayId)
@@ -245,87 +244,87 @@ class NewsManager(DistributedObject.DistributedObject):
                 paidStatus = Freebooter.getPaidStatus(localAvatar.getDoId())
                 if paidStatus:
                     self.multiplyAllAccessories(2)
-                
-            
+
+
             if holidayId == HolidayGlobals.ALLACCESSWEEKEND:
                 Freebooter.setAllAccess(False)
-            
+
             if holidayId == HolidayGlobals.APRILFOOLS:
                 messenger.send('moustacheFlip', [
                     0])
-            
+
             messenger.send('HolidayEnded', [
                 HolidayGlobals.getHolidayName(holidayId)])
-        
 
-    
+
+
     def setHolidayIdList(self, holidayIdArray):
         holidayIdList = []
         for hid in holidayIdArray:
             if hid[0] != None:
                 holidayIdList.append(hid[0])
-            
+
             self.holidayEndTimes[hid[0]] = hid[1]
-        
-        
+
+
         def isEnding(id):
             return id not in holidayIdList
 
-        
+
         def isStarting(id):
             return id not in self.holidayIdList
 
         toEnd = filter(isEnding, self.holidayIdList)
         for endingHolidayId in toEnd:
             self.endHoliday(endingHolidayId)
-        
+
         toStart = filter(isStarting, holidayIdList)
         for startingHolidayId in toStart:
             self.startHoliday(startingHolidayId)
-        
+
         messenger.send('setHolidayIdList', [
             holidayIdList])
 
-    
+
     def getHolidayIdList(self):
         return self.holidayIdList
 
-    
+
     def holidayNotify(self):
         pass
 
-    
+
     def inTutorial(self, level = PiratesGlobals.TUT_CHAPTER3_STARTED):
         if base.localAvatar.getTutorialState() <= level:
             return True
         else:
             return False
 
-    
+
     def inNewsWorld(self):
         w = base.localAvatar.getWorld()
         if not w:
             return None
-        
+
         ourInstance = w.type
         if ourInstance == None:
             return None
-        
+
         for iType in PiratesGlobals.INSTANCE_NO_NEWS_MESSAGES:
             if ourInstance == iType:
                 return False
                 continue
-        
+
         return True
 
-    
+
     def getTimeRemaining(self, holidayId):
         t = self.holidayEndTimes.get(holidayId, -1)
         if t == -1:
             return [
                 0,
                 0]
-        
+
         t = int(t)
         epochNow = int(time.time())
         epochRemain = t - epochNow
@@ -335,7 +334,7 @@ class NewsManager(DistributedObject.DistributedObject):
             hours,
             minutes]
 
-    
+
     def displayHolidayStatus(self):
         anyMessages = False
         paidStatus = Freebooter.getPaidStatus(localAvatar.getDoId())
@@ -344,103 +343,103 @@ class NewsManager(DistributedObject.DistributedObject):
             message = HolidayGlobals.getHolidayStatusMsg(holidayId, paidStatus)
             if message:
                 anyMessages = True
-                
+
                 try:
                     base.talkAssistant.receiveGameMessage(message % (h, m))
                 except TypeError:
                     base.talkAssistant.receiveGameMessage(message)
-                
 
-        
+
+
         if not anyMessages:
             base.talkAssistant.receiveGameMessage(PLocalizer.NO_CURRENT_HOLIDAYS)
             return None
-        
 
-    
+
+
     def setNoteablePathList(self, newPathList):
         if localAvatar and localAvatar.guiMgr and localAvatar.guiMgr.mapPage:
             for pathInfo in self.noteablePathList:
                 localAvatar.guiMgr.mapPage.removePath(pathInfo)
-            
+
             self.noteablePathList = newPathList
             for pathInfo in self.noteablePathList:
                 localAvatar.guiMgr.mapPage.addPath(pathInfo)
-            
-        
 
-    
+
+
+
     def divideTattooPrices(self, divisor):
         for (k, v) in TattooGlobals.tattoos.iteritems():
             currentPrice = v[4]
             newPrice = int(currentPrice / divisor)
             TattooGlobals.tattoos[k][4] = newPrice
-        
 
-    
+
+
     def divideClothingPrices(self, divisor):
         for (k, v) in ClothingGlobals.UNIQUE_ID.iteritems():
             currentPrice = v[5]
             newPrice = int(currentPrice / divisor)
             ClothingGlobals.UNIQUE_ID[k][5] = newPrice
-        
 
-    
+
+
     def divideJewelryPrices(self, divisor):
         for (k, v) in JewelryGlobals.jewelry_id.iteritems():
             currentPrice = v[3]
             newPrice = int(currentPrice / divisor)
             JewelryGlobals.jewelry_id[k][3] = newPrice
-        
 
-    
+
+
     def divideBarberPrices(self, divisor):
         for (k, v) in BarberGlobals.barber_id.iteritems():
             currentPrice = v[4]
             newPrice = int(currentPrice / divisor)
             BarberGlobals.barber_id[k][4] = newPrice
-        
 
-    
+
+
     def multiplyTattooPrices(self, factor):
         for (k, v) in TattooGlobals.tattoos.iteritems():
             currentPrice = v[4]
             newPrice = int(currentPrice * factor)
             TattooGlobals.tattoos[k][4] = newPrice
-        
 
-    
+
+
     def multiplyClothingPrices(self, factor):
         for (k, v) in ClothingGlobals.UNIQUE_ID.iteritems():
             currentPrice = v[5]
             newPrice = int(currentPrice * factor)
             ClothingGlobals.UNIQUE_ID[k][5] = newPrice
-        
 
-    
+
+
     def multiplyJewelryPrices(self, factor):
         for (k, v) in JewelryGlobals.jewelry_id.iteritems():
             currentPrice = v[3]
             newPrice = int(currentPrice * factor)
             JewelryGlobals.jewelry_id[k][3] = newPrice
-        
 
-    
+
+
     def multiplyBarberPrices(self, factor):
         for (k, v) in BarberGlobals.barber_id.iteritems():
             currentPrice = v[4]
             newPrice = int(currentPrice * factor)
             BarberGlobals.barber_id[k][4] = newPrice
-        
 
-    
+
+
     def divideAllAccessories(self, divisor):
         self.divideTattooPrices(divisor)
         self.divideClothingPrices(divisor)
         self.divideJewelryPrices(divisor)
         self.divideBarberPrices(divisor)
 
-    
+
     def multiplyAllAccessories(self, factor):
         self.multiplyTattooPrices(factor)
         self.multiplyClothingPrices(factor)

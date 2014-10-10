@@ -259,7 +259,7 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
     sfx = { }
     FailsafeAnims = (('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0), ('idle', 1.0))
     animInfo = { }
-    
+
     def __init__(self, other = None, animationMixerClass = BipedAnimationMixer):
         self.wantZombie = base.config.GetBool('want-zombie', 0)
         Avatar.__init__(self, other)
@@ -288,24 +288,24 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
         self.nametag3d.setLightOff()
         self.fader = None
 
-    
+
     def setName(self, val):
         Avatar.setName(self, val)
 
-    
+
     def deleteWeaponJoints(self):
         if not self.rightHandNode.isEmpty():
             self.rightHandNode.detachNode()
-        
+
         if not self.leftHandNode.isEmpty():
             self.leftHandNode.detachNode()
-        
+
         for node in self.weaponJointInstances:
             node.detachNode()
-        
+
         self.weaponJointInstances = []
 
-    
+
     def delete(self):
         self.loadAnimatedHead = None
         self.deleteWeaponJoints()
@@ -313,7 +313,7 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
         UsesAnimationMixer.delete(self)
         UsesEffectNode.delete(self)
 
-    
+
     def actorInterval(self, *args, **kwargs):
         if hasattr(self, 'undead') and self.undead:
             return UsesAnimationMixer.actorInterval(self.skeleton, *args, **args)
@@ -321,54 +321,54 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
             bodyIval = UsesAnimationMixer.actorInterval(self, *args, **args)
             return bodyIval
 
-    
+
     def play(self, *args, **kwArgs):
         if hasattr(self, 'undead') and self.undead:
             UsesAnimationMixer.play(self.skeleton, *args, **args)
         else:
             UsesAnimationMixer.play(self, *args, **args)
 
-    
+
     def loop(self, *args, **kwArgs):
         if hasattr(self, 'undead') and self.undead:
             UsesAnimationMixer.loop(self.skeleton, *args, **args)
         else:
             UsesAnimationMixer.loop(self, *args, **args)
 
-    
+
     def stop(self, *args, **kwArgs):
         if hasattr(self, 'undead') and self.undead:
             UsesAnimationMixer.stop(self.skeleton, *args, **args)
         else:
             UsesAnimationMixer.stop(self, *args, **args)
 
-    
+
     def pose(self, *args, **kwArgs):
         if hasattr(self, 'undead') and self.undead:
             UsesAnimationMixer.pose(self.skeleton, *args, **args)
         else:
             UsesAnimationMixer.pose(self, *args, **args)
 
-    
+
     def pingpong(self, *args, **kwArgs):
         if hasattr(self, 'undead') and self.undead:
             UsesAnimationMixer.pingpong(self.skeleton, *args, **args)
         else:
             UsesAnimationMixer.pingpong(self, *args, **args)
 
-    
+
     def getDuration(self, animName = None, partName = None, fromFrame = None, toFrame = None):
         return Avatar.getDuration(self, animName, partName, fromFrame, toFrame)
 
-    
+
     def getFrameTime(self, animName, frame, partName = None):
         return Avatar.getFrameTime(self, animName, frame, partName)
 
-    
+
     def getRadius(self):
         return self.battleTubeRadius
 
-    
+
     def getWeaponJoints(self):
         self.deleteWeaponJoints()
         lods = list(self.getLODNames())
@@ -380,7 +380,7 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
                     self.rightHandNode.reparentTo(handLocator)
                 else:
                     self.weaponJointInstances.append(self.rightHandNode.instanceTo(handLocator))
-            
+
             handLocator = self.getLOD(lodName).find('**/*weapon_left')
             if not handLocator.isEmpty():
                 if lodName == lods[0]:
@@ -388,33 +388,33 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
                 else:
                     self.weaponJointInstances.append(self.leftHandNode.instanceTo(handLocator))
             lodName == lods[0]
-        
+
         self.postAsyncLoadFix()
 
-    
+
     def postAsyncLoadFix(self):
         pass
 
-    
+
     def startLookAroundTask(self):
         taskMgr.remove(self.lookAroundTaskName)
         if self.headNode:
             delayTime = 1.0 + random.random() * 1.0
             taskMgr.doMethodLater(delayTime, self.lookAroundTask, self.lookAroundTaskName)
-        
 
-    
+
+
     def stopLookAroundTask(self):
         taskMgr.remove(self.lookAroundTaskName)
         if self.lerpHeadTrack:
             self.lerpHeadTrack.pause()
             self.lerpHeadTrack = None
-        
+
         if self.headNode:
             self.headNode.setHpr(self.headFudgeHpr)
-        
 
-    
+
+
     def isInFov(self, target):
         k = 0.66579999999999995
         relPos = target.getPos(self)
@@ -422,22 +422,22 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
             tan = relPos[0] / relPos[1]
             if tan < k and tan > -k:
                 return 1
-            
-        
+
+
         return 0
 
-    
+
     def lookAroundTask(self, task):
         if self.isLocal():
             if self.gameFSM.state == 'Battle' and self.currentTarget and not self.currentTarget.isEmpty():
                 task.delayTime = 5.0
                 return Task.again
-            
-        
+
+
         if self.getCurrentAnim() in stopLookaroundAnimList:
             self.headNode.setHpr(self.headFudgeHpr)
             return Task.again
-        
+
         hFov = 90
         vFov = 35
         if base.cr.targetMgr:
@@ -449,9 +449,9 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
             if not target.isEmpty():
                 if self.isInFov(target):
                     visibleTargets.append(target)
-                
+
             self.isInFov(target)
-        
+
         if len(visibleTargets) > 0:
             if random.choice((True, True, False)):
                 dummyNode = self.attachNewNode('dummy')
@@ -470,14 +470,14 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
         if self.lerpHeadTrack:
             self.lerpHeadTrack.pause()
             self.lerpHeadTrac3dk = None
-        
+
         t = 0.20000000000000001 + random.random() * 0.80000000000000004
         self.lerpHeadTrack = LerpHprInterval(self.headNode, t, newHpr, blendType = 'easeInOut')
         self.lerpHeadTrack.start()
         task.delayTime = 3.0 + random.random() * 4.0
         return Task.again
 
-    
+
     def initializeNametag3d(self):
         Avatar.initializeNametag3d(self)
         self.nametag3d.setColorScaleOff(100)
@@ -490,7 +490,7 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
         if self.iconNodePath.isEmpty():
             self.notify.warning('empty iconNodePath in initializeNametag3d')
             return 0
-        
+
         if not self.nameText:
             self.nameText = OnscreenText(fg = Vec4(1, 1, 1, 1), bg = Vec4(0, 0, 0, 0), scale = 1.1000000000000001, align = TextNode.ACenter, mayChange = 1, font = PiratesGlobals.getPirateBoldOutlineFont())
             self.nameText.reparentTo(self.iconNodePath)
@@ -499,17 +499,17 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
             self.nameText.setLightOff()
             self.nameText.setFogOff()
             self.nameTag3dInitialized()
-        
 
-    
+
+
     def nameTag3dInitialized(self):
         pass
 
-    
+
     def getNameText(self):
         return self.nameText
 
-    
+
     def getDeathAnimName(self, animNum = None):
         animStrings = [
             'death',
@@ -518,60 +518,60 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
             'death4']
         if animNum not in range(len(animStrings)):
             animNum = random.choice(range(0, len(animStrings)))
-        
+
         return animStrings[animNum]
 
-    
+
     def setChatAbsolute(self, chatString, chatFlags, dialogue = None, interrupt = 1):
         Avatar.setChatAbsolute(self, chatString, chatFlags, dialogue, interrupt)
         if chatString:
             avId = None
             if hasattr(self, 'doId'):
                 avId = self.doId
-            
-            base.talkAssistant.receiveOpenTalk(avId, self.getName(), 0, None, chatString)
-        
 
-    
+            base.talkAssistant.receiveOpenTalk(avId, self.getName(), 0, None, chatString)
+
+
+
     def fadeIn(self, time):
         if self.fader:
             self.fader.finish()
             self.fader = None
-        
+
         self.setTransparency(1)
         self.setColorScale(1, 1, 1, 0)
         self.show()
         self.fader = self.colorScaleInterval(time, Vec4(1, 1, 1, 1), startColorScale = Vec4(1, 1, 1, 0))
         self.fader.start()
 
-    
+
     def fadeOut(self, time):
         if self.fader:
             self.fader.finish()
             self.fader = None
-        
+
         self.setTransparency(1)
         self.setColorScale(1, 1, 1, 1)
         self.fader = Sequence(self.colorScaleInterval(time, Vec4(1, 1, 1, 0), startColorScale = Vec4(1, 1, 1, 1)), Func(self.hide))
         self.fader.start()
 
-    
+
     def setupAnimInfoState(cls, state, info):
         if len(info) < len(cls.FailsafeAnims):
             info += cls.FailsafeAnims[len(info) - len(cls.FailsafeAnims):]
-        
+
         cls.animInfo[state] = info
 
     setupAnimInfoState = classmethod(setupAnimInfoState)
-    
+
     def getAnimInfo(self, state):
         return self.animInfo.get(state, self.FailsafeAnims)
 
-    
+
     def setRenderReflection(self):
         OTPRender.renderReflection(self.renderReflection, self, 'p_biped', None)
 
-    
+
     def setupAnimInfo(cls):
         cls.setupAnimInfoState('LandRoam', (('idle', 1.0), ('walk', 1.0), ('run', 1.0), ('walk', -1.0), ('strafe_left', 1), ('strafe_right', 1), ('run_diagonal_left', 1), ('run_diagonal_right', 1), ('walk_back_diagonal_left', 1), ('walk_back_diagonal_right', 1), ('fall_ground', 1), ('fall_ground', 1), ('spin_left', 1), ('spin_right', 1)))
         cls.setupAnimInfoState('WaterRoam', (('tread_water', 1.0), ('swim', 1.0), ('swim', 1.0), ('swim_back', 1.0), ('swim_left', 1.0), ('swim_right', 1.0), ('swim_left_diagonal', 1.0), ('swim_right_diagonal', 1.0), ('swim_back_diagonal_left', 1.0), ('swim_back_diagonal_right', 1.0), ('fall_ground', 1), ('fall_ground', 1), ('tread_water', 1), ('tread_water', 1)))
@@ -580,18 +580,14 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
         cls.setupAnimInfoState('BayonetLandRoam', (('bayonet_idle', 1.0), ('bayonet_walk', 1.0), ('bayonet_run', 1.0), ('bayonet_walk', -1.0), ('strafe_left', 1), ('strafe_right', 1), ('run_diagonal_left', 1), ('run_diagonal_right', 1), ('walk_back_diagonal_left', 1), ('walk_back_diagonal_right', 1), ('fall_ground', 1), ('fall_ground', 1), ('spin_left', 1.0), ('spin_right', 1.0)))
 
     setupAnimInfo = classmethod(setupAnimInfo)
-    
+
+    @classmethod
     def initSfx(cls):
         for (name, effect) in cls.SfxNames.iteritems():
             if name not in cls.sfx:
                 sound = SoundGlobals.loadSfx(effect)
                 if sound and sound.getActive():
                     cls.sfx[name] = sound
-                
-            sound.getActive()
-        
-
-    initSfx = classmethod(initSfx)
 
 Biped.setupAnimInfo()
 Biped.initSfx()

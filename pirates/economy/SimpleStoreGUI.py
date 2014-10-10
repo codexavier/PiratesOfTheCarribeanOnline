@@ -1125,8 +1125,7 @@ class SimpleStoreGUI(DirectFrame):
 
     def getTabItemIds(self, tabId):
         allIds = self.getStockIds(self.stock)
-        continue
-        tabIds = _[1]
+        tabIds = [1]
         return tabIds
 
 
@@ -1185,8 +1184,7 @@ class CatalogStoreGUI(SimpleStoreGUI):
 
 
     def createTabs(self):
-        continue
-        stockHolidayIds = [](_[1])
+        stockHolidayIds = []
         if not stockHolidayIds:
             return None
 
@@ -1468,8 +1466,7 @@ class JewelryStoreGUI(SimpleStoreGUI):
     def getTabItemIds(self, tabId):
         allIds = self.getMerchandiseIds()
         tabType = SimpleJewelryItem.itemTypeFromJewelryType(tabId)
-        continue
-        tabIds = _[1]
+        tabIds = [1]
         return tabIds
 
 
@@ -1519,8 +1516,7 @@ class TattooStoreGUI(SimpleStoreGUI):
     def getTabItemIds(self, tabId):
         allIds = self.stock.keys()
         tabType = SimpleTattooItem.itemTypeFromTattooType(tabId)
-        continue
-        tabIds = _[1]
+        tabIds = [1]
         return tabIds
 
 
@@ -1669,8 +1665,7 @@ class MerchantStoreGUI(SimpleStoreGUI):
 
         if item:
             oldTasks = taskMgr.getTasksNamed('inventoryUIHideDetailsTask')
-            continue
-            oldTasks = _[1]
+            oldTasks = [1]
             for tsk in oldTasks:
                 taskMgr.remove(tsk)
 
@@ -1698,8 +1693,6 @@ class MerchantStoreGUI(SimpleStoreGUI):
 
         if item:
             oldTasks = taskMgr.getTasksNamed('inventoryUIShowDetailsTask')
-            continue
-            oldTasks = _[1]
             for tsk in oldTasks:
                 taskMgr.remove(tsk)
 

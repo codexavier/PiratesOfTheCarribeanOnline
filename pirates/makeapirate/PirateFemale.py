@@ -4468,8 +4468,6 @@ class PirateFemale(DirectObject.DirectObject):
                                     hairData.addPath(hairCut[j])
                                     cutFound = 1
 
-                            hairCut[j].getName().find(cuts[hatIdx + 1]) >= 0
-
                         if not cutFound:
                             if partIdx == 2:
                                 hairIndices.add(partIdx)
@@ -4557,10 +4555,6 @@ class PirateFemale(DirectObject.DirectObject):
                     if geomState.getAttrib(TextureAttrib.getClassType()).getTexture():
                         if geomState.getAttrib(TextureAttrib.getClassType()).getTexture().getName().find('feather') < 0:
                             geomNode.setGeomState(j, geomState.removeAttrib(TextureAttrib.getClassType()))
-
-
-                geomState.getAttrib(TextureAttrib.getClassType()).getTexture()
-
 
         geomSet = flattenMe.findAllMatches('**/+GeomNode')
         for i in xrange(geomSet.getNumPaths()):

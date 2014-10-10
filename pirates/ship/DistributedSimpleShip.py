@@ -1,5 +1,3 @@
-# File: D (Python 2.4)
-
 from direct.interval.IntervalGlobal import *
 from direct.gui.DirectGui import *
 from pandac.PandaModules import *
@@ -259,9 +257,7 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
         self.showThrough(OTPRender.EnviroCameraBitmask)
         self.calculateLook()
         self.buildShip()
-        continue
         self.mastHealth = [ x[0] * (x[1] / 100.0) for x in zip(self.maxMastHealth, self.mastStates) ]
-        continue
         self.armor = [ x[0] * (x[1] / 100.0) for x in zip(self.maxArmor, self.armorStates) ]
         self.Sp = sum(self.mastHealth)
         self.model.demandMastStates(self.mastStates, self.maxMastHealth)
@@ -1144,7 +1140,6 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             rear,
             left,
             right]
-        continue
         self.armor = [ x[0] * (x[1] / 100.0) for x in zip(self.maxArmor, self.armorStates) ]
         self.adjustArmorDisplay()
         self.updateShipEffects()
@@ -1197,7 +1192,6 @@ class DistributedSimpleShip(DistributedMovingObject, Teamable, DistributedFlagsh
             newVal != oldVal
 
         self.mastStates = newMastStates
-        continue
         self.mastHealth = [ x[0] * (x[1] / 100.0) for x in zip(self.maxMastHealth, self.mastStates) ]
         self.Sp = sum(self.mastHealth)
         if self.shipTargetPanel:
