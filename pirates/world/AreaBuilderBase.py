@@ -45,7 +45,7 @@ class ModelDef:
     collisions = None
     lod = None
     effects = None
-    
+
     def copy(self):
         newModel = ModelDef()
         newModel.root = self.root.copyTo(NodePath())
@@ -58,9 +58,9 @@ class ModelDef:
                 newModel.low = newModel.lod.getChild(2)
                 if self.superLow:
                     newModel.superLow = newModel.lod.getChild(3)
-                
-            
-        
+
+
+
         newModel.collisions = newModel.root.find('collisions')
         newModel.effects = newModel.root.find('effects')
         return newModel
@@ -143,7 +143,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         100.0]
     AREA_NOT_LOADED = 999
     notify = directNotify.newCategory('ClientArea')
-    
+
     def __init__(self, master):
         DirectObject.DirectObject.__init__(self)
         self.doneParenting = False
@@ -176,11 +176,11 @@ class AreaBuilderBase(DirectObject.DirectObject):
         self.minimapPrefix = None
         self.cleanUpList = []
 
-    
+
     def addToCleanUp(self, obj):
         self.cleanUpList.append(obj)
 
-    
+
     def makeNPCNavy(self, dna):
         dna.makeNPCNavySailor()
         dna.gender = 'n'
@@ -204,7 +204,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         dna.head.hair.mustache = 0
         dna.head.hair.color = 0
 
-    
+
     def getPropAvatarNode(self, object, transform, uid):
         object = copy.copy(object)
         nodePath = NodePath(ModelNode('propAv'))
@@ -218,12 +218,12 @@ class AreaBuilderBase(DirectObject.DirectObject):
         nodePath.setTag('uid', uid)
         return nodePath
 
-    
+
     def setupPropAv(self, root):
         object = marshal.loads(root.getTag('data'))
         objType = object['Type']
         uid = root.getTag('uid')
-        
+
         def playPropAvAnim(task, propAv, object, createDefault = True):
             anim = object['Animation Track']
             createDefSword = createDefault
@@ -252,16 +252,16 @@ class AreaBuilderBase(DirectObject.DirectObject):
                         propInfo = random.choice(allProps)
                         if type(propInfo) == types.ListType:
                             propInfo = propInfo[0]
-                        
+
                         prop = loader.loadModel(propInfo)
                         prop.reparentTo(propAv.rightHandNode)
-                    
-                
+
+
                 propAv.loop(anim)
             if createDefSword:
                 s = Sword.Sword(10103)
                 s.attachTo(propAv)
-            
+
             return Task.done
 
         propAv = None
@@ -309,11 +309,11 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 propAv.loadCast(subCat)
                 propAv.loop('idle')
                 __builtins__['propAv'] = propAv
-            
+
             createDefaultProp = False
             if object.has_key('Effect Type') and object['Effect Type'] != None and ObjectEffects.OBJECT_EFFECTS.has_key(object['Effect Type']):
                 ObjectEffects.OBJECT_EFFECTS[object['Effect Type']](propAv)
-            
+
         if propAv:
             propAv.swordIvals = []
             propAv.moveIvals = []
@@ -321,15 +321,15 @@ class AreaBuilderBase(DirectObject.DirectObject):
             playPropAvAnim(None, propAv, object, createDefaultProp)
             if object.has_key('Visual') and object['Visual'].has_key('Color'):
                 propAv.setColorScale(*object['Visual']['Color'])
-            
+
             if object['Animation Track'] == 'walk' or object['Animation Track'] == 'run':
                 self.createPropAvatarMovement(uid, propAv, object['Animation Track'])
-            
-        
+
+
         self.propAvs.append(propAv)
         return propAv
 
-    
+
     def createPropAvatarMovement(self, uid, propAv, anim):
         for currData in base.worldCreator.fileDicts:
             if currData['Objects'].has_key(self.uniqueId):
@@ -361,18 +361,18 @@ class AreaBuilderBase(DirectObject.DirectObject):
                         propAv.moveIval = moveIval
                         return None
                         continue
-                
-        
 
-    
+
+
+
     def checkSanityOnType(self, objData):
         objectType = objData['Type']
         if objectType != 'Building Exterior':
             return objectType
-        
+
         return objectType
         file = None
-        
+
         try:
             file = objData['File']
             bTrueBuilding = file != ''
@@ -384,27 +384,27 @@ class AreaBuilderBase(DirectObject.DirectObject):
         else:
             return objectType
 
-    
+
     def checkForFootprint(self, levelObj):
         objData = levelObj.data
         if objData['Type'] not in self.FOOTPRINT_OBJECTS:
             return None
-        
+
         visual = objData.get('Visual')
         if not visual:
             return None
-        
+
         if not visual.get('Model'):
             pass
         model = visual.get(0, { }).get('Model')
         if not model:
             return None
-        
+
         name = model + '_footprint'
         footprint = loader.loadModel(name, okMissing = True)
         if not footprint:
             return None
-        
+
         footprint.reparentTo(self.footprintObjects)
         footprint.setTransform(levelObj.transform)
         for field in ('Holiday',):
@@ -412,10 +412,10 @@ class AreaBuilderBase(DirectObject.DirectObject):
             if value:
                 footprint.setTag(field, objData[field])
                 continue
-        
+
         return footprint
 
-    
+
     def buildFootprintNode(self):
         footprintRoot = NodePath('footprint')
         footprintNodes = { }
@@ -434,7 +434,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
                     sort = -3
                 elif tag == 'Wall':
                     sort = -4
-                
+
                 if not child.getTag('VisZone Minimap'):
                     pass
                 minimapId = '0'
@@ -442,17 +442,17 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 if not footprintNode:
                     footprintNode = footprintRoot.attachNewNode('footprint_' + minimapId)
                     footprintNodes[minimapId] = footprintNode
-                
+
                 geom.reparentTo(footprintNode, sort = sort)
-            
-        
+
+
         self.footprintObjects.removeChildren()
         for node in footprintNodes.values():
             node.flattenStrong()
-        
+
         return footprintRoot
 
-    
+
     def flattenObjNode(self, objNode):
         lodnode = objNode.find('**/+LODNode')
         if not lodnode.isEmpty():
@@ -465,7 +465,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 if not lowNP.isEmpty():
                     lowNP.setLightOff(base.cr.timeOfDayManager.dlight)
                     sgr.removeColumn(lowNP.node(), InternalName.getNormal())
-                
+
                 for higherName in [
                     'med*',
                     'hi*']:
@@ -473,11 +473,11 @@ class AreaBuilderBase(DirectObject.DirectObject):
                     if not higher.isEmpty():
                         sgr.applyAttribs(higher.node(), sgr.TTCullFace)
                         continue
-                
-        
+
+
         objNode.flattenStrong()
 
-    
+
     def setupLODs(self):
         self.haveLODs = True
         detailNode = LODNode.makeDefaultLod('largeObjects')
@@ -486,7 +486,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         if hasattr(self.master, 'sphereRadii'):
             sdHigh = self.master.sphereRadii[0]
             sdLow = self.master.sphereRadii[2]
-        
+
         detailNode.addSwitch(sdHigh, 0)
         detailNode.addSwitch(sdLow, sdHigh)
         self.minLowLodSD = sdHigh
@@ -499,7 +499,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         self.smallObjectsHigh = self.allDetails.attachNewNode('smallStuff')
         self.smallObjects = []
 
-    
+
     def loadAnimatedTree(self, obj, modelName, animName, partName):
         syls = modelName.split('trunk_')
         newModelName = syls[0]
@@ -512,39 +512,39 @@ class AreaBuilderBase(DirectObject.DirectObject):
         bLODLoaded = not obj.hasLOD()
         if bLODLoaded:
             obj.setLODNode()
-        
+
         if loader.loadModel(newModelName) != None:
             if bLODLoaded:
                 obj.addLOD(1, 200, 0)
-            
+
             obj.loadModel(newModelName, newPartName, '1')
-        
+
         newModelName = re.sub('_hi', '_med', newModelName)
         if loader.loadModel(newModelName) != None:
             if bLODLoaded:
                 obj.addLOD(2, 400, 200)
-            
+
             obj.loadModel(newModelName, newPartName, '2')
-        
+
         newModelName = re.sub('_med', '_low', newModelName)
         if loader.loadModel(newModelName) != None:
             if bLODLoaded:
                 obj.addLOD(3, 1000, 400)
-            
+
             if base.options.getTerrainDetailSetting() == PiratesGlobals.TD_LOW:
                 model = loader.loadModel(newModelName)
                 model.findAllMatches('**/+GeomNode').reparentTo(obj.getLOD('3'))
             else:
                 obj.loadModel(newModelName, newPartName, '3')
-        
+
         self.setupUniqueActor(obj, newAnimName)
         newModelName = re.sub('_low', '_zero_coll', newModelName)
         coll = loader.loadModel(newModelName)
         if coll:
             coll.reparentTo(obj)
-        
 
-    
+
+
     def makeAnimatedTree(self, obj, trunk, leaf):
         tname = ''
         tparts = trunk.split('_')
@@ -554,9 +554,9 @@ class AreaBuilderBase(DirectObject.DirectObject):
             if syl == 'trunk':
                 tname = syl + '_' + tparts[i + 1]
                 break
-            
+
             i += 1
-        
+
         lname = ''
         lparts = leaf.split('_')
         numDelms = len(lparts)
@@ -565,23 +565,23 @@ class AreaBuilderBase(DirectObject.DirectObject):
             if syl == 'leaf':
                 lname = syl + '_' + lparts[i + 1]
                 break
-            
+
             i += 1
-        
+
         trunkNodes = obj.findAllMatches('**/*' + tname + '*')
         leafNodes = obj.findAllMatches('**/*' + lname + '*')
         obj.findAllMatches('**/+GeomNode').stash()
         trunkNodes.unstash()
         leafNodes.unstash()
 
-    
+
     def loadSubModelLODs(self, obj, modelName, animName, partName):
         if not obj.hasLOD():
             obj.setLODNode()
             obj.addLOD(1, 120, 0)
             obj.addLOD(2, 300, 120)
             obj.addLOD(3, 750, 300)
-        
+
         obj.loadModel(modelName, partName, '1')
         modelName = re.sub('_hi', '_med', modelName)
         obj.loadModel(modelName, partName, '2')
@@ -589,7 +589,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         obj.loadModel(modelName, partName, '3')
         self.setupUniqueActor(obj, animName)
 
-    
+
     def loadSubModels(self, propData):
         bAnimatedTree = propData['Type'] == 'Tree - Animated'
         obj = Actor.Actor()
@@ -606,14 +606,14 @@ class AreaBuilderBase(DirectObject.DirectObject):
             for i in range(len(subObjs)):
                 currSubObj = subObjs[i]
                 currSubObj.setScale(propData['Visual']['Scale'])
-            
-        
+
+
         if propData['Visual'].has_key('Color'):
             for i in range(len(subObjs)):
                 currSubObj = subObjs[i]
                 currSubObj.setColorScale(*propData['Visual']['Color'])
-            
-        
+
+
         animRateRange = [
             1.0,
             1.0]
@@ -640,52 +640,52 @@ class AreaBuilderBase(DirectObject.DirectObject):
                         for i in range(len(subObjs)):
                             currLOD = subObjs[i]
                             currLOD.setScale(currSubObj['Visual']['Scale'])
-                        
-                
+
+
                 if currSubObj['Visual'].has_key('Color'):
                     for i in range(len(subObjs)):
                         currLOD = subObjs[i]
                         currLOD.setColorScale(*currSubObj['Visual']['Color'])
-                    
-                
+
+
                 if propData['Type'] != 'Tree - Animated':
                     for lodName in obj.getLODNames():
                         obj.attach(name, attachInfo[0], attachInfo[1], lodName)
-                    
-                
+
+
                 animRateRange = WorldGlobals.ObjectAnimRates.get(animName)
                 if animRateRange == None:
                     animRateRange = WorldGlobals.ObjectAnimRates.get('Default')
                     continue
-            
+
             if bAnimatedTree:
                 self.makeAnimatedTree(obj, trunkName, leafName)
-            
-        
+
+
         return obj
 
-    
+
     def pauseSFX(self):
         for sfxNode in self.sfxNodes:
             sfxNode.stopPlaying()
-        
 
-    
+
+
     def resumeSFX(self):
         for sfxNode in self.sfxNodes:
             sfxNode.startPlaying()
-        
 
-    
+
+
     def loadSFXNode(self, objData, parent, uid):
         sfxNode = SoundFX.SoundFX(sfxFile = objData['SoundFX'], volume = float(objData['Volume']), looping = True, delayMin = float(objData['DelayMin']), delayMax = float(objData['DelayMax']), pos = objData['Pos'], hpr = objData['Hpr'], parent = parent, listenerNode = base.localAvatar, drawIcon = False)
         sfxNode.startPlaying('playSfx_%s' % uid)
         self.sfxNodes.append(sfxNode)
         return sfxNode
 
-    
+
     def loadAnimatedProp(self, propData, parent):
-        
+
         def playAnim(propAv, anim):
             __builtins__['bird'] = propAv
             propAv.loadAnims({
@@ -697,33 +697,33 @@ class AreaBuilderBase(DirectObject.DirectObject):
         if visInfo:
             modelName = visInfo.get('Model')
             anim = visInfo.get('Animate')
-        
+
         if modelName == None:
             return None
-        
+
         propAv.loadModel(modelName)
         if anim:
             playAnim(propAv, anim)
-        
+
         propAv.reparentTo(self.areaGeometry)
         propAv.setPos(propData['Pos'])
         propAv.setHpr(propData['Hpr'])
         if propData.has_key('Scale'):
             propAv.setScale(propData['Scale'])
-        
+
         if propData.has_key('Visual') and propData['Visual'].has_key('Color'):
             propAv.setColorScale(*propData['Visual']['Color'])
-        
+
         self.smallObjects.append(propAv)
         propAv.wrtReparentTo(self.areaGeometry)
         return propAv
 
-    
+
     def reparentLODCollisions(self, sourceNode, targetNode, collName):
         sourceNode.findAllMatches('**/+' + collName).wrtReparentTo(targetNode)
         targetNode.flattenLight()
 
-    
+
     def loadLights(self):
         self.polyLights = self.areaGeometry.findAllMatches('**/+PolylightNode')
         self.fires = []
@@ -755,51 +755,51 @@ class AreaBuilderBase(DirectObject.DirectObject):
             LanternGlowEffect.setPos(pos)
             LanternGlowEffect.loop()
             self.discs.append(LanternGlowEffect)
-        
 
-    
+
+
     def unloadLights(self):
         for light in self.lights:
             effect = base.localAvatar.node().getEffect(PolylightEffect.getClassType())
             if effect.hasLight(light):
                 base.localAvatar.node().setEffect(effect.removeLight(light))
                 continue
-        
+
         for disc in self.discs:
             disc.removeNode()
-        
+
         del self.discs
 
-    
+
     def attachCannon(self, cannon):
         self.interactives.append(cannon)
 
-    
+
     def setupCannonballBldgColl(self, collNode, mask):
         if collNode == None or collNode.isEmpty():
             return None
-        
+
         collNode.setCollideMask(mask)
         collNode.setTag('objType', str(PiratesGlobals.COLL_BLDG))
 
-    
+
     def loadObjects(self):
         if not self.areaLoaded:
             self._preLoadStep()
             self._loadObjects()
             self._postLoadStep()
             self.areaLoaded = True
-        
+
 
     loadObjects = report(types = [
         'args'], dConfigParam = 'minimap')(loadObjects)
-    
+
     def _preLoadStep(self):
         pass
 
     _preLoadStep = report(types = [
         'args'], dConfigParam = 'minimap')(_preLoadStep)
-    
+
     def _loadObjects(self):
         self.uniqueId = self.master.uniqueId
         areaGeometry = base.bamCache.lookup(Filename('/%s_area_%s_%s.bam' % (self.uniqueId, base.launcher.getServerVersion(), base.gridDetail)), 'bam')
@@ -807,7 +807,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
             base.cr.loadingScreen.beginStep('CachedObjects', 3, 70)
             if not areaGeometry.hasData():
                 self.notify.error('nonexistant geometry file for %s' % self.uniqueId)
-            
+
             self.staticGridRoot.detachNode()
             self.largeObjectsRoot.detachNode()
             self.collisions.detachNode()
@@ -841,33 +841,33 @@ class AreaBuilderBase(DirectObject.DirectObject):
 
     _loadObjects = report(types = [
         'args'], dConfigParam = 'minimap')(_loadObjects)
-    
+
     def _preSubObjectsStep(self):
         pass
 
     _preSubObjectsStep = report(types = [
         'args'], dConfigParam = 'minimap')(_preSubObjectsStep)
-    
+
     def _postSubObjectsStep(self):
         minimapPrefix = base.worldCreator.uidMinimapPrefix.get(self.master.uniqueId, '')
         if minimapPrefix:
             self.areaGeometry.setTag('Minimap Prefix', minimapPrefix)
-        
+
         footstepSound = base.worldCreator.footstepTable.get(self.master.uniqueId, '')
         if footstepSound:
             self.areaGeometry.setTag('Footstep Sound', footstepSound)
-        
+
         environment = base.worldCreator.environmentTable.get(self.master.uniqueId, '')
         if environment:
             self.areaGeometry.setTag('Environment', environment)
-        
+
         self.staticGridRoot.flattenLight()
         self.largeObjectsRoot.flattenLight()
         self.collisions.flattenLight()
 
     _postSubObjectsStep = report(types = [
         'args'], dConfigParam = 'minimap')(_postSubObjectsStep)
-    
+
     def _postLoadStep(self):
         base.loadingScreen.tick()
         self.setupLights()
@@ -877,17 +877,17 @@ class AreaBuilderBase(DirectObject.DirectObject):
         self.playAnims()
         for object in self.areaGeometry.findAllMatches('**/=Object_Cutscene'):
             base.cr.activeWorld.addCutsceneOriginNode(object, object.getName())
-        
+
         for object in self.areaGeometry.findAllMatches('**/Entity_Node'):
             entity = base.cr.activeWorld.addEntityObject(object)
             self.addToCleanUp(entity)
-        
+
         self.setupFloors(self.master.geom)
         self.setupFloors(self.areaGeometry)
         base.loadingScreen.tick()
         for obj in self.areaGeometry.findAllMatches('**/=objectType=propAv'):
             self.setupPropAv(obj)
-        
+
         for obj in self.largeObjectsRoot.findAllMatches('large_object;+s'):
             base.loadingScreen.tick()
             uid = obj.getTag('uid')
@@ -899,7 +899,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 'locator': [] }
             if not geomRoots:
                 geomRoots = obj.findAllMatches('*/*/geomRoot')
-            
+
             for geomRoot in geomRoots:
                 for doorStr in doorList:
                     nodeList = []
@@ -912,38 +912,38 @@ class AreaBuilderBase(DirectObject.DirectObject):
                         if not door.isEmpty():
                             doorList[doorStr].append(door)
                             continue
-                    
-                
+
+
                 lod = geomRoot.find('+LODNode')
                 if lod:
                     for door in doorList['left'] + doorList['right']:
                         door.wrtReparentTo(lod.getChild(0))
                         for i in range(1, lod.getNumChildren() - 1):
                             door.instanceTo(lod.getChild(i))
-                        
-                    
-            
+
+
+
             self.doors[uid] = doorList
-        
+
         holidayObjects = self.areaGeometry.findAllMatches('**/=Holiday;+s')
         if holidayObjects:
             self.accept('HolidayStarted', self.handleHolidayStarted)
             self.accept('HolidayEnded', self.handleHolidayEnded)
-        
+
         holidayObjects.stash()
         minimapPrefix = self.areaGeometry.getTag('Minimap Prefix')
         if minimapPrefix:
             self.master.setMinimapPrefix(minimapPrefix)
-        
+
         self.master.hideMapNodes()
         footstepSound = self.areaGeometry.getTag('Footstep Sound')
         if footstepSound:
             self.master.setFootstepSound(footstepSound)
-        
+
         environment = self.areaGeometry.getTag('Environment')
         if environment:
             self.master.setEnvironment(environment)
-        
+
         base.cr.npcManager.clearNpcData()
         npcDataNode = self.areaGeometry.find('npcData')
         if npcDataNode:
@@ -951,64 +951,64 @@ class AreaBuilderBase(DirectObject.DirectObject):
             if offsetInfoStr:
                 offsetInfo = eval(offsetInfoStr)
                 base.cr.npcManager.addNpcData(offsetInfo)
-            
-        
+
+
 
     _postLoadStep = report(types = [
         'args'], dConfigParam = 'minimap')(_postLoadStep)
-    
+
     def setupLights(self):
         for light in self.areaGeometry.findAllMatches('**/=Global Light'):
             self.addLight(light)
             OTPRender.renderReflection(False, light, 'p_light', None)
-        
+
         self.turnOnLights()
 
-    
+
     def unloadObjects(self):
         if not self.areaLoaded:
             return None
-        
+
         self.areaLoaded = False
         self.clearAnims()
         for av in self.propAvs:
             for ival in av.swordIvals:
                 ival.pause()
-            
+
             for ival in av.moveIvals:
                 ival.pause()
-            
+
             av.swordIvals = []
             av.moveIvals = []
             av.delete()
-        
+
         self.propAvs = []
         for light in self.globalLights:
             render.clearLight(light)
-        
+
         self.largeObjects = { }
         self.modelCache = { }
         self.treeCache = { }
         for sfxNode in self.sfxNodes:
             sfxNode.stopPlaying()
             sfxNode.removeNode()
-        
+
         self.sfxNodes = []
         if base.config.GetBool('want-model-texture-cleanup', 1):
             ModelPool.garbageCollect()
             TexturePool.garbageCollect()
-        
 
-    
+
+
     def loadWholeModel(self, modelBaseName, altId = None):
         geom = loader.loadModel(modelBaseName)
         if altId:
             blocker = geom.find('**/blocker_*')
             blocker.setName('blocker_' + altId)
-        
+
         return geom
 
-    
+
     def loadPiecesModels(self, modelBaseName, altId = None):
         terrainModel = loader.loadModel(modelBaseName + '_terrain', okMissing = True)
         if terrainModel:
@@ -1017,51 +1017,51 @@ class AreaBuilderBase(DirectObject.DirectObject):
             caveModel = loader.loadModel(modelBaseName + '_caves', okMissing = True)
             if caveModel:
                 caveModel.getChild(0).reparentTo(geom)
-            
+
             vegModel = loader.loadModel(modelBaseName + '_veg', okMissing = True)
             if vegModel:
                 vegModel.getChild(0).reparentTo(geom)
-            
+
             rockModel = loader.loadModel(modelBaseName + '_rocks', okMissing = True)
             if rockModel:
                 rockModel.getChild(0).reparentTo(geom)
-            
+
         else:
             geom = loader.loadModel(modelBaseName)
         if altId:
             blocker = geom.find('**/blocker_*')
             blocker.setName('blocker_' + altId)
-        
+
         return geom
 
-    
+
     def parentGridNodes(self):
         pass
 
-    
+
     def flattenGridNode(self, currGrid):
         pass
 
-    
+
     def stashGridNodes(self):
         pass
 
-    
+
     def unstashGridNodes(self):
         pass
 
-    
+
     def handleSpecial(self, objNP, objType, uid):
         objName = objNP.getName()
         forceRadius = None
         lodRadiusFactor = self.LOD_RADIUS_FACTOR_MOST
         if objName == 'PropSimple Fort':
             return None
-        
+
         forceLowLodSD = None
         if objType in self.LARGE_OBJECTS_LOW and self.minLowLodSD:
             forceLowLodSD = self.minLowLodSD
-        
+
         for lod in objNP.findAllMatches('**/+LODNode'):
             bounds = lod.getBounds()
             if not bounds.isEmpty():
@@ -1069,7 +1069,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 if forceRadius:
                     radius = forceRadius
                 else:
-                    
+
                     try:
                         radius = bounds.getRadius()
                     except:
@@ -1083,17 +1083,17 @@ class AreaBuilderBase(DirectObject.DirectObject):
                     if forceLowLodSD:
                         if i == lod.getNumChildren() - 1 and forceLowLodSD > distance:
                             distance = forceLowLodSD
-                        
-                    
-                    node.addSwitch(distance, radius * lodRadiusFactor[i])
-                
-        
 
-    
+
+                    node.addSwitch(distance, radius * lodRadiusFactor[i])
+
+
+
+
     def addLight(self, light):
         self.globalLights.add(light)
 
-    
+
     def delete(self):
         self.cleanupData()
         del self.globalLights
@@ -1103,7 +1103,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         self.master.ignore('localAvatarQuestComplete')
         self.master = None
 
-    
+
     def addLocationSphere(self, uid, pos, radius, name):
         name = PLocalizer.LocationNames.get(uid, '')
         self.namedAreas[uid] = [
@@ -1111,11 +1111,11 @@ class AreaBuilderBase(DirectObject.DirectObject):
             radius,
             name]
 
-    
+
     def getLocationInfo(self, uid):
         return self.namedAreas.get(uid)
 
-    
+
     def setupUniqueActor(self, actor, animName):
         data = self.anims.get(animName)
         if not data:
@@ -1130,7 +1130,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
             (anim, name) = data
         actor.renamePartBundles('modelRoot', name)
 
-    
+
     def playAnims(self):
         if not self.bound:
             self.animControls = AnimControlCollection()
@@ -1138,49 +1138,49 @@ class AreaBuilderBase(DirectObject.DirectObject):
             self.bound = True
             for i in xrange(self.animControls.getNumAnims()):
                 self.animControls.getAnim(i).setPlayRate(random.uniform(0.80000000000000004, 1))
-            
-        
+
+
         self.animControls.loopAll(1)
 
-    
+
     def stopAnims(self):
         if self.bound:
             self.animControls.stopAll()
-        
 
-    
+
+
     def clearAnims(self):
         if self.bound:
             self.bound = False
             self.animControls.stopAll()
             self.animControls = None
-        
 
-    
+
+
     def addObject(self, object, gameArea, transformParent):
         pass
 
-    
+
     def addLargeObj(self, geometry, uniqueId):
         pass
 
-    
+
     def removeLargeObj(self, geometry, uniqueId):
         pass
 
-    
+
     def addSectionObj(self, geometry, visZone, logError = 0):
         pass
 
-    
+
     def removeSectionObj(self, geometry, visZone):
         pass
 
-    
+
     def loadTerrain(self):
         pass
 
-    
+
     def getModel(self, objData):
         base.loadingScreen.tick()
         if objData.get('Type') == 'Tree - Animated':
@@ -1192,34 +1192,34 @@ class AreaBuilderBase(DirectObject.DirectObject):
                     node = np.node()
                     for i in range(node.getNumGeoms()):
                         node.setGeomState(i, node.getGeomState(i).compose(rs))
-                    
-                
-            
+
+
+
             return obj
         elif objData['Type'] == 'Switch Prop':
             (model, subDefs) = self.buildSwitchModel(objData)
             if not objData.get('UseMayaLOD', False):
                 for subDef in subDefs:
                     self.setupSwitchDistances(subDef.lod.node(), subDef.root)
-                
-            
+
+
         else:
             modelName = objData['Visual']['Model']
             model = self.modelCache.get(modelName)
             if not model:
                 model = self.buildModel(modelName)
-            
+
             model = model.copy()
             if not objData.get('UseMayaLOD', False):
                 self.setupSwitchDistances(model.lod.node(), model.root)
-            
+
         holiday = objData.get('Holiday')
         if holiday:
             self._applyTagToModel(objData, model, 'Holiday', holiday)
             if objData['Type'] == 'Invasion Barricade' or objData['Type'] == 'Invasion Barrier':
                 self._applyTagToModel(objData, model, 'Zone', objData.get('Zone'))
-            
-        
+
+
         color = objData['Visual'].get('Color')
         if color:
             rs = RenderState.makeEmpty().addAttrib(ColorScaleAttrib.make(color))
@@ -1227,12 +1227,12 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 node = np.node()
                 for i in range(node.getNumGeoms()):
                     node.setGeomState(i, node.getGeomState(i).compose(rs))
-                
-            
-        
+
+
+
         return model
 
-    
+
     def processSmallObject(self, model):
         model.lod.detachNode()
         extraData = model.geomRoot.findAllMatches('*')
@@ -1240,11 +1240,11 @@ class AreaBuilderBase(DirectObject.DirectObject):
         extraData.wrtReparentTo(node)
         for child in model.lod.getChildren():
             node.copyTo(child)
-        
+
         node.detachNode()
         model.lod.reparentTo(model.geomRoot)
 
-    
+
     def _applyTagToModel(self, objData, model, tag, value):
         if 'VisSize' in objData:
             if objData['VisSize'] == 'Large':
@@ -1254,13 +1254,13 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 model.high.setTag(tag, value)
                 if model.med:
                     model.med.setTag(tag, value)
-                
+
                 if model.low:
                     model.low.setTag(tag, value)
-                
+
                 if model.superLow:
                     model.superLow.setTag(tag, value)
-                
+
         elif objData['Type'] in self.LARGE_OBJECTS:
             model.root.setTag(tag, value)
         else:
@@ -1271,19 +1271,19 @@ class AreaBuilderBase(DirectObject.DirectObject):
             model.superLow.setTag(tag, value)
         for effect in model.root.findAllMatches('**/*_effect_*'):
             effect.setTag(tag, value)
-        
 
-    
+
+
     def buildModel(self, name):
         data = loader.loadModel(name)
         if not data:
             return NodePath('Error!')
-        
+
         modelDef = self.makeModelDef(data)
         self.modelCache[name] = modelDef
         return modelDef
 
-    
+
     def buildSwitchModel(self, objData):
         modelDef = ModelDef()
         modelDef.root = NodePath(ModelNode('large_object'))
@@ -1291,7 +1291,6 @@ class AreaBuilderBase(DirectObject.DirectObject):
         modelDef.root.node().setPreserveTransform(True)
         switchRoot = modelDef.root.attachNewNode(SwitchNode('Switch Prop'))
         switchRoot.setTag('Switch Class', objData['Switch Class'])
-        continue
         subDefs = [ (key, self.makeModelDef(loader.loadModel(visualData['Model']))) for (key, visualData) in objData['Visual'].iteritems() ]
         subDefs.sort()
         for (key, subDef) in subDefs:
@@ -1300,11 +1299,10 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 switchRoot.attachNewNode('blank-%d' % x)
                 x += 1
             subDef.root.reparentTo(switchRoot)
-        
-        continue
-        return (_[1], [ subDef[1] for subDef in subDefs ])
 
-    
+        return ([ subDef[1] for subDef in subDefs ])
+
+
     def makeModelDef(self, data):
         model = ModelDef()
         PandaNode(data.getName()).replaceNode(data.node())
@@ -1316,7 +1314,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
             for hole in lod.getChild(3).findAllMatches('**/door_hole*'):
                 hole.findAllMatches('**/+GeomNode').wrtReparentTo(hole.getParent())
                 hole.detachNode()
-            
+
         else:
             holes = data.findAllMatches('**/door_hole*')
         for hole in holes:
@@ -1324,12 +1322,12 @@ class AreaBuilderBase(DirectObject.DirectObject):
             geoms.setColorScale(0, 0, 0, 1)
             geoms.wrtReparentTo(hole.getParent())
             hole.detachNode()
-        
+
         lowendHighNP = data.find('**/lowend*')
         if not lowendHighNP.isEmpty():
             lowendHighNP.detachNode()
             lowendHighNP.flattenStrong()
-        
+
         model.root = NodePath('model')
         model.root.setTag('ModelName', data.getName())
         model.geomRoot = model.root.attachNewNode('geomRoot')
@@ -1339,18 +1337,18 @@ class AreaBuilderBase(DirectObject.DirectObject):
         data.findAllMatches('**/door_right*').wrtReparentTo(model.geomRoot)
         for obj in data.findAllMatches('**/=ignore-lighting'):
             obj.setLightOff(1000)
-        
+
         model.collisions = model.root.attachNewNode('collisions')
         cols = data.findAllMatches('**/+CollisionNode')
         for i in xrange(cols.getNumPaths()):
             cols[i].wrtReparentTo(model.collisions)
-        
+
         model.geomRoot.findAllMatches('**/collisions').detach()
         effects = data.findAllMatches('**/*_effect*;+s')
         if effects:
             model.effects = model.root.attachNewNode('effects')
             effects.wrtReparentTo(model.effects)
-        
+
         self.flattenObj(data)
         model.lod = data.find('**/+LODNode')
         if model.lod.isEmpty():
@@ -1365,7 +1363,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
             data.reparentTo(model.geomRoot)
         if model.lod.node().getNumSwitches() != model.lod.getNumChildren():
             self.setupSwitchDistances(model.lod.node(), model.root)
-        
+
         if base.options.getTerrainDetailSetting() > PiratesGlobals.TD_LOW:
             model.high = model.lod.getChild(0)
             if model.lod.getNumChildren() > 1:
@@ -1409,30 +1407,30 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 model.med = None
                 model.low = None
                 model.superLow = None
-            
-        
+
+
         if base.gridDetail != 'high' and not lowendHighNP.isEmpty():
             model.high.removeChildren()
             lowendHighNP.node().replaceNode(model.high.node())
-        
+
         numChildren = model.lod.getNumChildren()
         numSwitches = model.lod.node().getNumSwitches()
         switches = []
         for i in range(numSwitches):
             switches.append((model.lod.node().getIn(i), model.lod.node().getOut(i)))
-        
+
         for i in range(numChildren - 1):
             model.lod.node().addSwitch(switches[i][0], switches[i][1])
-        
+
         model.lod.node().addSwitch(1000000, switches[numChildren - 1][1])
         return model
 
-    
+
     def setupSwitchDistances(self, lodNode, root):
         bounds = root.getBounds()
         if bounds.isEmpty():
             return None
-        
+
         if bounds.isOfType(BoundingSphere.getClassType()):
             radius = bounds.getRadius()
         elif bounds.isOfType(BoundingBox.getClassType()):
@@ -1445,21 +1443,21 @@ class AreaBuilderBase(DirectObject.DirectObject):
         if config.GetBool('static-large-lods', 0):
             for i in range(numChildren - 1):
                 lodNode.addSwitch(staticLODs[i + 1], staticLODs[i])
-            
+
             lodNode.addSwitch(1000000, staticLODs[numChildren - 1])
         else:
             for i in xrange(numChildren - 1):
                 lodNode.addSwitch(radius * self.LOD_RADIUS_FACTOR_MOST[i + 1], radius * self.LOD_RADIUS_FACTOR_MOST[i])
-            
+
             lodNode.addSwitch(100000, radius * self.LOD_RADIUS_FACTOR_MOST[numChildren - 1])
 
-    
+
     def _applyRenderEffects(self, data):
         for node in data.findAllMatches('**/=Render=dual'):
             node.setAttrib(TransparencyAttrib.make(TransparencyAttrib.MMultisample), 1)
-        
 
-    
+
+
     def buildSign(self, objData, locator):
         signFrameName = objData['Visual'].get('SignFrame', '')
         if signFrameName:
@@ -1472,10 +1470,10 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 signIcon.reparentTo(signFrame)
                 signFrame.reparentTo(locator)
                 signFrame.flattenStrong()
-            
-        
 
-    
+
+
+
     def getTreeInfo(self, data):
         match = re.match('(.*)_trunk_([a-z])_.*', data['Visual']['Model'])
         leafType = re.match('.*leaf_([a-z]).*', data['SubObjs']['Top Model']['Visual']['Model'])
@@ -1485,7 +1483,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         else:
             return None
 
-    
+
     def loadTree(self, data):
         result = self.getTreeInfo(data)
         if result:
@@ -1523,57 +1521,57 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 leaf.unstash()
                 self.treeCache[result] = obj
                 return obj.copy()
-        
 
-    
+
+
     def makeLight(self, levelObj):
         light = EditorGlobals.LightDynamic(levelObj, self.areaGeometry, drawIcon = False)
         if light:
             light.lightNodePath.setTag('Global Light', '')
             OTPRender.renderReflection(False, light, 'p_light', None)
-        
+
         return light
 
-    
+
     def handleHolidayStarted(self, holidayName):
         self.unstashHolidayObjects(holidayName)
         self.master.handleHolidayStarted(holidayName)
 
-    
+
     def handleHolidayEnded(self, holidayName):
         self.stashHolidayObjects(holidayName)
         self.master.handleHolidayEnded(holidayName)
 
-    
+
     def checkForHolidayObjects(self):
         for holidayId in HolidayGlobals.getAllHolidayIds():
             if base.cr.newsManager and base.cr.newsManager.getHoliday(holidayId):
                 self.unstashHolidayObjects(HolidayGlobals.getHolidayName(holidayId))
                 continue
             self.stashHolidayObjects(HolidayGlobals.getHolidayName(holidayId))
-        
 
-    
+
+
     def stashHolidayObjects(self, holidayName):
         self.master.findAllMatches('**/=Holiday=%s;+s' % (holidayName,)).stash()
 
-    
+
     def unstashHolidayObjects(self, holidayName):
         self.master.findAllMatches('**/=Holiday=%s;+s' % (holidayName,)).unstash()
 
-    
+
     def arrived(self):
         pass
 
-    
+
     def left(self):
         pass
 
-    
+
     def cleanupData(self):
         for obj in self.cleanUpList:
             obj.cleanUp()
-        
+
         self.cleanUpList = []
         self.unloadObjects()
         self.areaGeometry.removeChildren()
@@ -1587,7 +1585,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         self.animNode = self.areaGeometry.attachNewNode('animations')
         self.ignoreAll()
 
-    
+
     def flattenObj(self, obj):
         node = obj.node()
         gr = SceneGraphReducer()
@@ -1597,7 +1595,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         gr.collectVertexData(node, ~(SceneGraphReducer.CVDFormat | SceneGraphReducer.CVDName | SceneGraphReducer.CVDAnimationType))
         gr.unify(node, 0)
 
-    
+
     def setupFloors(self, data):
         for collision in data.findAllMatches('**/+CollisionNode;+s'):
             curMask = collision.node().getIntoCollideMask()
@@ -1606,9 +1604,9 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 collision.setTag('objType', str(PiratesGlobals.COLL_LAND))
                 collision.setTag('groundId', str(self.master.doId))
                 continue
-        
 
-    
+
+
     def disableDynamicLights(self):
         attrib = render.getAttrib(LightAttrib.getClassType())
         if attrib:
@@ -1617,10 +1615,10 @@ class AreaBuilderBase(DirectObject.DirectObject):
                 if light.getClassType() != AmbientLight.getClassType():
                     self.staticGridRoot.setLightOff(NodePath(light), 10)
                     continue
-            
-        
 
-    
+
+
+
     def addClassObj(self, parentObj, levelObj, myClass):
         newObj = myClass()
         objData = levelObj.data
@@ -1628,7 +1626,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         newObj.setup(objData, 0, parent = parentObj, transform = levelObj.transform)
         return newObj
 
-    
+
     def addEntityNode(self, entityCatName, entityTypeName, properties, levelObj):
         transform = levelObj.transform
         objData = levelObj.data
@@ -1644,10 +1642,10 @@ class AreaBuilderBase(DirectObject.DirectObject):
             if propertyValue:
                 node.setTag(propertyName, propertyValue)
                 continue
-        
+
         return node
 
-    
+
     def registerMinimapObject(self, levelObj):
         transform = levelObj.transform
         objData = levelObj.data
@@ -1658,11 +1656,11 @@ class AreaBuilderBase(DirectObject.DirectObject):
             imageString = visual.get('SignImage')
             if imageString and visual.get('SignFrame'):
                 shopType = MinimapShop.getShopType(imageString)
-            
+
         elif objData['Type'] == 'Townsperson':
             category = objData['Category'].lower()
             shopType = MinimapShop.getShopType(category)
-        
+
         if shopType:
             node = self.areaGeometry.attachNewNode(ModelNode('MinimapShopNode'))
             node.node().setPreserveTransform(ModelNode.PTLocal)
@@ -1670,7 +1668,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
             node.setTag('Uid', uid)
             node.setTag('ShopType', shopType)
             return node
-        
+
         if objData['Type'] == 'Invasion Barricade':
             holiday = objData['Holiday']
             zone = objData['Zone']
@@ -1680,24 +1678,22 @@ class AreaBuilderBase(DirectObject.DirectObject):
             node.setTag('Holiday', holiday)
             node.setTag('Zone', zone)
             return node
-        
 
-    
+
+
     def getMinimapShopNodes(self):
         return self.areaGeometry.findAllMatches('MinimapShopNode;+s')
 
-    
+
     def getMinimapCapturePointNodes(self, holidayName):
         nodes = self.areaGeometry.findAllMatches('MinimapCapturePointNode;+s')
-        continue
-        nodes = _[1]
         return nodes
 
-    
+
     def isVisible(self, data):
         return True
 
-    
+
     def addSFXObject(self, levelObj):
         name = levelObj.data.get('SoundFX', '')
         node = self.areaGeometry.attachNewNode(ModelNode(name))
@@ -1705,7 +1701,7 @@ class AreaBuilderBase(DirectObject.DirectObject):
         node.setTransform(levelObj.transform)
         return node
 
-    
+
     def addEffectObject(self, levelObj):
         name = levelObj.data.get('EffectName', '')
         node = self.areaGeometry.attachNewNode(ModelNode(name))
@@ -1713,39 +1709,39 @@ class AreaBuilderBase(DirectObject.DirectObject):
         node.setTransform(levelObj.transform)
         return node
 
-    
+
     def handleLighting(self, obj, visZone):
         pass
 
-    
+
     def registerEffect(self, effect):
         pass
 
-    
+
     def unregisterEffect(self, effect):
         pass
 
-    
+
     def initEffects(self):
         pass
 
-    
+
     def turnOnLights(self):
         for light in self.globalLights:
             render.setLight(light)
-        
 
-    
+
+
     def turnOffLights(self):
         for light in self.globalLights:
             render.clearLight(light)
-        
 
-    
+
+
     def getTunnelMinimap(self, tunnelUid):
         return 0
 
-    
+
     def localAvLeaving(self):
         pass
 

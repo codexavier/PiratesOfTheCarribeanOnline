@@ -832,8 +832,8 @@ class PiratesBase(OTPBase):
 
     def startShow(self, cr):
         self.cr = cr
-        #from pirates.world import WorldCreator
-        #self.worldCreator = WorldCreator.WorldCreator(self.cr, None, None)
+        from pirates.world import WorldCreator
+        self.worldCreator = WorldCreator.WorldCreator(self.cr, None, None)
 
         def nullYield(comment = ''):
             pass
