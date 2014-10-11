@@ -2110,7 +2110,8 @@ class OTPClientRepository(ClientRepositoryBase):
             self.runningPeriodTimeRemaining = self.periodTimerSecondsRemaining
             self.recordPeriodTimer(None)
 
-
+    def startHeartbeat(self):
+        pass
 
     def stopPeriodTimer(self):
         if self.periodTimerStarted != None:

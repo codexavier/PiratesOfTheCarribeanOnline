@@ -10,9 +10,14 @@ class ClientServicesManagerUD(DistributedObjectGlobalUD):
         print 'Got a login!'
         print cookie
 
-        pdg = PyDatagram()
-        pdg.addServerHeader(self.air.getMsgSender(), self.air.ourChannel, 3110)
-        pdg.addUint16(2)
-        self.air.send(pdg)
+        self.target = self.air.getMsgSender()
 
-        self.sendUpdateToChannel(self.air.getMsgSender(), 'acceptLogin', [])
+        datagram = PyDatagram()
+        datagram.addServerHeader(
+            self.target,
+            self.air.ourChannel,
+            CLIENTAGENT_SET_STATE)
+        datagram.addUint16(2)
+        self.air.send(datagram)
+
+        self.sendUpdateToChannel(self.target, 'acceptLogin', [])
