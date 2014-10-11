@@ -855,7 +855,8 @@ class PiratesBase(OTPBase):
         serverList = []
         for name in gameServer.split(';'):
             url = URLSpec(name, 1)
-            url.setScheme('s')
+            if base.config.GetBool('server-force-ssl', False):
+                url.setScheme('s')
             if not url.hasPort():
                 url.setPort(serverPort)
 

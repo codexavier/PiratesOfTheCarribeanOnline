@@ -1,10 +1,8 @@
-# File: P (Python 2.4)
-
 from otp.launcher.DummyLauncherBase import DummyLauncherBase
 from pirates.launcher.PiratesQuickLauncher import PiratesQuickLauncher
 
 class PiratesDummyLauncher(DummyLauncherBase, PiratesQuickLauncher):
-    
+
     def __init__(self):
         DummyLauncherBase.__init__(self)
         self.setPhaseComplete(1, 100)

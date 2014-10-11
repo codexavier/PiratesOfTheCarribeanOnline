@@ -49,11 +49,9 @@ from otp.distributed import OtpDoGlobals
 from otp.otpbase import OTPGlobals
 from otp.friends import FriendSecret
 from otp.uberdog.AccountDetailRecord import AccountDetailRecord, SubDetailRecord
-'''
 from otp.otpgui import OTPDialog
-from pirates.login.AvatarChooser import AvatarChooser #TODO
+from pirates.login.AvatarChooser import AvatarChooser
 from pirates.makeapirate.MakeAPirate import MakeAPirate
-'''
 from pirates.pirate import HumanDNA
 from pirates.pirate import MasterHuman, Human
 from pirates.pirate import AvatarTypes
@@ -109,9 +107,10 @@ class PiratesClientRepository(OTPClientRepository):
         self.createAvatarClass = DistributedPlayerPirate.DistributedPlayerPirate
         self.tradeManager = None
         self.pvpManager = None
-        self.avatarManager = self.generateGlobalObject(OtpDoGlobals.OTP_DO_ID_PIRATES_AVATAR_MANAGER, 'DistributedAvatarManager')
-        self.chatManager = self.generateGlobalObject(OtpDoGlobals.OTP_DO_ID_CHAT_MANAGER, 'DistributedChatManager')
-        self.crewMatchManager = self.generateGlobalObject(OtpDoGlobals.OTP_DO_ID_PIRATES_CREW_MATCH_MANAGER, 'DistributedCrewMatchManager')
+        self.csm = self.generateGlobalObject(OtpDoGlobals.OTP_DO_ID_CLIENT_SERVICES_MANAGER, 'ClientServicesManager')
+        #self.avatarManager = self.generateGlobalObject(OtpDoGlobals.OTP_DO_ID_PIRATES_AVATAR_MANAGER, 'DistributedAvatarManager')
+        #self.chatManager = self.generateGlobalObject(OtpDoGlobals.OTP_DO_ID_CHAT_MANAGER, 'DistributedChatManager')
+        #self.crewMatchManager = self.generateGlobalObject(OtpDoGlobals.OTP_DO_ID_PIRATES_CREW_MATCH_MANAGER, 'DistributedCrewMatchManager')
         #self.avatarFriendsManager = self.generateGlobalObject(OtpDoGlobals.OTP_DO_ID_AVATAR_FRIENDS_MANAGER, 'PCAvatarFriendsManager')
         #self.playerFriendsManager = self.generateGlobalObject(OtpDoGlobals.OTP_DO_ID_PLAYER_FRIENDS_MANAGER, 'PCPlayerFriendsManager')
         #self.guildManager = self.generateGlobalObject(OtpDoGlobals.OTP_DO_ID_PIRATES_GUILD_MANAGER, 'PCGuildManager')

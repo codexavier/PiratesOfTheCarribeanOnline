@@ -44,7 +44,7 @@ DENIED = 2
 
 class AvatarChooser(DirectObject, StateData):
     notify = directNotify.newCategory('AvatarChooser')
-    
+
     def __init__(self, parentFSM, doneEvent):
         StateData.__init__(self, doneEvent)
         self.choice = (0, 0)
@@ -81,9 +81,9 @@ class AvatarChooser(DirectObject, StateData):
                         avatar.dna.setJewelryZone7(0, 0, 0)
                         avatar.dna.setJewelryZone8(0, 0, 0)
                         continue
-                
-            
-        
+
+
+
         self.subIds.sort()
         self.currentSubIndex = 0
         self.currentSubId = 0
@@ -102,18 +102,18 @@ class AvatarChooser(DirectObject, StateData):
         self.finalizeConfirmDialog = None
         self.deniedConfirmDialog = None
 
-    
+
     def enter(self):
         base.options.display.restrictToEmbedded(True)
         taskMgr.setupTaskChain('phasePost', threadPriority = TPHigh)
         if self.isLoaded == 0:
             self.load()
-        
+
         base.disableMouse()
         self.quitButton.show()
         if base.cr.loginInterface.supportsRelogin():
             self.logoutButton.show()
-        
+
         self.scene.reparentTo(render)
         camera.reparentTo(render)
         camera.setPosHpr(-29.018699999999999, 37.012500000000003, 24.75, 4.0899999999999999, 1.0, 0.0)
@@ -125,7 +125,7 @@ class AvatarChooser(DirectObject, StateData):
         self.showSub(index)
         if self.ship:
             taskMgr.add(self._AvatarChooser__shipRockTask, 'avatarChooserShipRockTask')
-        
+
         base.transitions.fadeScreen(1)
         base.transitions.fadeIn(3)
         base.graphicsEngine.renderFrame()
@@ -142,7 +142,7 @@ class AvatarChooser(DirectObject, StateData):
         self.accept('mouse3-up', self._stopMouseReadTask)
         if not self.disableOptions:
             self.accept('f7', self._AvatarChooser__handleOptions)
-        
+
         if base.launcher.getPhaseComplete(5):
             self._AvatarChooser__allPhasesComplete()
         else:
@@ -151,28 +151,28 @@ class AvatarChooser(DirectObject, StateData):
         base.options.savePossibleWorking(base.options)
         if launcher.getValue('GAME_SHOW_FIRSTADD'):
             self.popupTrialPanel()
-        
 
-    
+
+
     def exit(self):
         if self.isLoaded == 0:
             return None
-        
+
         base.musicMgr.requestFadeOut(SoundGlobals.MUSIC_AVATAR_CHOOSER)
         self.oceanSfx.stop()
         self.woodCreaksSfx.stop()
         if self.deleteConfirmDialog:
             self.deleteConfirmDialog.destroy()
             self.deleteConfirmDialog = None
-        
+
         if self.shareConfirmDialog:
             self.shareConfirmDialog.destroy()
             self.shareConfirmDialog = None
-        
+
         if self.notDownloadDialog:
             self.notDownloadDialog.destroy()
             self.notDownloadDialog = None
-        
+
         self.avatarListFrame.hide()
         self.highlightFrame.hide()
         self.quitFrame.hide()
@@ -180,7 +180,7 @@ class AvatarChooser(DirectObject, StateData):
         self.scene.detachNode()
         if self.ship:
             taskMgr.remove('avatarChooserShipRockTask')
-        
+
         self.ignore('mouse1')
         self.ignore('mouse1-up')
         self.ignore('mouse3')
@@ -195,21 +195,21 @@ class AvatarChooser(DirectObject, StateData):
         if hasattr(self, 'fadeInterval'):
             self.fadeInterval.pause()
             del self.fadeInterval
-        
+
         if hasattr(self, 'fadeFrame'):
             self.fadeFrame.destroy()
-        
+
         if self.doneStatus and self.doneStatus['mode'] == 'chose':
             base.options.display.restrictToEmbedded(False)
-        
+
         taskMgr.setupTaskChain('phasePost', threadPriority = TPLow)
 
-    
+
     def load(self):
         self.notify.debug('isPaid: %s' % str(base.cr.isPaid()))
         if self.isLoaded == 1:
             return None
-        
+
         if not base.config.GetBool('disable-pirates-options', 0):
             pass
         self.disableOptions = base.config.GetBool('location-kiosk', 0)
@@ -251,7 +251,7 @@ class AvatarChooser(DirectObject, StateData):
             self.ship.playIdle()
             lodNode = self.ship.lod.node()
             self.ship.lod.node().forceSwitch(0)
-        
+
         self.avatarListFrame = DirectFrame(parent = base.a2dTopLeft, relief = None)
         self.ropeFrame = DirectFrame(parent = self.avatarListFrame, relief = None, image = self.model.find('**/avatar_c_A_rope'), image_scale = 0.35999999999999999, pos = (0, 0, -0.014999999999999999))
         self.subFrame = BorderFrame(parent = self.avatarListFrame, frameSize = (-0.25, 0.25, -0.040000000000000001, 0.089999999999999997), borderScale = 0.20000000000000001, pos = (0, 0, -0.16), modelName = 'general_frame_f')
@@ -262,7 +262,7 @@ class AvatarChooser(DirectObject, StateData):
                 1])
             self.prevSubButton = DirectButton(parent = self.subFrame, relief = None, image = (triangleGui.find('**/triangle'), triangleGui.find('**/triangle_down'), triangleGui.find('**/triangle_over')), hpr = (0, 0, 180), pos = (-0.31, 0, 0.025000000000000001), scale = 0.080000000000000002, command = self.changeSub, extraArgs = [
                 -1])
-        
+
         self._AvatarChooser__createAvatarButtons()
         self.ropeFrame.reparentTo(self.avatarListFrame)
         self.subFrame.reparentTo(self.avatarListFrame)
@@ -271,14 +271,14 @@ class AvatarChooser(DirectObject, StateData):
         self.highlightFrame.hide()
         if base.config.GetBool('allow-linked-accounts', 0):
             self.shareButton = DirectButton(parent = self.highlightFrame, relief = None, text_scale = 0.044999999999999998, text_fg = (1, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002), text_shadow = PiratesGuiGlobals.TextShadow, text = ('', '', PLocalizer.AvatarChooserShared, ''), image = (self.model.find('**/avatar_c_B_unlock'), self.model.find('**/avatar_c_B_unlock'), self.model.find('**/avatar_c_B_unlock_over')), image_scale = 0.37, text_pos = (0, -0.10000000000000001), pos = (-0.51000000000000001, 0, -0.080000000000000002), scale = 1.3, command = self._AvatarChooser__handleShare)
-        
-        self.playButton = DirectButton(parent = self.highlightFrame, relief = None, text_scale = 0.050000000000000003, text_fg = (0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 0.69999999999999996), text_shadow = PiratesGuiGlobals.TextShadow, text = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserLoading, image = (self.model.find('**/avatar_c_B_bottom'), self.model.find('**/avatar_c_B_bottom'), self.model.find('**/avatar_c_B_bottom_over')), image_scale = 0.37, text_pos = (0, -0.014999999999999999), pos = (0, 0, -0.080000000000000002), scale = 1.7, color = (0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 0.69999999999999996), state = DGG.DISABLED, command = self._AvatarChooser__handlePlay)
+
+        self.playButton = DirectButton(parent = self.highlightFrame, relief = None, text_scale = 0.050000000000000003, text_fg = (0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 0.69999999999999996), text_shadow = PiratesGuiGlobals.TextShadow, text = 'smallCaps%s' % PLocalizer.AvatarChooserLoading, image = (self.model.find('**/avatar_c_B_bottom'), self.model.find('**/avatar_c_B_bottom'), self.model.find('**/avatar_c_B_bottom_over')), image_scale = 0.37, text_pos = (0, -0.014999999999999999), pos = (0, 0, -0.080000000000000002), scale = 1.7, color = (0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 0.69999999999999996), state = DGG.DISABLED, command = self._AvatarChooser__handlePlay)
         if not self.allPhasesComplete:
-            self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserLoading
+            self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserLoading
         elif not self.queueComplete:
-            self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserInQueue
+            self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserInQueue
         else:
-            self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserPlay
+            self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserPlay
             self.playButton.setColor(1, 1, 1, 1)
             self.playButton['text_fg'] = (1.0, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002)
         self.accept('enter', self._AvatarChooser__handleEnter)
@@ -293,26 +293,26 @@ class AvatarChooser(DirectObject, StateData):
             optionsState = DGG.DISABLED
         else:
             optionsState = DGG.NORMAL
-        self.optionsButton = DirectButton(parent = self.quitFrame, relief = None, text_scale = 0.050000000000000003, text_fg = (1, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002), text_shadow = PiratesGuiGlobals.TextShadow, text = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserOptions, image = (self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box_over')), image_scale = 0.37, text_pos = (0, -0.014999999999999999), pos = (0, 0, 0.20999999999999999), command = self._AvatarChooser__handleOptions, state = optionsState)
+        self.optionsButton = DirectButton(parent = self.quitFrame, relief = None, text_scale = 0.050000000000000003, text_fg = (1, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002), text_shadow = PiratesGuiGlobals.TextShadow, text = 'smallCaps%s' % PLocalizer.AvatarChooserOptions, image = (self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box_over')), image_scale = 0.37, text_pos = (0, -0.014999999999999999), pos = (0, 0, 0.20999999999999999), command = self._AvatarChooser__handleOptions, state = optionsState)
         if self.disableOptions:
             self.optionsButton.setColorScale(Vec4(0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 0.69999999999999996))
-        
-        self.upgradeButton = DirectButton(parent = self.quitFrame, relief = None, text_scale = 0.050000000000000003, text_fg = (1, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002), text_shadow = PiratesGuiGlobals.TextShadow, text = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserUpgrade, image = (self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box_over')), image_scale = 0.37, text_pos = (0, -0.014999999999999999), pos = (0, 0, 0.070000000000000007), command = self._AvatarChooser__handleUpgrade)
+
+        self.upgradeButton = DirectButton(parent = self.quitFrame, relief = None, text_scale = 0.050000000000000003, text_fg = (1, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002), text_shadow = PiratesGuiGlobals.TextShadow, text = 'smallCaps%s' % PLocalizer.AvatarChooserUpgrade, image = (self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box_over')), image_scale = 0.37, text_pos = (0, -0.014999999999999999), pos = (0, 0, 0.070000000000000007), command = self._AvatarChooser__handleUpgrade)
         if base.cr.isPaid() == OTPGlobals.AccessFull:
             self.upgradeButton.hide()
             self.optionsButton.setPos(0, 0, 0.070000000000000007)
-        
+
         self.disableQuit = base.config.GetBool('location-kiosk', 0)
         if self.disableQuit:
             quitState = DGG.DISABLED
         else:
             quitState = DGG.NORMAL
-        self.quitButton = DirectButton(parent = self.quitFrame, state = quitState, relief = None, text_scale = 0.050000000000000003, text_fg = (1, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002), text_shadow = PiratesGuiGlobals.TextShadow, text = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserQuit, image = (self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box_over')), image_scale = 0.37, text_pos = (0, -0.014999999999999999), pos = (0, 0, -0.070000000000000007), command = self._AvatarChooser__handleQuit)
+        self.quitButton = DirectButton(parent = self.quitFrame, state = quitState, relief = None, text_scale = 0.050000000000000003, text_fg = (1, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002), text_shadow = PiratesGuiGlobals.TextShadow, text = 'smallCaps%s' % PLocalizer.AvatarChooserQuit, image = (self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box_over')), image_scale = 0.37, text_pos = (0, -0.014999999999999999), pos = (0, 0, -0.070000000000000007), command = self._AvatarChooser__handleQuit)
         if self.disableQuit:
             self.quitButton.setColorScale(Vec4(0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 0.69999999999999996))
-        
-        self.renameButton = DirectButton(parent = base.a2dTopRight, relief = None, text_scale = 0.050000000000000003, text_fg = (1, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002), text_shadow = PiratesGuiGlobals.TextShadow, text = '\x1smallCaps\x1%s\x2' % 'rename', image = (self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box_over')), image_scale = 0.37, text_pos = (0, -0.014999999999999999), pos = (-0.29999999999999999, 0, -0.20000000000000001), command = self._AvatarChooser__handleRename)
-        
+
+        self.renameButton = DirectButton(parent = base.a2dTopRight, relief = None, text_scale = 0.050000000000000003, text_fg = (1, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002), text_shadow = PiratesGuiGlobals.TextShadow, text = 'smallCaps%s' % 'rename', image = (self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box'), self.model.find('**/avatar_c_C_box_over')), image_scale = 0.37, text_pos = (0, -0.014999999999999999), pos = (-0.29999999999999999, 0, -0.20000000000000001), command = self._AvatarChooser__handleRename)
+
         def shardSelected(shardId):
             base.cr.defaultShard = shardId
 
@@ -328,17 +328,17 @@ class AvatarChooser(DirectObject, StateData):
         self.logo.setScale(0.66000000000000003)
         charGui.removeNode()
 
-    
+
     def _AvatarChooser__createAvatarButtons(self):
         subCard = loader.loadModel('models/gui/toplevel_gui')
         for subFrame in self.subFrames.values():
             subFrame.destroy()
-        
+
         for buttonList in self.subAvButtons.values():
             for button in buttonList:
                 button.destroy()
-            
-        
+
+
         self.subFrames = { }
         self.subAvButtons = { }
         i = 0
@@ -366,7 +366,7 @@ class AvatarChooser(DirectObject, StateData):
                     textPos = (0, -0.014999999999999999)
                     image = (self.model.find('**/avatar_c_A_middle'), self.model.find('**/avatar_c_A_middle'), self.model.find('**/avatar_c_A_middle_over'), self.model.find('**/avatar_c_A_middle'))
                 if av == OTPGlobals.AvatarSlotAvailable:
-                    text = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserCreate
+                    text = 'smallCaps%s' % PLocalizer.AvatarChooserCreate
                     if -3 in avData:
                         command = self._AvatarChooser__handleCreate
                     else:
@@ -378,7 +378,7 @@ class AvatarChooser(DirectObject, StateData):
                     state = DGG.DISABLED
                     imageColor = Vec4(0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 1)
                 elif av == OTPGlobals.AvatarSlotUnavailable:
-                    text = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserCreate
+                    text = 'smallCaps%s' % PLocalizer.AvatarChooserCreate
                     if -3 in avData:
                         command = self._AvatarChooser__handleCreate
                     else:
@@ -393,20 +393,20 @@ class AvatarChooser(DirectObject, StateData):
                     subId,
                     slot])
                 avatarButtons.append(dib)
-            
+
             i += 1
-        
+
         subCard.removeNode()
         self.isLoaded = 1
         if self.queueComplete == False:
             self._AvatarChooser__deactivateCreateButtons()
-        
 
-    
+
+
     def unload(self):
         if self.isLoaded == 0:
             return None
-        
+
         loader.unloadSfx(self.oceanSfx)
         loader.unloadSfx(self.woodCreaksSfx)
         del self.oceanSfx
@@ -419,13 +419,13 @@ class AvatarChooser(DirectObject, StateData):
         if self.av:
             self.av.delete()
             del self.av
-        
+
         if self.ship:
             self.ship.destroy()
             self.ship = None
             taskMgr.remove('avatarChooserShipRockTask')
             self.shipRoot = None
-        
+
         self.water.delete()
         del self.water
         self.scene.removeNode()
@@ -436,12 +436,12 @@ class AvatarChooser(DirectObject, StateData):
         cleanupDialog('globalDialog')
         for subFrame in self.subFrames.values():
             subFrame.destroy()
-        
+
         for buttonList in self.subAvButtons.values():
             for button in buttonList:
                 button.destroy()
-            
-        
+
+
         del self.subFrames
         del self.subAvButtons
         self.avatarListFrame.destroy()
@@ -450,17 +450,17 @@ class AvatarChooser(DirectObject, StateData):
         self.renameButton.destroy()
         if self.nonPayerPanel:
             self.nonPayerPanel.destroy()
-        
+
         del self.nonPayerPanel
         if self.trialNonPayerPanel:
             self.trialNonPayerPanel.destroy()
-        
+
         del self.trialNonPayerPanel
         if self.gameOptions is not None:
             base.options = self.gameOptions.options
             self.gameOptions.destroy()
             del self.gameOptions
-        
+
         self.versionLabel.destroy()
         del self.versionLabel
         self.shardPanel.destroy()
@@ -471,17 +471,17 @@ class AvatarChooser(DirectObject, StateData):
         if self.finalizeConfirmDialog:
             self.finalizeConfirmDialog.destroy()
             self.finalizeConfirmDialog = None
-        
+
         if self.deniedConfirmDialog:
             self.deniedConfirmDialog.destroy()
             self.deniedConfirmDialog = None
-        
 
-    
+
+
     def getChoice(self):
         return self.choice
 
-    
+
     def _AvatarChooser__showHighlightedAvatar(self):
         self.notify.debugCall()
         (subId, slot) = self.choice
@@ -489,15 +489,15 @@ class AvatarChooser(DirectObject, StateData):
         if self.av:
             self.av.cleanupHuman()
             self.av.delete()
-        
+
         if self.deleteConfirmDialog:
             self.deleteConfirmDialog.destroy()
             self.deleteConfirmDialog = None
-        
+
         if self.shareConfirmDialog:
             self.shareConfirmDialog.destroy()
             self.shareConfirmDialog = None
-        
+
         self.av = Pirate.Pirate()
         self.av.setDNAString(potAv.dna)
         self.av.generateHuman(self.av.style.gender, base.cr.humanHigh)
@@ -514,31 +514,31 @@ class AvatarChooser(DirectObject, StateData):
             else:
                 self.shareButton['image'] = (self.model.find('**/avatar_c_B_lock'), self.model.find('**/avatar_c_B_lock'), self.model.find('**/avatar_c_B_lock_over'))
                 self.shareButton['text'] = ('', '', PLocalizer.AvatarChooserShared, '')
-        
+
         if not (potAv.online):
             if potAv.creator or not base.config.GetBool('allow-linked-accounts', 0):
                 self.deleteButton['state'] = DGG.NORMAL
                 if base.config.GetBool('allow-linked-accounts', 0):
                     self.shareButton['state'] = DGG.NORMAL
-                
+
             else:
                 self.deleteButton['state'] = DGG.DISABLED
                 if base.config.GetBool('allow-linked-accounts', 0):
                     self.shareButton['state'] = DGG.DISABLED
-                
+
         if potAv.online:
             self.playButton['text'] = PLocalizer.AvatarChooserAlreadyOnline
             self.playButton['state'] = DGG.DISABLED
         elif potAv.shared and potAv.creator or not base.config.GetBool('allow-linked-accounts', 0):
             if not self.allPhasesComplete:
-                self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserLoading
+                self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserLoading
             elif not self.queueComplete:
-                self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserInQueue
+                self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserInQueue
             else:
-                self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserPlay
+                self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserPlay
             self.playButton['state'] = DGG.NORMAL
         else:
-            self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserLockedByOwner
+            self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserLockedByOwner
             self.playButton['state'] = DGG.DISABLED
         self.renameButton.hide()
         if potAv.wishState == 'APPROVED':
@@ -550,11 +550,11 @@ class AvatarChooser(DirectObject, StateData):
                 if not self.handleDialogOnScreen:
                     self.notify.info('deniedConfirmDialog on screen')
                     self.deniedConfirmDialog = PDialog.PDialog(text = PLocalizer.AvatarChooserPleaseRename, style = OTPDialog.Acknowledge, command = self._AvatarChooser__handleDenied)
-                
+
                 self.handleDialogOnScreen = 1
-            
+
             self.renameButton.show()
-        
+
         if not (potAv.lastLogout) or int(time.time() / 60) - potAv.lastLogout > 60:
             potAv.defaultShard = 0
             base.cr.avPlayedRecently = False
@@ -562,22 +562,22 @@ class AvatarChooser(DirectObject, StateData):
             base.cr.avPlayedRecently = True
         if base.cr.defaultShard == 0:
             self.shardPanel['preferredShard'] = potAv.defaultShard
-        
 
-    
+
+
     def _AvatarChooser__hideHighlightedAvatar(self):
         if self.av:
             self.av.delete()
             self.av = None
-        
+
         self.highlightFrame.hide()
         self.renameButton.hide()
 
-    
+
     def _AvatarChooser__handleRename(self):
         self.enterNameMode()
 
-    
+
     def _AvatarChooser__handleHighlight(self, subId, slot):
         self.choice = (subId, slot)
         for button in self.subAvButtons[subId]:
@@ -585,27 +585,27 @@ class AvatarChooser(DirectObject, StateData):
                 button['text_fg'] = (0.5, 0.5, 0.5, 1)
                 continue
             button['text_fg'] = (1, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002)
-        
+
         self.subAvButtons[subId][slot]['text_fg'] = (1, 1, 1, 1)
         self._AvatarChooser__showHighlightedAvatar()
 
-    
+
     def _AvatarChooser__rotateHighlightedAvatar(self, val):
         if self.av:
             self.av.setH(val)
-        
 
-    
+
+
     def _AvatarChooser__handleArrowUp(self):
         if self.gameOptions is not None and not self.gameOptions.isHidden():
             return None
-        
+
         sub = self.choice[0]
         slot = self.choice[1]
         initialSlot = slot
         if not sub:
             return None
-        
+
         numButtons = len(self.subAvButtons[sub])
         av = False
         for index in range(0, numButtons - 1):
@@ -613,10 +613,10 @@ class AvatarChooser(DirectObject, StateData):
                 av = True
                 break
                 continue
-        
+
         if not av:
             return None
-        
+
         if slot == 0:
             slot = numButtons - 1
         else:
@@ -628,19 +628,19 @@ class AvatarChooser(DirectObject, StateData):
             slot = numButtons - 1
         if self.subAvButtons[sub][slot]['state'] == DGG.NORMAL and initialSlot != slot:
             self._AvatarChooser__handleHighlight(sub, slot)
-        
 
-    
+
+
     def _AvatarChooser__handleArrowDown(self):
         if self.gameOptions is not None and not self.gameOptions.isHidden():
             return None
-        
+
         sub = self.choice[0]
         slot = self.choice[1]
         initialSlot = slot
         if not sub:
             return None
-        
+
         numButtons = len(self.subAvButtons[sub])
         av = False
         for index in range(0, numButtons - 1):
@@ -648,10 +648,10 @@ class AvatarChooser(DirectObject, StateData):
                 av = True
                 break
                 continue
-        
+
         if not av:
             return None
-        
+
         if slot == numButtons - 1:
             slot = 0
         else:
@@ -663,17 +663,17 @@ class AvatarChooser(DirectObject, StateData):
             slot = 0
         if self.subAvButtons[sub][slot]['state'] == DGG.NORMAL and initialSlot != slot:
             self._AvatarChooser__handleHighlight(sub, slot)
-        
 
-    
+
+
     def _AvatarChooser__handleCreate(self, subId, slot):
         if not self.queueComplete:
             if not self.notQueueCompleteDialog:
                 self.notQueueCompleteDialog = PDialog.PDialog(text = PLocalizer.AvatarChooserQueued, style = OTPDialog.Acknowledge, command = self._AvatarChooser__handleNotQueueComplete)
-            
+
             self.notQueueCompleteDialog.show()
             return None
-        
+
         self.choice = (subId, slot)
         self.accept('rejectAvatarSlot', self._AvatarChooser__rejectAvatarSlot)
         self.accept('avatarSlotResponse', self._AvatarChooser__avatarSlotResponse)
@@ -681,7 +681,7 @@ class AvatarChooser(DirectObject, StateData):
         base.cr.waitForDatabaseTimeout(requestName = 'WaitForCreateAvatarResponse')
         self.blockInput()
 
-    
+
     def _AvatarChooser__rejectAvatarSlot(self, reasonId, subId, slot):
         self.notify.warning('rejectAvatarSlot: %s' % reasonId)
         self.ignore('rejectAvatarSlot')
@@ -689,7 +689,7 @@ class AvatarChooser(DirectObject, StateData):
         base.cr.cleanupWaitingForDatabase()
         self.allowInput()
 
-    
+
     def _AvatarChooser__avatarSlotResponse(self, subId, slot):
         UserFunnel.loggingAvID('write', 'NEW')
         UserFunnel.loggingSubID('write', subId)
@@ -701,11 +701,11 @@ class AvatarChooser(DirectObject, StateData):
         base.transitions.fadeOut(finishIval = Func(messenger.send, self.doneEvent, [
             self.doneStatus]))
 
-    
+
     def _AvatarChooser__handleShare(self):
         if self.shareConfirmDialog:
             self.shareConfirmDialog.destroy()
-        
+
         (subId, slot) = self.choice
         potAv = base.cr.avList[subId][slot]
         name = potAv.dna.getDNAName()
@@ -715,7 +715,7 @@ class AvatarChooser(DirectObject, StateData):
         else:
             self.shareConfirmDialog = PDialog.PDialog(text = PLocalizer.AvatarChooserConfirmShare % name, style = OTPDialog.TwoChoice, command = self._AvatarChooser__handleShareConfirmation)
 
-    
+
     def _AvatarChooser__shareAvatarResponse(self, avatarId, subId, shared):
         base.cr.cleanupWaitingForDatabase()
         self.ignore('rejectShareAvatar')
@@ -731,7 +731,7 @@ class AvatarChooser(DirectObject, StateData):
             self.shareButton['text'] = ('', '', PLocalizer.AvatarChooserShared, '')
         self.allowInput()
 
-    
+
     def _AvatarChooser__rejectShareAvatar(self, reasonId):
         self.notify.warning('rejectShareAvatar: %s' % reasonId)
         base.cr.cleanupWaitingForDatabase()
@@ -739,21 +739,21 @@ class AvatarChooser(DirectObject, StateData):
         self.ignore('shareAvatarResponse')
         self.allowInput()
 
-    
+
     def _AvatarChooser__handleEnter(self):
         if self.playButton['state'] == DGG.NORMAL:
             self._AvatarChooser__handlePlay()
-        
 
-    
+
+
     def _AvatarChooser__handlePlay(self):
         if not self.queueComplete:
             if not self.notQueueCompleteDialog:
                 self.notQueueCompleteDialog = PDialog.PDialog(text = PLocalizer.AvatarChooserQueued, style = OTPDialog.Acknowledge, command = self._AvatarChooser__handleNotQueueComplete)
-            
+
             self.notQueueCompleteDialog.show()
             return None
-        
+
         if not self.allPhasesComplete:
             if self.notDownloadDialog:
                 self.notDownloadDialog.show()
@@ -762,16 +762,16 @@ class AvatarChooser(DirectObject, StateData):
                 base.cr.centralLogger.writeClientEvent('User encountered phase blocker at pick-a-pirate')
                 self.notDownloadDialog.show()
             return None
-        
+
         if (0, 0) == self.choice:
             self._AvatarChooser__handleCreate(self.currentSubId, 0)
             return None
-        
+
         (subId, slot) = self.choice
         potAv = base.cr.avList[subId][slot]
         if potAv in (OTPGlobals.AvatarSlotUnavailable, OTPGlobals.AvatarSlotAvailable, OTPGlobals.AvatarPendingCreate):
             return None
-        
+
         self.notify.info('AvatarChooser: wants to play slot: %s avId: %s subId: %s' % (slot, potAv.id, subId))
         self.accept('rejectPlayAvatar', self._AvatarChooser__rejectPlayAvatar)
         self.accept('playAvatarResponse', self._AvatarChooser__playAvatarResponse)
@@ -785,7 +785,7 @@ class AvatarChooser(DirectObject, StateData):
         self.fadeInterval.start()
         base.emoteGender = base.cr.avList[subId][slot].dna.gender
 
-    
+
     def _AvatarChooser__rejectPlayAvatar(self, reasonId, avatarId):
         self.notify.warning('rejectPlayAvatar: %s' % reasonId)
         self.ignore('rejectPlayAvatar')
@@ -793,11 +793,11 @@ class AvatarChooser(DirectObject, StateData):
         base.cr.cleanupWaitingForDatabase()
         self.rejectPlayAvatarDialog = PDialog.PDialog(text = PLocalizer.AvatarChooserRejectPlayAvatar, style = OTPDialog.Acknowledge, command = self._AvatarChooser__handleRejectPlayAvatar)
 
-    
+
     def _AvatarChooser__handleRejectPlayAvatar(self, value):
         base.cr.loginFSM.request('shutdown')
 
-    
+
     def _AvatarChooser__playAvatarResponse(self, avatarId, subId, access, founder):
         (subId, slot) = self.choice
         self.notify.info('AvatarChooser: acquired avatar slot: %s avId: %s subId: %s' % (slot, avatarId, subId))
@@ -812,65 +812,65 @@ class AvatarChooser(DirectObject, StateData):
             self.doneStatus])
         messenger.send('destroyFeedbackPanel')
 
-    
+
     def _AvatarChooser__activatePlayButton(self):
         if not self.allPhasesComplete:
-            self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserLoading
+            self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserLoading
             return None
-        
+
         if not self.queueComplete:
-            self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserInQueue
+            self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserInQueue
             return None
-        
+
         self.playButton['state'] = DGG.NORMAL
-        self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserPlay
+        self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserPlay
         self.playButton.setColor(1, 1, 1, 1)
         self.playButton['text_fg'] = (1.0, 0.90000000000000002, 0.69999999999999996, 0.90000000000000002)
 
-    
+
     def _AvatarChooser__activateCreateButtons(self):
         if not self.allPhasesComplete:
             return None
-        
+
         if not self.queueComplete:
             return None
-        
+
         for (currSubId, currSubVal) in base.cr.avList.items():
             for currIdx in range(len(currSubVal)):
                 if currSubVal[currIdx] == OTPGlobals.AvatarSlotAvailable:
                     button = self.subAvButtons[currSubId][currIdx]
                     button.setColorScale(1, 1, 1, 1)
-                    button['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserCreate
+                    button['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserCreate
                     continue
-            
-        
 
-    
+
+
+
     def _AvatarChooser__deactivatePlayButton(self):
-        self.playButton['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserInQueue
+        self.playButton['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserInQueue
         self.playButton.setColor(0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 0.69999999999999996)
         self.playButton['text_fg'] = (0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 0.69999999999999996)
 
-    
+
     def _AvatarChooser__deactivateCreateButtons(self):
         for (currSubId, currSubVal) in base.cr.avList.items():
             for currIdx in range(len(currSubVal)):
                 if currSubVal[currIdx] == OTPGlobals.AvatarSlotAvailable:
                     button = self.subAvButtons[currSubId][currIdx]
                     button.setColorScale(0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 0.69999999999999996)
-                    button['text'] = '\x1smallCaps\x1%s\x2' % PLocalizer.AvatarChooserInQueue
+                    button['text'] = 'smallCaps%s' % PLocalizer.AvatarChooserInQueue
                     continue
-            
-        
 
-    
+
+
+
     def _AvatarChooser__allPhasesComplete(self):
         self.allPhasesComplete = True
         self._AvatarChooser__activatePlayButton()
         self._AvatarChooser__activateCreateButtons()
         self.ignore('launcherAllPhasesComplete')
 
-    
+
     def _startLoginStatusTask(self):
         if __dev__ or launcher.getValue('IS_DEV'):
             disableQueueDefault = 1
@@ -879,7 +879,7 @@ class AvatarChooser(DirectObject, StateData):
         if config.GetBool('disable-server-queueing', disableQueueDefault):
             self._setQueueComplete()
             return None
-        
+
         self.httpClient = HTTPClient()
         import urllib2 as urllib2
         proxies = urllib2.getproxies()
@@ -896,19 +896,19 @@ class AvatarChooser(DirectObject, StateData):
         if self.queueStatus and self.queueStatus == 'PLAY':
             self._setQueueComplete()
             return None
-        
+
         self.queueFreqSeconds = launcher.getValue('QUEUE_FREQ_SECONDS', None)
         self.queueUrl = launcher.getValue('QUEUE_URL', None)
         if self.loginToken is not None and self.queueStatus == 'QUEUE' and self.queueFreqSeconds is not None and self.queueUrl is not None:
             self.queueFreqSeconds = int(self.queueFreqSeconds)
             self._startQueueTask()
             return None
-        
+
         self.loginStatusRequest = None
         self.loginStatusTask = taskMgr.add(self._checkLoginStatus, 'AvatarChooser-CheckLoginStatus')
         self.loginStatusTask.delayTime = 0.10000000000000001
 
-    
+
     def _checkLoginStatus(self, task):
         if not self.loginStatusRequest:
             loginStatusUrl = launcher.getValue('WEB_PAGE_LOGIN_RPC', 'https://piratesonline.go.com/auth/piratesLogin') + '?'
@@ -920,19 +920,19 @@ class AvatarChooser(DirectObject, StateData):
                 loginStatusUrl += 'username=%s&password=%s' % (testLogin, testPass)
                 if config.GetBool('server-queueing-force', 0):
                     self.forceQueueStr = '&wannaqueue=1'
-                
+
                 loginStatusUrl += self.forceQueueStr
-            
+
             loginStatusUrl += '&fromGame=1'
             self.notify.info('Checking login status at: %s' % (loginStatusUrl,))
             self.statusRF = Ramfile()
             self.loginStatusRequest = self.httpClient.makeChannel(False)
             self.loginStatusRequest.beginGetDocument(DocumentSpec(loginStatusUrl))
             self.loginStatusRequest.downloadToRam(self.statusRF)
-        
+
         if self.loginStatusRequest.run():
             return task.again
-        
+
         requestData = ''
         if self.loginStatusRequest.isValid() and self.loginStatusRequest.isDownloadComplete():
             requestData = self.statusRF.getData()
@@ -947,16 +947,16 @@ class AvatarChooser(DirectObject, StateData):
             if len(pair) == 2:
                 results[pair[0].strip()] = pair[1].strip()
                 continue
-        
+
         self.queueStatus = results.get('LOGIN_ACTION', None)
         if self.queueStatus == 'PLAY':
             self._setQueueComplete()
             return task.done
-        
+
         if self.queueStatus != 'QUEUE':
             self.notify.warning('Received invalid LOGIN_ACTION: %s' % (self.queueStatus,))
             sys.exit(1)
-        
+
         loginTokenKey = config.GetString('queueing-token-2', 'SESSION_TOKEN')
         self.notify.info('using queueing token 2 of %s' % loginTokenKey)
         self.loginToken = results.get(loginTokenKey, self.loginToken)
@@ -966,11 +966,11 @@ class AvatarChooser(DirectObject, StateData):
             self.notify.warning('No login token or queueUrl, trying again:')
             self.loginStatusRequest = None
             return task.again
-        
+
         if config.GetBool('server-queueing-force', 0):
             self.notify.info('forcing queue')
             self.forceQueueStr = '&wannaqueue=1'
-            
+
             def clearForceQueue(task = None):
                 if self.forceQueueStr:
                     self.notify.info('clearing force queue')
@@ -986,7 +986,7 @@ class AvatarChooser(DirectObject, StateData):
         self._startQueueTask()
         return task.done
 
-    
+
     def _stopLoginStatusTask(self):
         self._stopQueueTask()
         self.httpClient = None
@@ -994,15 +994,15 @@ class AvatarChooser(DirectObject, StateData):
         if self.loginStatusTask:
             taskMgr.remove(self.loginStatusTask)
             self.loginStatusTask = None
-        
 
-    
+
+
     def _startQueueTask(self):
         self.notify.info('Checking queue status...')
         self.queueRequest = None
         self.queueTask = taskMgr.add(self._checkQueue, 'AvatarChooser-CheckQueue')
 
-    
+
     def _checkQueue(self, task):
         if not self.queueRequest:
             self.notify.info('Checking queue status at: %s' % (self.queueUrl + self.forceQueueStr,))
@@ -1011,10 +1011,10 @@ class AvatarChooser(DirectObject, StateData):
             self.statusRF = Ramfile()
             self.queueRequest.downloadToRam(self.statusRF)
             task.delayTime = 0.10000000000000001
-        
+
         if self.queueRequest.run():
             return task.again
-        
+
         requestData = ''
         if self.queueRequest.isValid() and self.queueRequest.isDownloadComplete():
             self.notify.info('CheckQueue download complete')
@@ -1031,26 +1031,26 @@ class AvatarChooser(DirectObject, StateData):
             if len(pair) == 2:
                 results[pair[0].strip()] = pair[1].strip()
                 continue
-        
+
         userError = results.get('USER_ERROR', None)
         if userError:
             self.notify.warning('Received USER_ERROR: %s fetching queue status' % (userError,))
             sys.exit(1)
-        
+
         self.queueStatus = results.get('QUEUE_ACTION', None)
         if self.queueStatus == 'PLAY':
             self._setQueueComplete()
             return task.done
-        
+
         if self.queueStatus != 'QUEUE':
             self.notify.warning('Received invalid QUEUE_ACTION: %s' % (self.queueStatus,))
             sys.exit(1)
-        
+
         self.notify.info('Queue not ready.  Next check in %s seconds...' % (self.queueFreqSeconds,))
         self.queueRequest = None
         return task.again
 
-    
+
     def _setQueueComplete(self):
         self.notify.info('Queueing is complete!')
         self.queueTask = None
@@ -1058,7 +1058,7 @@ class AvatarChooser(DirectObject, StateData):
         self._AvatarChooser__activatePlayButton()
         self._AvatarChooser__activateCreateButtons()
 
-    
+
     def _setQueueNotComplete(self):
         self.notify.info('Queueing is not complete!')
         self.queueComplete = False
@@ -1066,28 +1066,28 @@ class AvatarChooser(DirectObject, StateData):
         self._AvatarChooser__deactivateCreateButtons()
         if not taskMgr.hasTaskNamed('AvatarChooser-CheckQueue'):
             self._startQueueTask()
-        
 
-    
+
+
     def _stopQueueTask(self):
         self.queueRequest = None
         if self.queueTask:
             taskMgr.remove(self.queueTask)
             self.queueTask = None
-        
 
-    
+
+
     def _AvatarChooser__handleDelete(self):
         if self.deleteConfirmDialog:
             self.deleteConfirmDialog.destroy()
-        
+
         (subId, slot) = self.choice
         potAv = base.cr.avList[subId][slot]
         name = potAv.dna.getDNAName()
         self.blockInput()
         self.deleteConfirmDialog = PDialog.PDialog(text = PLocalizer.AvatarChooserConfirmDelete % name, style = OTPDialog.YesNo, command = self._AvatarChooser__handleDeleteConfirmation)
 
-    
+
     def _AvatarChooser__handleDeleteConfirmation(self, value):
         self.deleteConfirmDialog.destroy()
         self.deleteConfirmDialog = None
@@ -1103,7 +1103,7 @@ class AvatarChooser(DirectObject, StateData):
         else:
             self.allowInput()
 
-    
+
     def _AvatarChooser__handleShareConfirmation(self, value):
         self.shareConfirmDialog.destroy()
         self.shareConfirmDialog = None
@@ -1123,14 +1123,14 @@ class AvatarChooser(DirectObject, StateData):
         else:
             self.allowInput()
 
-    
+
     def _AvatarChooser__removeAvatarResponse(self, avatarId, subId):
         self.ignore('rejectRemoveAvatar')
         self.ignore('removeAvatarResponse')
         base.cr.cleanupWaitingForDatabase()
         base.cr.sendGetAvatarsMsg()
 
-    
+
     def _AvatarChooser__rejectRemoveAvatar(self, reasonId):
         self.notify.warning('rejectRemoveAvatar: %s' % reasonId)
         self.ignore('rejectRemoveAvatar')
@@ -1138,7 +1138,7 @@ class AvatarChooser(DirectObject, StateData):
         base.cr.cleanupWaitingForDatabase()
         self.allowInput()
 
-    
+
     def updateAvatarList(self):
         self._AvatarChooser__hideHighlightedAvatar()
         self._AvatarChooser__createAvatarButtons()
@@ -1147,17 +1147,17 @@ class AvatarChooser(DirectObject, StateData):
         if self.currentSubId not in self.subIds:
             self.notify.warning('subId %s is no longer in family: %s' % (self.currentSubIndex, self.subIds))
             self.currentSubIndex = 0
-        
+
         self.showSub(self.currentSubIndex)
         subAvs = base.cr.avList[self.currentSubId]
         if len(subAvs) > 0 and subAvs[0] not in (OTPGlobals.AvatarSlotUnavailable, OTPGlobals.AvatarSlotAvailable, OTPGlobals.AvatarPendingCreate):
             self._AvatarChooser__handleHighlight(self.currentSubId, 0)
-        
+
         if not self.handleDialogOnScreen:
             self.allowInput()
-        
 
-    
+
+
     def _AvatarChooser__handleOptions(self):
         if self.gameOptions is not None:
             if self.gameOptions.isHidden():
@@ -1176,23 +1176,23 @@ class AvatarChooser(DirectObject, StateData):
         self.gameOptions = GameOptions('Game Options', x, y, width, height, base.options, access = subAccess, chooser = self)
         self.gameOptions.show()
 
-    
+
     def _AvatarChooser__handleQuit(self):
         self.doneStatus = {
             'mode': 'exit' }
         messenger.send(self.doneEvent, [
             self.doneStatus])
 
-    
+
     def _AvatarChooser__handleUpgrade(self):
         base.cr.centralLogger.writeClientEvent('Upgrade button pressed on Pick-A-Pirate screen')
         base.popupBrowser('http://piratesonline.go.com/#/account_services/membership_options.html', True)
 
-    
+
     def _AvatarChooser__handleLogoutWithoutConfirm(self):
         base.cr.loginFSM.request('login')
 
-    
+
     def _AvatarChooser__shipRockTask(self, task):
         h = self.shipRoot.getH()
         p = 1.5 * math.sin(task.time * 0.90000000000000002)
@@ -1200,15 +1200,15 @@ class AvatarChooser(DirectObject, StateData):
         self.shipRoot.setHpr(h, p, r)
         return Task.cont
 
-    
+
     def blockInput(self):
         color = Vec4(0.69999999999999996, 0.69999999999999996, 0.69999999999999996, 0.69999999999999996)
         for subButtons in self.subAvButtons.values():
             for button in subButtons:
                 button['state'] = DGG.DISABLED
                 button.setColorScale(color)
-            
-        
+
+
         self.renameButton['state'] = DGG.DISABLED
         self.renameButton.setColorScale(color)
         self.quitButton['state'] = DGG.DISABLED
@@ -1220,7 +1220,7 @@ class AvatarChooser(DirectObject, StateData):
         if base.config.GetBool('allow-linked-accounts', 0):
             self.shareButton['state'] = DGG.DISABLED
             self.shareButton.setColorScale(color)
-        
+
         self.deleteButton['state'] = DGG.DISABLED
         self.deleteButton.setColorScale(color)
         self.optionsButton['state'] = DGG.DISABLED
@@ -1232,9 +1232,9 @@ class AvatarChooser(DirectObject, StateData):
             self.nextSubButton.setColorScale(color)
             self.prevSubButton['state'] = DGG.DISABLED
             self.prevSubButton.setColorScale(color)
-        
 
-    
+
+
     def allowInput(self):
         for subButtons in self.subAvButtons.values():
             for button in subButtons:
@@ -1243,14 +1243,14 @@ class AvatarChooser(DirectObject, StateData):
                 else:
                     button['state'] = DGG.DISABLED
                 button.clearColorScale()
-            
-        
+
+
         self.renameButton['state'] = DGG.NORMAL
         self.renameButton.clearColorScale()
         if not self.disableQuit:
             self.quitButton['state'] = DGG.NORMAL
             self.quitButton.clearColorScale()
-        
+
         self.logoutButton['state'] = DGG.NORMAL
         self.logoutButton.clearColorScale()
         self.playButton['state'] = DGG.NORMAL
@@ -1258,7 +1258,7 @@ class AvatarChooser(DirectObject, StateData):
         if base.config.GetBool('allow-linked-accounts', 0):
             self.shareButton['state'] = DGG.NORMAL
             self.shareButton.clearColorScale()
-        
+
         self.deleteButton['state'] = DGG.NORMAL
         self.deleteButton.clearColorScale()
         self.upgradeButton['state'] = DGG.NORMAL
@@ -1266,13 +1266,13 @@ class AvatarChooser(DirectObject, StateData):
         if not self.disableOptions:
             self.optionsButton['state'] = DGG.NORMAL
             self.optionsButton.clearColorScale()
-        
+
         if base.config.GetBool('allow-linked-accounts', 0):
             self.nextSubButton['state'] = DGG.NORMAL
             self.nextSubButton.clearColorScale()
             self.prevSubButton['state'] = DGG.NORMAL
             self.prevSubButton.clearColorScale()
-        
+
         if self.choice == (0, 0):
             potAv = None
         else:
@@ -1284,31 +1284,31 @@ class AvatarChooser(DirectObject, StateData):
                     self.deleteButton['state'] = DGG.NORMAL
                     if base.config.GetBool('allow-linked-accounts', 0):
                         self.shareButton['state'] = DGG.NORMAL
-                    
+
                 else:
                     self.deleteButton['state'] = DGG.DISABLED
                     if base.config.GetBool('allow-linked-accounts', 0):
                         self.shareButton['state'] = DGG.DISABLED
-                    
+
             if potAv.online:
                 self.playButton['state'] = DGG.DISABLED
             elif potAv.shared and potAv.creator or not base.config.GetBool('allow-linked-accounts', 0):
                 self.playButton['state'] = DGG.NORMAL
             else:
                 self.playButton['state'] = DGG.DISABLED
-        
+
         if self.queueComplete == False:
             self._AvatarChooser__deactivatePlayButton()
             self._AvatarChooser__deactivateCreateButtons()
-        
 
-    
+
+
     def _AvatarChooser__handleFirstAdd(self, value):
         self.firstAddDialog.destroy()
         self.firstAddDialog = None
         self.allowInput()
 
-    
+
     def _AvatarChooser__handleFinalize(self, value):
         (subId, slot) = self.choice
         self.notifications[slot].remove()
@@ -1325,19 +1325,19 @@ class AvatarChooser(DirectObject, StateData):
         avButton.setText()
         self.allowInput()
 
-    
+
     def _AvatarChooser__handleNotQueueComplete(self, value):
         self.notQueueCompleteDialog.destroy()
         self.notQueueCompleteDialog = None
         self.allowInput()
 
-    
+
     def _AvatarChooser__handleNotDownload(self, value):
         self.notDownloadDialog.destroy()
         self.notDownloadDialog = None
         self.allowInput()
 
-    
+
     def _AvatarChooser__handleDenied(self, value):
         (subId, slot) = self.choice
         self.notifications[slot].remove()
@@ -1347,7 +1347,7 @@ class AvatarChooser(DirectObject, StateData):
         self.handleDialogOnScreen = 0
         self.allowInput()
 
-    
+
     def enterNameMode(self):
         (subId, slot) = self.choice
         self.quitFrame.setColorScale(Vec4(1, 1, 1, 0))
@@ -1362,7 +1362,7 @@ class AvatarChooser(DirectObject, StateData):
         self.nameGui = NameGUI.NameGUI(main = av, independent = True)
         self.nameGui.enter()
 
-    
+
     def exitNameMode(self, value):
         (subId, slot) = self.choice
         if value == 1:
@@ -1379,7 +1379,7 @@ class AvatarChooser(DirectObject, StateData):
             if self.notifications.get(slot, 0):
                 self.notifications[slot].remove()
                 del self.notifications[slot]
-            
+
         else:
             self.renameButton.show()
         self.nameGui.unload()
@@ -1392,7 +1392,7 @@ class AvatarChooser(DirectObject, StateData):
         base.camera.setX(-29)
         self.subFrame.show()
 
-    
+
     def placeNotification(self, slot, pos, style):
         notification = self.exclam.copyTo(self.avatarListFrame)
         self.notifications[slot] = notification
@@ -1400,11 +1400,11 @@ class AvatarChooser(DirectObject, StateData):
         notification.setScale(0.14000000000000001)
         notification.setR(25)
 
-    
+
     def changeSub(self, delta):
         self.showSub(self.currentSubIndex + delta)
 
-    
+
     def showSub(self, index):
         if self.subIds[self.currentSubIndex]:
             numAvs = len(self.subAvButtons[self.subIds[self.currentSubIndex]])
@@ -1413,35 +1413,35 @@ class AvatarChooser(DirectObject, StateData):
                     self.notifications[slot].remove()
                     del self.notifications[slot]
                     continue
-            
-        
+
+
         self.currentSubIndex = index
         numSubs = len(self.subIds)
         if self.currentSubIndex <= 0:
             self.currentSubIndex = 0
             if base.config.GetBool('allow-linked-accounts', 0):
                 self.prevSubButton.hide()
-            
+
         elif base.config.GetBool('allow-linked-accounts', 0):
             self.prevSubButton.show()
-        
+
         if self.currentSubIndex >= numSubs - 1:
             self.currentSubIndex = numSubs - 1
             if base.config.GetBool('allow-linked-accounts', 0):
                 self.nextSubButton.hide()
-            
+
         elif base.config.GetBool('allow-linked-accounts', 0):
             self.nextSubButton.show()
-        
+
         self.currentSubId = self.subIds[self.currentSubIndex]
         subName = base.cr.accountDetailRecord.subDetails[self.currentSubId].subName
         subAccess = base.cr.accountDetailRecord.subDetails[self.currentSubId].subAccess
         subAccessStr = PLocalizer.AccessLevel[subAccess]
-        subLabelText = '\x1white\x1%s\x2\n\x1smallCaps\x1%s\x2' % (subName, subAccessStr)
+        subLabelText = 'white%s\nsmallCaps%s' % (subName, subAccessStr)
         self.subLabel['text'] = subLabelText
         for frame in self.subFrames.values():
             frame.hide()
-        
+
         self.subFrames[self.currentSubId].show()
         anyAvatars = False
         for avList in base.cr.avList.values():
@@ -1450,11 +1450,11 @@ class AvatarChooser(DirectObject, StateData):
                     anyAvatars = True
                     break
                     continue
-            
+
             if anyAvatars:
                 break
                 continue
-        
+
         avList = base.cr.avList[self.currentSubId]
         for avIdx in range(0, len(avList)):
             if avList[avIdx] not in (OTPGlobals.AvatarSlotUnavailable, OTPGlobals.AvatarSlotAvailable, OTPGlobals.AvatarPendingCreate):
@@ -1462,9 +1462,9 @@ class AvatarChooser(DirectObject, StateData):
                     self.placeNotification(avIdx, (0.32000000000000001, 0, -0.37 - avIdx * 0.095000000000000001), APPROVED)
                 elif avList[avIdx].wishState == 'DENIED' or avList[avIdx].wishState == 'OPEN':
                     self.placeNotification(avIdx, (0.32000000000000001, 0, -0.37 - avIdx * 0.095000000000000001), DENIED)
-                
+
             avList[avIdx].wishState == 'OPEN'
-        
+
         if anyAvatars:
             self.avatarListFrame.reparentTo(base.a2dTopLeft)
             self.avatarListFrame.setPosHprScale(0.41999999999999998, 0, -0.29999999999999999, 0, 0, 0, 1, 1, 1)
@@ -1480,33 +1480,33 @@ class AvatarChooser(DirectObject, StateData):
         else:
             self._AvatarChooser__hideHighlightedAvatar()
 
-    
+
     def popupTrialPanel(self):
         if not self.trialNonPayerPanel:
             self.trialNonPayerPanel = TrialNonPayerPanel.TrialNonPayerPanel(trial = True)
-        
+
         self.trialNonPayerPanel.show()
 
-    
+
     def popupFeatureBrowser(self, subId, slot):
         if not self.nonPayerPanel:
             self.nonPayerPanel = TrialNonPayerPanel.TrialNonPayerPanel(trial = False)
             self.nonPayerPanel.fullText['text'] = PLocalizer.VR_FeaturePopLongTextAvatars
-        
+
         self.nonPayerPanel.show()
 
-    
+
     def _stopMouseReadTask(self):
         taskMgr.remove('AvatarChooser-MouseRead')
 
-    
+
     def _startMouseReadTask(self):
         self._stopMouseReadTask()
         mouseData = base.win.getPointer(0)
         self.lastMousePos = (mouseData.getX(), mouseData.getY())
         taskMgr.add(self._mouseReadTask, 'AvatarChooser-MouseRead')
 
-    
+
     def _mouseReadTask(self, task):
         if not base.mouseWatcherNode.hasMouse():
             pass
@@ -1523,7 +1523,7 @@ class AvatarChooser(DirectObject, StateData):
             value = self.av.getH()
             value = (value + dx * 0.69999999999999996) % 360
             self._AvatarChooser__rotateHighlightedAvatar(value)
-        
+
         return Task.cont
 
 

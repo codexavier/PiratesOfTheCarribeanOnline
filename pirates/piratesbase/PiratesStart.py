@@ -17,10 +17,12 @@ import __builtin__
 import gc
 gc.disable()
 
-print 'Creating PiratesDummyLauncher'
-from pirates.launcher.PiratesDummyLauncher import PiratesDummyLauncher
-launcher = PiratesDummyLauncher()
-__builtin__.launcher = launcher
+try:
+    launcher
+except:
+    from pirates.launcher.PiratesOnlineLauncher import PiratesOnlineLauncher
+    launcher = PiratesOnlineLauncher()
+    __builtin__.launcher = launcher
 
 from direct.gui import DirectGuiGlobals
 import PiratesGlobals
@@ -69,8 +71,4 @@ if base.config.GetBool('want-portal-cull', 0):
 if base.options:
     base.options.options_to_config()
     base.options.setRuntimeOptions()
-    if launcher.isDummy() and not Thread.isTrueThreads():
-        run()
-    elif __name__ == '__main__':
-        run()
-
+    run()
