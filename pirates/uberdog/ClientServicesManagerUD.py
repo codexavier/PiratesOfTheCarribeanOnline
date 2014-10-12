@@ -7,9 +7,6 @@ class ClientServicesManagerUD(DistributedObjectGlobalUD):
     notify = directNotify.newCategory('ClientServicesManagerUD')
 
     def login(self, cookie):
-        print 'Got a login!'
-        print cookie
-
         self.target = self.air.getMsgSender()
 
         datagram = PyDatagram()

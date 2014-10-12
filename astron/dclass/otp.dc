@@ -1,6 +1,8 @@
 from direct.distributed import DistributedObject/AI/UD
 from otp.distributed import CentralLogger/AI/UD
 from otp.distributed import DistributedDirectory/AI
+from otp.distributed import DistributedDistrict/AI/UD
+from otp.ai import TimeManager/AI
 
 typedef uint8 bool;
 typedef uint32 DoId;
@@ -10,6 +12,18 @@ struct BarrierData {
   uint16 context;
   string name;
   DoIdList avIds;
+};
+
+struct OSInfo {
+  string name;
+  int16 platform;
+  int16 major;
+  int16 minor;
+};
+
+struct CPUSpeed {
+  int32/1000 maxSpeed;
+  int32/1000 currentSpeed;
 };
 
 dclass DistributedObject {
@@ -27,4 +41,22 @@ dclass CentralLogger : DistributedObject {
 
 dclass DistributedDirectory : DistributedObject {
   setParentingRules(string, string) broadcast ram;
+};
+
+dclass DistributedDistrict : DistributedObject {
+  setName(string) required broadcast ram;
+  setAvailable(uint8) required broadcast ram;
+};
+
+dclass TimeManager : DistributedObject {
+  requestServerTime(uint8) airecv clsend;
+  serverTime(uint8, int32, uint32);
+  setDisconnectReason(uint8) airecv clsend;
+  setExceptionInfo(string(0-1024)) airecv clsend;
+  setSignature(string(0-1024), char [16], char [16]) airecv clsend;
+  setFrameRate(uint16/10, uint16/1000, uint16, string(0-256), uint32/10, uint32/10, string(0-256), uint16, uint16, uint32/10, uint32/10, uint32/10, uint32, OSInfo, CPUSpeed, uint16, uint16, string(0-256)) airecv clsend;
+  setCpuInfo(string(0-1024), string) airecv clsend;
+  checkForGarbageLeaks(bool) airecv clsend;
+  setNumAIGarbageLeaks(uint32);
+  setClientGarbageLeak(uint32, string(0-1024)) airecv clsend;
 };

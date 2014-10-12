@@ -1,5 +1,6 @@
 from direct.distributed import DistributedObjectGlobal
 from pirates.uberdog import ClientServicesManager/UD
+from pirates.distributed import PiratesDistrict/AI
 
 dclass DistributedObjectGlobal : DistributedObject {
 };
@@ -7,4 +8,14 @@ dclass DistributedObjectGlobal : DistributedObject {
 dclass ClientServicesManager : DistributedObjectGlobal {
   login(string cookie) clsend;
   acceptLogin();
+};
+
+dclass PiratesDistrict : DistributedDistrict {
+  setParentingRules(string, string) broadcast ram;
+  setAvatarCount(uint32) broadcast required;
+  setNewAvatarCount(uint32) broadcast required;
+  setMainWorld(string) broadcast required;
+  setShardType(uint8) broadcast required ram;
+  setStats : setAvatarCount, setNewAvatarCount;
+  setPopulationLimits(uint16, uint16);
 };
