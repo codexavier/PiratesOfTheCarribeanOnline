@@ -35,7 +35,7 @@ class Cutscene(NodePath, DirectObject):
         self.delayedStarts = []
 
     def initialize(self, doneCallback, giverId):
-        pass # TODO
+        pass
 
     def patch(self):
         for actor in self.__actors:
@@ -115,16 +115,16 @@ class Cutscene(NodePath, DirectObject):
         self.ignore('cutscene-finish')
 
     def getName(self):
-        pass
+        return '%s-%s' % (self.__data.id, self.__serial)
 
     def getDoneEvent(self):
-        pass
+        return '%s-done' % self.getName()
 
-    def setCallback(self):
-        pass
+    def setCallback(self, callback):
+        self.__callback = callback
 
-    def getActor(self):
-        pass
+    def getActor(self, actorKey):
+        return self.__actorKey2actor[actorKey]
 
     def forceOriginNode(self):
         pass
@@ -142,28 +142,78 @@ class Cutscene(NodePath, DirectObject):
         pass
 
     def __unloadSound(self):
-        pass
+        del self.__sounds
 
     def __startCutscene(self):
-        pass
+        if not base.win.getGsg():
+            self.skipNow()
+            return
+
+        if self.cr:
+            localAvatar.stopCombatMusic()
+            base.musicMgr.requestCurMusicFadeOut(1.0, 0.0)
+
+        aspect2d.hide()
+        for actor in self.__actors:
+            actor.startCutscene(self.__locators)
+
+        CameraShaker.setCutsceneScale(0.1)
+        self.acceptOnce('escape', self.__skip)
+
+        if self.startedCallback:
+            self.startedCallback()
+
+        render.prepareScene(base.win.getGsg())
 
     def __skip(self):
-        pass
+        if self.allowSkip:
+            self.__ival.finish()
+            base.sfxManagerList[0].stopAllSounds()
+            messenger.send('cutscene-skipped')
+            return
+        messenger.send('cutscene-not-skipped')
 
     def skipNow(self):
-        pass
+        self.ival.finish()
+        base.sfxManagerList[0].stopAllSounds()
+        messenger.send('cutscene-skipped')
 
     def __finishCutscene(self):
-        pass
+        if self.cr:
+            if base.musicMgr.current:
+                vol = base.musicMgr.current.volume
+                base.musicMgr.requestCurMusicFadeIn(3.0, vol)
+
+        self.ignore('escape')
+        CameraShaker.clearCutsceneScale()
+
+        for actor in self.__actors:
+            actor.finishCutscene()
+
+        base.sfxManagerList[0].stopAllSounds()
+        aspect2d.show()
+
+        if self.oldTodState:
+            if self.cr:
+                self.cr.timeOfDayManager.setEnvironment(self.oldTodState)
+            else:
+                base.pe.changeTimeOfDay()
+
+        messenger.send('cutscene-finish')
 
     def startTimer(self):
-        pass
+        self.__resetTimer()
+        taskMgr.add(self.updateTimer, 'cutsceneTimerUpdate')
+        self.acceptOnce('cutscene-finish', self.stopTimer)
 
     def stopTimer(self):
-        pass
+        taskMgr.remove('cutsceneTimerUpdate')
 
     def updateTimer(self):
-        pass
+        if self.__ival.isPlaying():
+            totalPlayTime = globalClock.getRealTime() - self.timerStartTime - self.timerTotalPauseTime
+            self.timer['text'] = '%.2f' % totalPlayTime
+        return Task.cont
 
     def play(self):
         pass
@@ -186,5 +236,5 @@ class Cutscene(NodePath, DirectObject):
     def overrideOldAvState(self):
         pass
 
-    def setStartCallback(self):
-        pass
+    def setStartCallback(self, callback):
+        self.startedCallback = callback
