@@ -721,15 +721,16 @@ class OTPClientRepository(ClientRepositoryBase):
         for shard in self.activeDistrictMap.values():
             if shard.available:
                 return True
-                continue
-        else:
-            return False
+        return False
 
     _shardsAreReady = report(types = [
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(_shardsAreReady)
 
     def _wantShardListComplete(self):
+        if not base.config.GetBool('wait-for-shards', True):
+            self.loginFSM.request('waitForAvatarList')
+            return
         if self._shardsAreReady():
             self.loginFSM.request('waitForAvatarList')
         else:
@@ -939,7 +940,6 @@ class OTPClientRepository(ClientRepositoryBase):
         'deltaStamp'], dConfigParam = 'teleport')(exitPeriodTimeout)
 
     def enterWaitForAvatarList(self):
-        self.handler = self.handleWaitForAvatarList
         self._requestAvatarList()
 
     enterWaitForAvatarList = report(types = [
@@ -948,7 +948,7 @@ class OTPClientRepository(ClientRepositoryBase):
 
     def _requestAvatarList(self):
         self.cleanupWaitingForDatabase()
-        self.sendGetAvatarsMsg()
+        self.csm.requestAvatars()
         self.waitForDatabaseTimeout(requestName = 'WaitForAvatarList')
         self.acceptOnce(OtpAvatarManager.OtpAvatarManager.OnlineEvent, self._requestAvatarList)
 
@@ -974,50 +974,9 @@ class OTPClientRepository(ClientRepositoryBase):
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(exitWaitForAvatarList)
 
-    def handleWaitForAvatarList(self, msgType, di):
-        if msgType == CLIENT_GET_AVATARS_RESP:
-            self.handleGetAvatarsRespMsg(di)
-        elif msgType == CLIENT_GET_AVATARS_RESP2:
-            pass
-        else:
-            self.handleMessageType(msgType, di)
-
-    handleWaitForAvatarList = report(types = [
-        'args',
-        'deltaStamp'], dConfigParam = 'teleport')(handleWaitForAvatarList)
-
-    def handleGetAvatarsRespMsg(self, di):
-        returnCode = di.getUint8()
-        if returnCode == 0:
-            avatarTotal = di.getUint16()
-            avList = []
-            for i in range(0, avatarTotal):
-                avNum = di.getUint32()
-                avNames = [
-                    '',
-                    '',
-                    '',
-                    '']
-                avNames[0] = di.getString()
-                avNames[1] = di.getString()
-                avNames[2] = di.getString()
-                avNames[3] = di.getString()
-                avDNA = di.getString()
-                avPosition = di.getUint8()
-                aname = di.getUint8()
-                potAv = PotentialAvatar(avNum, avNames, avDNA, avPosition, aname)
-                avList.append(potAv)
-
-            self.avList = avList
-            self.loginFSM.request('chooseAvatar', [
-                self.avList])
-        else:
-            self.notify.error('Bad avatar list return code: ' + str(returnCode))
-            self.loginFSM.request('shutdown')
-
-    handleGetAvatarsRespMsg = report(types = [
-        'args',
-        'deltaStamp'], dConfigParam = 'teleport')(handleGetAvatarsRespMsg)
+    def handleAvatarsList(self, avatars):
+        self.avList = avatars
+        self.loginFSM.request('chooseAvatar', [self.avList])
 
     def handleGetAvatarsResp2Msg(self, di):
         returnCode = di.getUint8()

@@ -216,7 +216,7 @@ PlayerNames = [
 
 class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
     notify = DirectNotifyGlobal.directNotify.newCategory('Human')
-    
+
     def __init__(self, other = None):
         Biped.Biped.__init__(self, other, HumanAnimationMixer)
         self.model = None
@@ -260,26 +260,26 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         self.isPaid = True
         if other != None:
             self.copyHuman(other)
-        
 
-    
+
+
     def removeCopiedNodes(self):
         self.dropShadow = self.find('**/drop_shadow*')
         if not self.dropShadow.isEmpty():
             self.deleteDropShadow()
-        
 
-    
+
+
     def flattenHuman(self):
         self.deleteNametag3d()
         self.getWeaponJoints()
 
-    
+
     def _DynamicHuman__doneFlattenHuman(self, models):
         self.flattenPending = None
         self.getWeaponJoints()
 
-    
+
     def copyHuman(self, other):
         self.gender = other.gender
         self.loaded = other.loaded
@@ -288,9 +288,9 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         self.flattenHuman()
         self.model = None
 
-    
+
     def delete(self):
-        
+
         try:
             pass
         except:
@@ -298,20 +298,20 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             taskMgr.remove(self._DynamicHuman__blinkName)
             if self.dropShadow and not self.dropShadow.isEmpty():
                 self.deleteDropShadow()
-            
+
             del self.eyeFSM
             self.controlShapes = None
             self.sliderNames = None
             if self.model:
                 self.model.delete()
                 del self.model
-            
+
             Biped.Biped.delete(self)
 
 
-    
+
     def isDeleted(self):
-        
+
         try:
             if self.Human_deleted == 1:
                 return True
@@ -319,12 +319,12 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             return False
 
 
-    
+
     def setupExtraNodes(self):
         idx = 0
         if self.gender == 'f':
             idx = 1
-        
+
         jointName = 'def_head01'
         jointNameExtra = 'def_extra_jt'
         jointNameScale = 'def_scale_jt'
@@ -342,11 +342,11 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             if not exposedHeadJoint.isEmpty():
                 exposedHeadJoint.removeNode()
                 continue
-        
+
         self.headNode.setScale(HeadScales[idx][self.style.getBodyShape()])
         self.setGlobalScale(self.calcBodyScale())
 
-    
+
     def undoExtraNodes(self):
         jointNameExtra = 'def_extra_jt'
         jointNameScale = 'def_scale_jt'
@@ -354,25 +354,25 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         if not joints.isEmpty():
             joints.detach()
             joints.clear()
-        
+
         if self.headNode:
             self.headNode.removeNode()
             self.headNode = None
             self.extraNode.removeNode()
             self.extraNode = None
-        
+
         joints = self.findAllMatches('**/*' + jointNameScale)
         if not joints.isEmpty():
             joints.detach()
             joints.clear()
-        
+
         if self.scaleNode:
             self.scaleNode.removeNode()
             self.scaleNode = None
             self.rootNode = None
-        
 
-    
+
+
     def fixEyes(self):
         self.eyeLids = { }
         self.eyeBalls = { }
@@ -385,9 +385,9 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             self.eyeLids[lodName].stash()
             self.eyeBalls[lodName].unstash()
             self.eyeIris[lodName].unstash()
-        
 
-    
+
+
     def generateFaceTexture(self):
         faceTextureIdx = self.style.head.texture
         if self.gender == 'f':
@@ -399,14 +399,14 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             tex = self.model.faceTextures.findTexture(tex_name)
             if tex == None:
                 return None
-            
+
         else:
             return None
         for lodName in self.getLODNames():
             self.findAllMatches('**/body_master_face').setTexture(tex, 1)
-        
 
-    
+
+
     def generateSkinColor(self):
         skinColor = self.style.getSkinColor()
         self.model.faces[0].setColorScale(skinColor)
@@ -419,7 +419,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             else:
                 self.model.body.setColorScale(skinColor)
 
-    
+
     def generateSkinTexture(self):
         bodyTextureIdx = self.style.body.skin
         if self.zombie:
@@ -427,7 +427,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                 bodyTextureIdx = PirateFemale.ZOMB_BODY_TEXTURE
             else:
                 bodyTextureIdx = PirateMale.ZOMB_BODY_TEXTURE
-        
+
         if self.gender == 'f':
             body_textures = PirateFemale.body_textures[self.style.body.shape]
         else:
@@ -439,15 +439,15 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             return None
         for parts in self.model.bodys:
             parts.setTexture(tex, 1)
-        
 
-    
+
+
     def generateHairColor(self, colorName = None, colorModel = None):
         self.model.setHairBaseColor()
 
-    
+
     def getTrySafe(self, list, idx):
-        
+
         try:
             if type(idx) == str:
                 lookup = idx.split('_cut')[0]
@@ -458,7 +458,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             return None
 
 
-    
+
     def generateEyesTexture(self):
         eyesTextureIdx = self.style.head.eyes.color
         if self.gender == 'f':
@@ -472,22 +472,22 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             return None
         self.model.irises.setTexture(tex, 1)
 
-    
+
     def generateHatColor(self):
         style = self.style
         if self.zombie:
             style = self.model.dnaZomb
-        
+
         hatColor = style.lookupHatColor()
         geom = self.getGeomNode()
         geom.findAllMatches('**/hat_band*').setColorScale(hatColor)
 
-    
+
     def generateClothesColor(self):
         style = self.style
         if self.zombie:
             style = self.model.dnaZomb
-        
+
         clothesTopColor = style.lookupClothesTopColor()
         clothesBotColor = style.lookupClothesBotColor()
         geom = self.getGeomNode()
@@ -498,13 +498,13 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         geom.findAllMatches('**/clothing_layer2_belt*').setColorScale(clothesBotColor[1])
         geom.findAllMatches('**/clothing_layer1_shoe*').setColorScale(clothesBotColor[2])
 
-    
+
     def generateColor(self):
         self.generateSkinColor()
         self.generateHairColor()
         self.generateHatColor()
 
-    
+
     def makeAnimDict(self, gender, animNames):
         self.animDict = []
         for currAnim in animNames:
@@ -513,17 +513,17 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                 self.animTable.append([
                     currAnimName,
                     currAnimName])
-            
-        
+
+
         self.reducedAnimList = self.animDict
 
-    
+
     def forceLoadAnimDict(self):
         for anim in self.animDict:
             self.getAnimControls(anim[0])
-        
 
-    
+
+
     def createAnimDict(self, customList = None):
         if self.gender == 'f':
             filePrefix = 'models/char/f'
@@ -535,7 +535,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         animList = self.reducedAnimList
         if animList is None:
             animList = AnimListDict[self.type]
-        
+
         AnimDict.clear()
         for anim in animList:
             animSuffix = ''
@@ -544,15 +544,15 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                     animSuffix = '_' + genderPrefix + NewModelDict.get(self.type)
                     break
                     continue
-            
+
             AnimDict[anim[0]] = filePrefix + '_' + anim[1] + animSuffix
-        
+
         if self.reducedAnimList is None:
             AnimDict.pop('intro')
-        
+
         return filePrefix
 
-    
+
     def generateBody(self, copy = 1):
         filePrefix = self.createAnimDict()
         lodString = '2000'
@@ -560,11 +560,11 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         self.loadAnims(AnimDict, 'modelRoot', 'all')
         if loader.loadModel(filePrefix + '_' + '1000', allowInstance = True) != None:
             lodString = '1000'
-        
+
         self.loadModel(filePrefix + '_' + lodString, 'modelRoot', '1000', copy)
         if loader.loadModel(filePrefix + '_' + '500', allowInstance = True) != None:
             lodString = '500'
-        
+
         self.loadModel(filePrefix + '_' + lodString, 'modelRoot', '500', copy)
         self.makeSubpart('head', [
             'zz_head01'], [])
@@ -578,7 +578,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         self.getWeaponJoints()
         self.eyeIrisTextures = loader.loadModel('models/misc/eye_iris.bam')
 
-    
+
     def refreshBody(self):
         if self.style.getGender() == 'f':
             gender = 1
@@ -598,14 +598,14 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                 joint.setScale(vector)
                 continue
             joint.setPos(vector)
-        
+
         self.headNode.setScale(HeadScales[gender][self.style.getBodyShape()])
         self.setGlobalScale(self.calcBodyScale())
         self.createAnimDict()
         self.stop(self.getCurrentAnim())
         self.loop(self.getCurrentAnim())
 
-    
+
     def setLODs(self):
         self.setLODNode()
         avatarDetail = base.config.GetString('avatar-detail', 'high')
@@ -636,10 +636,10 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             lowLOD = self.getLOD('500')
             lowLOD.setTextureOff(1000)
             lowLOD.setTransparency(0, 1000)
-        
+
         self.getLODNode().setCenter(Point3(0, 0, 5))
 
-    
+
     def showLOD(self, lodName):
         if not self.model.loaded:
             self.model.setupHead(lodName)
@@ -647,17 +647,17 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             self.model.setupClothing(lodName)
             if self.master:
                 self.model.setupSelectionChoices('NPC')
-            
+
             self.model.loaded = 1
-        
+
         self.model.setFromDNA()
         self.generateEyesTexture()
         if self.optimizeLOD:
             self.optimizeLowLOD()
-        
+
         self.generateColor()
 
-    
+
     def loadHuman(self, gender = 'm', other = None):
         if other:
             pirate = other
@@ -667,7 +667,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         pirate.gender = gender
         if self.loaded:
             return None
-        
+
         if pirate.gender == 'f':
             pirate.type = BodyDefs.femaleFrames[pirate.style.getBodyShape()]
             controlShapes = PirateFemale.ControlShapes
@@ -714,7 +714,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             pirate.showNormal()
         if hasattr(self, 'motionFSM'):
             self.motionFSM.setAvatar(self)
-        
+
         self.controlShapes = controlShapes
         self.sliderNames = sliderNames
         if other:
@@ -722,7 +722,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             self.fixEyes()
             self.copyHuman(other)
             self.undoExtraNodes()
-        
+
         self.setupExtraNodes()
         self.applyBodyShaper()
         self.applyHeadShaper()
@@ -732,36 +732,36 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             pirate.unloadAnims(AnimDict, None, None)
             pirate.removeAnimControlDict()
             pirate.reducedAnimList = None
-        
+
         self.initializeMiscNodes()
         self.startBlink()
 
-    
+
     def initializeMiscNodes(self):
         self.initializeNametag3d()
         self.initializeDropShadow()
         if self.getLOD('2000') == None:
             return None
-        
+
         exposedHeadJoint = self.getLOD('2000').find('**/def_head01')
         if not exposedHeadJoint.isEmpty():
             idx = 0
             if self.gender == 'f':
                 idx = 1
-            
+
             exposedHeadJoint.setScale(1)
             self.headNode.reparentTo(exposedHeadJoint)
             self.headNode.setScale(HeadScales[idx][self.style.getBodyShape()])
-        
 
-    
+
+
     def undoControlJoints(self):
         self.getGeomNode().getParent().findAllMatches('def_*').detach()
         self.getGeomNode().getParent().findAllMatches('trs_*').detach()
         self.findAllMatches('def_*').detach()
         self.findAllMatches('trs_*').detach()
 
-    
+
     def cleanupHuman(self, gender = 'm'):
         self.eyeFSM.request('off')
         self.undoExtraNodes()
@@ -773,7 +773,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         self.loaded = 0
         self.master = 0
 
-    
+
     def generateHuman(self, gender = 'm', others = None):
         other = None
         if others:
@@ -781,26 +781,26 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                 other = others[1]
             else:
                 other = others[0]
-        
+
         if other and not (other.master) and other.loaded:
             other.cleanupHuman()
         elif self.loaded:
             self.cleanupHuman()
-        
+
         self.loadHuman(self.style.gender, other)
         if self.isLocal():
             self.renderReflection = True
-        
+
         self.setRenderReflection()
         self.disableMixing()
         self.enableMixing()
 
     generateHuman = quickProfile('loadHuman')(generateHuman)
-    
+
     def getShadowJoint(self):
         return self
 
-    
+
     def getNametagJoints(self):
         joints = []
         for lodName in self.getLODNames():
@@ -809,14 +809,14 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             if joint:
                 joints.append(joint)
                 continue
-        
+
         return joints
 
-    
+
     def _DynamicHuman__blinkOpenEyes(self, task):
         if self.eyeFSM.getCurrentState().getName() == 'closed':
             self.eyeFSM.request('open')
-        
+
         r = self.randGen.random()
         if r < 0.10000000000000001:
             t = 0.20000000000000001
@@ -825,7 +825,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         taskMgr.doMethodLater(t, self._DynamicHuman__blinkCloseEyes, self._DynamicHuman__blinkName)
         return Task.done
 
-    
+
     def _DynamicHuman__blinkCloseEyes(self, task):
         if self.eyeFSM.getCurrentState().getName() != 'open':
             taskMgr.doMethodLater(4.0, self._DynamicHuman__blinkCloseEyes, self._DynamicHuman__blinkName)
@@ -834,38 +834,38 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             taskMgr.doMethodLater(0.125, self._DynamicHuman__blinkOpenEyes, self._DynamicHuman__blinkName)
         return Task.done
 
-    
+
     def startBlink(self):
         taskMgr.remove(self._DynamicHuman__blinkName)
         if self.eyeLids:
             self.openEyes()
-        
+
         taskMgr.doMethodLater(self.randGen.random() * 4.0 + 1, self._DynamicHuman__blinkCloseEyes, self._DynamicHuman__blinkName)
 
-    
+
     def stopBlink(self):
         taskMgr.remove(self._DynamicHuman__blinkName)
         if self.eyeLids:
             self.eyeFSM.request('open')
-        
 
-    
+
+
     def closeEyes(self):
         self.eyeFSM.request('closed')
 
-    
+
     def openEyes(self):
         self.eyeFSM.request('open')
 
-    
+
     def enterEyeFSMOff(self):
         pass
 
-    
+
     def exitEyeFSMOff(self):
         pass
 
-    
+
     def enterEyeFSMOpen(self):
         for lodName in self.getLODNames():
             if not self.eyeLids[lodName].isEmpty():
@@ -873,13 +873,13 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                 self.eyeBalls[lodName].show()
                 self.eyeIris[lodName].show()
                 continue
-        
 
-    
+
+
     def exitEyeFSMOpen(self):
         pass
 
-    
+
     def enterEyeFSMClosed(self):
         return None
         for lodName in self.getLODNames():
@@ -888,13 +888,13 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                 self.eyeBalls[lodName].hide()
                 self.eyeIris[lodName].hide()
                 continue
-        
 
-    
+
+
     def exitEyeFSMClosed(self):
         pass
 
-    
+
     def setControlValue(self, r, name):
         if self.style.getGender() == 'f':
             matrixF = FemaleHeadShapeControlJointMatrix
@@ -908,8 +908,8 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         if r < 0.0:
             if len(ctl) > 1:
                 slider = ctl[1]
-            
-        
+
+
         for i in range(0, len(slider)):
             jointName = slider[i][0]
             jointCtls = self.findAllMatches(jointName)
@@ -960,8 +960,8 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                         else:
                             self.notify.warning('scv:wrong element = %s' % jointSet[jointIdx][1])
                     jointSet[jointIdx][1] == TX
-                
-            
+
+
             self.notify.debug('scv: %s composite posDelta = %s' % (jointName, posDelta))
             posF.setX(posI[0] + posDelta[0])
             posF.setY(posI[1] + posDelta[1])
@@ -980,10 +980,10 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             for j in range(0, jointCtls.getNumPaths()):
                 jointCtl = jointCtls[j]
                 jointCtl.setPosHprScale(posF, hprF, sclF)
-            
-        
 
-    
+
+
+
     def applyBodyShaper(self):
         if self.style.getGender() == 'f':
             cjs = FemaleBodyShapeControlJoints
@@ -998,36 +998,36 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                     joint = self.controlJoint(None, 'legs', jointName, lodName)
                     continue
                 joint = self.controlJoint(joint, 'legs', jointName, lodName)
-            
+
             joint = self.find('**/*' + jointName)
             vector = matrix[jointName][type]
             if jointName.find('def') != -1:
                 joint.setScale(vector)
                 continue
             joint.setPos(vector)
-        
 
-    
+
+
     def undoBodyShaper(self):
         if self.style.getGender() == 'f':
             cjs = FemaleBodyShapeControlJoints
         else:
             cjs = MaleBodyShapeControlJoints
 
-    
+
     def applyHeadShaper(self):
         self.createControlJoints()
         self.initHeadControlShapes()
         self.setHeadControlShapeValues()
 
-    
+
     def undoHeadShaper(self):
         if self.style.getGender() == 'f':
             cjs = FemaleHeadShapeControlJoints
         else:
             cjs = MaleHeadShapeControlJoints
 
-    
+
     def createControlJoints(self):
         if self.style.getGender() == 'f':
             cjs = FemaleHeadShapeControlJoints
@@ -1044,10 +1044,10 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                 if lodName == '500':
                     continue
                     continue
-            
-        
 
-    
+
+
+
     def initHeadControlShapes(self):
         if self.style.getGender() == 'f':
             cjs = FemaleHeadShapeControlJoints
@@ -1059,7 +1059,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             matrixI = MaleHeadShapeInitialControlJointMatrix
         if len(matrixF['initialized']) > 0:
             return None
-        
+
         initializedMatrixI = len(matrixI['initialized'])
         initializedMatrixF = len(matrixF['initialized'])
         for jointName in cjs:
@@ -1070,7 +1070,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             matrixI[jointName].append(pos)
             matrixI[jointName].append(hpr)
             matrixI[jointName].append(scale)
-        
+
         matrixI['initialized'].append('initialized')
         shapes = self.controlShapes
         names = self.sliderNames
@@ -1081,8 +1081,8 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                 if len(slider) > 1:
                     slider[1][k][4] = slider[1][k][2]
                     continue
-            
-        
+
+
         for i in xrange(0, len(shapes)):
             slider = shapes[names[i]]
             for k in xrange(0, len(slider[0])):
@@ -1092,33 +1092,34 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                 pos = matrixI[jointName][0]
                 hpr = matrixI[jointName][1]
                 scl = matrixI[jointName][2]
+
                 if jointCtl[1] < 3:
                     posDelta = jointCtl[4] - pos[jointCtl[1]]
                     jointCtl[4] = posDelta
                     if len(slider) > 1:
                         jointCtl = slider[1][k]
                         jointCtl[4] = posDelta
-                    
-                len(slider) > 1
-                if jointCtl[1] > 2 and jointCtl[1] < 6:
-                    hprDelta = jointCtl[4] - hpr[jointCtl[1] - 3]
-                    jointCtl[4] = hprDelta
-                    if len(slider) > 1:
-                        jointCtl = slider[1][k]
-                        jointCtl[4] = hprDelta
-                    
-                len(slider) > 1
-                sclDelta = jointCtl[4] - scl[jointCtl[1] - 6]
-                jointCtl[4] = sclDelta
+
                 if len(slider) > 1:
-                    jointCtl = slider[1][k]
-                    jointCtl[4] = sclDelta
-                    continue
-            
-        
+                    if jointCtl[1] > 2 and jointCtl[1] < 6:
+                        hprDelta = jointCtl[4] - hpr[jointCtl[1] - 3]
+                        jointCtl[4] = hprDelta
+                        if len(slider) > 1:
+                            jointCtl = slider[1][k]
+                            jointCtl[4] = hprDelta
+
+                #if len(slider) > 1:
+                    #sclDelta = jointCtl[4] - scl[jointCtl[1] - 6]
+                    #jointCtl[4] = sclDelta
+
+                #if len(slider) > 1:
+                #    jointCtl = slider[1][k]
+                #    jointCtl[4] = sclDelta
+
+
         matrixF['initialized'].append('initialized')
 
-    
+
     def setHeadControlShapeValues_old(self):
         value = self.style.getHeadSize()
         mappedValue = 0.90000000000000002 + (1 + value) * 0.10000000000000001
@@ -1149,39 +1150,39 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         self.setControlValue(self.style.getEarFlapAngle(), 'earFlap')
         self.setControlValue(self.style.getEarPosition(), 'earPosition')
 
-    
+
     def getGlobalScale(self):
         return self.scaleNode.getScale()
 
-    
+
     def setGlobalScale(self, scale):
         self.scaleNode.setScale(scale)
         self.scaleNode.setZ(-(self.floorOffsetZ * (1 - scale)))
 
-    
+
     def calcBodyScale(self):
         idx = 0
         if self.gender == 'f':
             idx = 1
-        
+
         mappedValue = (0.80000000000000004 + (1 + self.style.getBodyHeight()) * 0.20000000000000001) * BodyScales[idx][self.style.getBodyShape()]
         return mappedValue
 
-    
+
     def showZombie(self):
         self.model.irises.stash()
         self.model.faces[0].stash()
         self.model.faceZomb.unstash()
         self.generateSkinTexture()
 
-    
+
     def showNormal(self):
         self.model.irises.unstash()
         self.model.faces[0].unstash()
         self.model.faceZomb.stash()
         self.generateSkinTexture()
 
-    
+
     def takeAwayTexture(self, geoms, omitFace = False):
         emptyRenderState = RenderState.makeEmpty()
         eyeIrisColor = VBase4(0, 0, 0, 1)
@@ -1191,15 +1192,15 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                 element.setColorScale(eyeIrisColor)
             elif omitFace and 'master_face' in element.getName():
                 continue
-            
+
             element.setTextureOff()
             geom = element.node()
             for j in range(0, geom.getNumGeoms()):
                 geom.setGeomState(j, emptyRenderState)
-            
-        
 
-    
+
+
+
     def optimizeMedLOD(self):
         medLOD = self.getLOD('1000')
         geoms = medLOD.findAllMatches('**/teeth*')
@@ -1210,7 +1211,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             self.medSkinGone = True
             geoms = medLOD.findAllMatches('**/body_*')
             self.takeAwayTexture(geoms, True)
-        
+
         geoms = medLOD.findAllMatches('**/hair_*')
         self.takeAwayTexture(geoms)
         if self.gender != 'f':
@@ -1218,7 +1219,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
             self.takeAwayTexture(geoms)
             geoms = medLOD.findAllMatches('**/mustache_*')
             self.takeAwayTexture(geoms)
-        
+
         geoms = medLOD.findAllMatches('**/eye_*')
         self.takeAwayTexture(geoms)
         geoms = medLOD.findAllMatches('**/clothing_layer2_belt_*')
@@ -1226,7 +1227,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         geoms = medLOD.findAllMatches('**/clothing_layer1_shoe_*')
         self.takeAwayTexture(geoms)
 
-    
+
     def optimizeLowLOD(self):
         lowLOD = self.getLOD('500')
         geoms = lowLOD.findAllMatches('**/teeth*')
@@ -1234,7 +1235,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         geoms = lowLOD.findAllMatches('**/+GeomNode')
         self.takeAwayTexture(geoms)
 
-    
+
     def setHeadControlShapeValues(self):
         value = self.style.getHeadSize()
         mappedValue = 0.90000000000000002 + (1 + value) * 0.10000000000000001
@@ -1266,7 +1267,7 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         self.setControlValue_new(self.style.getEarPosition(), 'earPosition')
         self.postProcess_setHeadControlShapeValues()
 
-    
+
     def setControlValue_new(self, r, name):
         ctl = self.controlShapes[name]
         zeroindex = ctl[0]
@@ -1274,13 +1275,13 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
         if r < 0.0:
             if len(ctl) > 1:
                 sliders = ctl[1]
-            
-        
+
+
         for i in range(0, len(sliders)):
             zeroindex[i][5] = sliders[i][4] * r
-        
 
-    
+
+
     def postProcess_setHeadControlShapeValues(self):
         if self.style.getGender() == 'f':
             cjs = FemaleHeadShapeControlJoints
@@ -1314,9 +1315,9 @@ class DynamicHuman(HumanBase.HumanBase, Biped.Biped):
                     if sliderJoint[0] == jointName:
                         fdict2[sliderJoint[1]](sliderJoint[5])
                         continue
-                
-            
+
+
             self.find(jointName).setPosHprScale(posDelta, hprDelta, sclDelta)
-        
+
 
 

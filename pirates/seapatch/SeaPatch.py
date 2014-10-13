@@ -525,8 +525,8 @@ class SeaPatch(Water):
                 out_file.write(i2 + 'patch.enableWave(' + str(i) + ')\n')
             else:
                 out_file.write(i2 + 'patch.disableWave(' + str(i) + ')\n')
-            out_file.write(i2 + 'patch.setWaveTarget(%s, %s)\n' % (i, self._SeaPatch__formatWaveTarget(self.patch.getWaveTarget(i))))
-            out_file.write(i2 + 'patch.setWaveFunc(%s, %s)\n' % (i, self._SeaPatch__formatWaveFunc(self.patch.getWaveFunc(i))))
+            out_file.write(i2 + 'patch.setWaveTarget(%s, %s)\n' % (i, self.__formatWaveTarget(self.patch.getWaveTarget(i))))
+            out_file.write(i2 + 'patch.setWaveFunc(%s, %s)\n' % (i, self.__formatWaveFunc(self.patch.getWaveFunc(i))))
             if self.patch.getWaveFunc(i) == SeaPatchRoot.WFSin:
                 out_file.write(i2 + 'patch.setWaveDirection(' + str(i) + ', Vec2(%.4f, %.4f))\n' % (mdir[i][0], mdir[i][1]))
 
@@ -537,7 +537,7 @@ class SeaPatch(Water):
 
 
 
-    def _SeaPatch__formatWaveTarget(self, target):
+    def __formatWaveTarget(self, target):
         if target == SeaPatchRoot.WTZ:
             return 'SeaPatchRoot.WTZ'
         elif target == SeaPatchRoot.WTU:
@@ -547,7 +547,7 @@ class SeaPatch(Water):
 
 
 
-    def _SeaPatch__formatWaveFunc(self, func):
+    def __formatWaveFunc(self, func):
         if func == SeaPatchRoot.WFSin:
             return 'SeaPatchRoot.WFSin'
         elif func == SeaPatchRoot.WFNoise:

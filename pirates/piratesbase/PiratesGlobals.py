@@ -14,6 +14,7 @@ searchPath = DSearchPath()
 for i in range(getModelPath().getNumDirectories()):
     searchPath.appendDirectory(getModelPath().getDirectory(i))
 
+PiratesSubId = 9872
 ShipsDatabaseChannelId = 4008
 AvatarsDatabaseChannelId = 4021
 InventoryDatabaseChannelId = 4023
@@ -226,8 +227,8 @@ def getInterfaceOutlineFont():
             InterfaceOutlineFont = loader.loadFont(InterfaceOutlineFontPath, lineHeight = 1.0)
             if not InterfaceOutlineFont.isValid():
                 InterfaceOutlineFont = TextNode.getDefaultFont()
-            
-    
+
+
     return InterfaceOutlineFont
 
 
@@ -246,8 +247,8 @@ def getPirateFont():
             PirateFont = loader.loadFont(PirateFontPath, lineHeight = 1.0)
             if not PirateFont.isValid():
                 PirateFont = TextNode.getDefaultFont()
-            
-    
+
+
     return PirateFont
 
 
@@ -266,8 +267,8 @@ def getPirateOutlineFont():
             PirateOutlineFont = loader.loadFont(PirateOutlineFontPath, lineHeight = 1.0)
             if not PirateOutlineFont.isValid():
                 PirateOutlineFont = TextNode.getDefaultFont()
-            
-    
+
+
     return PirateOutlineFont
 
 
@@ -286,8 +287,8 @@ def getPirateBoldOutlineFont():
             PirateBoldOutlineFont = loader.loadFont(PirateBoldOutlineFontPath, lineHeight = 1.0)
             if not PirateBoldOutlineFont.isValid():
                 PirateBoldOutlineFont = TextNode.getDefaultFont()
-            
-    
+
+
     return PirateBoldOutlineFont
 
 
@@ -622,7 +623,7 @@ def teamStr2TeamId(typeStr, defaultTeam = PLAYER_TEAM):
         team = SPANISH_UNDEAD_TEAM_STR
     elif typeStr == FRENCH_UNDEAD_TEAM_STR:
         team = FRENCH_UNDEAD_TEAM_STR
-    
+
     return team
 
 SearchableCrate = 'Crate'

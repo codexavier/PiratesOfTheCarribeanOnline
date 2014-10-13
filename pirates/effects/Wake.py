@@ -1,7 +1,7 @@
 # File: W (Python 2.4)
 
 from pandac.PandaModules import *
-from libpirates import SeaPatchNode
+from pirates.seapatch.SeaPatchNode import SeaPatchNode
 from direct.interval.IntervalGlobal import *
 from direct.actor import Actor
 from direct.particles import ParticleEffect
@@ -23,7 +23,7 @@ class Wake(PooledEffect):
     TurnFactor = -2.0
     AvgCount = 50
     TexStage = TextureStage.getDefault()
-    
+
     def __init__(self):
         PooledEffect.__init__(self)
         self.taskName = None
@@ -58,7 +58,7 @@ class Wake(PooledEffect):
             if self.use_depth_offset:
                 depth_offset = DepthOffsetAttrib.make(5)
                 self.spNP.setAttrib(depth_offset)
-            
+
         else:
             self.wake.setBin('ground', -7)
             self.bowWave.setBin('fixed', 0)
@@ -78,11 +78,11 @@ class Wake(PooledEffect):
             self.spNP.setAttrib(stencil)
             if not base.useStencils:
                 self.spNP.hide()
-            
-        
+
+
         self.shadow = None
 
-    
+
     def attachToShip(self, ship):
         self.taskName = ship.taskName('wake')
         draw_shadow = True
@@ -113,7 +113,7 @@ class Wake(PooledEffect):
                 wake_offset_y = 22.5
             wake_scale = 0.17999999999999999
             string = 'INTERCEPTORL1'
-        
+
         if model == ShipGlobals.INTERCEPTORL2:
             scale_x = 0.69999999999999996 / 0.75
             scale_y = 0.55000000000000004 / 0.75
@@ -124,7 +124,7 @@ class Wake(PooledEffect):
                 wake_offset_y = 22.5 / 0.75
             wake_scale = 0.17999999999999999 / 0.75
             string = 'INTERCEPTORL2'
-        
+
         if model == ShipGlobals.INTERCEPTORL3 or model == ShipGlobals.SKEL_INTERCEPTORL3:
             scale_x = 0.69999999999999996 / 0.75 / 0.75
             scale_y = 0.55000000000000004 / 0.75 / 0.75
@@ -135,7 +135,7 @@ class Wake(PooledEffect):
                 wake_offset_y = 22.5 / 0.75 / 0.75
             wake_scale = 0.17999999999999999 / 0.75 / 0.75
             string = 'INTERCEPTORL3'
-        
+
         if model == ShipGlobals.QUEEN_ANNES_REVENGE:
             scale_x = 0.69999999999999996 / 0.75 / 0.75
             scale_y = 0.55000000000000004 / 0.75 / 0.75
@@ -146,7 +146,7 @@ class Wake(PooledEffect):
                 wake_offset_y = 22.5 / 0.75 / 0.75
             wake_scale = 0.17999999999999999 / 0.75 / 0.75
             string = 'QUEEN_ANNES_REVENGE'
-        
+
         if model == ShipGlobals.MERCHANTL1:
             scale_x = 1.05
             scale_y = 1.05
@@ -157,7 +157,7 @@ class Wake(PooledEffect):
                 wake_offset_y = 80.0 * 0.69999999999999996
             wake_scale = 0.5 * 0.69999999999999996
             string = 'MERCHANTL1'
-        
+
         if model == ShipGlobals.MERCHANTL2:
             scale_x = 1.5
             scale_y = 1.5
@@ -168,7 +168,7 @@ class Wake(PooledEffect):
                 wake_offset_y = 80.0
             wake_scale = 0.5
             string = 'MERCHANTL2'
-        
+
         if model == ShipGlobals.MERCHANTL3:
             scale_x = 1.8500000000000001
             scale_y = 1.8500000000000001
@@ -179,7 +179,7 @@ class Wake(PooledEffect):
                 wake_offset_y = 80.0 * 1.2333000000000001
             wake_scale = 0.5 * 1.2333000000000001
             string = 'MERCHANTL3'
-        
+
         if model == ShipGlobals.WARSHIPL1:
             scale_x = 1.0800000000000001 * 0.75 * 0.75
             scale_y = 1.01 * 0.75 * 0.75
@@ -190,7 +190,7 @@ class Wake(PooledEffect):
             else:
                 wake_offset_y = 125.0 * 0.69999999999999996 * 0.69999999999999996
             string = 'WARSHIPL1'
-        
+
         if model == ShipGlobals.WARSHIPL2:
             scale_x = 1.0800000000000001 * 0.75
             scale_y = 1.01 * 0.75
@@ -201,7 +201,7 @@ class Wake(PooledEffect):
             else:
                 wake_offset_y = 125.0 * 0.69999999999999996
             string = 'WARSHIPL2'
-        
+
         if model == ShipGlobals.SKEL_WARSHIPL3:
             scale = 0.72499999999999998
             scale_x = 1.0800000000000001 * scale
@@ -217,7 +217,7 @@ class Wake(PooledEffect):
             else:
                 wake_offset_y = 85.0 * scale
             string = 'SKEL_WARSHIPL3'
-        
+
         if model == ShipGlobals.WARSHIPL3:
             scale_x = 1.0800000000000001
             scale_y = 1.05
@@ -228,7 +228,7 @@ class Wake(PooledEffect):
             else:
                 wake_offset_y = 125.0
             string = 'WARSHIPL3'
-        
+
         if model == ShipGlobals.BLACK_PEARL:
             scale_x = 1.05
             scale_y = 1.0800000000000001
@@ -236,7 +236,7 @@ class Wake(PooledEffect):
             wake_scale = 0.59999999999999998
             wake_offset_y = 100.0
             string = 'BLACK_PEARL'
-        
+
         if model == ShipGlobals.SHIP_OF_THE_LINE:
             scale_x = 1.05
             scale_y = 1.0800000000000001
@@ -244,13 +244,13 @@ class Wake(PooledEffect):
             wake_scale = 0.59999999999999998
             wake_offset_y = 100.0
             string = 'SHIP_OF_THE_LINE'
-        
+
         if model == ShipGlobals.DAUNTLESS:
             string = 'DAUNTLESS'
-        
+
         if model == ShipGlobals.FLYING_DUTCHMAN:
             string = 'FLYING_DUTCHMAN'
-        
+
         if draw_shadow:
             if self.shadow_model:
                 water_shadow = WaterShadow('p_ship_shadow', self.shadow_model, ship)
@@ -258,38 +258,38 @@ class Wake(PooledEffect):
                 water_shadow.setScale(scale_x, scale_y, scale_z)
                 if not hasattr(base, 'pe'):
                     water_shadow.setHpr(180, 0, 0)
-                
+
                 self.shadow = water_shadow
             else:
                 print 'ERROR: -------------- shadow model not found for ship class', ship.shipClass
-        
+
         self.wake.setScale(wake_scale)
         if not hasattr(base, 'pe'):
             self.wake.setHpr(180, 0, 0)
-        
+
         self.wake.setPos(wake_offset_x, wake_offset_y, wake_offset_z)
         self.wake.reparentTo(ship)
         self.wake.hide()
 
-    
+
     def startAnimate(self, ship):
         self.stopAnimate()
         self.wake.show()
         taskMgr.add(self._Wake__animate, self.taskName, extraArgs = [
             ship])
 
-    
+
     def stopAnimate(self):
         if self.wake:
             if not self.wake.isEmpty():
                 self.wake.hide()
-            
-        
+
+
         if self.taskName:
             taskMgr.remove(self.taskName)
-        
 
-    
+
+
     def _Wake__animate(self, ship):
         self.pastForwardVelocity.append(ship.getForwardVelocity())
         while len(self.pastForwardVelocity) > self.AvgCount:
@@ -320,23 +320,23 @@ class Wake(PooledEffect):
         self.bend.setH(rotationalVelocity * self.TurnFactor)
         return Task.cont
 
-    
+
     def startFakeAnimate(self):
         self.wake.show()
         taskMgr.add(self._Wake__fakeAnimate, self.taskName)
 
-    
+
     def stopFakeAnimate(self):
         if self.wake:
             if not self.wake.isEmpty():
                 self.wake.hide()
-            
-        
+
+
         if self.taskName:
             taskMgr.remove(self.taskName)
-        
 
-    
+
+
     def _Wake__fakeAnimate(self, task):
         velocity = 90.0
         if velocity < self.MinWakeVelocity:
@@ -359,7 +359,7 @@ class Wake(PooledEffect):
         self.bowWave.setTexOffset(self.TexStage, self.u, 0)
         return Task.cont
 
-    
+
     def cleanUpEffect(self):
         self.stopAnimate()
         self.wake.detachNode()
@@ -367,16 +367,16 @@ class Wake(PooledEffect):
         self.checkInEffect(self)
         if self.shadow != None:
             self.shadow.detachNode()
-        
 
-    
+
+
     def destroy(self):
         self.stopAnimate()
         self.wake.removeNode()
         self.bowWave.removeNode()
         if self.shadow != None:
             self.shadow.removeNode()
-        
+
         PooledEffect.destroy(self)
 
 

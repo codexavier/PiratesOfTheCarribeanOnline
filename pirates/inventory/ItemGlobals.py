@@ -61,11 +61,11 @@ def getAllWeaponIds(type = None):
             if type:
                 if __itemInfo[item][ITEM_TYPE] != type:
                     continue
-                
-            
+
+
             keys.append(item)
             continue
-    
+
     return keys
 
 
@@ -76,10 +76,10 @@ def getAllClothingIds(gender = None):
             if gender:
                 if (gender == 'm' or __itemInfo[item][MALE_MODEL_ID] == -1 or gender == 'f') and __itemInfo[item][FEMALE_MODEL_ID] == -1:
                     continue
-                
+
             keys.append(item)
             continue
-    
+
     return keys
 
 
@@ -89,7 +89,7 @@ def getClothingByType(type):
         if __itemInfo[item][ITEM_CLASS] == InventoryType.ItemTypeClothing and __itemInfo[item][ITEM_TYPE] == type:
             keys.append(item)
             continue
-    
+
     return keys
 
 
@@ -99,7 +99,7 @@ def getAllJewelryIds():
         if __itemInfo[item][ITEM_CLASS] == InventoryType.ItemTypeJewelry:
             keys.append(item)
             continue
-    
+
     return keys
 
 
@@ -109,7 +109,7 @@ def getJewelryByType(type):
         if __itemInfo[item][ITEM_CLASS] == InventoryType.ItemTypeJewelry and __itemInfo[item][ITEM_TYPE] == type:
             keys.append(item)
             continue
-    
+
     return keys
 
 
@@ -119,7 +119,7 @@ def getAllTattooIds():
         if __itemInfo[item][ITEM_CLASS] == InventoryType.ItemTypeTattoo:
             keys.append(item)
             continue
-    
+
     return keys
 
 
@@ -129,7 +129,7 @@ def getTattoosByType(type):
         if __itemInfo[item][ITEM_CLASS] == InventoryType.ItemTypeTattoo and __itemInfo[item][ITEM_TYPE] == type:
             keys.append(item)
             continue
-    
+
     return keys
 
 
@@ -139,7 +139,7 @@ def getAllCharmIds():
         if __itemInfo[item][ITEM_CLASS] == InventoryType.ItemTypeCharm:
             keys.append(item)
             continue
-    
+
     return keys
 
 
@@ -150,7 +150,7 @@ def getAllConsumableIds(usableOnly = True):
             if usableOnly == False or not __itemInfo[item][FROM_QUEST]:
                 keys.append(item)
                 continue
-    
+
     return keys
 
 
@@ -160,7 +160,7 @@ def getAllHealthIds():
         if __itemInfo[item][ITEM_CLASS] == InventoryType.ItemTypeConsumable and __itemInfo[item][AUTO_TONIC]:
             keys.append(item)
             continue
-    
+
     return keys
 
 
@@ -170,7 +170,7 @@ def getHumanWeaponTypes():
         if __itemInfo[item][ITEM_CLASS] == InventoryType.ItemTypeWeapon or __itemInfo[item][ITEM_CLASS] == InventoryType.ItemTypeConsumable:
             keys.append(item)
             continue
-    
+
     return keys
 
 
@@ -178,7 +178,7 @@ def getVersion(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[VERSION]
-    
+
     return 0
 
 
@@ -186,7 +186,7 @@ def getGoldCost(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[GOLD_COST]
-    
+
     return 0
 
 
@@ -194,7 +194,7 @@ def getName(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return str(item[ITEM_NAME])
-    
+
     return ''
 
 
@@ -202,7 +202,7 @@ def getConstantName(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return str(item[CONSTANT_NAME])
-    
+
     return ''
 
 
@@ -210,7 +210,7 @@ def getRarity(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[RARITY]
-    
+
     return 0
 
 
@@ -218,7 +218,7 @@ def getClass(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ITEM_CLASS]
-    
+
     return 0
 
 
@@ -226,7 +226,7 @@ def getType(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ITEM_TYPE]
-    
+
     return 0
 
 
@@ -234,7 +234,7 @@ def isFromLoot(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FROM_LOOT]
-    
+
     return 0
 
 
@@ -242,7 +242,7 @@ def isFromShop(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FROM_SHOP]
-    
+
     return 0
 
 
@@ -250,7 +250,7 @@ def isFromQuest(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FROM_QUEST]
-    
+
     return 0
 
 
@@ -258,7 +258,7 @@ def isFromPromo(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FROM_PROMO]
-    
+
     return 0
 
 
@@ -266,7 +266,7 @@ def isFromPVP(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FROM_PVP]
-    
+
     return 0
 
 
@@ -274,7 +274,7 @@ def isFromNPC(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FROM_NPC]
-    
+
     return 0
 
 
@@ -288,11 +288,11 @@ def getLegalWeapons(rarity, items, level, weaponLevels, enemyLevel):
             if itemClass == InventoryType.ItemTypeWeapon:
                 if item[WEAPON_REQ] <= weaponLevels[itemType - 1] + WEAPON_LEVEL_REQ_BUFFER:
                     typeItems.append(itemId)
-                
+
             else:
                 typeItems.append(itemId)
         itemClass == InventoryType.ItemTypeWeapon
-    
+
     return typeItems
 
 
@@ -303,7 +303,7 @@ def getLegalConsumables(rarity, items, level):
         if item and item[ITEM_CLASS] == InventoryType.ItemTypeConsumable and item[FROM_LOOT] and item[RARITY] == rarity and item[ITEM_NOTORIETY_REQ] <= level + LEVEL_REQ_BUFFER:
             typeItems.append(itemId)
             continue
-    
+
     return typeItems
 
 
@@ -318,9 +318,9 @@ def getLegalClothing(rarity, gender, items, level):
                 modelId = item[FEMALE_MODEL_ID]
             if modelId != -1:
                 typeItems.append(itemId)
-            
+
         modelId != -1
-    
+
     return typeItems
 
 
@@ -331,7 +331,7 @@ def getLegalStoreItems(items):
         if item[FROM_SHOP]:
             typeItems.append(itemId)
             continue
-    
+
     return typeItems
 
 
@@ -345,9 +345,7 @@ def getGenderType(type, gender, items):
                 modelId = getFemaleModelId(item)
             if modelId != -1:
                 typeItems.append(item)
-            
-        modelId != -1
-    
+
     return typeItems
 
 
@@ -355,7 +353,7 @@ def getSubtype(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ITEM_SUBTYPE]
-    
+
     return 0
 
 
@@ -363,7 +361,7 @@ def getNotorietyRequirement(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ITEM_NOTORIETY_REQ]
-    
+
     return 0
 
 
@@ -371,7 +369,7 @@ def getLandInfamyRequirement(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ITEM_LAND_INFAMY_REQ]
-    
+
     return 0
 
 
@@ -379,7 +377,7 @@ def getSeaInfamyRequirement(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ITEM_SEA_INFAMY_REQ]
-    
+
     return 0
 
 
@@ -387,7 +385,7 @@ def getQuestRequirement(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return str(item[QUEST_REQ])
-    
+
     return ''
 
 
@@ -395,7 +393,7 @@ def getWeaponRequirement(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[WEAPON_REQ]
-    
+
     return 0
 
 
@@ -403,7 +401,7 @@ def getPower(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[POWER]
-    
+
     return 0
 
 
@@ -411,7 +409,7 @@ def getBarrels(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[BARRELS]
-    
+
     return 0
 
 
@@ -419,7 +417,7 @@ def getSpecialAttackRank(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[SPECIAL_ATTACK_RANK]
-    
+
     return 0
 
 
@@ -427,7 +425,7 @@ def getSpecialAttack(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[SPECIAL_ATTACK]
-    
+
     return 0
 
 
@@ -435,7 +433,7 @@ def getAttributeRank1(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ATTRIBUTE_1_RANK]
-    
+
     return 0
 
 
@@ -443,7 +441,7 @@ def getAttribute1(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ATTRIBUTE_1]
-    
+
     return 0
 
 
@@ -451,7 +449,7 @@ def getAttributeRank2(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ATTRIBUTE_2_RANK]
-    
+
     return 0
 
 
@@ -459,7 +457,7 @@ def getAttribute2(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ATTRIBUTE_2]
-    
+
     return 0
 
 
@@ -467,7 +465,7 @@ def getAttributeRank3(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ATTRIBUTE_3_RANK]
-    
+
     return 0
 
 
@@ -475,7 +473,7 @@ def getAttribute3(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ATTRIBUTE_3]
-    
+
     return 0
 
 
@@ -483,15 +481,15 @@ def getWeaponAttributes(itemId, attributeId):
     boostId1 = getAttribute1(itemId)
     if boostId1 == attributeId:
         return getAttributeRank1(itemId)
-    
+
     boostId2 = getAttribute2(itemId)
     if boostId2 == attributeId:
         return getAttributeRank2(itemId)
-    
+
     boostId3 = getAttribute3(itemId)
     if boostId3 == attributeId:
         return getAttributeRank3(itemId)
-    
+
     return 0
 
 
@@ -503,18 +501,18 @@ def getAttributes(itemId):
         attributeRank1 = getAttributeRank1(itemId)
         if attribute1 and attributeRank1:
             attributes.append((attribute1, attributeRank1))
-        
+
         attribute2 = getAttribute2(itemId)
         attributeRank2 = getAttributeRank2(itemId)
         if attribute2 and attributeRank2:
             attributes.append((attribute2, attributeRank2))
-        
+
         attribute3 = getAttribute3(itemId)
         attributeRank3 = getAttributeRank3(itemId)
         if attribute3 and attributeRank3:
             attributes.append((attribute3, attributeRank3))
-        
-    
+
+
     return attributes
 
 
@@ -522,7 +520,7 @@ def getSkillBoostRank1(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[SKILLBOOST_1_RANK]
-    
+
     return 0
 
 
@@ -530,7 +528,7 @@ def getSkillBoost1(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[SKILLBOOST_1]
-    
+
     return 0
 
 
@@ -538,7 +536,7 @@ def getSkillBoostRank2(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[SKILLBOOST_2_RANK]
-    
+
     return 0
 
 
@@ -546,7 +544,7 @@ def getSkillBoost2(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[SKILLBOOST_2]
-    
+
     return 0
 
 
@@ -554,7 +552,7 @@ def getSkillBoostRank3(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[SKILLBOOST_3_RANK]
-    
+
     return 0
 
 
@@ -562,7 +560,7 @@ def getSkillBoost3(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[SKILLBOOST_3]
-    
+
     return 0
 
 
@@ -570,15 +568,15 @@ def getWeaponBoosts(itemId, skillId):
     boostId1 = getSkillBoost1(itemId)
     if boostId1 == skillId:
         return getSkillBoostRank1(itemId)
-    
+
     boostId2 = getSkillBoost2(itemId)
     if boostId2 == skillId:
         return getSkillBoostRank2(itemId)
-    
+
     boostId3 = getSkillBoost3(itemId)
     if boostId3 == skillId:
         return getSkillBoostRank3(itemId)
-    
+
     return 0
 
 
@@ -590,18 +588,18 @@ def getSkillBoosts(itemId):
         skillBoostRank1 = getSkillBoostRank1(itemId)
         if skillBoost1 and skillBoostRank1:
             skillBoosts.append((skillBoost1, skillBoostRank1))
-        
+
         skillBoost2 = getSkillBoost2(itemId)
         skillBoostRank2 = getSkillBoostRank2(itemId)
         if skillBoost2 and skillBoostRank2:
             skillBoosts.append((skillBoost2, skillBoostRank2))
-        
+
         skillBoost3 = getSkillBoost3(itemId)
         skillBoostRank3 = getSkillBoostRank3(itemId)
         if skillBoost3 and skillBoostRank3:
             skillBoosts.append((skillBoost3, skillBoostRank3))
-        
-    
+
+
     return skillBoosts
 
 
@@ -609,14 +607,14 @@ def getModel(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return str(item[ITEM_MODEL])
-    
+
 
 
 def getColor(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[ITEM_COLOR]
-    
+
     return 0
 
 
@@ -624,14 +622,14 @@ def getIcon(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return str(item[ITEM_ICON])
-    
+
 
 
 def getVfxType1(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[VFX_TYPE_1]
-    
+
     return 0
 
 
@@ -639,7 +637,7 @@ def getVfxType2(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[VFX_TYPE_2]
-    
+
     return 0
 
 
@@ -647,7 +645,7 @@ def getVfxOffset(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[VFX_OFFSET]
-    
+
     return 0
 
 
@@ -655,7 +653,7 @@ def getFlavorText(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FLAVOR_TEXT]
-    
+
     return ''
 
 HAS_HOLIDAY_DATA = {
@@ -682,8 +680,8 @@ def getStackLimit(itemId):
     if item:
         if item[ITEM_CLASS] == InventoryType.ItemTypeConsumable:
             return item[STACK_LIMIT]
-        
-    
+
+
     return 0
 
 
@@ -691,7 +689,7 @@ def isAutoTonic(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[AUTO_TONIC]
-    
+
     return 0
 
 
@@ -699,7 +697,7 @@ def getUseSkill(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[USE_SKILL]
-    
+
     return 0
 
 
@@ -707,7 +705,7 @@ def getMaleModelId(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[MALE_MODEL_ID]
-    
+
     return 0
 
 
@@ -715,7 +713,7 @@ def getMaleTextureId(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[MALE_TEXTURE_ID]
-    
+
     return 0
 
 
@@ -723,7 +721,7 @@ def getFemaleModelId(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FEMALE_MODEL_ID]
-    
+
     return 0
 
 
@@ -731,7 +729,7 @@ def getFemaleTextureId(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FEMALE_TEXTURE_ID]
-    
+
     return 0
 
 
@@ -739,7 +737,7 @@ def canDyeItem(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[CAN_DYE_ITEM]
-    
+
     return 0
 
 
@@ -747,7 +745,7 @@ def getPrimaryColor(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[PRIMARY_COLOR]
-    
+
     return 0
 
 
@@ -755,7 +753,7 @@ def getSecondaryColor(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[SECONDARY_COLOR]
-    
+
     return 0
 
 
@@ -763,7 +761,7 @@ def getMaleOrientation(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[MALE_ORIENTATION]
-    
+
     return 0
 
 
@@ -771,7 +769,7 @@ def getMaleOrientation2(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[MALE_ORIENTATION_2]
-    
+
     return 0
 
 
@@ -779,7 +777,7 @@ def getFemaleOrientation(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FEMALE_ORIENTATION]
-    
+
     return 0
 
 
@@ -787,7 +785,7 @@ def getFemaleOrientation2(itemId):
     item = __itemInfo.get(itemId)
     if item:
         return item[FEMALE_ORIENTATION_2]
-    
+
     return 0
 
 AttributeIcons = {
@@ -929,8 +927,8 @@ def getJumpAnimInfo(weaponInfo):
         animInfo = JumpAnimInfo.get(subtypeId)
         if animInfo:
             return animInfo
-        
-    
+
+
     return [
         'jump',
         1,
@@ -945,7 +943,7 @@ StopToAimSubtypes = [
 def shouldStopToAim(subtypeId):
     if subtypeId in StopToAimSubtypes:
         return True
-    
+
     return False
 
 LinkedSkills = {
@@ -1013,7 +1011,7 @@ def getSkillCategory(weaponId):
         return __weaponId2SkillCategory.get(getSubtype(weaponId))
     elif type:
         return __weaponId2SkillCategory.get(type)
-    
+
     return __weaponId2SkillCategory.get(weaponId)
 
 TattooOrientations = {
@@ -1408,14 +1406,14 @@ def initItemTattooImages():
         image.setWrapV(Texture.WMBorderColor)
         image.setBorderColor(Vec4(1, 1, 1, 1))
         ItemTattooImages[i] = (image, scale)
-    
+
     _tattoosInitialized = 1
 
 
 def getItemTattooImage(tattooNum):
     if _itemTattoosInitialized == 0:
         initItemTattooImages()
-    
+
     return ItemTattooImages.get(tattooNum)
 
 
@@ -1437,7 +1435,7 @@ def getItemRepId(itemId):
         return InventoryType.CannonRep
     elif itemType == SAILING:
         return InventoryType.SailingRep
-    
+
 
 ModelPosHpr = {
     'pir_m_hnd_dol_bane_a': [

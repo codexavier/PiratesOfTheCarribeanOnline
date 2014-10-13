@@ -7,14 +7,20 @@ class ClientServicesManagerUD(DistributedObjectGlobalUD):
     notify = directNotify.newCategory('ClientServicesManagerUD')
 
     def login(self, cookie):
-        self.target = self.air.getMsgSender()
+        target = self.air.getMsgSender()
 
         datagram = PyDatagram()
         datagram.addServerHeader(
-            self.target,
+            target,
             self.air.ourChannel,
             CLIENTAGENT_SET_STATE)
         datagram.addUint16(2)
         self.air.send(datagram)
 
-        self.sendUpdateToChannel(self.target, 'acceptLogin', [])
+        self.sendUpdateToChannel(target, 'acceptLogin', [])
+
+    def requestAvatars(self):   # TODO
+        print 'Got an avatar request'
+        target = self.air.getMsgSender()
+        avs = []
+        self.sendUpdateToChannel(target, 'setAvatars', [avs])

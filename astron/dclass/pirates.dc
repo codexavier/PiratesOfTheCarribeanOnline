@@ -2,12 +2,23 @@ from direct.distributed import DistributedObjectGlobal
 from pirates.uberdog import ClientServicesManager/UD
 from pirates.distributed import PiratesDistrict/AI
 
+struct PotentialPirate {
+  uint32 doId;
+  string name;
+  string dna;
+  uint8 position;
+  uint8 random;
+};
+
 dclass DistributedObjectGlobal : DistributedObject {
 };
 
 dclass ClientServicesManager : DistributedObjectGlobal {
   login(string cookie) clsend;
   acceptLogin();
+
+  requestAvatars() clsend;
+  setAvatars(PotentialPirate[]);
 };
 
 dclass PiratesDistrict : DistributedDistrict {

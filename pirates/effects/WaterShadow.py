@@ -1,11 +1,11 @@
 # File: W (Python 2.4)
 
 from pandac.PandaModules import *
-from libpirates import SeaPatchNode
+from pirates.seapatch.SeaPatchNode import SeaPatchNode
 from otp.otpbase import OTPRender
 
 class WaterShadow(NodePath):
-    
+
     def __init__(self, name, shadow_model, parent, use_water_bin = True, bin_number = 7):
         self.name = name
         self.use_water_bin = use_water_bin
@@ -44,8 +44,8 @@ class WaterShadow(NodePath):
                 self.setAttrib(stencil)
                 if not base.useStencils:
                     self.hide()
-                
-            
-        
+
+
+
 
 

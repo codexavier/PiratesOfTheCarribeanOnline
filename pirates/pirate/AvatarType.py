@@ -12,12 +12,12 @@ class AvatarType:
 
     def __init__(self, faction = None, track = None, id = None, base = None, boss = 0):
         self._setMutable(True)
-        try:
+        if 'base' in __builtins__:
             self.faction = base.faction
             self.track = base.track
             self.id = base.id
             self.boss = base.boss
-        except:
+        else:
             self.faction = AvatarType.Unspecified
             self.track = AvatarType.Unspecified
             self.id = AvatarType.Unspecified

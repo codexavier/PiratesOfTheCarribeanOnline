@@ -316,45 +316,45 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
 
     def actorInterval(self, *args, **kwargs):
         if hasattr(self, 'undead') and self.undead:
-            return UsesAnimationMixer.actorInterval(self.skeleton, *args, **args)
+            return UsesAnimationMixer.actorInterval(self.skeleton, *args, **kwArgs)
         else:
-            bodyIval = UsesAnimationMixer.actorInterval(self, *args, **args)
+            bodyIval = UsesAnimationMixer.actorInterval(self, *args, **kwArgs)
             return bodyIval
 
 
     def play(self, *args, **kwArgs):
         if hasattr(self, 'undead') and self.undead:
-            UsesAnimationMixer.play(self.skeleton, *args, **args)
+            UsesAnimationMixer.play(self.skeleton, *args, **kwArgs)
         else:
-            UsesAnimationMixer.play(self, *args, **args)
+            UsesAnimationMixer.play(self, *args, **kwArgs)
 
 
     def loop(self, *args, **kwArgs):
         if hasattr(self, 'undead') and self.undead:
-            UsesAnimationMixer.loop(self.skeleton, *args, **args)
+            UsesAnimationMixer.loop(self.skeleton, *args, **kwArgs)
         else:
-            UsesAnimationMixer.loop(self, *args, **args)
+            UsesAnimationMixer.loop(self, *args, **kwArgs)
 
 
     def stop(self, *args, **kwArgs):
         if hasattr(self, 'undead') and self.undead:
-            UsesAnimationMixer.stop(self.skeleton, *args, **args)
+            UsesAnimationMixer.stop(self.skeleton, *args, **kwArgs)
         else:
-            UsesAnimationMixer.stop(self, *args, **args)
+            UsesAnimationMixer.stop(self, *args, **kwArgs)
 
 
     def pose(self, *args, **kwArgs):
         if hasattr(self, 'undead') and self.undead:
-            UsesAnimationMixer.pose(self.skeleton, *args, **args)
+            UsesAnimationMixer.pose(self.skeleton, *args, **kwArgs)
         else:
-            UsesAnimationMixer.pose(self, *args, **args)
+            UsesAnimationMixer.pose(self, *args, **kwArgs)
 
 
     def pingpong(self, *args, **kwArgs):
         if hasattr(self, 'undead') and self.undead:
-            UsesAnimationMixer.pingpong(self.skeleton, *args, **args)
+            UsesAnimationMixer.pingpong(self.skeleton, *args, **kwArgs)
         else:
-            UsesAnimationMixer.pingpong(self, *args, **args)
+            UsesAnimationMixer.pingpong(self, *args, **kwArgs)
 
 
     def getDuration(self, animName = None, partName = None, fromFrame = None, toFrame = None):
@@ -387,7 +387,6 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
                     self.leftHandNode.reparentTo(handLocator)
                 else:
                     self.weaponJointInstances.append(self.leftHandNode.instanceTo(handLocator))
-            lodName == lods[0]
 
         self.postAsyncLoadFix()
 
@@ -486,6 +485,8 @@ class Biped(UsesAnimationMixer, Avatar, UsesEffectNode):
         self.nametag3d.setZ(self.scale)
         self.nametag3d.setH(self.getGeomNode().getH())
         self.nametag.setFont(PiratesGlobals.getPirateFont())
+
+        return 0 # TODO: fix iconNodePath
         self.iconNodePath = self.nametag.getNameIcon()
         if self.iconNodePath.isEmpty():
             self.notify.warning('empty iconNodePath in initializeNametag3d')

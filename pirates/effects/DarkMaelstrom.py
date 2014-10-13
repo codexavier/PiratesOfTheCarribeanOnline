@@ -8,7 +8,7 @@ from pirates.piratesbase import PiratesGlobals
 import random
 
 class DarkMaelstrom(DirectObject, NodePath):
-    
+
     def __init__(self, newParent = None):
         NodePath.__init__(self, 'DarkMaelstromParent')
         self.newParent = newParent
@@ -44,8 +44,7 @@ class DarkMaelstrom(DirectObject, NodePath):
         stormTops = self.glow.findAllMatches('**/Swirl_*')
         for top in stormTops:
             top.setBin('fixed', 125)
-        
-        continue
+
         stormTopTs = [ top.findAllTextureStages()[0] for top in stormTops ]
         duration = 20 + random.randint(1, 20)
         rotate = Parallel(stormTops[0].hprInterval(duration, Point3(360, 0, 0), startHpr = Point3(0, 0, 0)), stormTops[1].hprInterval(duration, Point3(0, 0, 0), startHpr = Point3(360, 0, 0)))
@@ -73,73 +72,73 @@ class DarkMaelstrom(DirectObject, NodePath):
         self.lightningTrack = Sequence(Wait(1.0), playBolt1, Wait(0.5), playBolt2, Wait(2.0), playBolt3, Wait(1.5), playBolt4, Wait(0.0))
         self.fadeTrack = None
 
-    
+
     def play(self, rate = 1):
         self.setColorScaleOff()
         self.track.start()
         self.lightningTrack.start()
         self.reparentTo(self.newParent)
 
-    
+
     def loop(self, rate = 1):
         self.setColorScaleOff()
         self.track.loop()
         self.lightningTrack.loop()
         self.reparentTo(self.newParent)
 
-    
+
     def fadeOutAndStop(self):
         if hasattr(self, 'lightningTrack'):
             self.lightningTrack.finish()
-        
+
         self.fadeTrack = Sequence(LerpColorScaleInterval(self, 1.0, Vec4(1.0, 1.0, 1.0, 0.0)), Func(self.stop))
         self.fadeTrack.start()
 
-    
+
     def stop(self):
         if hasattr(self, 'track'):
             if self.track:
                 self.track.finish()
-            
-        
+
+
         if hasattr(self, 'lightningTrack'):
             if self.lightningTrack:
                 self.lightningTrack.finish()
-            
-        
+
+
         if hasattr(self, 'fadeTrack'):
             if self.fadeTrack:
                 self.fadeTrack.finish()
-            
-        
 
-    
+
+
+
     def finish(self):
         self.stop()
         self.cleanUpEffect()
 
-    
+
     def cleanUpEffect(self):
         self.detachNode()
 
-    
+
     def destroy(self):
         self.stop()
         if hasattr(self, 'track'):
             del self.track
-        
+
         if hasattr(self, 'lightningTrack'):
             del self.lightningTrack
-        
+
         if hasattr(self, 'fadeTrack'):
             del self.fadeTrack
-        
+
         if hasattr(self, 'glow'):
             del self.glow
-        
+
         self.removeNode()
 
-    
+
     def setNewUVs(self, offset, part, ts):
         part.setTexOffset(ts, offset, offset)
 

@@ -336,23 +336,19 @@ class AnimationMixer:
     NA_INDEX = -1
     LOOP_INDEX = 0
     ACTION_INDEX = 1
-    LOOP = {
-        'NA': NA_INDEX,
-        'LOOP': LOOP_INDEX }
-    ACTION = {
-        'NA': NA_INDEX,
-        'ACTION': ACTION_INDEX }
-    sectionNames = [
-        None]
-    partNameLists = {
-        None: [] }
-    AnimRankings = { }
+    LOOP = {'NA': NA_INDEX, 'LOOP': LOOP_INDEX}
+    ACTION = {'NA': NA_INDEX, 'ACTION': ACTION_INDEX}
+    sectionNames = [None]
+    partNameLists = {None: []}
+    AnimRankings = {}
     defaultBlendT = 0.14999999999999999
 
     def __init__(self, actor):
         self.actor = actor
         channelCount = 0
-        self.partMixers =  [PartMixer(self, channelCount, actor, self.getPartsNameList(part)) for part in self.sectionNames]
+        self.partMixers = {}
+        for part in self.sectionNames:
+            self.partMixers[part] = PartMixer(self, channelCount, actor, self.getPartsNameList(part))
         self.ownedIvals = []
 
 
