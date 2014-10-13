@@ -1,4 +1,5 @@
 window-title Pirates Online [ALPHA]
+icon-filename pirates.ico
 
 model-path resources/
 model-path resources/phase_2
