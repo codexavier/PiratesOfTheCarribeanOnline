@@ -160,7 +160,7 @@ def getRandomCrazySkinColor():
         if randRoll < crazySkinColorRarities[i]:
             return i
             continue
-    
+
     return 0
 
 jewelryColors = [
@@ -312,10 +312,10 @@ def printColors():
             int(color.getY() * 256),
             int(color.getZ() * 256)]
         print str(outVal)
-    
+
     print '\n ** Jewelry Colors:'
     for color in jewelryColors:
-        
+
         try:
             outVal = [
                 int(color.getX() * 256),
@@ -325,7 +325,7 @@ def printColors():
             pass
 
         print str(outVal)
-    
+
     print '\n ** Hair Colors:'
     for color in hairColors:
         outVal = [
@@ -333,7 +333,7 @@ def printColors():
             int(color.getY() * 256),
             int(color.getZ() * 256)]
         print str(outVal)
-    
+
     print '\n ** Male Hat Colors:'
     for color in hatColors[0]:
         outVal = [
@@ -341,7 +341,7 @@ def printColors():
             int(color.getY() * 256),
             int(color.getZ() * 256)]
         print str(outVal)
-    
+
     print '\n ** Female Hat Colors:'
     for color in hatColors[1]:
         outVal = [
@@ -349,7 +349,7 @@ def printColors():
             int(color.getY() * 256),
             int(color.getZ() * 256)]
         print str(outVal)
-    
+
     print '\n ** Male Top Colors:'
     for color in clothesTopColors[0]:
         outVal = [
@@ -357,7 +357,7 @@ def printColors():
             int(color.getY() * 256),
             int(color.getZ() * 256)]
         print str(outVal)
-    
+
     print '\n ** Female Top Colors:'
     for color in clothesTopColors[1]:
         outVal = [
@@ -365,7 +365,7 @@ def printColors():
             int(color.getY() * 256),
             int(color.getZ() * 256)]
         print str(outVal)
-    
+
     print '\n ** Male Bottom Colors:'
     for color in clothesBotColors[0]:
         outVal = [
@@ -373,7 +373,7 @@ def printColors():
             int(color.getY() * 256),
             int(color.getZ() * 256)]
         print str(outVal)
-    
+
     print '\n ** Female Bottom Colors:'
     for color in clothesBotColors[1]:
         outVal = [
@@ -381,19 +381,19 @@ def printColors():
             int(color.getY() * 256),
             int(color.getZ() * 256)]
         print str(outVal)
-    
+
 
 
 class PirateEyes:
-    
+
     def __init__(self, color = 0):
         self.color = color
 
-    
+
     def copy(self, other):
         self.color = other.color
 
-    
+
     def __str__(self):
         string = 'color %s' % self.color
         return string
@@ -401,7 +401,7 @@ class PirateEyes:
 
 
 class PirateHair:
-    
+
     def __init__(self, hair = 0, beard = 0, mustache = 0, color = 0):
         self.hair = hair
         self.beard = beard
@@ -409,7 +409,7 @@ class PirateHair:
         self.color = color
         self.highlight = 0
 
-    
+
     def copy(self, other):
         self.hair = other.hair
         self.beard = other.beard
@@ -417,7 +417,7 @@ class PirateHair:
         self.color = other.color
         self.highlight = other.highlight
 
-    
+
     def __str__(self):
         string = 'style %s, beard %s, mustache %s, color %s, highlight %s' % (self.hair, self.beard, self.mustache, self.color, self.highlight)
         return string
@@ -425,7 +425,7 @@ class PirateHair:
 
 
 class PirateHead:
-    
+
     def __init__(self):
         self.headWidth = 0.0
         self.headHeight = 0.0
@@ -466,7 +466,7 @@ class PirateHead:
         self.earLobe = 0.0
         self.hair = PirateHair()
 
-    
+
     def copy(self, other):
         self.headWidth = other.headWidth
         self.headHeight = other.headHeight
@@ -507,7 +507,7 @@ class PirateHead:
         self.earLobe = other.earLobe
         self.hair.copy(other.hair)
 
-    
+
     def __str__(self):
         string = '--shape--\n\t' + 'headWidth %s, headHeight %s, headRoundness %s\n\t' % (self.headWidth, self.headHeight, self.headRoundness) + 'jawWidth %s, jawChinSize %s, jawAngle %s, jawLength %s\n\t' % (self.jawWidth, self.jawChinSize, self.jawAngle, self.jawLength) + 'face %s\n\t' % self.texture + '--mouth--\n\t' + 'mouthWidth %s, mouthLipThickness %s, \n\t' % (self.mouthWidth, self.mouthLipThickness) + 'cheekFat %s, teeth %s\n\t' % (self.cheekFat, self.teeth) + '--eyes--\n\t' + 'browProtruding %s\n\t' % self.browProtruding + 'eyeCorner %s, eyeOpeningSize  %s, eyeSpace %s\n\t' % (self.eyeCorner, self.eyeOpeningSize, self.eyeBulge) + 'eye %s\n\t' % self.eyes + '--nose--\n\t' + 'noseBridgeWidth %s, noseNostrilWidth %s, noseLength %s, noseBump %s\n\t' % (self.noseBridgeWidth, self.noseNostrilWidth, self.noseLength, self.noseBump) + 'noseNostrilHeight %s, noseNostrilAngle %s, noseNostrilIndent %s\n\t' % (self.noseNostrilHeight, self.noseNostrilAngle, self.noseNostrilIndent) + 'noseBridgeBroke %s, noseNostrilBroke %s\n\t' % (self.noseBridgeBroke, self.noseNostrilBroke) + '--ear--\n\t' + 'earScale %s, earFlapAngle %s, earPosition %s\n\t' % (self.earScale, self.earFlapAngle, self.earPosition) + '--hair--\n\t' + '%s\n\t' % self.hair
         return string
@@ -515,7 +515,6 @@ class PirateHead:
 
 
 class PirateBody:
-    
     def __init__(self, shape = 0, height = 0.0, color = 0):
         self.shape = shape
         self.height = height
@@ -523,7 +522,6 @@ class PirateBody:
         self.color = color
         self.skin = 0
 
-    
     def copy(self, other):
         self.shape = other.shape
         self.height = other.height
@@ -531,15 +529,12 @@ class PirateBody:
         self.color = other.color
         self.skin = other.skin
 
-    
     def __str__(self):
         string = 'shape %s, height %s, headSize %s, skintone %s, skinTexture %s' % (self.shape, self.height, self.headSize, self.color, self.skin)
         return string
 
 
-
 class PirateClothes:
-    
     def __init__(self, top = 0, bot = 0, shoe = 0, color = 0):
         self.shirt = top
         self.vest = 0
@@ -565,7 +560,6 @@ class PirateClothes:
         self.shoeColor = 0
         self.hatColor = 0
 
-    
     def copy(self, other):
         self.shirt = other.shirt
         self.vest = other.vest
@@ -591,15 +585,11 @@ class PirateClothes:
         self.shoeColor = other.shoeColor
         self.hatColor = other.hatColor
 
-    
     def __str__(self):
         string = 'shirt %s:%s:%s, vest %s:%s:%s, coat %s:%s:%s, pant %s:%s:%s,%s, belt %s:%s:%s, hat %s:%s:%s, sock %s:%s, shoe %s:%s' % (self.shirt, self.shirtTexture, self.shirtColor, self.vest, self.vestTexture, self.vestColor, self.coat, self.coatTexture, self.coatColor, self.pant, self.pantTexture, self.pantColor, self.shoeColor, self.belt, self.beltTexture, self.sashColor, self.hat, self.hatTexture, self.hatColor, self.sock, self.sockTexture, self.shoe, self.shoeTexture)
         return string
 
-
-
 class HumanDNA(AvatarDNA.AvatarDNA):
-    
     def __init__(self, gender = 'm', bodyIndex = None):
         self.type = 'pirate'
         self.tutorial = 0
@@ -610,7 +600,6 @@ class HumanDNA(AvatarDNA.AvatarDNA):
                 bodyIndex = BodyDefs.BodyChoiceGenderDict[self.gender][2]
             else:
                 bodyIndex = 2
-        
         self.body = PirateBody(bodyIndex)
         self.head = PirateHead()
         self.clothes = PirateClothes()
@@ -703,7 +692,7 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             0,
             0]
 
-    
+
     def makeMakeAPirate(self):
         if self.gender == 'm':
             self.clothes.shirt = 4
@@ -744,9 +733,7 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             self.clothes.hat = 3
             self.clothes.hatColor = 0
             self.head.texture = 0
-        
 
-    
     def copy(self, other):
         self.type = other.type
         self.tutorial = other.tutorial
@@ -772,12 +759,10 @@ class HumanDNA(AvatarDNA.AvatarDNA):
         self.jewelryZone7 = other.jewelryZone7
         self.jewelryZone8 = other.jewelryZone8
 
-    
     def __str__(self):
         string = 'type = %s\n' % self.type + 'name = %s\n' % self.name + 'tutorial = %s\n' % self.tutorial + 'gender = %s\n' % self.gender + 'head = %s\n' % self.head + 'body = %s\n' % self.body + 'clothes = %s\n' % self.clothes
         return string
 
-    
     def saveAsNPCDict(self):
         d = { }
         d[HumanDNA.setTutorial] = self.tutorial
@@ -857,7 +842,6 @@ class HumanDNA(AvatarDNA.AvatarDNA):
         d[HumanDNA.setJewelryZone8] = (self.jewelryZone8[0], self.jewelryZone8[1], self.jewelryZone8[2])
         return d
 
-    
     def loadFromNPCDict(self, npcDict):
         for f in npcDict.keys():
             if isinstance(npcDict[f], tuple):
@@ -865,9 +849,7 @@ class HumanDNA(AvatarDNA.AvatarDNA):
                 exec 'f(self, ' + str(val)[1:]
                 continue
             f(self, npcDict[f])
-        
 
-    
     def setTattooChest(self, tattoo, offsetX, offsetY, scale, rotate, color):
         self.tattooChest = [
             tattoo,
@@ -877,7 +859,6 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             rotate,
             color]
 
-    
     def setTattooZone2(self, tattoo, offsetX, offsetY, scale, rotate, color):
         self.tattooZone2 = [
             tattoo,
@@ -887,7 +868,6 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             rotate,
             color]
 
-    
     def setTattooZone3(self, tattoo, offsetX, offsetY, scale, rotate, color):
         self.tattooZone3 = [
             tattoo,
@@ -897,7 +877,6 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             rotate,
             color]
 
-    
     def setTattooZone4(self, tattoo, offsetX, offsetY, scale, rotate, color):
         self.tattooZone4 = [
             tattoo,
@@ -907,7 +886,6 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             rotate,
             color]
 
-    
     def setTattooZone5(self, tattoo, offsetX, offsetY, scale, rotate, color):
         self.tattooZone5 = [
             tattoo,
@@ -917,7 +895,6 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             rotate,
             color]
 
-    
     def setTattooZone6(self, tattoo, offsetX, offsetY, scale, rotate, color):
         self.tattooZone6 = [
             tattoo,
@@ -927,7 +904,6 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             rotate,
             color]
 
-    
     def setTattooZone7(self, tattoo, offsetX, offsetY, scale, rotate, color):
         self.tattooZone7 = [
             tattoo,
@@ -937,7 +913,6 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             rotate,
             color]
 
-    
     def setTattooZone8(self, tattoo, offsetX, offsetY, scale, rotate, color):
         self.tattooZone8 = [
             tattoo,
@@ -947,649 +922,644 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             rotate,
             color]
 
-    
     def setJewelryZone1(self, idx, primaryColor = 0, secondaryColor = 0):
         self.jewelryZone1 = [
             idx,
             primaryColor,
             secondaryColor]
 
-    
     def setJewelryZone2(self, idx, primaryColor = 0, secondaryColor = 0):
         self.jewelryZone2 = [
             idx,
             primaryColor,
             secondaryColor]
 
-    
     def setJewelryZone3(self, idx, primaryColor = 0, secondaryColor = 0):
         self.jewelryZone3 = [
             idx,
             primaryColor,
             secondaryColor]
 
-    
     def setJewelryZone4(self, idx, primaryColor = 0, secondaryColor = 0):
         self.jewelryZone4 = [
             idx,
             primaryColor,
             secondaryColor]
 
-    
     def setJewelryZone5(self, idx, primaryColor = 0, secondaryColor = 0):
         self.jewelryZone5 = [
             idx,
             primaryColor,
             secondaryColor]
 
-    
+
     def setJewelryZone6(self, idx, primaryColor = 0, secondaryColor = 0):
         self.jewelryZone6 = [
             idx,
             primaryColor,
             secondaryColor]
 
-    
+
     def setJewelryZone7(self, idx, primaryColor = 0, secondaryColor = 0):
         self.jewelryZone7 = [
             idx,
             primaryColor,
             secondaryColor]
 
-    
+
     def setJewelryZone8(self, idx, primaryColor = 0, secondaryColor = 0):
         self.jewelryZone8 = [
             idx,
             primaryColor,
             secondaryColor]
 
-    
+
     def setTutorial(self, val):
         self.tutorial = val
 
-    
+
     def setName(self, val):
         self.name = val
 
-    
+
     def setGender(self, val):
         self.gender = val
 
-    
+
     def setBodyShape(self, val):
         self.body.shape = val
 
-    
+
     def setBodyHeight(self, val):
         self.body.height = val
 
-    
+
     def setBodyColor(self, val):
         self.body.color = val
 
-    
+
     def setBodySkin(self, val):
         self.body.skin = val
 
-    
+
     def setHeadSize(self, val):
         self.body.headSize = val
 
-    
+
     def setHeadWidth(self, val):
         self.head.headWidth = val
 
-    
+
     def setHeadHeight(self, val):
         self.head.headHeight = val
 
-    
+
     def setHeadRoundness(self, val):
         self.head.headRoundness = val
 
-    
+
     def setJawWidth(self, val):
         self.head.jawWidth = val
 
-    
+
     def setJawRoundness(self, val):
         self.head.jawRoundness = val
 
-    
+
     def setJawChinSize(self, val):
         self.head.jawChinSize = val
 
-    
+
     def setJawAngle(self, val):
         self.head.jawAngle = val
 
-    
+
     def setJawLength(self, val):
         self.head.jawLength = val
 
-    
+
     def setMouthWidth(self, val):
         self.head.mouthWidth = val
 
-    
+
     def setMouthLipThickness(self, val):
         self.head.mouthLipThickness = val
 
-    
+
     def setMouthFrown(self, val):
         self.head.mouthFrown = val
 
-    
+
     def setCheekBoneHeight(self, val):
         self.head.cheekBoneHeight = val
 
-    
+
     def setCheekBoneWidth(self, val):
         self.head.cheekBoneWidth = val
 
-    
+
     def setCheekFat(self, val):
         self.head.cheekFat = val
 
-    
+
     def setBrowWidth(self, val):
         self.head.browWidth = val
 
-    
+
     def setBrowProtruding(self, val):
         self.head.browProtruding = val
 
-    
+
     def setBrowAngle(self, val):
         self.head.browAngle = val
 
-    
+
     def setBrowHeight(self, val):
         self.head.browHeight = val
 
-    
+
     def setEyeCorner(self, val):
         self.head.eyeCorner = val
 
-    
+
     def setEyeOpeningSize(self, val):
         self.head.eyeOpeningSize = val
 
-    
+
     def setEyeBulge(self, val):
         self.head.eyeBulge = val
 
-    
+
     def setNoseBridgeWidth(self, val):
         self.head.noseBridgeWidth = val
 
-    
+
     def setNoseNostrilWidth(self, val):
         self.head.noseNostrilWidth = val
 
-    
+
     def setNoseLength(self, val):
         self.head.noseLength = val
 
-    
+
     def setNoseBump(self, val):
         self.head.noseBump = val
 
-    
+
     def setNoseNostrilHeight(self, val):
         self.head.noseNostrilHeight = val
 
-    
+
     def setNoseNostrilAngle(self, val):
         self.head.noseNostrilAngle = val
 
-    
+
     def setNoseNostrilIndent(self, val):
         self.head.noseNostrilIndent = val
 
-    
+
     def setNoseBridgeBroke(self, val):
         self.head.noseBridgeBroke = val
 
-    
+
     def setNoseNostrilBroke(self, val):
         self.head.noseNostrilBroke = val
 
-    
+
     def setEarScale(self, val):
         self.head.earScale = val
 
-    
+
     def setEarFlapAngle(self, val):
         self.head.earFlapAngle = val
 
-    
+
     def setEarPosition(self, val):
         self.head.earPosition = val
 
-    
+
     def setEarLobe(self, val):
         self.head.earLobe = val
 
-    
+
     def setHeadTexture(self, val):
         self.head.texture = val
 
-    
+
     def setHairHair(self, val):
         self.head.hair.hair = val
 
-    
+
     def setHairBeard(self, val):
         self.head.hair.beard = val
 
-    
+
     def setHairMustache(self, val):
         self.head.hair.mustache = val
 
-    
+
     def setHairColor(self, val):
         self.head.hair.color = val
 
-    
+
     def setHighLightColor(self, val):
         self.head.hair.highlight = val
 
-    
+
     def setHat(self, val):
         self.clothes.hat = val
 
-    
+
     def setHatIdx(self, val):
         self.clothes.hat = val
 
-    
+
     def setHatColor(self, val):
         self.clothes.hatColor = val
 
-    
+
     def setEyesColor(self, val):
         self.head.eyes.color = val
 
-    
+
     def setClothesByType(self, type, val1, val2, val3):
         if type == 'HAT':
             self.clothes.hat = val1
             self.clothes.hatTexture = val2
             if val3 >= 0:
                 self.clothes.hatColor = val3
-            
+
         elif type == 'SHIRT':
             self.clothes.shirt = val1
             self.clothes.shirtTexture = val2
             if val3 >= 0:
                 self.clothes.shirtColor = val3
-            
+
         elif type == 'VEST':
             self.clothes.vest = val1
             self.clothes.vestTexture = val2
             if val3 >= 0:
                 self.clothes.vestColor = val3
-            
+
         elif type == 'COAT':
             self.clothes.coat = val1
             self.clothes.coatTexture = val2
             if val3 >= 0:
                 self.clothes.coatColor = val3
-            
+
         elif type == 'PANT':
             self.clothes.pant = val1
             self.clothes.pantTexture = val2
             if val3 >= 0:
                 self.clothes.pantColor = val3
-            
+
         elif type == 'BELT':
             self.clothes.belt = val1
             self.clothes.beltTexture = val2
             if val3 >= 0:
                 self.clothes.sashColor = val3
-            
+
         elif type == 'SHOE':
             self.clothes.shoe = val1
             self.clothes.shoeTexture = val2
             if val3 >= 0:
                 self.clothes.shoeColor = val3
-            
-        
 
-    
+
+
+
     def setClothesShirt(self, val1, val2 = 0):
         self.clothes.shirt = val1
         self.clothes.shirtTexture = val2
 
-    
+
     def setClothesPant(self, val1, val2 = 0):
         self.clothes.pant = val1
         self.clothes.pantTexture = val2
 
-    
+
     def setClothesHat(self, val1, val2 = 0):
         self.clothes.hat = val1
         self.clothes.hatTexture = val2
 
-    
+
     def setHatTexture(self, val):
         self.clothes.hatTexture = val
 
-    
+
     def setClothesSock(self, val1, val2 = 0):
         self.clothes.sock = val1
         self.clothes.sockTexture = val2
 
-    
+
     def setClothesShoe(self, val1, val2 = 0):
         self.clothes.shoe = val1
         self.clothes.shoeTexture = val2
 
-    
+
     def setClothesVest(self, val1, val2 = 0):
         self.clothes.vest = val1
         self.clothes.vestTexture = val2
 
-    
+
     def setClothesCoat(self, val1, val2 = 0):
         self.clothes.coat = val1
         self.clothes.coatTexture = val2
 
-    
+
     def setClothesBelt(self, val1, val2 = 0):
         self.clothes.belt = val1
         self.clothes.beltTexture = val2
 
-    
+
     def setClothesTopColor(self, val1, val2, val3):
         self.clothes.shirtColor = val1
         self.clothes.vestColor = val2
         self.clothes.coatColor = val3
 
-    
+
     def setClothesBotColor(self, val1, val2, val3):
         self.clothes.pantColor = val1
         self.clothes.sashColor = val2
         self.clothes.shoeColor = val3
 
-    
+
     def getTattooChest(self):
         return self.tattooChest
 
-    
+
     def getTattooZone2(self):
         return self.tattooZone2
 
-    
+
     def getTattooZone3(self):
         return self.tattooZone3
 
-    
+
     def getTattooZone4(self):
         return self.tattooZone4
 
-    
+
     def getTattooZone5(self):
         return self.tattooZone5
 
-    
+
     def getTattooZone6(self):
         return self.tattooZone6
 
-    
+
     def getTattooZone7(self):
         return self.tattooZone7
 
-    
+
     def getTattooZone8(self):
         return self.tattooZone8
 
-    
+
     def getJewelryZone1(self):
         return self.jewelryZone1
 
-    
+
     def getJewelryZone2(self):
         return self.jewelryZone2
 
-    
+
     def getJewelryZone3(self):
         return self.jewelryZone3
 
-    
+
     def getJewelryZone4(self):
         return self.jewelryZone4
 
-    
+
     def getJewelryZone5(self):
         return self.jewelryZone5
 
-    
+
     def getJewelryZone6(self):
         return self.jewelryZone6
 
-    
+
     def getJewelryZone7(self):
         return self.jewelryZone7
 
-    
+
     def getJewelryZone8(self):
         return self.jewelryZone8
 
-    
+
     def getTutorial(self):
         return self.tutorial
 
-    
+
     def getDNAName(self):
         return self.name
 
-    
+
     def getGender(self):
         return self.gender
 
-    
+
     def getBodyShape(self):
         return self.body.shape
 
-    
+
     def getBodyHeight(self):
         return self.body.height
 
-    
+
     def getBodyColor(self):
         return self.body.color
 
-    
+
     def getBodySkin(self):
         return self.body.skin
 
-    
+
     def getHeadSize(self):
         return self.body.headSize
 
-    
+
     def getHeadWidth(self):
         return self.head.headWidth
 
-    
+
     def getHeadHeight(self):
         return self.head.headHeight
 
-    
+
     def getHeadRoundness(self):
         return self.head.headRoundness
 
-    
+
     def getJawWidth(self):
         return self.head.jawWidth
 
-    
+
     def getJawRoundness(self):
         return self.head.jawRoundness
 
-    
+
     def getJawChinSize(self):
         return self.head.jawChinSize
 
-    
+
     def getJawAngle(self):
         return self.head.jawAngle
 
-    
+
     def getJawLength(self):
         return self.head.jawLength
 
-    
+
     def getMouthWidth(self):
         return self.head.mouthWidth
 
-    
+
     def getMouthLipThickness(self):
         return self.head.mouthLipThickness
 
-    
+
     def getMouthFrown(self):
         return self.head.mouthFrown
 
-    
+
     def getCheekBoneHeight(self):
         return self.head.cheekBoneHeight
 
-    
+
     def getCheekBoneWidth(self):
         return self.head.cheekBoneWidth
 
-    
+
     def getCheekFat(self):
         return self.head.cheekFat
 
-    
+
     def getBrowWidth(self):
         return self.head.browWidth
 
-    
+
     def getBrowProtruding(self):
         return self.head.browProtruding
 
-    
+
     def getBrowAngle(self):
         return self.head.browAngle
 
-    
+
     def getBrowHeight(self):
         return self.head.browHeight
 
-    
+
     def getEyeCorner(self):
         return self.head.eyeCorner
 
-    
+
     def getEyeOpeningSize(self):
         return self.head.eyeOpeningSize
 
-    
+
     def getEyeBulge(self):
         return self.head.eyeBulge
 
-    
+
     def getNoseBridgeWidth(self):
         return self.head.noseBridgeWidth
 
-    
+
     def getNoseNostrilWidth(self):
         return self.head.noseNostrilWidth
 
-    
+
     def getNoseLength(self):
         return self.head.noseLength
 
-    
+
     def getNoseBump(self):
         return self.head.noseBump
 
-    
+
     def getNoseNostrilHeight(self):
         return self.head.noseNostrilHeight
 
-    
+
     def getNoseNostrilAngle(self):
         return self.head.noseNostrilAngle
 
-    
+
     def getNoseNostrilIndent(self):
         return self.head.noseNostrilIndent
 
-    
+
     def getNoseBridgeBroke(self):
         return self.head.noseBridgeBroke
 
-    
+
     def getNoseNostrilBroke(self):
         return self.head.noseNostrilBroke
 
-    
+
     def getEarScale(self):
         return self.head.earScale
 
-    
+
     def getEarFlapAngle(self):
         return self.head.earFlapAngle
 
-    
+
     def getEarPosition(self):
         return self.head.earPosition
 
-    
+
     def getEarLobe(self):
         return self.head.earLobe
 
-    
+
     def getHeadTexture(self):
         return self.head.texture
 
-    
+
     def getHairHair(self):
         return self.head.hair.hair
 
-    
+
     def getHairBeard(self):
         return self.head.hair.beard
 
-    
+
     def getHairMustache(self):
         return self.head.hair.mustache
 
-    
+
     def getHairColor(self):
         return self.head.hair.color
 
-    
+
     def getHighLightColor(self):
         return self.head.hair.highlight
 
-    
+
     def getHatIdx(self):
         return self.clothes.hat
 
-    
+
     def getHat(self):
         return self.clothes.hat
 
-    
+
     def getHatTexture(self):
         return self.clothes.hatTexture
 
-    
+
     def getHatColor(self):
         return self.clothes.hatColor
 
-    
+
     def getEyesColor(self):
         return self.head.eyes.color
 
-    
+
     def verifyClothing(self, type, modelId, texId):
         if (self.gender, type, modelId, texId) in ClothingGlobals.quickConfirmSet:
             return [
@@ -1604,73 +1574,73 @@ class HumanDNA(AvatarDNA.AvatarDNA):
                 modelId,
                 texId]
 
-    
+
     def getClothesShirt(self):
         return self.verifyClothing('SHIRT', self.clothes.shirt, self.clothes.shirtTexture)
 
-    
+
     def getClothesPant(self):
         return self.verifyClothing('PANT', self.clothes.pant, self.clothes.pantTexture)
 
-    
+
     def getClothesHat(self):
         return self.verifyClothing('HAT', self.clothes.hat, self.clothes.hatTexture)
 
-    
+
     def getClothesSock(self):
         return [
             self.clothes.sock,
             self.clothes.sockTexture]
 
-    
+
     def getClothesShoe(self):
         return self.verifyClothing('SHOE', self.clothes.shoe, self.clothes.shoeTexture)
 
-    
+
     def getClothesVest(self):
         return self.verifyClothing('VEST', self.clothes.vest, self.clothes.vestTexture)
 
-    
+
     def getClothesCoat(self):
         return self.verifyClothing('COAT', self.clothes.coat, self.clothes.coatTexture)
 
-    
+
     def getClothesBelt(self):
         return self.verifyClothing('BELT', self.clothes.belt, self.clothes.beltTexture)
 
-    
+
     def getClothesTopColor(self):
         return [
             self.clothes.shirtColor,
             self.clothes.vestColor,
             self.clothes.coatColor]
 
-    
+
     def getClothesBotColor(self):
         return [
             self.clothes.pantColor,
             self.clothes.sashColor,
             self.clothes.shoeColor]
 
-    
+
     def defaultColor(self):
         return 0
 
-    
+
     def _HumanDNA__defaultColors(self):
         self.hairColor = 1
         self.hairColor = 2
         self.skinColor = 0
 
-    
+
     def setNPCType(self):
         self.type = 'npc'
 
-    
+
     def getType(self):
         return self.type
 
-    
+
     def getBuild(self):
         if self.model[0] == 'sf':
             return 'short fat'
@@ -1685,39 +1655,39 @@ class HumanDNA(AvatarDNA.AvatarDNA):
         else:
             notify.error('unknown modelStyle: ', self.model[0])
 
-    
+
     def getGender(self):
         return self.gender
 
-    
+
     def lookupHairColor(self):
-        
+
         try:
             return hairColors[self.head.hair.color]
         except:
             return hairColors[0]
 
 
-    
+
     def lookupHatColor(self):
         idx = 0
         if self.gender == 'f':
             idx = 1
-        
-        
+
+
         try:
             return DYE_COLORS[self.color.hatColor]
         except:
             return DYE_COLORS[0]
 
 
-    
+
     def lookupClothesTopColor(self):
         idx = 0
         if self.gender == 'f':
             idx = 1
-        
-        
+
+
         try:
             return [
                 DYE_COLORS[self.clothes.shirtColor],
@@ -1730,13 +1700,13 @@ class HumanDNA(AvatarDNA.AvatarDNA):
                 DYE_COLORS[10]]
 
 
-    
+
     def lookupClothesBotColor(self):
         idx = 0
         if self.gender == 'f':
             idx = 1
-        
-        
+
+
         try:
             return [
                 DYE_COLORS[self.clothes.pantColor],
@@ -1749,60 +1719,60 @@ class HumanDNA(AvatarDNA.AvatarDNA):
                 DYE_COLORS[12]]
 
 
-    
+
     def getHairBaseColor(self):
-        
+
         try:
             return hairColors[self.getHairColor()]
         except:
             return hairColors[0]
 
 
-    
+
     def getHairHighLightColor(self):
-        
+
         try:
             return hairHighLightColors[self.getHighLightColor()]
         except:
             return hairHighLightColors[0]
 
 
-    
+
     def getSkinColor(self):
-        
+
         try:
             return skinColors[self.body.color]
         except:
             return skinColors[0]
 
 
-    
+
     def getColor(self, index):
-        
+
         try:
             return hairColors[index]
         except:
             return hairColors[0]
 
 
-    
+
     def tossAValue(self, random, clip = 0.5, negative = True):
         value = 0.0
         value = random.random()
         if value > clip:
             value = clip
-        
+
         if negative:
             toss = random.choice([
                 0,
                 1])
             if toss:
                 value = -value
-            
-        
+
+
         return value
 
-    
+
     def makeNPCPirate(self, seed = None, gender = 'm'):
         if seed:
             randomGen = random.Random()
@@ -1867,7 +1837,7 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             self.head.hair.hair = randomGen.choice(range(16))
             self.head.hair.color = randomGen.choice(range(5))
 
-    
+
     def makeNPCGhost(self, seed = None, gender = 'm', wantConquistadorHat = False):
         if seed:
             randomGen = random.Random()
@@ -1933,11 +1903,11 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             self.clothes.coatColor = randomGen.choice(colors)
             if wantConquistadorHat:
                 self.clothes.hat = 17
-            
+
             self.head.hair.hair = randomGen.choice(range(16))
             self.head.hair.color = randomGen.choice(range(5))
 
-    
+
     def makeNPCZombie(self, seed = None, gender = 'm'):
         if seed:
             randomGen = random.Random()
@@ -2015,7 +1985,7 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             self.head.hair.hair = randomGen.choice(range(16))
             self.head.hair.color = randomGen.choice(range(5))
 
-    
+
     def makeNPCBountyHunter(self, seed = None, gender = 'm'):
         if seed:
             randomGen = random.Random()
@@ -2100,7 +2070,7 @@ class HumanDNA(AvatarDNA.AvatarDNA):
             self.head.hair.hair = randomGen.choice(range(16))
             self.head.hair.color = randomGen.choice(range(5))
 
-    
+
     def makeNPCTownfolk(self, seed = None, gender = 'm'):
         if seed:
             randomGen = random.Random()
@@ -2121,7 +2091,7 @@ class HumanDNA(AvatarDNA.AvatarDNA):
         self.head.hair.mustache = 1
         self.head.hair.color = 2
 
-    
+
     def makeNPCNavySailor(self, seed = None, gender = 'm'):
         if seed:
             randomGen = random.Random()
@@ -2203,7 +2173,7 @@ class HumanDNA(AvatarDNA.AvatarDNA):
         self.clothes.hat = 3
         self.clothes.hatColor = 0
 
-    
+
     def makeNPCIndiaNavySailor(self, seed = None, gender = 'm'):
         if seed:
             randomGen = random.Random()
@@ -2283,7 +2253,7 @@ class HumanDNA(AvatarDNA.AvatarDNA):
         self.clothes.hat = 4
         self.clothes.hatColor = 0
 
-    
+
     def makeLeadingMan(self):
         self.gender = 'm'
         self.height = 0.80000000000000004
@@ -2313,4 +2283,298 @@ class HumanDNA(AvatarDNA.AvatarDNA):
         self.head.hair.mustache = 4
         self.head.hair.color = 2
 
+    def makeNetString(self):
+        dg = PyDatagram()
+        if self.gender == 'm':
+            dg.addUint8(1)
+        else:
+            dg.addUint8(0)
+        dg.addUint8(self.body.shape)
+        dg.addUint8(self.body.height)
+        dg.addUint8(self.body.color)
+        dg.addUint8(self.body.skin)
+        dg.addUint8(self.body.headSize)
+        dg.addUint8(self.head.headWidth)
+        dg.addUint8(self.head.headHeight)
+        dg.addUint8(self.head.headRoundness)
+        dg.addUint8(self.head.jawWidth)
+        dg.addUint8(self.head.jawRoundness)
+        dg.addUint8(self.head.jawChinSize)
+        dg.addUint8(self.head.jawAngle)
+        dg.addUint8(self.head.jawLength)
+        dg.addUint8(self.head.mouthWidth)
+        dg.addUint8(self.head.mouthLipThickness)
+        dg.addUint8(self.head.mouthFrown)
+        dg.addUint8(self.head.cheekBoneHeight)
+        dg.addUint8(self.head.cheekBoneWidth)
+        dg.addUint8(self.head.cheekFat)
+        dg.addUint8(self.head.browWidth)
+        dg.addUint8(self.head.browProtruding)
+        dg.addUint8(self.head.browAngle)
+        dg.addUint8(self.head.browHeight)
+        dg.addUint8(self.head.eyeCorner)
+        dg.addUint8(self.head.eyeOpeningSize)
+        dg.addUint8(self.head.eyeBulge)
+        dg.addUint8(self.head.noseBridgeWidth)
+        dg.addUint8(self.head.noseNostrilWidth)
+        dg.addUint8(self.head.noseLength)
+        dg.addUint8(self.head.noseBump)
+        dg.addUint8(self.head.noseNostrilHeight)
+        dg.addUint8(self.head.noseNostrilAngle)
+        dg.addUint8(self.head.noseNostrilIndent)
+        dg.addUint8(self.head.noseBridgeBroke)
+        dg.addUint8(self.head.noseNostrilBroke)
+        dg.addUint8(self.head.earScale)
+        dg.addUint8(self.head.earFlapAngle)
+        dg.addUint8(self.head.earPosition)
+        dg.addUint8(self.head.earLobe)
+        dg.addUint8(self.head.texture)
+        dg.addUint8(self.head.hair.hair)
+        dg.addUint8(self.head.hair.beard)
+        dg.addUint8(self.head.hair.mustache)
+        dg.addUint8(self.head.hair.color)
+        dg.addUint8(self.head.hair.highlight)
+        dg.addUint8(self.head.eyes.color)
+        dg.addUint8(self.clothes.hat)
+        dg.addUint8(self.clothes.hatTexture)
+        dg.addUint8(self.clothes.shirt)
+        dg.addUint8(self.clothes.shirtTexture)
+        dg.addUint8(self.clothes.pant)
+        dg.addUint8(self.clothes.pantTexture)
+        dg.addUint8(self.clothes.sock)
+        dg.addUint8(self.clothes.sockTexture)
+        dg.addUint8(self.clothes.shoe)
+        dg.addUint8(self.clothes.shoeTexture)
+        dg.addUint8(self.clothes.vest)
+        dg.addUint8(self.clothes.vestTexture)
+        dg.addUint8(self.clothes.coat)
+        dg.addUint8(self.clothes.coatTexture)
+        dg.addUint8(self.clothes.belt)
+        dg.addUint8(self.clothes.beltTexture)
+        dg.addUint8(self.clothes.shirtColor)
+        dg.addUint8(self.clothes.vestColor)
+        dg.addUint8(self.clothes.coatColor)
+        dg.addUint8(self.clothes.pantColor)
+        dg.addUint8(self.clothes.sashColor)
+        dg.addUint8(self.clothes.shoeColor)
+        dg.addUint8(self.tattooChest[0])
+        dg.addFloat64(self.tattooChest[1])
+        dg.addFloat64(self.tattooChest[2])
+        dg.addUint8(self.tattooChest[3])
+        dg.addUint8(self.tattooChest[4])
+        dg.addUint8(self.tattooChest[5])
+        dg.addUint8(self.tattooZone2[0])
+        dg.addFloat64(self.tattooZone2[1])
+        dg.addFloat64(self.tattooZone2[2])
+        dg.addUint8(self.tattooZone2[3])
+        dg.addUint8(self.tattooZone2[4])
+        dg.addUint8(self.tattooZone2[5])
+        dg.addUint8(self.tattooZone3[0])
+        dg.addFloat64(self.tattooZone3[1])
+        dg.addFloat64(self.tattooZone3[2])
+        dg.addUint8(self.tattooZone3[3])
+        dg.addUint8(self.tattooZone3[4])
+        dg.addUint8(self.tattooZone3[5])
+        dg.addUint8(self.tattooZone4[0])
+        dg.addFloat64(self.tattooZone4[1])
+        dg.addFloat64(self.tattooZone4[2])
+        dg.addUint8(self.tattooZone4[3])
+        dg.addUint8(self.tattooZone4[4])
+        dg.addUint8(self.tattooZone4[5])
+        dg.addUint8(self.tattooZone5[0])
+        dg.addFloat64(self.tattooZone5[1])
+        dg.addFloat64(self.tattooZone5[2])
+        dg.addUint8(self.tattooZone5[3])
+        dg.addUint8(self.tattooZone5[4])
+        dg.addUint8(self.tattooZone5[5])
+        dg.addUint8(self.tattooZone6[0])
+        dg.addFloat64(self.tattooZone6[1])
+        dg.addFloat64(self.tattooZone6[2])
+        dg.addUint8(self.tattooZone6[3])
+        dg.addUint8(self.tattooZone6[4])
+        dg.addUint8(self.tattooZone6[5])
+        dg.addUint8(self.tattooZone7[0])
+        dg.addFloat64(self.tattooZone7[1])
+        dg.addFloat64(self.tattooZone7[2])
+        dg.addUint8(self.tattooZone7[3])
+        dg.addUint8(self.tattooZone7[4])
+        dg.addUint8(self.tattooZone7[5])
+        dg.addUint8(self.tattooZone8[0])
+        dg.addFloat64(self.tattooZone8[1])
+        dg.addFloat64(self.tattooZone8[2])
+        dg.addUint8(self.tattooZone8[3])
+        dg.addUint8(self.tattooZone8[4])
+        dg.addUint8(self.tattooZone8[5])
+        dg.addUint8(self.jewelryZone1[0])
+        dg.addUint8(self.jewelryZone1[1])
+        dg.addUint8(self.jewelryZone1[2])
+        dg.addUint8(self.jewelryZone2[0])
+        dg.addUint8(self.jewelryZone2[1])
+        dg.addUint8(self.jewelryZone2[2])
+        dg.addUint8(self.jewelryZone3[0])
+        dg.addUint8(self.jewelryZone3[1])
+        dg.addUint8(self.jewelryZone3[2])
+        dg.addUint8(self.jewelryZone4[0])
+        dg.addUint8(self.jewelryZone4[1])
+        dg.addUint8(self.jewelryZone4[2])
+        dg.addUint8(self.jewelryZone5[0])
+        dg.addUint8(self.jewelryZone5[1])
+        dg.addUint8(self.jewelryZone5[2])
+        dg.addUint8(self.jewelryZone6[0])
+        dg.addUint8(self.jewelryZone6[1])
+        dg.addUint8(self.jewelryZone6[2])
+        dg.addUint8(self.jewelryZone7[0])
+        dg.addUint8(self.jewelryZone7[1])
+        dg.addUint8(self.jewelryZone7[2])
+        dg.addUint8(self.jewelryZone8[0])
+        dg.addUint8(self.jewelryZone8[1])
+        dg.addUint8(self.jewelryZone8[2])
+        return dg.getMessage()
 
+    def makeFromNetString(self, netString):
+        dg = PyDatagram(netString)
+        dgi = PyDatagramIterator(dg)
+        if dgi.getUint8():
+            self.gender = 'm'
+        else:
+            self.gender = 'f'
+        self.body.shape = dgi.getUint8()
+        self.body.height = dgi.getUint8()
+        self.body.color = dgi.getUint8()
+        self.body.skin = dgi.getUint8()
+        self.body.headSize = dgi.getUint8()
+        self.head.headWidth = dgi.getUint8()
+        self.head.headHeight = dgi.getUint8()
+        self.head.headRoundness = dgi.getUint8()
+        self.head.jawWidth = dgi.getUint8()
+        self.head.jawRoundness = dgi.getUint8()
+        self.head.jawChinSize = dgi.getUint8()
+        self.head.jawAngle = dgi.getUint8()
+        self.head.jawLength = dgi.getUint8()
+        self.head.mouthWidth = dgi.getUint8()
+        self.head.mouthLipThickness = dgi.getUint8()
+        self.head.mouthFrown = dgi.getUint8()
+        self.head.cheekBoneHeight = dgi.getUint8()
+        self.head.cheekBoneWidth = dgi.getUint8()
+        self.head.cheekFat = dgi.getUint8()
+        self.head.browWidth = dgi.getUint8()
+        self.head.browProtruding = dgi.getUint8()
+        self.head.browAngle = dgi.getUint8()
+        self.head.browHeight = dgi.getUint8()
+        self.head.eyeCorner = dgi.getUint8()
+        self.head.eyeOpeningSize = dgi.getUint8()
+        self.head.eyeBulge = dgi.getUint8()
+        self.head.noseBridgeWidth = dgi.getUint8()
+        self.head.noseNostrilWidth = dgi.getUint8()
+        self.head.noseLength = dgi.getUint8()
+        self.head.noseBump = dgi.getUint8()
+        self.head.noseNostrilHeight = dgi.getUint8()
+        self.head.noseNostrilAngle = dgi.getUint8()
+        self.head.noseNostrilIndent = dgi.getUint8()
+        self.head.noseBridgeBroke = dgi.getUint8()
+        self.head.noseNostrilBroke = dgi.getUint8()
+        self.head.earScale = dgi.getUint8()
+        self.head.earFlapAngle = dgi.getUint8()
+        self.head.earPosition = dgi.getUint8()
+        self.head.earLobe = dgi.getUint8()
+        self.head.texture = dgi.getUint8()
+        self.head.hair.hair = dgi.getUint8()
+        self.head.hair.beard = dgi.getUint8()
+        self.head.hair.mustache = dgi.getUint8()
+        self.head.hair.color = dgi.getUint8()
+        self.head.hair.highlight = dgi.getUint8()
+        self.head.eyes.color = dgi.getUint8()
+        self.clothes.hat  = dgi.getUint8()
+        self.clothes.hatTexture  = dgi.getUint8()
+        self.clothes.shirt = dgi.getUint8()
+        self.clothes.shirtTexture = dgi.getUint8()
+        self.clothes.pant = dgi.getUint8()
+        self.clothes.pantTexture = dgi.getUint8()
+        self.clothes.sock = dgi.getUint8()
+        self.clothes.sockTexture = dgi.getUint8()
+        self.clothes.shoe = dgi.getUint8()
+        self.clothes.shoeTexture = dgi.getUint8()
+        self.clothes.vest = dgi.getUint8()
+        self.clothes.vestTexture = dgi.getUint8()
+        self.clothes.coat = dgi.getUint8()
+        self.clothes.coatTexture = dgi.getUint8()
+        self.clothes.belt = dgi.getUint8()
+        self.clothes.beltTexture = dgi.getUint8()
+        self.clothes.shirtColor = dgi.getUint8()
+        self.clothes.vestColor = dgi.getUint8()
+        self.clothes.coatColor = dgi.getUint8()
+        self.clothes.pantColor = dgi.getUint8()
+        self.clothes.sashColor = dgi.getUint8()
+        self.clothes.shoeColor = dgi.getUint8()
+        self.tattooChest[0] = dgi.getUint8()
+        self.tattooChest[1] = dgi.getFloat64()
+        self.tattooChest[2] = dgi.getFloat64()
+        self.tattooChest[3] = dgi.getUint8()
+        self.tattooChest[4] = dgi.getUint8()
+        self.tattooChest[5] = dgi.getUint8()
+        self.tattooZone2[0] = dgi.getUint8()
+        self.tattooZone2[1] = dgi.getFloat64()
+        self.tattooZone2[2] = dgi.getFloat64()
+        self.tattooZone2[3] = dgi.getUint8()
+        self.tattooZone2[4] = dgi.getUint8()
+        self.tattooZone2[5] = dgi.getUint8()
+        self.tattooZone3[0] = dgi.getUint8()
+        self.tattooZone3[1] = dgi.getFloat64()
+        self.tattooZone3[2] = dgi.getFloat64()
+        self.tattooZone3[3] = dgi.getUint8()
+        self.tattooZone3[4] = dgi.getUint8()
+        self.tattooZone3[5] = dgi.getUint8()
+        self.tattooZone4[0] = dgi.getUint8()
+        self.tattooZone4[1] = dgi.getFloat64()
+        self.tattooZone4[2] = dgi.getFloat64()
+        self.tattooZone4[3] = dgi.getUint8()
+        self.tattooZone4[4] = dgi.getUint8()
+        self.tattooZone4[5] = dgi.getUint8()
+        self.tattooZone5[0] = dgi.getUint8()
+        self.tattooZone5[1] = dgi.getFloat64()
+        self.tattooZone5[2] = dgi.getFloat64()
+        self.tattooZone5[3] = dgi.getUint8()
+        self.tattooZone5[4] = dgi.getUint8()
+        self.tattooZone5[5] = dgi.getUint8()
+        self.tattooZone6[0] = dgi.getUint8()
+        self.tattooZone6[1] = dgi.getFloat64()
+        self.tattooZone6[2] = dgi.getFloat64()
+        self.tattooZone6[3] = dgi.getUint8()
+        self.tattooZone6[4] = dgi.getUint8()
+        self.tattooZone6[5] = dgi.getUint8()
+        self.tattooZone7[0] = dgi.getUint8()
+        self.tattooZone7[1] = dgi.getFloat64()
+        self.tattooZone7[2] = dgi.getFloat64()
+        self.tattooZone7[3] = dgi.getUint8()
+        self.tattooZone7[4] = dgi.getUint8()
+        self.tattooZone7[5] = dgi.getUint8()
+        self.tattooZone8[0] = dgi.getUint8()
+        self.tattooZone8[1] = dgi.getFloat64()
+        self.tattooZone8[2] = dgi.getFloat64()
+        self.tattooZone8[3] = dgi.getUint8()
+        self.tattooZone8[4] = dgi.getUint8()
+        self.tattooZone8[5] = dgi.getUint8()
+        self.jewelryZone1[0] = dgi.getUint8()
+        self.jewelryZone1[1] = dgi.getUint8()
+        self.jewelryZone1[2] = dgi.getUint8()
+        self.jewelryZone2[0] = dgi.getUint8()
+        self.jewelryZone2[1] = dgi.getUint8()
+        self.jewelryZone2[2] = dgi.getUint8()
+        self.jewelryZone3[0] = dgi.getUint8()
+        self.jewelryZone3[1] = dgi.getUint8()
+        self.jewelryZone3[2] = dgi.getUint8()
+        self.jewelryZone4[0] = dgi.getUint8()
+        self.jewelryZone4[1] = dgi.getUint8()
+        self.jewelryZone4[2] = dgi.getUint8()
+        self.jewelryZone5[0] = dgi.getUint8()
+        self.jewelryZone5[1] = dgi.getUint8()
+        self.jewelryZone5[2] = dgi.getUint8()
+        self.jewelryZone6[0] = dgi.getUint8()
+        self.jewelryZone6[1] = dgi.getUint8()
+        self.jewelryZone6[2] = dgi.getUint8()
+        self.jewelryZone7[0] = dgi.getUint8()
+        self.jewelryZone7[1] = dgi.getUint8()
+        self.jewelryZone7[2] = dgi.getUint8()
+        self.jewelryZone8[0] = dgi.getUint8()
+        self.jewelryZone8[1] = dgi.getUint8()
+        self.jewelryZone8[2] = dgi.getUint8()
