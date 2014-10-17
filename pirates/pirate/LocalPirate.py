@@ -102,7 +102,7 @@ class LocalPirate(DistributedPlayerPirate, LocalAvatar):
     def __init__(self, cr):
 
         try:
-            pass
+            self.LocalPirate_initialized
         except:
             self.LocalPirate_initialized = 1
             DistributedPlayerPirate.__init__(self, cr)
@@ -265,7 +265,7 @@ class LocalPirate(DistributedPlayerPirate, LocalAvatar):
 
     def sendUpdate(self, *args, **kw):
         if self.isGenerated():
-            return DistributedPlayerPirate.sendUpdate(self, *args, **args)
+            return DistributedPlayerPirate.sendUpdate(self, *args, **kw)
 
 
 
@@ -762,7 +762,7 @@ class LocalPirate(DistributedPlayerPirate, LocalAvatar):
     def delete(self):
 
         try:
-            pass
+            self.LocalPirate_deleted
         except:
             self.LocalPirate_deleted = 1
             self.guiMgr.delete()
@@ -800,7 +800,7 @@ class LocalPirate(DistributedPlayerPirate, LocalAvatar):
 
 
     def generateHuman(self, *args, **kwargs):
-        DistributedPlayerPirate.generateHuman(self, *args, **args)
+        DistributedPlayerPirate.generateHuman(self, *args, **kwargs)
         self.deleteWeaponJoints()
         lod2000 = self.getLOD('2000')
         if lod2000:
@@ -1550,3 +1550,519 @@ class LocalPirate(DistributedPlayerPirate, LocalAvatar):
             messenger.send(callback)
 
         return numInterests
+
+    def replaceInterestTag(self, *args, **kw):
+        pass
+
+    def b_setLocation(self, *args, **kw):
+        pass
+
+    def setLocation(self, *args, **kw):
+        pass
+
+    def teleportToShard(self, *args, **kw):
+        pass
+
+    def handleTeleportToShardDone(self, *args, **kw):
+        pass
+
+    def setLootCarried(self, *args, **kw):
+        pass
+
+    def printState(self, *args, **kw):
+        pass
+
+    def playOuch(self, *args, **kw):
+        pass
+
+    def getGetupTrack(self, *args, **kw):
+        pass
+
+    def hasEffect(self, *args, **kw):
+        pass
+
+    def setBattleTeleportFlag(self, *args, **kw):
+        pass
+
+    def clearBattleTeleportFlag(self, *args, **kw):
+        pass
+
+    def setupMovementSounds(self, *args, **kw):
+        pass
+
+    def _setShip(self, *args, **kw):
+        pass
+
+    def setShipId(self, *args, **kw):
+        pass
+
+    def setAreaFootstep(self, *args, **kw):
+        pass
+
+    def setSurfaceIndexFromLevelDefault(self, *args, **kw):
+        pass
+
+    def setSurfaceIndex(self, *args, **kw):
+        pass
+
+    def setMovementIndex(self, *args, **kw):
+        pass
+
+    def getTrackedRotation(self, *args, **kw):
+        pass
+
+    def _changeMoveSound(self, *args, **kw):
+        pass
+
+    def stopSound(self, *args, **kw):
+        pass
+
+    def refreshStatusTray(self, *args, **kw):
+        pass
+
+    def getConeOriginNode(self, *args, **kw):
+        pass
+
+    def composeRequestProjectileSkill(self, *args, **kw):
+        pass
+
+    def composeRequestShipSkill(self, *args, **kw):
+        pass
+
+    def initCombatTray(self, *args, **kw):
+        pass
+
+    def setStickyTargets(self, *args, **kw):
+        pass
+
+    def startMonitorStickyTargets(self, *args, **kw):
+        pass
+
+    def monitorStickyTargets(self, *args, **kw):
+        pass
+
+    def openJailDoor(self, *args, **kw):
+        pass
+
+    def beginTrackTarget(self, *args, **kw):
+        pass
+
+    def endTrackTarget(self, *args, **kw):
+        pass
+
+    def startLookAtTarget(self, *args, **kw):
+        pass
+
+    def __lookAtTarget(self, *args, **kw):
+        pass
+
+    def stopLookingAtTarget(self, *args, **kw):
+        pass
+
+    def testFacing(self, *args, **kw):
+        pass
+
+    def findLegalTargets(self, *args, **kw):
+        pass
+
+    def checkViewingArc(self, *args, **kw):
+        pass
+
+    def addWobbleId(self, *args, **kw):
+        pass
+
+    def removeWobbleId(self, *args, **kw):
+        pass
+
+    def startFovWobble(self, *args, **kw):
+        pass
+
+    def doFovWobble(self, *args, **kw):
+        pass
+
+    def setCamFov(self, *args, **kw):
+        pass
+
+    def setCamRoll(self, *args, **kw):
+        pass
+
+    def stopFovWobble(self, *args, **kw):
+        pass
+
+    def _setCreatureTransformation(self, *args, **kw):
+        pass
+
+    def setCreatureTransformation(self, *args, **kw):
+        pass
+
+    def setHasGhostPowers(self, *args, **kw):
+        pass
+
+    def startGhostGM(self, *args, **kw):
+        pass
+
+    def stopGhostGM(self, *args, **kw):
+        pass
+
+    def requestKill(self, *args, **kw):
+        pass
+
+    def requestGhost(self, *args, **kw):
+        pass
+
+    def setAvatarViewTarget(self, *args, **kw):
+        pass
+
+    def acknowledgeViewTarget(self, *args, **kw):
+        pass
+
+    def displayWhisper(self, *args, **kw):
+        pass
+
+    def displayTalkWhisper(self, *args, **kw):
+        pass
+
+    def displayTalkAccount(self, *args, **kw):
+        pass
+
+    def whisperTo(self, *args, **kw):
+        pass
+
+    def setKickEvents(self, *args, **kw):
+        pass
+
+    def spendSkillPoint(self, *args, **kw):
+        pass
+
+    def checkForAutoTrigger(self, *args, **kw):
+        pass
+
+    def swapFloorCollideMask(self, *args, **kw):
+        pass
+
+    def handleShipArrive(self, *args, **kw):
+        pass
+
+    def handleShipLeave(self, *args, **kw):
+        pass
+
+    def placeOnShip(self, *args, **kw):
+        pass
+
+    def removeFromShip(self, *args, **kw):
+        pass
+
+    def startAutoRun(self, *args, **kw):
+        pass
+
+    def stopAutoRun(self, *args, **kw):
+        pass
+
+    def getName(self, *args, **kw):
+        pass
+
+    def soShowReset(self, *args, **kw):
+        pass
+
+    def resetQuestShow(self, *args, **kw):
+        pass
+
+    def setGuildId(self, *args, **kw):
+        pass
+
+    def setBandId(self, *args, **kw):
+        pass
+
+    def setSiegeTeam(self, *args, **kw):
+        pass
+
+    def setTutorial(self, *args, **kw):
+        pass
+
+    def startOceanCheck(self, *args, **kw):
+        pass
+
+    def checkCurrentOcean(self, *args, **kw):
+        pass
+
+    def l_setActiveQuest(self, *args, **kw):
+        pass
+
+    def wrtReparentTo(self, *args, **kw):
+        pass
+
+    def enableWaterEffect(self, *args, **kw):
+        pass
+
+    def disableWaterEffect(self, *args, **kw):
+        pass
+
+    def adjustWaterEffect(self, *args, **kw):
+        pass
+
+    def handleWaterIn(self, *args, **kw):
+        pass
+
+    def handleWaterAgain(self, *args, **kw):
+        pass
+
+    def handleWaterOut(self, *args, **kw):
+        pass
+
+    def spawnWiggle(self, *args, **kw):
+        pass
+
+    def setLifterDelayFrames(self, *args, **kw):
+        pass
+
+    def queueStoryQuest(self, *args, **kw):
+        pass
+
+    def resetStoryQuest(self, *args, **kw):
+        pass
+
+    def triggerNPCInteract(self, *args, **kw):
+        pass
+
+    def leaveZoneLOD(self, *args, **kw):
+        pass
+
+    def enterZoneLOD(self, *args, **kw):
+        pass
+
+    def b_setGameState(self, *args, **kw):
+        pass
+
+    def printTS(self, *args, **kw):
+        pass
+
+    def printIZL(self, *args, **kw):
+        pass
+
+    def addStatusEffect(self, *args, **kw):
+        pass
+
+    def removeStatusEffect(self, *args, **kw):
+        pass
+
+    def setDefaultShard(self, *args, **kw):
+        pass
+
+    def logDefaultShard(self, *args, **kw):
+        pass
+
+    def enableCloudScudEffect(self, *args, **kw):
+        pass
+
+    def disableCloudScudEffect(self, *args, **kw):
+        pass
+
+    def teleportCleanupComplete(self, *args, **kw):
+        pass
+
+    def doFadeIn(self, *args, **kw):
+        pass
+
+    def setSoloInteraction(self, *args, **kw):
+        pass
+
+    def getSoloInteraction(self, *args, **kw):
+        pass
+
+    def initVisibleToCamera(self, *args, **kw):
+        pass
+
+    def isStateAIProtected(self, *args, **kw):
+        pass
+
+    def setGameState(self, *args, **kw):
+        pass
+
+    def motionFSMEnterState(self, *args, **kw):
+        pass
+
+    def motionFSMExitState(self, *args, **kw):
+        pass
+
+    def updatePaidStatus(self, *args, **kw):
+        pass
+
+    def goAFK(self, *args, **kw):
+        pass
+
+    def checkInputState(self, *args, **kw):
+        pass
+
+    def checkAction(self, *args, **kw):
+        pass
+
+    def delayAFK(self, *args, **kw):
+        pass
+
+    def toggleAFK(self, *args, **kw):
+        pass
+
+    def gotSpecialReward(self, *args, **kw):
+        pass
+
+    def addLocalProjectile(self, *args, **kw):
+        pass
+
+    def clearLocalProjectile(self, *args, **kw):
+        pass
+
+    def cleanupLocalProjectiles(self, *args, **kw):
+        pass
+
+    def addShipTarget(self, *args, **kw):
+        pass
+
+    def setCannonAmmoSkillId(self, *args, **kw):
+        pass
+
+    def getCannonAmmoSkillId(self, *args, **kw):
+        pass
+
+    def getShortName(self, *args, **kw):
+        pass
+
+    def getLevel(self, *args, **kw):
+        pass
+
+    def setAsGM(self, *args, **kw):
+        pass
+
+    def setBadgeIcon(self, *args, **kw):
+        pass
+
+    def setShipBadgeIcon(self, *args, **kw):
+        pass
+
+    def changeBodyType(self, *args, **kw):
+        pass
+
+    def setAvatarSkinCrazy(self, *args, **kw):
+        pass
+
+    def playCurse(self, *args, **kw):
+        pass
+
+    def setZombie(self, *args, **kw):
+        pass
+
+    def setCurseStatus(self, *args, **kw):
+        pass
+
+    def getAllowSocialPanel(self, *args, **kw):
+        pass
+
+    def setAllowSocialPanel(self, *args, **kw):
+        pass
+
+    def displayMoraleMessage(self, *args, **kw):
+        pass
+
+    def __cleanupMoraleDialog(self, *args, **kw):
+        pass
+
+    def __destroyedMoraleDialog(self, *args, **kw):
+        pass
+
+    def guildStatusUpdate(self, *args, **kw):
+        pass
+
+    def guildNameRequest(self, *args, **kw):
+        pass
+
+    def guildNameReject(self, *args, **kw):
+        pass
+
+    def guildNameChange(self, *args, **kw):
+        pass
+
+    def __cleanupGuildDialog(self, *args, **kw):
+        pass
+
+    def __destroyedGuildDialog(self, *args, **kw):
+        pass
+
+    def getCanLogout(self, *args, **kw):
+        pass
+
+    def teleportQuery(self, *args, **kw):
+        pass
+
+    def teleportResponse(self, *args, **kw):
+        pass
+
+    def requestCombatMusic(self, *args, **kw):
+        pass
+
+    def stopCombatMusic(self, *args, **kw):
+        pass
+
+    def setEfficiency(self, *args, **kw):
+        pass
+
+    def setBoardedShip(self, *args, **kw):
+        pass
+
+    def putOnBoat(self, *args, **kw):
+        pass
+
+    def gotBoat(self, *args, **kw):
+        pass
+
+    def arrivedOnShip(self, *args, **kw):
+        pass
+
+    def leftShip(self, *args, **kw):
+        pass
+
+    def getMinimapObject(self, *args, **kw):
+        pass
+
+    def getGridMinimapObject(self, *args, **kw):
+        pass
+
+    def setVisZone(self, *args, **kw):
+        pass
+
+    def handleZoneChanged(self, *args, **kw):
+        pass
+
+    def skipTutorial(self, *args, **kw):
+        pass
+
+    def handleBackToMain(self, *args, **kw):
+        pass
+
+    def refreshInventoryUI(self, *args, **kw):
+        pass
+
+    def setDefenceEffect(self, *args, **kw):
+        pass
+
+    def stopAllDefenceEffects(self, *args, **kw):
+        pass
+
+    def testProtection(self, *args, **kw):
+        pass
+
+    def testBlock(self, *args, **kw):
+        pass
+
+    def disableLootUI(self, *args, **kw):
+        pass
+
+    def enableLootUI(self, *args, **kw):
+        pass
+
+    def checkHaveShip(self, *args, **kw):
+        pass
+
+    def enterDialogMode(self, *args, **kw):
+        pass
+
+    def exitDialogMode(self, *args, **kw):
+        pass
