@@ -22,8 +22,8 @@ class LoginPiratesAccount(LoginBase):
         cr = self.cr
         # TODO
 
-    def resendPlayToken(self):
-        self.notify.error('Cannot resend playtoken!')
+    def resendLoginCookie(self):
+        self.notify.error('Cannot resend login cookie!')
 
     def getErrorCode(self):
         return 0

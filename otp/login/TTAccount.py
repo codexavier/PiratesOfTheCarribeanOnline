@@ -258,8 +258,8 @@ class TTAccount:
         if operation in ('get', 'forgotPassword', 'authenticateDelete', 'play', 'cancel', 'create', 'purchase', 'setParentPassword', 'authenticateParentPassword', 'authenticateParentPasswordNewStyle', 'authenticateParentUsernameAndPassword', 'authenticateDeleteNewStyle'):
             pass
         elif operation == 'setSecretChat':
-            self.playToken = self.response.getString('playToken')
-            self.playTokenIsEncrypted = 1
+            self.loginCookie = self.response.getString('loginCookie')
+            self.loginCookieIsEncrypted = 1
         else:
             self.notify.error('Internal TTAccount error: need to extract useful data for %s operation' % operation)
         return None

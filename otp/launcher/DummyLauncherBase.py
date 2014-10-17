@@ -103,7 +103,7 @@ class DummyLauncherBase:
     def getBlue(self):
         return None
 
-    def getPlayToken(self):
+    def getLoginCookie(self):
         return None
 
     def getDISLToken(self):

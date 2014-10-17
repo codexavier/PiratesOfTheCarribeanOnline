@@ -1855,7 +1855,7 @@ class LauncherBase(DirectObject):
             self.notify.info("Third party programs installed:")
             for hack in hacksInstalled.keys():
                 self.notify.info(hack)
-        
+
         if len(hacksRunning) > 0:
             self.notify.info("Third party programs running:")
             for hack in hacksRunning.keys():
@@ -1866,7 +1866,7 @@ class LauncherBase(DirectObject):
     def getBlue(self):
         return None
 
-    def getPlayToken(self):
+    def getLoginCookie(self):
         return None
 
     def getDISLToken(self):

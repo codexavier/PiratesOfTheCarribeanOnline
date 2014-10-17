@@ -55,7 +55,7 @@ class LoginGSAccount(LoginBase.LoginBase):
         datagram.addString(config.GetString('otp-whitelist', 'YES'))
         cr.send(datagram)
 
-    def resendPlayToken(self):
+    def resendLoginCookie(self):
         pass
 
     def requestPwdReminder(self, email = None, acctName = None):
@@ -81,6 +81,6 @@ class LoginGSAccount(LoginBase.LoginBase):
 
     def enableSecretFriends(self, loginName, password, parentPassword, enable = 1):
         return (password == parentPassword, None)
-# okay decompyling C:\Users\Maverick\Documents\Visual Studio 2010\Projects\Unfreezer\py2\otp\login\LoginGSAccount.pyc 
+# okay decompyling C:\Users\Maverick\Documents\Visual Studio 2010\Projects\Unfreezer\py2\otp\login\LoginGSAccount.pyc
 # decompiled 1 files: 1 okay, 0 failed, 0 verify failed
 # 2013.08.22 22:15:37 Pacific Daylight Time

@@ -85,13 +85,13 @@ class OTPClientRepository(ClientRepositoryBase):
             self.blue = fakeBlue
 
 
-        self.playToken = None
+        self.loginCookie = None
         if self.launcher:
-            self.playToken = self.launcher.getPlayToken()
+            self.loginCookie = self.launcher.getLoginCookie()
 
-        fakePlayToken = config.GetString('fake-playtoken', '')
-        if fakePlayToken:
-            self.playToken = fakePlayToken
+        fakeLoginCookie = config.GetString('fake-login-cookie', '')
+        if fakeLoginCookie:
+            self.loginCookie = fakeLoginCookie
 
 
         self.DISLToken = None
@@ -150,9 +150,9 @@ class OTPClientRepository(ClientRepositoryBase):
         elif self.requiredLogin == 'blue':
             if not self.blue:
                 self.notify.error('The tcr does not have the required blue login')
-        elif self.requiredLogin == 'playToken':
-            if not self.playToken:
-                self.notify.error('The tcr does not have the required playToken login')
+        elif self.requiredLogin == 'loginCookie':
+            if not self.loginCookie:
+                self.notify.error('The tcr does not have the required loginCookie login')
         elif self.requiredLogin == 'DISLToken':
             if not self.DISLToken:
                 self.notify.error('The tcr does not have the required DISL token login')
@@ -1543,8 +1543,8 @@ class OTPClientRepository(ClientRepositoryBase):
         secsLeft = self.freeTimeExpiresAt - time.time()
         return max(0, secsLeft)
 
-    def isWebPlayToken(self):
-        return self.playToken != None
+    def isWebLoginCookie(self):
+        return self.loginCookie is not None
 
     def isBlue(self):
         return self.blue != None

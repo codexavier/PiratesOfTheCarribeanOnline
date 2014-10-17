@@ -87,8 +87,8 @@ class LoginTTSpecificDevAccount(LoginTTAccount.LoginTTAccount):
         self.notify.info('tokenString=\n%s' % tokenString)
         datagram = PyDatagram()
         datagram.addUint16(CLIENT_LOGIN_TOONTOWN)
-        playToken = tokenString
-        datagram.addString(playToken)
+        loginCookie = tokenString
+        datagram.addString(loginCookie)
         datagram.addString('dev')
         datagram.addUint32(cr.hashVal)
         datagram.addUint32(4)
@@ -96,7 +96,7 @@ class LoginTTSpecificDevAccount(LoginTTAccount.LoginTTAccount):
         datagram.addString(magicWords)
         cr.send(datagram)
 
-    def resendPlayToken(self):
+    def resendLoginCookie(self):
         pass
 
     def requestPwdReminder(self, email = None, acctName = None):
@@ -116,6 +116,6 @@ class LoginTTSpecificDevAccount(LoginTTAccount.LoginTTAccount):
 
     def needToSetParentPassword(self):
         return False
-# okay decompyling C:\Users\Maverick\Documents\Visual Studio 2010\Projects\Unfreezer\py2\otp\login\LoginTTSpecificDevAccount.pyc 
+# okay decompyling C:\Users\Maverick\Documents\Visual Studio 2010\Projects\Unfreezer\py2\otp\login\LoginTTSpecificDevAccount.pyc
 # decompiled 1 files: 1 okay, 0 failed, 0 verify failed
 # 2013.08.22 22:15:39 Pacific Daylight Time

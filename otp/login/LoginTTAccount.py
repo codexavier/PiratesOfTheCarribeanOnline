@@ -26,14 +26,14 @@ class LoginTTAccount(LoginBase.LoginBase, TTAccount.TTAccount):
         datagram = PyDatagram()
         if self.useTTSpecificLogin:
             datagram.addUint16(CLIENT_LOGIN_TOONTOWN)
-            self.__addPlayToken(datagram)
+            self.__addLoginCookie(datagram)
             datagram.addString(cr.serverVersion)
             datagram.addUint32(cr.hashVal)
             self.__addTokenType(datagram)
             datagram.addString(cr.wantMagicWords)
         else:
             datagram.addUint16(CLIENT_LOGIN_2)
-            self.__addPlayToken(datagram)
+            self.__addLoginCookie(datagram)
             datagram.addString(cr.serverVersion)
             datagram.addUint32(cr.hashVal)
             self.__addTokenType(datagram)
@@ -41,22 +41,22 @@ class LoginTTAccount(LoginBase.LoginBase, TTAccount.TTAccount):
             datagram.addString(cr.wantMagicWords)
         cr.send(datagram)
 
-    def resendPlayToken(self):
+    def resendLoginCookie(self):
         cr = self.cr
         datagram = PyDatagram()
         datagram.addUint16(CLIENT_SET_SECURITY)
-        self.__addPlayToken(datagram)
+        self.__addLoginCookie(datagram)
         self.__addTokenType(datagram)
         cr.send(datagram)
 
-    def __addPlayToken(self, datagram):
-        self.playToken = self.playToken.strip()
-        datagram.addString(self.playToken)
+    def __addLoginCookie(self, datagram):
+        self.loginCookie = self.loginCookie.strip()
+        datagram.addString(self.loginCookie)
 
     def __addTokenType(self, datagram):
         if self.useTTSpecificLogin:
             datagram.addInt32(CLIENT_LOGIN_3_DISL_TOKEN)
-        elif self.playTokenIsEncrypted:
+        elif self.loginCookieIsEncrypted:
             datagram.addInt32(CLIENT_LOGIN_2_PLAY_TOKEN)
         else:
             datagram.addInt32(CLIENT_LOGIN_2_PLAY_TOKEN)
@@ -112,6 +112,6 @@ class LoginTTAccount(LoginBase.LoginBase, TTAccount.TTAccount):
             result = TTAccount.TTAccount.authenticateDelete(self, loginName, password)
             return result
         return None
-# okay decompyling C:\Users\Maverick\Documents\Visual Studio 2010\Projects\Unfreezer\py2\otp\login\LoginTTAccount.pyc 
+# okay decompyling C:\Users\Maverick\Documents\Visual Studio 2010\Projects\Unfreezer\py2\otp\login\LoginTTAccount.pyc
 # decompiled 1 files: 1 okay, 0 failed, 0 verify failed
 # 2013.08.22 22:15:38 Pacific Daylight Time

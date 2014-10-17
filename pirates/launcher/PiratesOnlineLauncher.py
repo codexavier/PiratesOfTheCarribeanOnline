@@ -14,12 +14,11 @@ class PiratesOnlineLauncher(LauncherBase):
     def setPandaErrorCode(self, errorCode):
         pass
 
-    def getPlayToken(self):
-        return self.getValue('PO_PLAYCOOKIE')
+    def getLoginCookie(self):
+        return self.getValue('LOGIN_COOKIE')
 
     def getGameServer(self):
-        return self.getValue('PO_GAMESERVER')
-
+        return self.getValue('GAME_SERVER')
 
     def getValue(self, key, default = None):
         return os.environ.get(key, default)
