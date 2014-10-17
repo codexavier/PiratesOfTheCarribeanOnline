@@ -319,8 +319,6 @@ def getLegalClothing(rarity, gender, items, level):
             if modelId != -1:
                 typeItems.append(itemId)
 
-        modelId != -1
-
     return typeItems
 
 

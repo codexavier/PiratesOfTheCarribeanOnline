@@ -13,11 +13,11 @@ from pirates.coderedemption import CodeRedemptionGlobals
 
 class RedeemCodeGUI(DirectFrame):
     notify = DirectNotifyGlobal.directNotify.newCategory('RedeemCodeGUI')
-    
+
     def __init__(self, parent, **kw):
         optiondefs = (('relief', None, None),)
         self.defineoptions(kw, optiondefs)
-        DirectFrame.__init__(self, parent, **None)
+        DirectFrame.__init__(self, parent)
         self.initialiseoptions(RedeemCodeGUI)
         gui_main = loader.loadModel('models/gui/gui_main')
         topImage = gui_main.find('**/game_options_panel/top')
@@ -34,17 +34,17 @@ class RedeemCodeGUI(DirectFrame):
         self.alertDialog = None
         self.accept('codeRedeemed', self._RedeemCodeGUI__handleCodeRedeem)
 
-    
+
     def confirmCode(self, input = None):
         if input == None:
             input = self.codeInput.get()
-        
+
         self.codeInput.enterText('')
         self.hideCode(1)
         if self.alertDialog:
             self.alertDialog.destroy()
             self.alertDialog = None
-        
+
         if input == None or len(input) == 0:
             self.alertDialog = PDialog.PDialog(parent = aspect2dp, text = PLocalizer.ShopCodeErr, style = OTPDialog.CancelOnly, command = self._RedeemCodeGUI__handleAlert, destroyedCallback = self._RedeemCodeGUI__destroyedAlert)
             self.alertDialog.setPos(0.59999999999999998, 0, 0.10000000000000001)
@@ -52,16 +52,16 @@ class RedeemCodeGUI(DirectFrame):
         else:
             localAvatar.submitCodeToServer(input)
 
-    
+
     def _RedeemCodeGUI__destroyedAlert(self):
         self.alertDialog = None
 
-    
+
     def _RedeemCodeGUI__handleCodeRedeem(self, value):
         if self.alertDialog:
             self.alertDialog.destroy()
             self.alertDialog = None
-        
+
         if value == CodeRedemptionGlobals.ERROR_ID_GOOD:
             self.alertDialog = PDialog.PDialog(parent = aspect2dp, text = PLocalizer.ShopCodeSuccess, style = OTPDialog.CancelOnly, command = self._RedeemCodeGUI__handleCodeSuccess, destroyedCallback = self._RedeemCodeGUI__destroyedAlert)
         elif value == CodeRedemptionGlobals.ERROR_ID_OVERFLOW:
@@ -71,53 +71,53 @@ class RedeemCodeGUI(DirectFrame):
         self.alertDialog.setPos(0.59999999999999998, 0, 0.10000000000000001)
         self.alertDialog.setBin('gui-fixed', 2)
 
-    
+
     def _RedeemCodeGUI__handleCodeSuccess(self, value = None):
         self.hideCode()
         if self.alertDialog:
             self.alertDialog.destroy()
             self.alertDialog = None
-        
 
-    
+
+
     def _RedeemCodeGUI__handleAlert(self, value = None):
         if value == -1:
             if self.alertDialog:
                 self.alertDialog.destroy()
                 self.alertDialog = None
-            
-            self.showCode()
-        
 
-    
+            self.showCode()
+
+
+
     def hideCode(self, option = 0):
         self.artFrame.hide()
         if option == 0:
             self.blackout.hide()
-        
+
         self.codeInput.enterText('')
         self.codeInput.hide()
 
-    
+
     def showCode(self):
         self.artFrame.show()
         self.blackout.show()
         self.codeInput.show()
 
-    
+
     def destroy(self):
         DirectFrame.destroy(self)
         if self.artFrame:
             self.artFrame.destroy()
-        
+
         if self.blackout:
             self.blackout.destroy()
-        
+
         if self.codeInput:
             self.codeInput.destroy()
-        
+
         if self.alertDialog:
             self.alertDialog.destroy()
-        
+
 
 

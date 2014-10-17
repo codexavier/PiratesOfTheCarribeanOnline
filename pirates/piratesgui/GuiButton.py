@@ -1,5 +1,3 @@
-# File: G (Python 2.4)
-
 import copy
 from pandac.PandaModules import *
 from direct.directnotify.DirectNotifyGlobal import directNotify
@@ -11,12 +9,13 @@ from pirates.piratesgui import PiratesGuiGlobals
 from pirates.piratesbase import PiratesGlobals
 from pirates.piratesgui.BorderFrame import BorderFrame
 
+
 class GuiButton(DirectButton):
     notify = directNotify.newCategory('GuiButton')
     genericButton = None
     redGenericButton = None
     blueGenericButton = None
-    
+
     def __init__(self, parent = None, hotkeys = (), hotkeyLabel = None, hotkeyLabelX = 0.091999999999999998, hotkeyArgs = True, helpText = '', helpPos = (0, 0, 0), helpDelay = PiratesGuiGlobals.HelpPopupTime, helpColorOff = False, helpLeftAlign = False, helpCenterAlign = False, **kw):
         self.loadGui()
         self.helpBox = None
@@ -24,7 +23,7 @@ class GuiButton(DirectButton):
         self.canRepositon = False
         optiondefs = (('relief', None, None), ('pos', (0, 0, 0), None), ('image', GuiButton.genericButton, None), ('image_scale', (0.23999999999999999, 0.22, 0.22), None), ('image_pos', (0, 0, 0), None), ('pressEffect', 0, None), ('text', '', None), ('text_font', PiratesGlobals.getInterfaceFont(), None), ('text_scale', PiratesGuiGlobals.TextScaleLarge, None), ('text0_fg', PiratesGuiGlobals.TextFG2, None), ('text1_fg', PiratesGuiGlobals.TextFG2, None), ('text2_fg', PiratesGuiGlobals.TextFG2, None), ('text3_fg', PiratesGuiGlobals.TextFG3, None), ('text_shadow', PiratesGuiGlobals.TextShadow, None), ('text_pos', (0, -0.01), None), ('text_wordwrap', 8, None), ('text_align', TextNode.ACenter, None), ('textMayChange', 1, None), ('helpText', helpText, self.helpTextUpdated), ('helpPos', helpPos, self.setHelpPos), ('helpDelay', helpDelay, None), ('helpColorOff', helpColorOff, None), ('helpLeftAlign', helpLeftAlign, None), ('helpCenterAlign', helpCenterAlign, None), ('helpBin', 'gui-popup', None), ('helpBinSort', 0, None), ('helpOpaque', 0, None), ('canReposition', False, None), ('sortOrder', 100, None), ('baseImage', None, None), ('selected', False, None), ('selectedImage', GuiButton.genericButton, None), ('state', DGG.NORMAL, self.setState))
         self.defineoptions(kw, optiondefs)
-        DirectButton.__init__(self, parent = NodePath(), **None)
+        DirectButton.__init__(self, parent = NodePath())
         self.initialiseoptions(GuiButton)
         self.hotkeys = ()
         self.setupHotkeys(hotkeys, hotkeyLabel, self['command'], self['extraArgs'], hotkeyLabelX, hotkeyArgs)
@@ -33,7 +32,7 @@ class GuiButton(DirectButton):
         self.reparentTo(aspect2d)
         self.helpTaskName = None
 
-    
+
     def destroy(self):
         self.hideDetails()
         if self.helpWatcher:
@@ -41,28 +40,28 @@ class GuiButton(DirectButton):
             self.helpWatcher.unbind(DGG.WITHOUT)
             self.helpWatcher.destroy()
             self.helpWatcher = None
-        
+
         self.unbind(DGG.ENTER)
         self.unbind(DGG.EXIT)
         self.ignoreAll()
         DirectButton.destroy(self)
 
-    
+
     def loadGui(self):
         if GuiButton.genericButton:
             return None
-        
+
         gui = loader.loadModel('models/gui/toplevel_gui')
         GuiButton.genericButton = (gui.find('**/generic_button'), gui.find('**/generic_button_down'), gui.find('**/generic_button_over'), gui.find('**/generic_button_disabled'))
         GuiButton.redGenericButton = (gui.find('**/pir_t_gui_but_generic'), gui.find('**/pir_t_gui_but_generic_down'), gui.find('**/pir_t_gui_but_generic_over'), gui.find('**/pir_t_gui_but_generic_disabled'))
         GuiButton.blueGenericButton = (gui.find('**/pir_t_gui_but_generic_blue'), gui.find('**/pir_t_gui_but_generic_blue_down'), gui.find('**/pir_t_gui_but_generic_blue_over'), gui.find('**/pir_t_gui_but_generic_blue_disabled'))
 
-    
+
     def setupHotkeys(self, hotkeys, hotkeyLabel, command, extraArgs, hotkeyLabelX = 0.091999999999999998, hotkeyArgs = True):
         if self.hotkeys:
             self.ignoreHotkeys()
             self.hotkeyLabel.destroy()
-        
+
         self.hotkeys = hotkeys
         self.command = command
         self.extraArgs = extraArgs
@@ -91,10 +90,10 @@ class GuiButton(DirectButton):
                         hotkey])
                     continue
                 self.accept(hotkey, self.command, self.extraArgs)
-            
-        
 
-    
+
+
+
     def createHelpWatcher(self):
         if self['helpOpaque']:
             self.bind(DGG.ENTER, self.waitShowDetails)
@@ -112,7 +111,7 @@ class GuiButton(DirectButton):
             self.helpWatcher.bind(DGG.WITHIN, self.waitShowDetails)
             self.helpWatcher.bind(DGG.WITHOUT, self.hideDetails)
 
-    
+
     def _GuiButton__discoverHelpWatcherPos(self):
         w = self.getWidth()
         h = self.getHeight()
@@ -122,17 +121,17 @@ class GuiButton(DirectButton):
         pos = Vec3(bounds[0] + w / 2, 0, bounds[2] + h / 2)
         return pos
 
-    
+
     def resetHelpWatcher(self):
         if self.helpWatcher:
             self.helpWatcher.setPos(self, 0, 0, 0)
-        
 
-    
+
+
     def createHelpBox(self):
         if not self.helpWatcher:
             self.createHelpWatcher()
-        
+
         helpLabel = DirectLabel(relief = None, state = DGG.DISABLED, text = self['helpText'], text_align = TextNode.ACenter, text_scale = PiratesGuiGlobals.TextScaleMed, text_fg = PiratesGuiGlobals.TextFG1, text_wordwrap = 12, text_shadow = (0, 0, 0, 1), textMayChange = 0, sortOrder = 91)
         height = helpLabel.getHeight()
         width = helpLabel.getWidth() + 0.050000000000000003
@@ -181,26 +180,26 @@ class GuiButton(DirectButton):
             self.helpBox.flattenLight()
         if self['helpBin']:
             self.helpBox.setBin(self['helpBin'], self['helpBinSort'])
-        
 
-    
+
+
     def helpTextUpdated(self):
         if self.helpBox and self.helpBox['text'] != self['helpText']:
             self.helpBox.destroy()
             self.createHelpBox()
         elif self['helpText']:
             self.createHelpBox()
-        
 
-    
+
+
     def setHelpPos(self):
         if self.helpBox:
             self.helpTextUpdated()
-        
 
-    
+
+
     def waitShowDetails(self, event):
-        
+
         try:
             self['helpDelay']
         except AttributeError:
@@ -208,7 +207,7 @@ class GuiButton(DirectButton):
 
         if not self.helpBox:
             self.createHelpBox()
-        
+
         if self['helpDelay']:
             self.hideDetails()
             self.helpTaskName = 'helpInfoTask-%s' % self.getName()
@@ -216,101 +215,82 @@ class GuiButton(DirectButton):
         else:
             self.helpBox.show()
 
-    
+
     def hideDetails(self, event = None):
         if self.helpTaskName:
             taskMgr.remove(self.helpTaskName)
-        
+
         if self.helpBox and not self.helpBox.isEmpty():
             self.helpBox.hide()
-        
 
-    
+
+
     def setImage(self):
         DirectButton.setImage(self)
         if not self['baseImage']:
             self['baseImage'] = self['image']
-        
 
-    
+
+
     def setSelected(self):
         if self['selected']:
             self['image'] = self['selectedImage']
         else:
             self['image'] = self['baseImage']
 
-    
-    def setPos(self, *args, **kw):
-        DirectButton.setPos(self, *args, **args)
 
-    
-    def setX(self, *args, **kw):
-        DirectButton.setX(self, *args, **args)
-
-    
-    def setY(self, *args, **kw):
-        DirectButton.setY(self, *args, **args)
-
-    
-    def setZ(self, *args, **kw):
-        DirectButton.setZ(self, *args, **args)
-
-    
     def setState(self):
         DirectButton.setState(self)
         if self.helpWatcher:
             self.helpWatcher['state'] = self['state']
-        
 
-    
+
+
     def removeNode(self):
         DirectButton.removeNode(self)
         if self.helpWatcher:
             self.helpWatcher.removeNode()
-        
 
-    
+
+
     def remove(self):
         DirectButton.remove(self)
         if self.helpWatcher:
             self.helpWatcher.remove()
-        
 
-    
+
+
     def detachNode(self):
         DirectButton.detachNode(self)
         if self.helpWatcher:
             self.helpWatcher.detachNode()
-        
 
-    
+
+
     def hide(self):
         DirectButton.hide(self)
         if self.helpWatcher:
             self.helpWatcher.hide()
-        
 
-    
+
+
     def show(self):
         DirectButton.show(self)
         if self.helpWatcher:
             self.helpWatcher.show()
-        
 
-    
+
+
     def stash(self):
         DirectButton.stash(self)
         if self.helpWatcher:
             self.helpWatcher.stash()
-        
 
-    
+
+
     def unstash(self):
         DirectButton.unstash(self)
         self.reparentTo(self.getParent(), sort = self['sortOrder'])
         if self.helpWatcher:
             self.helpWatcher.unstash()
             self.helpWatcher.reparentTo(self.helpWatcher.getParent(), sort = self.helpWatcher['sortOrder'])
-        
-
-

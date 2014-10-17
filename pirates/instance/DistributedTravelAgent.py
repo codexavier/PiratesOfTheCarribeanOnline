@@ -1,11 +1,5 @@
-# File: D (Python 2.4)
+from direct.distributed.DistributedObject import DistributedObject
 
-from direct.distributed import DistributedObject
 
-class DistributedTravelAgent(DistributedObject.DistributedObject):
+class DistributedTravelAgent(DistributedObject):
     notify = directNotify.newCategory('DistributedTravelAgent')
-    
-    def __init__(self, air):
-        DistributedObject.DistributedObject.__init__(self, air)
-
-

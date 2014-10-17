@@ -1,13 +1,21 @@
 from direct.distributed import DistributedObjectGlobal
 from pirates.uberdog import ClientServicesManager/UD
 from pirates.distributed import PiratesDistrict/AI
+from pirates.pirate import DistributedPlayerPirate/AI/UD
 
 struct PotentialPirate {
-  uint32 doId;
-  string name;
-  string dna;
-  uint8 position;
-  uint8 random;
+  uint32 avNum;
+  string avName;
+  string avDNA;
+  uint8 avPosition;
+  uint8 aname;
+};
+
+struct AvatarType {
+  int8 faction;
+  int8 track;
+  int8 id;
+  uint8 boss;
 };
 
 dclass DistributedObjectGlobal : DistributedObject {
@@ -19,6 +27,12 @@ dclass ClientServicesManager : DistributedObjectGlobal {
 
   requestAvatars() clsend;
   setAvatars(PotentialPirate[]);
+
+  createAvatar(blob dna, uint8 index) clsend;
+  createAvatarResp(uint32 avId);
+
+  chooseAvatar(uint32 avId) clsend;
+  avatarResponse(uint32 avId, blob avdata);
 };
 
 dclass PiratesDistrict : DistributedDistrict {

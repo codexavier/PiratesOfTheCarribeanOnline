@@ -25,15 +25,15 @@ class MusicianGUI(DirectFrame):
     height = 1.3500000000000001
     columnWidth = PiratesGuiGlobals.InventoryItemGuiWidth + PiratesGuiGlobals.ScrollbarSize + 0.050000000000000003
     CoinImage = None
-    
+
     def __init__(self, inventory, name, **kw):
         optiondefs = (('relief', None, None), ('framSize', (0, self.width, 0, self.height), None), ('sortOrder', 20, None))
         self.defineoptions(kw, optiondefs)
-        DirectFrame.__init__(self, None, **None)
+        DirectFrame.__init__(self, None)
         self.initialiseoptions(MusicianGUI)
         if not MusicianGUI.CoinImage:
             MusicianGUI.CoinImage = loader.loadModel('models/gui/toplevel_gui').find('**/treasure_w_coin*')
-        
+
         self.panel = GuiPanel.GuiPanel(name, self.width, self.height, parent = self)
         self.panel.closeButton['command'] = self.closePanel
         self.setPos(-0.59999999999999998, 0, -0.66000000000000003)
@@ -51,41 +51,41 @@ class MusicianGUI(DirectFrame):
         self.accept(PiratesGuiGlobals.InventoryBuyEvent, self.handleBuyItem)
         self.acceptOnce('escape', self.closePanel)
 
-    
+
     def closePanel(self):
         messenger.send('exitStore')
         self.ignoreAll()
 
-    
+
     def handleBuyItem(self, data, useCode):
         itemId = data[0]
         if not itemId:
             return None
-        
+
         inventory = base.localAvatar.getInventory()
         if not inventory:
             return None
-        
+
         if useCode == PiratesGuiGlobals.InventoryAdd:
             if inventory.getGoldInPocket() < 5:
                 base.localAvatar.guiMgr.createWarning(PLocalizer.NotEnoughMoneyWarning, PiratesGuiGlobals.TextFG6)
                 return None
-            
+
             if base.musicMgr.current.name not in [
                 SoundGlobals.MUSIC_TAVERN_A,
                 SoundGlobals.MUSIC_TAVERN_B,
                 SoundGlobals.MUSIC_TAVERN_C]:
                 base.localAvatar.guiMgr.createWarning(PLocalizer.WaitYourTurnWarning, PiratesGuiGlobals.TextFG6)
                 return None
-            
+
             messenger.send('requestMusic', [
                 itemId])
         elif useCode == PiratesGuiGlobals.InventoryRemove:
-            raise 
-        
+            raise
 
-    
+
+
     def handleCommitPurchase(self):
-        raise 
+        raise
 
 

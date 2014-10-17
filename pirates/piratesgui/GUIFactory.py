@@ -19,9 +19,9 @@ def destroyDirectGUIDict(dict):
     for key in dict:
         if hasattr(dict[key], 'destroy'):
             dict[key].destroy()
-        
+
         dict[key].removeNode()
-    
+
     dict.clear()
 
 
@@ -31,7 +31,7 @@ def generateElements(nodePath, parent):
 
 
 def generateButtons(nodePath, parent, **kw):
-    return _generateType(nodePath, parent, 'button', **None)
+    return _generateType(nodePath, parent, 'button')
 
 
 def generateText(nodePath, parent):
@@ -44,7 +44,7 @@ def generateStaticElements(nodePath, parent):
 
 def _generateType(nodePath, parent, type, **kw):
     elements = _parseChildren(nodePath, parent, elementTypes = [
-        type], **None)
+        type])
     if type in elements:
         return elements[type]
     else:
@@ -53,8 +53,8 @@ def _generateType(nodePath, parent, type, **kw):
 
 def _parseChildren(nodePath, parent, elements = { }, elementTypes = None, **kw):
     for i in range(nodePath.getNumChildren()):
-        _parseNodePath(nodePath.getChild(i), parent, elements, elementTypes, **None)
-    
+        _parseNodePath(nodePath.getChild(i), parent, elements, elementTypes)
+
     return elements
 
 
@@ -67,10 +67,10 @@ def _parseNodePath(nodePath, parent, elements = { }, elementTypes = None, **kw):
         pass
     canCreate = prefix in elementTypes
     if canCreate:
-        nameAndElement = PREFIX_TO_CREATE_CALL[prefix](nodePath, parent, **None)
+        nameAndElement = PREFIX_TO_CREATE_CALL[prefix](nodePath, parent)
         if prefix not in elements:
             elements[prefix] = { }
-        
+
         elements[prefix][nameAndElement[0]] = nameAndElement[1]
     else:
         notify.debug('no rule to create element with prefix %s' % prefix)
@@ -99,7 +99,7 @@ def _parseButton(nodePath, parent, **kw):
     game = nodePath.getName()[len(BUTTON_PREFIX) + 1:]
     text = PLocalizer.Minigame_Repair_Names[game]
     button = _createButton(nodePath = nodePath, parent = parent, canReposition = True, helpText = text, helpPos = (0.0, 0.0, -0.17499999999999999), helpOpaque = 1, helpCenterAlign = True, command = None, extraArgs = [
-        0], **None)
+        0])
     return (nodePath.getName()[len(BUTTON_PREFIX) + 1:], button)
 
 
@@ -107,7 +107,7 @@ def _createButton(nodePath, parent, **kw):
     buttonClass = kw.get('buttonClass', DirectButton)
     if 'buttonClass' in kw:
         del kw['buttonClass']
-    
+
     textLocator = nodePath.find('text_button')
     if textLocator.isEmpty():
         textPos = (0.0, 0.0)
@@ -122,12 +122,12 @@ def _createButton(nodePath, parent, **kw):
     if 'passNodePathToButton' in kw:
         if kw['passNodePathToButton']:
             args['nodePath'] = nodePath
-        
+
         del kw['passNodePathToButton']
-    
+
     for key in kw:
         args[key] = kw[key]
-    
+
     b = buttonClass(**None)
     b.setScale(SCALE_MULTIPLIER)
     b.setPos(nodePath.getPos() * SCALE_MULTIPLIER)

@@ -12,18 +12,18 @@ from pirates.piratesgui.CheckButton import CheckButton
 from pirates.piratesbase import PiratesGlobals
 
 class BoardingPermissionPanel(GuiPanel):
-    
+
     def __init__(self, parent, *args, **kw):
         self.guiSetup = False
         optiondefs = (('parent', parent, None), ('pos', (-0.57999999999999996, 0, -0.089999999999999997), None), ('command', None, None), ('extraArgs', [], None), ('ownShip', 0, None))
         self.defineoptions(kw, optiondefs)
-        GuiPanel.__init__(self, title = PLocalizer.BoardPermTitle, h = 0.80000000000000004, w = 0.5, titleSize = 1.5, showClose = False, **None)
+        GuiPanel.__init__(self, title = PLocalizer.BoardPermTitle, h = 0.80000000000000004, w = 0.5, titleSize = 1.5, showClose = False)
         self.initialiseoptions(BoardingPermissionPanel)
         self.titleLabel['text_align'] = TextNode.ACenter
         self.titleLabel.setPos(0.23000000000000001, 0, 0.71999999999999997)
         self.setupGui()
 
-    
+
     def destroy(self):
         self.button = None
         self.background = None
@@ -33,7 +33,7 @@ class BoardingPermissionPanel(GuiPanel):
         self.publicButton = None
         GuiPanel.destroy(self)
 
-    
+
     def setupGui(self):
         self.destroyGui()
         if not self.guiSetup:
@@ -93,9 +93,9 @@ class BoardingPermissionPanel(GuiPanel):
             buttonOptions['value'] = publicState
             self.publicButton = CheckButton(**None)
             self.guiSetup = True
-        
 
-    
+
+
     def destroyGui(self):
         if self.guiSetup:
             self.background.destroy()
@@ -111,57 +111,57 @@ class BoardingPermissionPanel(GuiPanel):
             self.button.destroy()
             self.button = None
             self.guiSetup = False
-        
 
-    
+
+
     def allowFriends(self, allow):
         if self['ownShip']:
             ship = localAvatar.getShip()
             if ship:
                 ship.b_setAllowFriendState(allow)
-            
-        
 
-    
+
+
+
     def allowCrew(self, allow):
         if self['ownShip']:
             ship = localAvatar.getShip()
             if ship:
                 ship.b_setAllowCrewState(allow)
-            
-        
 
-    
+
+
+
     def allowGuild(self, allow):
         if self['ownShip']:
             ship = localAvatar.getShip()
             if ship:
                 ship.b_setAllowGuildState(allow)
-            
-        
 
-    
+
+
+
     def allowPublic(self, allow):
         if self['ownShip']:
             ship = localAvatar.getShip()
             if ship:
                 ship.b_setAllowPublicState(allow)
-            
-        
 
-    
+
+
+
     def setAllowFriends(self, allow):
         self.friendsButton['value'] = allow
 
-    
+
     def setAllowCrew(self, allow):
         self.crewButton['value'] = allow
 
-    
+
     def setAllowGuild(self, allow):
         self.guildButton['value'] = allow
 
-    
+
     def setAllowPublic(self, allow):
         self.publicButton['value'] = allow
 

@@ -51,7 +51,7 @@ class StackMessage(BorderFrame):
 
         optiondefs = (('relief', None, None), ('frameSize', (0, 0.80000000000000004, -0.17999999999999999, 0), None), ('state', DGG.DISABLED, None), ('time', 7, None), ('priority', 0, None), ('modelName', 'general_frame_b', None), ('borderScale', 0.69999999999999996, None), ('icon', (), self.setIcon), ('buttonStyle', None, None), ('noCallback', None, None), ('yesCallback', None, None), ('cancelCallback', None, None))
         self.defineoptions(kwargs, optiondefs, dynamicGroups = ())
-        BorderFrame.__init__(self, parent, **None)
+        BorderFrame.__init__(self, parent)
         self.initialiseoptions(StackMessage)
         self.ival = None
         self.cornerGeom = self.corner.copyTo(self)
@@ -286,7 +286,7 @@ class StackMessage(BorderFrame):
 class ModalStackMessage(StackMessage):
 
     def __init__(self, parent = None, **kwargs):
-        StackMessage.__init__(self, parent, **None)
+        StackMessage.__init__(self, parent)
         self.initialiseoptions(ModalStackMessage)
         self.doneFunc = None
         self.fadeTime = 0
@@ -391,7 +391,7 @@ class MessageStackPanel(DirectFrame):
     def __init__(self, parent = None, **kwargs):
         optiondefs = (('relief', None, None), ('state', DGG.DISABLED, None), ('maxMessages', 3, self.setMaxMessages), ('messageBorder', 0.0050000000000000001, self.setMessageBorder), ('posLerpTime', 0.25, self.setPosLerpTime), ('fadeLerpTime', 0.25, self.setFadeLerpTime))
         self.defineoptions(kwargs, optiondefs, dynamicGroups = ('posLerpTime', 'fadeLerpTime', 'messageBorder'))
-        DirectFrame.__init__(self, parent, **None)
+        DirectFrame.__init__(self, parent)
         self.initialiseoptions(MessageStackPanel)
         if not MessageStackPanel.popupSfx:
             MessageStackPanel.popupSfx = loadSfx(SoundGlobals.SFX_GUI_STACK_POPUP)

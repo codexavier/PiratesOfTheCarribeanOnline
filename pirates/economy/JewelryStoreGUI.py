@@ -39,7 +39,7 @@ class JewelryStoreTab(LeftTab):
     def __init__(self, tabBar, name, **kw):
         optiondefs = (('modelName', 'general_frame_d', None), ('borderScale', 0.38, None), ('bgBuffer', 0.14999999999999999, None))
         self.defineoptions(kw, optiondefs)
-        LeftTab.__init__(self, tabBar, name, **None)
+        LeftTab.__init__(self, tabBar, name)
         self.initialiseoptions(JewelryStoreTab)
 
 
@@ -64,7 +64,7 @@ class JewelryStoreTabBar(TabBar):
 
 
     def makeTab(self, name, **kw):
-        return JewelryStoreTab(self, name, **None)
+        return JewelryStoreTab(self, name)
 
 
 
@@ -213,7 +213,7 @@ class JewelryStoreGUI(DirectFrame):
     def __init__(self, npc, shopId, **kw):
         optiondefs = (('relief', None, None), ('framSize', (0, self.width, 0, self.height), None), ('sortOrder', 20, None))
         self.defineoptions(kw, optiondefs)
-        DirectFrame.__init__(self, None, **None)
+        DirectFrame.__init__(self, None)
         self.initialiseoptions(JewelryStoreGUI)
         self.pirate = None
         self.camIval = None

@@ -14,7 +14,7 @@ bp = bpdb.bpPreset('Kraken')
 
 class GrabberTentacle(DistributedCreature, Monstrous):
     notify = DirectNotifyGlobal.directNotify.newCategory('GrabberTentacle')
-    
+
     def __init__(self, cr):
         DistributedCreature.__init__(self, cr)
         self.krakenId = 0
@@ -30,7 +30,7 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         self.rangeCollisions = None
         self.collisionsSet = False
 
-    
+
     def setupCreature(self, avatarType):
         DistributedCreature.setupCreature(self, avatarType)
         self.slideBase = NodePath('slideBase')
@@ -39,7 +39,7 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         self.initializeMonstrousTags(self.creature)
         self.creature.getGeomNode().hide(OTPRender.ShadowCameraBitmask)
 
-    
+
     def announceGenerate(self):
         DistributedCreature.announceGenerate(self)
         self.accept('f8', self.grabAvatar, extraArgs = [
@@ -50,30 +50,30 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         self.creature.setPythonTag('tentacle', self)
         if not hasattr(base, 'tentacles'):
             getBase().tentacles = []
-        
+
         getBase().tentacles.append(self)
 
-    
+
     def disable(self):
         getBase().tentacles.remove(self)
         if self.krakenRequest:
             self.cr.relatedObjectMgr.abortRequest(self.krakenRequest)
             self.krakenRequest = None
-        
+
         if self.avRequest:
             self.cr.relatedObjectMgr.abortRequest(self.avRequest)
             self.avRequest = None
-        
+
         if self.shipRequest:
             self.cr.relatedObjectMgr.abortRequest(self.shipRequest)
             self.shipRequest = None
-        
+
         self.avatarId = 0
         taskMgr.remove(self.uniqueName('grabDelay'))
         kraken = self.getKraken()
         if kraken:
             kraken.removeGrabberTentacle(self.doId)
-        
+
         self.ignore('f8')
         self.ignore(self.uniqueName('enterRange'))
         self.ignore(self.uniqueName('exitRange'))
@@ -82,10 +82,10 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         if self.rangeCollisions:
             self.rangeCollisions.detachNode()
             self.rangeCollisions = None
-        
+
         DistributedCreature.disable(self)
 
-    
+
     def delete(self):
         self.creature.delete()
         self.krakenId = 0
@@ -95,50 +95,50 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         self.creature = None
         DistributedCreature.delete(self)
 
-    
+
     def wantsSmoothing(self):
         return 0
 
-    
+
     def setKrakenId(self, krakenId):
         self.krakenId = krakenId
 
-    
+
     def getKraken(self):
         return self.cr.doId2do.get(self.krakenId)
 
-    
+
     def createGameFSM(self):
         self.gameFSM = GrabberGameFSM(self)
 
-    
+
     def getShip(self):
         kraken = self.getKraken()
         if kraken:
             pass
         return kraken.getTargetShip()
 
-    
+
     def setLocatorId(self, locatorId):
         self.locatorId = locatorId
-        
+
         def krakenArrived(kraken):
             self.krakenRequest = None
             kraken.addGrabberTentacle(self.locatorId, self)
 
         self.krakenRequest = self.cr.relatedObjectMgr.requestObjects((self.krakenId,), eachCallback = krakenArrived)
 
-    
+
     def setRockingDampen(self, val):
         self.rockingDampen = val
 
-    
+
     def getRockingDampen(self):
         return self.rockingDampen
 
-    
+
     def attachToShipLocator(self, time = 0, pos = Point3(0), wrt = False):
-        
+
         def shipArrived(ship):
             self.shipRequest = None
             locator = ship.getKrakenGrabberLocator(self.locatorId)
@@ -150,66 +150,66 @@ class GrabberTentacle(DistributedCreature, Monstrous):
             if not self.collisionsSet:
                 self.creature.setupCollisions()
                 self.collisionsSet = True
-            
+
 
         kraken = self.getKraken()
         if self.shipRequest:
             self.cr.relatedObjectMgr.abortRequest(self.shipRequest)
             self.shipRequest = None
-        
+
         self.shipRequest = self.cr.relatedObjectMgr.requestObjects((kraken.getTargetShipId(),), eachCallback = shipArrived)
 
-    
+
     def attachToShipModel(self):
-        
+
         def shipArrived(ship):
             self.shipRequest = None
             self.wrtSetBase(ship.getModelRoot())
             if not self.collisionsSet:
                 self.creature.setupCollisions()
                 self.collisionsSet = True
-            
+
 
         kraken = self.getKraken()
         if self.shipRequest:
             self.cr.relatedObjectMgr.abortRequest(self.shipRequest)
             self.shipRequest = None
-        
+
         self.shipRequest = self.cr.relatedObjectMgr.requestObjects((kraken.getTargetShipId(),), eachCallback = shipArrived)
 
-    
+
     def setBase(self, node, scale = 0):
         self.slideBase.reparentTo(node)
         if scale:
             self.slideBase.setScale(scale)
-        
 
-    
+
+
     def wrtSetBase(self, node, scale = 0):
         self.slideBase.wrtReparentTo(node)
         if scale:
             self.slideBase.setScale(scale)
-        
 
-    
+
+
     def loop(self, *args, **kw):
         if (args or args[0] == 'idle') and kw.get('animName') == 'idle' or kw.get('newAnim') == 'idle':
             kw['restart'] = 0
-        
-        DistributedCreature.loop(self, *args, **args)
 
-    
+        DistributedCreature.loop(self, *args, **kw)
+
+
     def emerge(self, emerge):
         if emerge:
             if self.gameFSM.state in [
                 'Off',
                 'Submerged']:
                 self.requestGameState('Idle')
-            
+
         else:
             self.requestGameState('Submerged')
 
-    
+
     def grabAvatar(self, avId):
         taskMgr.remove(self.uniqueName('grabDelay'))
         self.stopMove()
@@ -217,8 +217,8 @@ class GrabberTentacle(DistributedCreature, Monstrous):
             if self.avRequest:
                 self.cr.relatedObjectMgr.abortRequest(self.avRequest)
                 self.avRequest = None
-            
-            
+
+
             def avatarArrived(av):
                 self.avRequest = None
                 self.l_grabAvatar(av)
@@ -229,17 +229,17 @@ class GrabberTentacle(DistributedCreature, Monstrous):
                 self.cr.relatedObjectMgr.abortRequest(self.avRequest)
                 self.avRequest = None
             else:
-                
+
                 def avatarArrived(av):
                     self.avRequest = None
                     self.l_releaseAvatar(av)
 
                 self.avRequest = self.cr.relatedObjectMgr.requestObjects((self.avatarId,), eachCallback = avatarArrived)
-        
 
-    
+
+
     def l_grabAvatar(self, av):
-        
+
         def moveComplete(completed):
             if completed:
                 self.attachToShipModel()
@@ -261,7 +261,7 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         if targetNode.isEmpty():
             targetNode = av.attachNewNode('grab_offset')
             targetNode.setZ(4)
-        
+
         if av.isLocal():
             av.b_setGameState('TentacleTargeted', [
                 self])
@@ -270,7 +270,7 @@ class GrabberTentacle(DistributedCreature, Monstrous):
                 self], localChange = 1)
         self.moveTask = self.moveToTarget(targetNode, time, True, moveComplete)
 
-    
+
     def l_releaseAvatar(self, av):
         self.avatarId = 0
         time = self.creature.getDuration('grab_avatar')
@@ -285,13 +285,13 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         else:
             av.setGameState('LandRoam', localChange = 1)
 
-    
+
     def reparentNodeToTip(self, node):
         node.wrtReparentTo(self.creature.getGrabTipNode())
         node.setPosHpr(0, 0, 0, 0, -90, 0)
         node.setScale(render, 1)
 
-    
+
     def setAvatarToGrabbedState(self, av):
         state = 'TentacleGrabbed'
         if av.isLocal():
@@ -300,12 +300,12 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         else:
             av.setGameState(state, localChange = 1)
 
-    
+
     def setGrabbedAvatar(self, avId):
         if self.isMoving():
             pass
         1
-        
+
         def avatarArrived(av):
             self.avRequest = None
             self.reparentNodeToTip(av)
@@ -316,10 +316,10 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         if self.avRequest:
             self.cr.relatedObjectMgr.abortRequest(self.avRequest)
             self.avRequest = None
-        
+
         self.avRequest = self.cr.relatedObjectMgr.requestObjects((avId,), eachCallback = avatarArrived)
 
-    
+
     def moveToTarget(self, targetNode, time, dampenRocking = False, callback = None):
         self.stopMove()
         task = taskMgr.add(self.targetMoveTask, self.uniqueName('move'))
@@ -339,11 +339,11 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         task.callback = callback
         return task
 
-    
+
     def targetMoveTask(self, task):
         if task.dampenRocking:
             self.setRockingDampen(min(1, task.time / task.tFinal))
-        
+
         distance = max(0, lerp(task.d0, 0, min(1, task.time / task.tFinal)))
         zDistance = lerp(task.z0, 0, min(1, task.time / task.tFinal))
         vTargetToTip = self.creature.getGrabTargetNode().getPos(self.slideBase) - task.targetNode.getPos(self.slideBase)
@@ -366,15 +366,15 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         self.slider.setZ(self.slideBase, zPos - task.height)
         if task.time < task.tFinal:
             return task.cont
-        
+
         if task.callback:
             task.callback(True)
-        
+
         self.setRockingDampen(0)
         self.moveTask = None
         return task.done
 
-    
+
     def resetSlider(self, time = 0, pos = Point3(0), callback = None):
         self.stopMove()
         if time:
@@ -393,9 +393,9 @@ class GrabberTentacle(DistributedCreature, Monstrous):
             self.slider.setPos(pos)
             if callback:
                 callback(True)
-            
 
-    
+
+
     def resetSliderTask(self, task):
         t = min(1, task.time / task.tFinal)
         sBPos = lerp(task.sBPos, Point3(0), t)
@@ -406,29 +406,29 @@ class GrabberTentacle(DistributedCreature, Monstrous):
         self.slider.setPos(sPos)
         if task.time < task.tFinal:
             return task.cont
-        
+
         if task.callback:
             task.callback(True)
-        
+
         self.moveTask = None
         return task.done
 
-    
+
     def stopMove(self):
         if self.moveTask:
             taskMgr.remove(self.moveTask)
             self.setRockingDampen(0)
             if self.moveTask.callback:
                 self.moveTask.callback(False)
-            
-            self.moveTask = None
-        
 
-    
+            self.moveTask = None
+
+
+
     def isMoving(self):
         return bool(self.moveTask)
 
-    
+
     def setupCollisions(self):
         if not self.rangeCollisions:
             ship = self.getShip()
@@ -448,47 +448,47 @@ class GrabberTentacle(DistributedCreature, Monstrous):
             cNodePath.reparentTo(rParent)
             cNodePath.setScale(int(range * 0.90000000000000002))
             self.rangeCollisions = cNodePath
-        
 
-    
+
+
     def withinRange(self, cEntry):
         self.notify.debug('withinRange-%s(%s)' % (self.doId, self.locatorId))
 
-    
+
     def withoutRange(self, cEntry):
         self.notify.debug('withoutRange-%s(%s)' % (self.doId, self.locatorId))
 
-    
+
     def showVis(self):
         self.rangeCollisions.show()
 
-    
+
     def hideVis(self):
         self.rangeCollisions.hide()
 
-    
+
     def getRandomPos(self):
         return Point3(0, lerp(0, 60, random.random()), lerp(-10, -40, random.random()))
 
-    
+
     def showAllVis():
         for t in getBase().tentacles:
             t.showVis()
-        
+
 
     showAllVis = staticmethod(showAllVis)
-    
+
     def hideAllVis():
         for t in getBase().tentacles:
             t.hideVis()
-        
+
 
     hideAllVis = staticmethod(hideAllVis)
-    
+
     def initializeBattleCollisions(self):
         pass
 
-    
+
     def isInteractiveMasked(self):
         return 1
 

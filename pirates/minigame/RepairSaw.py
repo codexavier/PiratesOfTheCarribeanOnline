@@ -13,11 +13,11 @@ from pirates.audio.SoundGlobals import loadSfx
 from pirates.piratesgui.GuiPanel import *
 
 class RepairSaw(DirectButton):
-    
+
     def __init__(self, parent, **kw):
         optiondefs = (('clickDownCommand', None, None), ('clickUpCommand', None, None))
         self.defineoptions(kw, optiondefs)
-        DirectButton.__init__(self, parent, **None)
+        DirectButton.__init__(self, parent)
         self.initialiseoptions(RepairSaw)
         self.sawingGame = parent
         self._initVars()
@@ -29,12 +29,12 @@ class RepairSaw(DirectButton):
         self.bind(DGG.B1PRESS, self.onMouseDown)
         self.bind(DGG.B1RELEASE, self.onMouseUp)
 
-    
+
     def _initVars(self):
         self.isMouseDown = False
         self.isMouseInButton = False
 
-    
+
     def _initGUI(self):
         mainGui = loader.loadModel('models/gui/pir_m_gui_srp_sawing_main')
         self.sawGlow = OnscreenImage(parent = self, image = mainGui.find('**/glow'))
@@ -46,23 +46,23 @@ class RepairSaw(DirectButton):
         self.totalTime = 0
         taskMgr.add(self.updateGlow, self.uniqueName('RepairSaw.UpdateGlow'))
 
-    
+
     def updateGlow(self, task):
         dt = globalClock.getDt()
         self.totalTime += dt * 1.75
         alphaVal = self.totalTime - math.floor(self.totalTime)
         if math.floor(self.totalTime) % 2 == 0:
             alphaVal = 1.0 - alphaVal
-        
+
         alphaVal = alphaVal * alphaVal
         self.sawGlow.setColorScale(1.0, 1.0, 1.0, alphaVal)
         return Task.cont
 
-    
+
     def _initIntervals(self):
         pass
 
-    
+
     def destroy(self):
         taskMgr.remove(self.uniqueName('RepairSaw.UpdateGlow'))
         taskMgr.remove(self.uniqueName('RepairSaw.updateTask'))
@@ -70,29 +70,29 @@ class RepairSaw(DirectButton):
         taskMgr.remove(DGG.B1RELEASE)
         DirectFrame.destroy(self)
 
-    
+
     def onMouseEnter(self, event):
         self.sawGlow.setColorScale(0.5, 1.0, 0.5, 1.0)
         taskMgr.remove(self.uniqueName('RepairSaw.UpdateGlow'))
         self.isMouseInButton = True
 
-    
+
     def onMouseExit(self, event):
         self.totalTime = 0
         self.sawGlow.setColorScale(1.0, 1.0, 1.0, 0.0)
         taskMgr.add(self.updateGlow, self.uniqueName('RepairSaw.UpdateGlow'))
         self.isMouseInButton = False
 
-    
+
     def onMouseDown(self, event):
         if self.isMouseInButton:
             self.sawGlow.stash()
             self.isMouseDown = True
             apply(self['clickDownCommand'])
             taskMgr.add(self.updateTask, self.uniqueName('RepairSaw.updateTask'), priority = 1, extraArgs = [])
-        
 
-    
+
+
     def onMouseUp(self, event):
         self.sawGlow.unstash()
         self.isMouseDown = False
@@ -100,14 +100,14 @@ class RepairSaw(DirectButton):
         taskMgr.remove(self.uniqueName('RepairSaw.updateTask'))
         self.setR(180)
 
-    
+
     def deactivate(self):
         self.stash()
         self.ignore(self.guiItem.getEnterEvent())
         self.ignore(self.guiItem.getExitEvent())
         self.onMouseUp(None)
 
-    
+
     def activate(self):
         self.ignore(self.guiItem.getEnterEvent())
         self.ignore(self.guiItem.getExitEvent())
@@ -116,7 +116,7 @@ class RepairSaw(DirectButton):
         self.unstash()
         self.setR(180)
 
-    
+
     def updateTask(self):
         dt = globalClock.getDt()
         if base.mouseWatcherNode.hasMouse():
@@ -139,7 +139,7 @@ class RepairSaw(DirectButton):
                     nextPos = self.sawingGame.sawWaypoints[self.sawingGame.lastHitIndex + dir].getPos(self.sawingGame)
                     dif = self.sawingGame.sawWaypoints[self.sawingGame.lastHitIndex].getPos(self.sawingGame) - nextPos
                     goalR = math.degrees(math.atan2(-dif.getZ(), dif.getX()))
-                
+
             else:
                 validWaypointPositions = [
                     self.sawingGame.sawWaypoints[0].getPos(self.sawingGame),
@@ -156,8 +156,8 @@ class RepairSaw(DirectButton):
                     self.setR(goalR)
                 else:
                     self.setR(self.getR() + RepairGlobals.Sawing.sawTurnSpeed * dt * (-anglediff / abs(anglediff)))
-            
-        
+
+
         return Task.cont
 
 

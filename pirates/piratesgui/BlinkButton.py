@@ -8,7 +8,7 @@ from pirates.piratesgui import GuiButton
 from pirates.piratesgui import PiratesGuiGlobals
 
 class BlinkButton(GuiButton.GuiButton):
-    
+
     def __init__(self, parent, **kw):
         card = loader.loadModel('models/textureCards/skillIcons')
         base1 = card.find('**/base')
@@ -23,7 +23,7 @@ class BlinkButton(GuiButton.GuiButton):
         seq.node().loop(True)
         optiondefs = (('sortOrder', 0, None), ('relief', None, None), ('image', (seq, base3, base2), None))
         self.defineoptions(kw, optiondefs)
-        GuiButton.GuiButton.__init__(self, parent = parent, **None)
+        GuiButton.GuiButton.__init__(self, parent = parent)
         self.initialiseoptions(BlinkButton)
 
 

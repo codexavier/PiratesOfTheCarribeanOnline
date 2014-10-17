@@ -27,18 +27,18 @@ class StowawayGUI(DirectFrame):
     columnWidth = PiratesGuiGlobals.InventoryItemGuiWidth + PiratesGuiGlobals.ScrollbarSize + 0.050000000000000003
     CoinImage = None
     CrateShutSound = None
-    
+
     def __init__(self, inventory, name, **kw):
         optiondefs = (('relief', None, None), ('framSize', (0, self.width, 0, self.height), None), ('sortOrder', 20, None))
         self.defineoptions(kw, optiondefs)
-        DirectFrame.__init__(self, None, **None)
+        DirectFrame.__init__(self, None)
         self.initialiseoptions(StowawayGUI)
         if not StowawayGUI.CoinImage:
             StowawayGUI.CoinImage = loader.loadModel('models/gui/toplevel_gui').find('**/treasure_w_coin*')
-        
+
         if not StowawayGUI.CrateShutSound:
             StowawayGUI.CrateShutSound = loadSfx(SoundGlobals.SFX_STOWAWAY_CRATE_SHUT)
-        
+
         self.panel = GuiPanel.GuiPanel(name, self.width, self.height, parent = self)
         self.panel.closeButton['command'] = self.closePanel
         self.setPos(-0.80000000000000004, 0, -0.66000000000000003)
@@ -52,30 +52,30 @@ class StowawayGUI(DirectFrame):
         self.accept(PiratesGuiGlobals.InventoryBuyEvent, self.handleBuyItem)
         self.acceptOnce('escape', self.closePanel)
 
-    
+
     def closePanel(self):
         messenger.send('exitStore')
         self.ignoreAll()
 
-    
+
     def handleBuyItem(self, data, useCode):
         itemId = data[0]
         if not itemId:
             return None
-        
+
         inventory = base.localAvatar.getInventory()
         if not inventory:
             return None
-        
+
         if useCode == PiratesGuiGlobals.InventoryAdd:
             if inventory.getGoldInPocket() < EconomyGlobals.StowawayCost[itemId]:
                 base.localAvatar.guiMgr.createWarning(PLocalizer.NotEnoughMoneyWarning, PiratesGuiGlobals.TextFG6)
                 return None
-            
+
             messenger.send('requestStowaway', [
                 itemId])
         elif useCode == PiratesGuiGlobals.InventoryRemove:
-            raise 
-        
+            raise
+
 
 

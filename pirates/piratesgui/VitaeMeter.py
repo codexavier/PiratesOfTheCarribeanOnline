@@ -9,9 +9,9 @@ from pirates.piratesgui.DialMeter import DialMeter
 from pirates.piratesgui.BorderFrame import BorderFrame
 
 class VitaeMeter(DirectFrame):
-    
+
     def __init__(self, parent, **kw):
-        DirectFrame.__init__(self, parent, **None)
+        DirectFrame.__init__(self, parent)
         self.initialiseoptions(VitaeMeter)
         toplevel_gui = loader.loadModel('models/gui/toplevel_gui')
         self.vitaeDial = DialMeter(parent = self, meterColor = Vec4(0.80000000000000004, 0.20000000000000001, 0.20000000000000001, 1), baseColor = Vec4(0, 0, 0, 1), scale = 0.28000000000000003)
@@ -28,21 +28,21 @@ class VitaeMeter(DirectFrame):
         self.vitaeIcon.bind(DGG.WITHIN, self.showDetails)
         self.vitaeIcon.bind(DGG.WITHOUT, self.hideDetails)
 
-    
+
     def showDetails(self, event):
         self.helpBox.show()
 
-    
+
     def hideDetails(self, event):
         self.helpBox.hide()
 
-    
+
     def update(self, level, range, val):
         self.vitaeDial.hide()
         Range = range * 1.0009999999999999
         if level > 0:
             self.vitaeDial.update(val, Range)
             self.vitaeDial.show()
-        
+
 
 

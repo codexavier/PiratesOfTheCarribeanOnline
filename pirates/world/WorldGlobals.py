@@ -1,6 +1,6 @@
-# File: W (Python 2.4)
-
 from pandac.PandaModules import TransformState, Vec3
+
+
 OCEAN_GRID_SIZE = 60
 OCEAN_CELL_SIZE = 2000
 OCEAN_GRID_RADIUS = 3
@@ -177,7 +177,7 @@ def getOceanZone(xc, yc):
 
 
 class LevelObject:
-    
+
     def __init__(self, uniqueId, data):
         self.uniqueId = uniqueId
         self.data = data
@@ -186,15 +186,15 @@ class LevelObject:
         scale = data.get('Scale', Vec3(1, 1, 1))
         self.transform = TransformState.makePosHprScale(pos, hpr, scale)
 
-    
+
     def __repr__(self):
         return '%s(%s): %s' % (self.data['Type'], self.uniqueId, self.data)
 
-    
+
     def __getitem__(self, key):
         return self.data[key]
 
-    
+
     def get(self, key, default = None):
         return self.data.get(key, default)
 

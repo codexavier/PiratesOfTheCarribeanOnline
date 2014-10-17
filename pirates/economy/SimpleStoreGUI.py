@@ -47,7 +47,7 @@ class SimpleStoreTab(LeftTab):
     def __init__(self, tabBar, name, **kw):
         optiondefs = (('modelName', 'general_frame_d', None), ('borderScale', 0.38, None), ('bgBuffer', 0.14999999999999999, None))
         self.defineoptions(kw, optiondefs)
-        LeftTab.__init__(self, tabBar, name, **None)
+        LeftTab.__init__(self, tabBar, name)
         self.initialiseoptions(SimpleStoreTab)
 
 
@@ -76,7 +76,7 @@ class SimpleStoreTabBar(TabBar):
 
 
     def makeTab(self, name, **kw):
-        return SimpleStoreTab(self, name, **None)
+        return SimpleStoreTab(self, name)
 
 
 
@@ -405,7 +405,7 @@ class SimpleStoreGUI(DirectFrame):
     def __init__(self, storeName, npc = None, shopId = None, **kw):
         optiondefs = (('relief', None, None), ('frameSize', (-(self.guiWidth) / 2, self.guiWidth / 2, -(self.guiHeight) / 2, self.guiHeight / 2), None))
         self.defineoptions(kw, optiondefs)
-        DirectFrame.__init__(self, None, **None)
+        DirectFrame.__init__(self, None)
         self.confirmDialog = None
         self.rollInItem = None
         self.rollInItemTask = None
@@ -1162,7 +1162,7 @@ class CatalogStoreGUI(SimpleStoreGUI):
         self.femaleStock = self.removeHolidayItems(self.femaleStock)
         self.femaleStock = self.filterStockItems(self.femaleStock, self.previewFemale)
         self.currTabFemaleStock = { }
-        SimpleStoreGUI.__init__(self, PLocalizer.CatalogStore, npc, shopId, **None)
+        SimpleStoreGUI.__init__(self, PLocalizer.CatalogStore, npc, shopId)
         self.rotateSlider.hide()
 
 
@@ -1411,7 +1411,7 @@ class AccessoriesStoreGUI(SimpleStoreGUI):
     def __init__(self, npc, shopId, **kw):
         self.TailorIcons = loader.loadModel('models/textureCards/tailorIcons')
         self.ShirtIcon = loader.loadModel('models/gui/char_gui').find('**/chargui_cloth')
-        SimpleStoreGUI.__init__(self, PLocalizer.TailorStore, npc, shopId, **None)
+        SimpleStoreGUI.__init__(self, PLocalizer.TailorStore, npc, shopId)
 
 
     def createTabs(self):
@@ -1460,7 +1460,7 @@ class JewelryStoreGUI(SimpleStoreGUI):
             (-0.5, 0.5, 0.5)] }
 
     def __init__(self, npc, shopId, **kw):
-        SimpleStoreGUI.__init__(self, PLocalizer.ShopJewelry, npc, shopId, **None)
+        SimpleStoreGUI.__init__(self, PLocalizer.ShopJewelry, npc, shopId)
 
 
     def getTabItemIds(self, tabId):
@@ -1510,7 +1510,7 @@ class TattooStoreGUI(SimpleStoreGUI):
             0.40000000000000002]]
 
     def __init__(self, npc, shopId, **kw):
-        SimpleStoreGUI.__init__(self, PLocalizer.TattooShop, npc, shopId, **None)
+        SimpleStoreGUI.__init__(self, PLocalizer.TattooShop, npc, shopId)
 
 
     def getTabItemIds(self, tabId):
@@ -1630,7 +1630,7 @@ class MerchantStoreGUI(SimpleStoreGUI):
                 self.tabInventory[tabId].append(itemId)
                 continue
 
-        SimpleStoreGUI.__init__(self, name, npc, **None)
+        SimpleStoreGUI.__init__(self, name, npc)
         self.rotateSlider.hide()
 
 

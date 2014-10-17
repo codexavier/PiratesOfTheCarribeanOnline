@@ -1,24 +1,19 @@
-# File: P (Python 2.4)
-
 from pirates.piratesbase import PiratesGlobals
 from Human import Human
 import AvatarTypes
 
+
 class Pirate(Human):
-    
     def __init__(self, other = None):
         Human.__init__(self, other)
         self.avatarType = AvatarTypes.Pirate
 
 
-
 class PirateHeadPortrait(Human):
-    
     def __init__(self):
         Human.__init__(self)
         self.avatarType = AvatarTypes.Townfolk
 
-    
     def generatePortrait(self, other):
         highLod = other.getLOD('2000')
         face = highLod.findAllMatches('**/body_master_face')
@@ -32,11 +27,8 @@ class PirateHeadPortrait(Human):
         eyes = highLod.findAllMatches('**/eye*')
         teeth = highLod.findAllMatches('**/teeth*')
 
-    
     def shapeHead(self, other):
         import pdb as pdb
         pdb.set_trace()
         self.style = other.style
         self.generateHuman(self.style.gender, base.cr.humanHigh)
-
-

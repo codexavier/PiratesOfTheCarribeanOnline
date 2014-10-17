@@ -387,25 +387,11 @@ class PiratesClientRepository(OTPClientRepository):
         'deltaStamp'], dConfigParam = 'teleport')(exitChooseAvatar)
 
     def enterCreateAvatar(self, avList, index, subId):
-        self.handler = self.handleCreateAvatar
-        if True: #self.skipTutorial: Skip the tutorial
-            self.tutorial = 0
-            self.avCreate = MakeAPirate(avList, 'makeAPirateComplete', subId, index, self.isPaid())
-            self.avCreate.load()
-            self.avCreate.enter()
-            self.accept('makeAPirateComplete', self.__handleMakeAPirate)
-            self.accept('nameShopCreateAvatar', self.sendCreateAvatarMsg)
-        else:
-            self.tutorial = 1
-            dna = HumanDNA.HumanDNA()
-            newPotAv = PotentialAvatar(0, [
-                'dbp',
-                '',
-                '',
-                ''], dna, index, 0)
-            self.avatarManager.sendRequestCreateAvatar(subId)
-            self.accept('createdNewAvatar', self.handleAvatarCreated, [
-                newPotAv])
+        self.tutorial = 0
+        self.avCreate = MakeAPirate(avList, 'makeAPirateComplete', subId, index, self.isPaid())
+        self.avCreate.load()
+        self.avCreate.enter()
+        self.accept('makeAPirateComplete', self.__handleMakeAPirate)
 
     enterCreateAvatar = report(types = [
         'args',
@@ -413,8 +399,7 @@ class PiratesClientRepository(OTPClientRepository):
 
     def handleAvatarCreated(self, newPotAv, avatarId, subId):
         newPotAv.id = avatarId
-        self.loginFSM.request('waitForSetAvatarResponse', [
-            newPotAv])
+        self.loginFSM.request('waitForSetAvatarResponse', [newPotAv])
 
     handleAvatarCreated = report(types = [
         'args',
@@ -424,8 +409,7 @@ class PiratesClientRepository(OTPClientRepository):
         done = self.avCreate.getDoneStatus()
         if done == 'cancel':
             self.avCreate.exit()
-            self.loginFSM.request('chooseAvatar', [
-                self.avList])
+            self.loginFSM.request('chooseAvatar', [self.avList])
         elif done == 'created':
             self.handleAvatarCreated(self.avCreate.newPotAv, self.avCreate.avId, self.avCreate.subId)
         else:
@@ -451,34 +435,10 @@ class PiratesClientRepository(OTPClientRepository):
         'args',
         'deltaStamp'], dConfigParam = 'teleport')(exitCreateAvatar)
 
-    def handleCreateAvatar(self, msgType, di):
-        if msgType == CLIENT_CREATE_AVATAR_RESP:
-            self.handleCreateAvatarResponseMsg(di)
-        else:
-            self.handleMessageType(msgType, di)
-
-    handleCreateAvatar = report(types = [
-        'args',
-        'deltaStamp'], dConfigParam = 'teleport')(handleCreateAvatar)
-
-    def handleCreateAvatarResponseMsg(self, di):
-        echoContext = di.getUint16()
-        returnCode = di.getUint8()
-        if returnCode == 0:
-            self.avId = di.getUint32()
-            newPotAv = PotentialAvatar(self.avId, [
-                self.newName,
-                '',
-                '',
-                ''], self.newDNA, self.newPosition, 1)
-            self.loginFSM.request('waitForSetAvatarResponse', [
-                newPotAv])
-        else:
-            self.notify.error('name rejected')
-
-    handleCreateAvatarResponseMsg = report(types = [
-        'args',
-        'deltaStamp'], dConfigParam = 'teleport')(handleCreateAvatarResponseMsg)
+    def handleCreateAvatarResponse(self, avId):
+        self.avId = avId
+        newPotAv = PotentialAvatar(self.avId, [self.newName, '', '', ''], self.newDNA, self.newPosition, 1)
+        self.loginFSM.request('waitForSetAvatarResponse', [newPotAv])
 
     def avatarListFailed(self, reason):
         dialogClass = OTPGlobals.getGlobalDialogClass()
@@ -777,3 +737,6 @@ class PiratesClientRepository(OTPClientRepository):
 
     def __handleStartTutorial(self, avId, zoneId):
         pass # TODO
+
+    def isShardInterestOpen(self):
+        return False # TODO: When should this return true? :(

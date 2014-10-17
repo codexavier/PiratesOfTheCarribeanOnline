@@ -15,7 +15,7 @@ from pirates.piratesbase import PLocalizer
 from pirates.piratesgui import PiratesGuiGlobals
 from pirates.piratesgui import PDialog
 from pirates.piratesgui import GuiPanel
-#from pirates.piratesgui import ChatPanel
+from pirates.piratesgui import ChatPanel
 from PChatInputSpeedChat import PChatInputSpeedChat
 from PChatInputEmote import PChatInputEmote
 from PChatInputTyped import PChatInputTyped

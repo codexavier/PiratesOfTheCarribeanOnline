@@ -19,8 +19,15 @@ class ClientServicesManagerUD(DistributedObjectGlobalUD):
 
         self.sendUpdateToChannel(target, 'acceptLogin', [])
 
-    def requestAvatars(self):   # TODO
-        print 'Got an avatar request'
+    def requestAvatars(self):
         target = self.air.getMsgSender()
         avs = []
         self.sendUpdateToChannel(target, 'setAvatars', [avs])
+
+    def createAvatar(self, avDNA, index):
+        target = self.air.getMsgSender()
+        self.sendUpdateToChannel(target, 'createAvatarResp', [69])
+
+    def chooseAvatar(self, avId):
+        target = self.air.getMsgSender()
+        self.sendUpdateToChannel(target, 'avatarResponse', [avId, ''])

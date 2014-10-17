@@ -15,7 +15,7 @@ class PChatInputTyped(FSM.FSM, DirectEntry):
         FSM.FSM.__init__(self, 'PChatInputTyped')
         optiondefs = (('parent', parent, None), ('relief', DGG.SUNKEN, None), ('scale', 0.029999999999999999, None), ('frameSize', (-0.20000000000000001, 25.300000000000001, -0.5, 1.2), None), ('borderWidth', (0.10000000000000001, 0.10000000000000001), None), ('frameColor', (0.90000000000000002, 0.90000000000000002, 0.84999999999999998, 0.80000000000000004), None), ('entryFont', OTPGlobals.getInterfaceFont(), None), ('width', 25, None), ('numLines', 1, None), ('cursorKeys', 1, None), ('backgroundFocus', 0, None), ('suppressKeys', 1, None), ('suppressMouse', 1, None), ('command', self.sendChat, None), ('focus', 0, None), ('text', '', None))
         self.defineoptions(kw, optiondefs)
-        DirectEntry.__init__(self, parent = parent, **None)
+        DirectEntry.__init__(self, parent = parent)
         self.initialiseoptions(PChatInputTyped)
         self.whisperId = None
         self.bind(DGG.OVERFLOW, self.chatOverflow)

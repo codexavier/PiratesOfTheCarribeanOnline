@@ -7,7 +7,7 @@ from direct.interval.IntervalGlobal import *
 from pirates.piratesgui import PiratesGuiGlobals
 
 class GuiTray(DirectFrame):
-    
+
     def __init__(self, parent, w = 0.5, h = 0.10000000000000001, draggable = 0, **kw):
         self.width = w
         self.height = h
@@ -17,7 +17,7 @@ class GuiTray(DirectFrame):
         else:
             optiondefs = (('relief', None, None), ('state', DGG.DISABLED, None), ('frameColor', PiratesGuiGlobals.FrameColor, None), ('borderWidth', PiratesGuiGlobals.BorderWidth, None), ('frameSize', (0, self.width, 0, self.height), None))
         self.defineoptions(kw, optiondefs)
-        DirectFrame.__init__(self, parent, **None)
+        DirectFrame.__init__(self, parent)
         self.initialiseoptions(GuiTray)
         self.draggable = draggable
         if self.draggable:
@@ -28,17 +28,17 @@ class GuiTray(DirectFrame):
             self.dragBar.bind(DGG.B2RELEASE, self.dragStop)
             self.dragBar.bind(DGG.B3PRESS, self.dragStart)
             self.dragBar.bind(DGG.B3RELEASE, self.dragStop)
-        
 
-    
+
+
     def destroy(self):
         if self._GuiTray__fader:
             self._GuiTray__fader.pause()
             self._GuiTray__fader = None
-        
+
         DirectFrame.destroy(self)
 
-    
+
     def dragStart(self, event):
         self.bringToFront()
         if self.draggable:
@@ -48,9 +48,9 @@ class GuiTray(DirectFrame):
             editVec = Vec3(vWidget2render2d - vMouse2render2d)
             task = taskMgr.add(self.dragTask, self.taskName('dragTask'))
             task.editVec = editVec
-        
 
-    
+
+
     def dragTask(self, task):
         mwn = base.mouseWatcherNode
         if mwn.hasMouse():
@@ -67,40 +67,40 @@ class GuiTray(DirectFrame):
             x = min(base.a2dRight - self.width, max(base.a2dLeft, x))
             z = min(base.a2dTop - self.height, max(base.a2dBottom, z))
             self.setPos(aspect2d, x, y, z)
-        
+
         return Task.cont
 
-    
+
     def dragStop(self, event):
         if self.draggable:
             taskMgr.remove(self.taskName('dragTask'))
-        
 
-    
+
+
     def bringToFront(self):
         self.reparentTo(self.getParent())
 
-    
+
     def show(self):
         if self._GuiTray__fader:
             self._GuiTray__fader.pause()
-        
+
         self.setAlphaScale(1.0)
         DirectFrame.show(self)
 
-    
+
     def hide(self):
         if self._GuiTray__fader:
             self._GuiTray__fader.pause()
-        
+
         self.setAlphaScale(1.0)
         DirectFrame.hide(self)
 
-    
+
     def fadeOut(self, delay = 0.0, duration = 0.5):
         if self._GuiTray__fader:
             self._GuiTray__fader.pause()
-        
+
         self._GuiTray__fader = Sequence(Wait(delay), LerpFunctionInterval(self.setAlphaScale, fromData = self.getColorScale()[3], toData = 0.0, duration = duration), Func(self.hide))
         self._GuiTray__fader.start()
 

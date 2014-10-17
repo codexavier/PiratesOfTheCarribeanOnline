@@ -27,7 +27,7 @@ class ShipFrameSelect(ShipFrame):
         self.button = None
         self.snapShot = None
         self.defineoptions(kw, optiondefs)
-        ShipFrame.__init__(self, parent, **None)
+        ShipFrame.__init__(self, parent)
         self.initialiseoptions(ShipFrameSelect)
 
 

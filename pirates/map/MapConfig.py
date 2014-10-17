@@ -7,23 +7,23 @@ from direct.gui.OnscreenText import OnscreenText
 import sys
 
 class RangeSlider(DirectFrame):
-    
+
     def __init__(self, label = '', range = (0, 1), command = None, value = 0.0, orientation = DGG.HORIZONTAL, *args, **kwargs):
-        super(self.__class__, self).__init__(*args, **args)
+        super(self.__class__, self).__init__(*args, **kwargs)
         self.initialiseoptions(self.__class__)
-        self.setup(label, range, value, orientation, *args, **args)
+        self.setup(label, range, value, orientation, *args, **kwargs)
         self['command'] = command
 
-    
+
     def __setitem__(self, key, value):
         if key == 'command':
-            
+
             def finalCommand():
                 val = self.slider['value']
                 self.slider['text'] = '%1.3f' % val
                 if value:
                     value(val)
-                
+
 
             self.slider['command'] = finalCommand
         elif key == 'value':
@@ -33,7 +33,7 @@ class RangeSlider(DirectFrame):
         else:
             super(self.__class__, self).__setitem__(key, value)
 
-    
+
     def __getitem__(self, key):
         if key == 'command':
             return self.slider['command']
@@ -44,13 +44,13 @@ class RangeSlider(DirectFrame):
         else:
             return super(self.__class__, self).__getitem__(key)
 
-    
+
     def setup(self, label, range, value, orientation, *args, **kwargs):
-        
+
         def updateField(widget, field, value):
             widget[field] = value
 
-        
+
         def finalCommand():
             val = self.slider['value']
             updateField(self.slider, 'text', '%1.3f' % val)
@@ -75,21 +75,21 @@ class RangeSlider(DirectFrame):
 
 
 class MapConfig(DirectFrame):
-    
+
     def __init__(self, *args, **kwargs):
         kwargs['suppressMouse'] = 0
-        super(self.__class__, self).__init__(*args, **args)
+        super(self.__class__, self).__init__(*args, **kwargs)
         self.initialiseoptions(self.__class__)
         self.setTransparency(1)
         self.setup()
 
-    
+
     def setup(self):
         if hasattr(self, 'mainFrame'):
             self.mainFrame.destroy()
-        
+
         self.mainFrame = DirectFrame(parent = self, relief = None)
-        
+
         def setVisibility():
             value = self.visSlider['value']
             self.setColorScale(Vec4(1, 1, 1, value))

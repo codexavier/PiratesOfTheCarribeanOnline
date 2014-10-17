@@ -7,11 +7,11 @@ from pirates.piratesgui import PiratesGuiGlobals
 from pirates.ship import ShipGlobals
 
 class ShipArmorGui(GuiTray):
-    
+
     def __init__(self, parent, **kw):
         optiondefs = (('relief', None, None),)
         self.defineoptions(kw, optiondefs)
-        GuiTray.__init__(self, parent, 0.5, 0.5, **None)
+        GuiTray.__init__(self, parent, 0.5, 0.5)
         damageModel = loader.loadModel('models/gui/ship_damage')
         tex = damageModel.find('**/background*')
         self.damageGUI = DirectFrame(parent = self, pos = (0.0, 0.0, 0.0), relief = None, image = tex, image_scale = 0.059999999999999998, sortOrder = 2)
@@ -41,7 +41,7 @@ class ShipArmorGui(GuiTray):
         self.clipBottom.setHpr(0, 0, 109)
         self.hpRear.setClipPlane(self.clipBottom)
 
-    
+
     def setArmorStatus(self, location, status):
         if location == ShipGlobals.ARMOR_REAR:
             self.hpRear.setHpr(0, 0, 40 * status)
@@ -49,6 +49,6 @@ class ShipArmorGui(GuiTray):
             self.hpLeft.setHpr(0, 0, -120 * status)
         elif location == ShipGlobals.ARMOR_RIGHT:
             self.hpRight.setHpr(0, 0, 120 * status)
-        
+
 
 

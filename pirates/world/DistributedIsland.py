@@ -970,19 +970,19 @@ class DistributedIsland(DistributedGameArea.DistributedGameArea, DistributedCart
 
 
     def setX(self, *args, **kwargs):
-        DistributedGameArea.DistributedGameArea.setX(self, *args, **args)
+        DistributedGameArea.DistributedGameArea.setX(self, *args, **kwargs)
         mapPage = base.localAvatar.guiMgr.mapPage
         mapPage.updateIsland(self.mapName, worldPos = self.getPos())
 
 
     def setY(self, *args, **kwargs):
-        DistributedGameArea.DistributedGameArea.setY(self, *args, **args)
+        DistributedGameArea.DistributedGameArea.setY(self, *args, **kwargs)
         mapPage = base.localAvatar.guiMgr.mapPage
         mapPage.updateIsland(self.mapName, worldPos = self.getPos())
 
 
     def setH(self, *args, **kwargs):
-        DistributedGameArea.DistributedGameArea.setH(self, *args, **args)
+        DistributedGameArea.DistributedGameArea.setH(self, *args, **kwargs)
         mapPage = base.localAvatar.guiMgr.mapPage
         mapPage.updateIsland(self.mapName, rotation = self.getH())
 
@@ -1229,7 +1229,7 @@ class DistributedIsland(DistributedGameArea.DistributedGameArea, DistributedCart
     if __dev__:
 
         def setZoneLevel(self, *args, **kw):
-            ZoneLOD.ZoneLOD.setZoneLevel(self, *args, **args)
+            ZoneLOD.ZoneLOD.setZoneLevel(self, *args, **kw)
 
         setZoneLevel = report(types = [
             'frameCount',

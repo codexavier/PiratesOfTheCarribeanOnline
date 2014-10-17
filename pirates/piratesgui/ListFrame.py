@@ -12,21 +12,21 @@ class ListFrame(DirectFrame, DirectObject):
     revealSpeed = PiratesGuiGlobals.ItemRevealTime
     pageFinishWait = PiratesGuiGlobals.PageFinishWaitTime
     maxTotalWait = PiratesGuiGlobals.MaxTotalRevealTime
-    
+
     def __init__(self, w, h, title, holder = None, hideAll = True, delayedReveal = None, frameColor = PiratesGuiGlobals.FrameColor, **kw):
         self.adjustHeight = False
         if h == None:
             h = 1
             self.adjustHeight = True
-        
-        DirectFrame.__init__(self, relief = None, state = DGG.NORMAL, frameColor = frameColor, borderWidth = PiratesGuiGlobals.BorderWidth, frameSize = (0.0, w, 0.0, h), pos = (PiratesGuiGlobals.BorderWidth[0], 0, PiratesGuiGlobals.BorderWidth[0]), **None)
+
+        DirectFrame.__init__(self, relief = None, state = DGG.NORMAL, frameColor = frameColor, borderWidth = PiratesGuiGlobals.BorderWidth, frameSize = (0.0, w, 0.0, h), pos = (PiratesGuiGlobals.BorderWidth[0], 0, PiratesGuiGlobals.BorderWidth[0]))
         self.initialiseoptions(ListFrame)
         self.delayedReveal = delayedReveal
         self.items = []
         self.hideAll = hideAll
         if holder is None:
             holder = localAvatar
-        
+
         self.holder = holder
         self.accept(self.getItemChangeMessage(), self._handleItemChange)
         self.myHeight = h
@@ -37,53 +37,53 @@ class ListFrame(DirectFrame, DirectObject):
         gui = loader.loadModel('models/gui/toplevel_gui')
         self.lockArt = gui.find('**/pir_t_gui_gen_key_subscriber')
 
-    
+
     def setup(self):
         self._createIface()
 
-    
+
     def getItemChangeMessage(self):
         if self.holder:
             return self.holder.getItemChangeMsg()
         else:
             return ''
 
-    
+
     def getShowNextItemMessage(self):
         return 'showNext'
 
-    
+
     def getListFinishedMessage(self):
         return 'listFinished'
 
-    
+
     def getItemList(self):
         return self.holder.getItemList()
 
-    
+
     def createNewItem(self, item, itemType = None, columnWidths = [], color = None):
         return self.holder.createNewItem(item, self, itemType, columnWidths, color)
 
-    
+
     def setResizeItemHeights(self, resize):
         self.resizeItemHeights = resize
 
-    
+
     def destroy(self):
         self.ignoreAll()
         for entry in self.items:
             entry.destroy()
-        
+
         self.items = []
         self._destroyIface()
         DirectFrame.destroy(self)
         for request in self.pendingObjRequests:
             base.cr.relatedObjectMgr.abortRequest(request)
-        
+
         self.pendingObjRequests = []
         self.holder = None
 
-    
+
     def getItemHeight(self):
         if self.resizeItemHeights:
             numItems = len(self.items)
@@ -91,7 +91,7 @@ class ListFrame(DirectFrame, DirectObject):
         else:
             return -1
 
-    
+
     def createListItem(self, currItem, revealTime = 0, itemType = None, columnWidths = [], color = None):
         newItem = self.createNewItem(currItem, itemType, columnWidths, color)
         self.items.insert(0, newItem)
@@ -104,7 +104,7 @@ class ListFrame(DirectFrame, DirectObject):
         for gui in self.items:
             if self.hideAll == False:
                 gui.descText.wrtReparentTo(gui)
-            
+
             gui.setZ(y)
             if itemHeight == -1:
                 currHeight = gui.getHeight()
@@ -117,31 +117,31 @@ class ListFrame(DirectFrame, DirectObject):
             if self.hideAll == False:
                 gui.descText.wrtReparentTo(self.getParent().getParent())
                 continue
-        
+
         if self.adjustHeight:
             newSize = self['frameSize']
             self['frameSize'] = (newSize[0], newSize[1], newSize[2], totalY + self.topBuffer)
-        
+
         if hasattr(currItem, 'getChangeEvent'):
             self.accept(currItem.getChangeEvent(), self._handleItemChange)
-        
+
         if revealTime:
             unwrapMode = currItem.get('UnwrapMode', 0)
             newItem.setRevealTimer(revealTime, unwrapMode)
-        
+
         return newItem
 
-    
+
     def _createIface(self):
         itemList = self.getItemList()
         revealTime = self.revealSpeed
         if base.config.GetBool('fast-gui', 0) is 1:
             self.revealSpeed = 0
-        
+
         numItems = len(itemList)
         if numItems > 0:
             min(self.revealSpeed, self.maxTotalWait / numItems)
-        
+
         revealTime = 0
         for currItem in itemList:
             if currItem is not None:
@@ -167,48 +167,48 @@ class ListFrame(DirectFrame, DirectObject):
                                     itmPtr['extraArgs'] = [
                                         'Restricted_ListFrame',
                                         4]
-                                
-                            
-                        
+
+
+
                     if (itemType == None or itemType != 'Space') and self.delayedReveal:
                         revealTime += self.revealSpeed
-                    
-        
 
-    
+
+
+
     def sendFinished(args = None):
         messenger.send(self.getListFinishedMessage())
         taskMgr.doMethodLater(self.pageFinishWait + revealTime, sendFinished, 'scoreboardWait')
 
-    
+
     def _destroyIface(self):
         for gui in self.items:
             gui.destroy()
-        
+
         self.items = []
 
-    
+
     def removeItem(self, item):
         item.detachNode()
         self.items.remove(item)
 
-    
+
     def redraw(self):
         self._destroyIface()
         self.items = []
         self._createIface()
 
-    
+
     def _handleItemChange(self):
         self.redraw()
         if self.holder and hasattr(self.holder, 'handleChildChange'):
             self.holder.handleChildChange()
-        
 
-    
+
+
     def cleanup(self):
         for currItem in self.items:
             currItem.descText.wrtReparentTo(currItem)
-        
+
 
 

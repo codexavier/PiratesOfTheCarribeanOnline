@@ -26,11 +26,11 @@ from pirates.ship import HighSeasGlobals
 from pirates.piratesgui import MessageGlobals
 
 class ShipStatusDisplay(GuiTray.GuiTray):
-    
+
     def __init__(self, parent, shipId, **kw):
         optiondefs = (('relief', None, None), ('pos', (-0.029999999999999999, 0, -0.55000000000000004), None), ('shipId', shipId, None), ('shipName', ('', 0), self.applyShipName), ('shipClass', '', self.applyShipClass), ('shipHp', (0, 0), self.applyShipHp), ('shipSp', (0, 0), self.applyShipSp), ('shipCargo', (0, 0), self.applyShipCargo), ('oldCargo', 0, None), ('shipCrew', (0, 0), self.applyShipCrew), ('oldCrew', 0, None), ('ownShip', 0, None))
         self.defineoptions(kw, optiondefs)
-        GuiTray.GuiTray.__init__(self, parent, 0.5, 0.5, **None)
+        GuiTray.GuiTray.__init__(self, parent, 0.5, 0.5)
         self.invReq = None
         self.timer = None
         self.anchorButton = None
@@ -53,26 +53,26 @@ class ShipStatusDisplay(GuiTray.GuiTray):
         self.accept('setShipSpeed-%s' % self['shipId'], self.setShipSpeed)
         self.initialiseoptions(ShipStatusDisplay)
 
-    
+
     def destroy(self):
         self.ignoreAll()
         taskMgr.remove('doThreatMessageQueue')
         if self.invReq:
             DistributedInventoryBase.cancelGetInventory(self.invReq)
             self.invReq = None
-        
+
         if self.statusEffectsPanel:
             self.statusEffectsPanel.destroy()
             self.statusEffectsPanel = None
-        
+
         if self.openPortLabel:
             self.openPortLabel.destroy()
             self.openPortLabel = None
-        
+
         if self.anchorButton:
             self.anchorButton.destroy()
             self.anchorButton = None
-        
+
         self.hpMeterDownIval.pause()
         self.hpMeterUpGreenIval.pause()
         self.hpMeterUpRedIval.pause()
@@ -86,7 +86,7 @@ class ShipStatusDisplay(GuiTray.GuiTray):
         GuiTray.GuiTray.destroy(self)
         self.destroyBoardingPermissionPanel()
 
-    
+
     def loadGUI(self):
         shipcard = loader.loadModel('models/gui/ship_battle')
         self.nameBox = DirectFrame(parent = self, relief = None, pos = (0.058000000000000003, 0, -0.0064999999999999997), text = 'Ship Name', text_align = TextNode.ALeft, text_scale = 0.044999999999999998, text_pos = (0, -0.01), text_fg = PiratesGuiGlobals.TextFG1, text_wordwrap = 15, text_shadow = (0, 0, 0, 1), textMayChange = 1, text_font = PiratesGlobals.getInterfaceFont())
@@ -130,7 +130,7 @@ class ShipStatusDisplay(GuiTray.GuiTray):
         self.accept('settingLocalShipId', self.handleLocalShipSet)
         self.handleLocalShipSet(quiet = 1)
 
-    
+
     def handleLocalShipSet(self, quiet = 1):
         if localAvatar.ship:
             self.setThreatLevel(localAvatar.ship.getThreatLevel(), quiet)
@@ -139,7 +139,7 @@ class ShipStatusDisplay(GuiTray.GuiTray):
             self.setThreatLevel(0, quiet)
             self.setOpenPort(None, None, quiet)
 
-    
+
     def setOpenPort(self, portId, oldPortId, quiet = 0):
         openPortUID = EnemyGlobals.OPEN_PORT_DICT.get(portId, '')
         openPortName = PLocalizer.OpenPortNames.get(openPortUID)
@@ -165,17 +165,17 @@ class ShipStatusDisplay(GuiTray.GuiTray):
                         allPortMessage[1],
                         openPortMessage[1]]
                     base.localAvatar.guiMgr.queueInstructionMessage(messageText, messageSoundList, messageCategory = MessageGlobals.MSG_CAT_TELL_PORT)
-            
+
             self.disableAnchorButton()
         else:
             self.openPortLabel.hide()
             self.hideWrongPort()
 
-    
+
     def hideWrongPort(self):
         base.localAvatar.guiMgr.unlockInstructionMessage(self)
 
-    
+
     def tellWrongPort(self):
         taskMgr.remove('hideWrongPortText')
         openPortName = ''
@@ -183,15 +183,15 @@ class ShipStatusDisplay(GuiTray.GuiTray):
             portIndex = localAvatar.ship.getOpenPort()
             openPortUID = EnemyGlobals.OPEN_PORT_DICT.get(portIndex, '')
             openPortName = PLocalizer.OpenPortNames.get(openPortUID, '')
-        
+
         if openPortName:
             localPortUID = ''
             if localAvatar.getPort():
                 localPortDO = base.cr.doId2do.get(localAvatar.getPort())
                 if localPortDO:
                     localPortUID = localPortDO.uniqueId
-                
-            
+
+
             if localPortUID in EnemyGlobals.NON_WILD_ISLANDS:
                 wrongIslandMessage = HighSeasGlobals.getWrongIslandMessage()
                 messageText1 = wrongIslandMessage[0]
@@ -210,26 +210,26 @@ class ShipStatusDisplay(GuiTray.GuiTray):
         else:
             base.localAvatar.guiMgr.lockInstructionMessage(self, PLocalizer.WrongIslandNoPort, messageCategory = MessageGlobals.MSG_CAT_NO_PORT)
 
-    
+
     def setThreatLevel(self, threatLevel, quiet = 0):
         if localAvatar.ship and localAvatar.ship.getSiegeTeam():
             quiet = 0
             threatLevel = 0
-        
+
         threatCard = loader.loadModel('models/gui/ship_threat_icons')
         threatImage = None
         threatIconName = EnemyGlobals.THREAT_ICON_DICT.get(threatLevel)
         if threatIconName:
             threatImage = threatCard.find('**/%s*' % threatIconName)
-        
+
         self.threatFrame['image'] = threatImage
         self.threatFrame['image_scale'] = 0.13500000000000001
         threatDescription = HighSeasGlobals.getThreatLevelDescription(threatLevel, 0)
         if threatDescription and not quiet:
             base.localAvatar.guiMgr.queueInstructionMessageFront(threatDescription[0], threatDescription[1], threatImage, 1.0, messageCategory = MessageGlobals.MSG_CAT_THREAT_LEVEL)
-        
 
-    
+
+
     def setupPermissionUI(self):
         if not self.permissionButton:
             if self['ownShip']:
@@ -244,9 +244,9 @@ class ShipStatusDisplay(GuiTray.GuiTray):
             tex = loader.loadModel('models/gui/toplevel_gui').find('**/gui_boarding')
             self.permissionLabel = DirectLabel(parent = self.permissionButton, relief = None, state = DGG.DISABLED, image = tex, image_scale = 0.14999999999999999, image_color = (1, 1, 1, 0.80000000000000004))
             self.permissionLabel.setTransparency(1, 1)
-        
 
-    
+
+
     def handlePermissionButton(self):
         if self.permissionPanel:
             if self.permissionPanel.isHidden():
@@ -256,85 +256,85 @@ class ShipStatusDisplay(GuiTray.GuiTray):
         else:
             self.showPermissionPanel()
 
-    
+
     def showPermissionButton(self):
         if self.permissionButton:
             self.permissionButton.show()
-        
 
-    
+
+
     def hidePermissionButton(self):
         if self.permissionButton:
             self.permissionButton.hide()
-        
 
-    
+
+
     def createBoardingPermissionPanel(self):
         if not self.permissionPanel:
             self.permissionPanel = BoardingPermissionPanel(self, ownShip = self['ownShip'], command = self.hidePermissionPanel)
             self.permissionPanel.hide()
-        
 
-    
+
+
     def destroyBoardingPermissionPanel(self):
         if self.permissionPanel:
             self.permissionPanel.destroy()
             self.permissionPanel = None
-        
 
-    
+
+
     def hidePermissionPanel(self):
         if self.permissionPanel:
             self.permissionPanel.hide()
-        
 
-    
+
+
     def showPermissionPanel(self):
         if not self.permissionPanel:
             self.createBoardingPermissionPanel()
-        
+
         self.permissionPanel.show()
 
-    
+
     def loadLootPanel(self):
         if self.lootPanel:
             return None
-        
+
         self.lootPanel = LootPopupPanel.LootPopupPanel()
         self.lootPanel.reparentTo(self)
         self.lootPanel.setPos(0.050000000000000003, 0, 0)
         self.lootPanel.hide()
 
-    
+
     def applyShipName(self):
         self.setShipName(*self['shipName'])
 
-    
+
     def applyShipClass(self):
         self.setShipClass(self['shipClass'])
 
-    
+
     def applyShipHp(self):
         self.setShipHp(*self['shipHp'])
 
-    
+
     def applyShipSp(self):
         self.setShipSp(*self['shipSp'])
 
-    
+
     def applyShipCargo(self):
         self.setShipCargo(*self['shipCargo'])
 
-    
+
     def applyShipCrew(self):
         self.setShipCrew(*self['shipCrew'])
 
-    
+
     def setShipName(self, name, team):
         if (name, team) != self['shipName']:
             self['shipName'] = (name, team)
             return None
-        
+
         self.nameBox['text'] = name
         if team == PiratesGlobals.PLAYER_TEAM:
             self.nameBox['text_fg'] = PiratesGlobals.PLAYER_NAMETAG
@@ -346,29 +346,29 @@ class ShipStatusDisplay(GuiTray.GuiTray):
             self.nameBox['text_fg'] = PiratesGlobals.FRENCH_NAMETAG
         elif team == PiratesGlobals.SPANISH_UNDEAD_TEAM:
             self.nameBox['text_fg'] = PiratesGlobals.SPANISH_NAMETAG
-        
 
-    
+
+
     def setShipClass(self, shipClass):
         if shipClass != self['shipClass']:
             self['shipClass'] = shipClass
             return None
-        
 
-    
+
+
     def setShipHp(self, hp, maxHp):
         if (hp, maxHp) != self['shipHp']:
             self['shipHp'] = (hp, maxHp)
             return None
-        
+
         if hp < 0:
             hp = 0
         elif hp > maxHp:
             hp = maxHp
-        
+
         if not maxHp:
             return None
-        
+
         hpFraction = float(hp) / float(maxHp)
         if hpFraction >= 0.5:
             barColor = (0.10000000000000001, 0.69999999999999996, 0.10000000000000001, 1)
@@ -394,8 +394,8 @@ class ShipStatusDisplay(GuiTray.GuiTray):
         if currentTime is not None:
             if currentTime < 0.5:
                 prevValue = prevValue + self.prevChange
-            
-        
+
+
         if prevValue > hp:
             self.hpMeterChange.setColor(1.0, 0.0, 0.0, 1.0)
             self.prevChange = float(prevValue - hp)
@@ -410,7 +410,7 @@ class ShipStatusDisplay(GuiTray.GuiTray):
             if currentTime is None:
                 self.hpMeterDownIval.start()
                 return None
-            
+
             if currentTime >= 0.5:
                 self.hpMeterDownIval.start()
             else:
@@ -424,13 +424,13 @@ class ShipStatusDisplay(GuiTray.GuiTray):
             frameLeft = float(valueScale * 0.39900000000000002)
             if frameLeft < 0.025000000000000001:
                 return None
-            
+
             frameX = frameLeft - frameRight
             self.hpMeterChange.setPos(frameX - 0.19450000000000001, 0.0, 0.0)
             if frameLeft > 0.39900000000000002:
                 diff = frameLeft - 0.39900000000000002
                 frameRight = float(frameRight - diff)
-            
+
             self.hpMeterChange['frameSize'] = (0.0, frameRight, -0.010999999999999999, 0.0080000000000000002)
             if hpFraction >= 0.5:
                 self.hpMeterUpGreenIval.start()
@@ -438,23 +438,23 @@ class ShipStatusDisplay(GuiTray.GuiTray):
                 self.hpMeterUpYellowIval.start()
             else:
                 self.hpMeterUpRedIval.start()
-        
 
-    
+
+
     def setShipSp(self, sp, maxSp):
         if (sp, maxSp) != self['shipSp']:
             self['shipSp'] = (sp, maxSp)
             return None
-        
+
         self.speedMeter['range'] = maxSp
         self.speedMeter['value'] = sp
 
-    
+
     def setShipCargo(self, cargo, maxCargo):
         if (cargo, maxCargo) != self['shipCargo']:
             self['shipCargo'] = (cargo, maxCargo)
             return None
-        
+
         if self['oldCargo'] != cargo:
             self['oldCargo'] = cargo
             self.cargoLabel['text'] = '%s/%s' % (len(cargo), maxCargo)
@@ -468,20 +468,20 @@ class ShipStatusDisplay(GuiTray.GuiTray):
             scaleAnim.start()
             if self.lootPanel and not self.lootPanel.isHidden():
                 self.lootPanel.showLoot(cargo)
-            
-        
 
-    
+
+
+
     def setShipCrew(self, crew, maxCrew):
         if (crew, maxCrew) != self['shipCrew']:
             self['shipCrew'] = (crew, maxCrew)
             return None
-        
+
         if self['oldCrew'] != crew:
             self['oldCrew'] = crew
             if self['oldCrew'] == 0:
                 return None
-            
+
             self.crewLabel['text'] = '%s/%s' % (len(crew), maxCrew)
             if len(crew) >= maxCrew:
                 self.crewLabel['text_fg'] = (1, 0, 0, 1)
@@ -489,9 +489,9 @@ class ShipStatusDisplay(GuiTray.GuiTray):
                 self.crewLabel['text_fg'] = (1, 1, 1, 1)
             scaleAnim = self.crewMeter.scaleInterval(0.5, VBase3(0.90000000000000002), startScale = VBase3(1.5), blendType = 'easeIn')
             scaleAnim.start()
-        
 
-    
+
+
     def setShipSpeed(self, speed, maxSpeed):
         self.knotSpeed['text'] = PLocalizer.Knots % abs(int(speed * 0.20999999999999999))
         minP = -0.25
@@ -500,7 +500,7 @@ class ShipStatusDisplay(GuiTray.GuiTray):
         newP = (maxP - minP) * percent + minP
         self.speedMeter['geom_pos'] = (newP, 0, -0.01)
 
-    
+
     def toggleCargo(self):
         self.loadLootPanel()
         if self.lootPanel.isHidden():
@@ -508,7 +508,7 @@ class ShipStatusDisplay(GuiTray.GuiTray):
         else:
             self.lootPanel.hide()
 
-    
+
     def updateStatusEffects(self, effects):
         effectIdList = effects.keys()
         for effectKeyId in effectIdList:
@@ -517,7 +517,7 @@ class ShipStatusDisplay(GuiTray.GuiTray):
                 self.statusEffectsPanel.addStatusEffect(effectId, duration, timeLeft, ts, attackerId)
                 continue
             self.statusEffectsPanel.updateStatusEffect(effectId, duration, timeLeft, ts, attackerId)
-        
+
         for effectKeyId in self.skillEffects.keys():
             if effectKeyId not in effectIdList:
                 buff = self.skillEffects.get(effectKeyId)
@@ -525,82 +525,82 @@ class ShipStatusDisplay(GuiTray.GuiTray):
                     effectId = buff[0]
                     attackerId = buff[1]
                     self.statusEffectsPanel.removeStatusEffect(effectId, attackerId)
-                
-        
+
+
         self.skillEffects = copy.copy(effects)
         if self.skillEffects:
             self.addDurationTask()
         else:
             self.removeDurationTask()
 
-    
+
     def addDurationTask(self):
         if not self.durationTask:
             self.durationTask = taskMgr.add(self.updateDurationTask, self.taskName('updateStatusPanelTask'))
-        
 
-    
+
+
     def removeDurationTask(self):
         if self.durationTask:
             taskMgr.remove(self.taskName('updateStatusPanelTask'))
             self.durationTask = None
-        
 
-    
+
+
     def updateDurationTask(self, task):
         if len(self.skillEffects) > 0:
             if self.statusEffectsPanel:
                 self.statusEffectsPanel.updateDurations()
-            
+
             return Task.cont
         else:
             self.durationTask = None
             return Task.done
 
-    
+
     def enableAnchorButton(self):
         if not self.anchorButton:
             self.anchorButton = AnchorButton.AnchorButton(parent = base.a2dBottomCenter, helpText = PLocalizer.AnchorButtonHelp, image_scale = 0.17999999999999999, pos = (0, 0, 0.34000000000000002), scale = 1.2, command = self.handleAnchorButton)
-        
+
         self.anchorButton.show()
 
-    
+
     def disableAnchorButton(self):
         if self.anchorButton:
             self.anchorButton.hide()
-        
 
-    
+
+
     def handleAnchorButton(self):
         self.disableAnchorButton()
         base.cr.doId2do[self['shipId']].requestDropAnchor()
 
-    
+
     def setArmorStatus(self, location, status):
         self.armorGui.setArmorStatus(location, status)
 
-    
+
     def setAllowFriends(self, allow):
         if self.permissionPanel:
             self.permissionPanel.setAllowFriends(allow)
-        
 
-    
+
+
     def setAllowCrew(self, allow):
         if self.permissionPanel:
             self.permissionPanel.setAllowCrew(allow)
-        
 
-    
+
+
     def setAllowGuild(self, allow):
         if self.permissionPanel:
             self.permissionPanel.setAllowGuild(allow)
-        
 
-    
+
+
     def setAllowPublic(self, allow):
         if self.permissionPanel:
             self.permissionPanel.setAllowPublic(allow)
-        
+
 
 

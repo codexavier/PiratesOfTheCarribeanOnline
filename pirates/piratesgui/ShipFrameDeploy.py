@@ -15,7 +15,7 @@ class ShipFrameDeploy(ShipFrameSelect):
     def __init__(self, parent, **kw):
         optiondefs = (('avatarName', '', None),)
         self.defineoptions(kw, optiondefs)
-        ShipFrameSelect.__init__(self, parent, **None)
+        ShipFrameSelect.__init__(self, parent)
         self.initialiseoptions(ShipFrameDeploy)
 
 

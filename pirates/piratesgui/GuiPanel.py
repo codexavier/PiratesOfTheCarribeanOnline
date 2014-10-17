@@ -9,11 +9,11 @@ from pirates.piratesgui.BorderFrame import BorderFrame
 from direct.interval.IntervalGlobal import *
 
 class GuiPanel(BorderFrame):
-    
+
     def __init__(self, title, w, h, showClose = True, titleSize = 0, modelName = 'general_frame_f', **kw):
         self.width = w
         self.height = h
-        BorderFrame.__init__(self, frameSize = (0, w, 0, h), modelName = modelName, sortOrder = 20, **None)
+        BorderFrame.__init__(self, frameSize = (0, w, 0, h), modelName = modelName, sortOrder = 20)
         self.initialiseoptions(GuiPanel)
         titleFont = PiratesGuiGlobals.TextScaleMed
         textColor = PiratesGuiGlobals.TextFG1
@@ -34,7 +34,7 @@ class GuiPanel(BorderFrame):
             textColor = PiratesGuiGlobals.TextFG1
             textShadow = None
             wordwrap = 10
-        
+
         if title:
             self.titleLabel = DirectLabel(parent = self, relief = None, pos = (0.050000000000000003, 0, h - PiratesGuiGlobals.TextScaleSmall * 2.5), text = title, text_align = TextNode.ALeft, text_scale = titleFont, text_pos = (0.014999999999999999, 0.014999999999999999), text_fg = textColor, text_shadow = textShadow, text_font = PiratesGlobals.getPirateOutlineFont(), textMayChange = 1, text_wordwrap = wordwrap, sortOrder = 21)
         else:
@@ -47,23 +47,23 @@ class GuiPanel(BorderFrame):
             self.closeButton = None
         self.fadeLerp = None
 
-    
+
     def changeTitle(self, text):
         self.titleLabel['text'] = text
 
-    
+
     def destroy(self):
         if self.fadeLerp:
             self.fadeLerp.pause()
             del self.fadeLerp
-        
+
         DirectFrame.destroy(self)
 
-    
+
     def closePanel(self):
         self.hide()
 
-    
+
     def setMouseFade(self, fade):
         if fade:
             self.bind(DGG.WITHIN, self.withinFrame)
@@ -73,21 +73,21 @@ class GuiPanel(BorderFrame):
             self.unbind(DGG.WITHIN)
             self.unbind(DGG.WITHOUT)
 
-    
+
     def withinFrame(self, event):
         if self.fadeLerp:
             self.fadeLerp.pause()
             del self.fadeLerp
-        
+
         self.fadeLerp = LerpFunctionInterval(self.setAlphaScale, fromData = self.getColorScale()[3], toData = 1, duration = 0.5)
         self.fadeLerp.start()
 
-    
+
     def withoutFrame(self, event):
         if self.fadeLerp:
             self.fadeLerp.pause()
             del self.fadeLerp
-        
+
         self.fadeLerp = LerpFunctionInterval(self.setAlphaScale, fromData = self.getColorScale()[3], toData = 0, duration = 0.5)
         self.fadeLerp.start()
 

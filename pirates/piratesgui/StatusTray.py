@@ -24,7 +24,7 @@ class StatusTray(GuiTray.GuiTray):
     SHOW_SKILL_DURATION = 2.0
 
     def __init__(self, parent, showSkills = 0, **kw):
-        GuiTray.GuiTray.__init__(self, parent, 0.75, 0.14999999999999999, **None)
+        GuiTray.GuiTray.__init__(self, parent, 0.75, 0.14999999999999999)
         self.initialiseoptions(StatusTray)
         self.name = None
         self.sticky = False
@@ -404,13 +404,13 @@ class StatusTray(GuiTray.GuiTray):
 
     def fadeOut(self, *args, **kwargs):
         self.doId = 0
-        GuiTray.GuiTray.fadeOut(self, *args, **args)
+        GuiTray.GuiTray.fadeOut(self, *args, **kwargs)
 
 
     def hide(self, *args, **kwargs):
         self.removeDurationTask()
         self.doId = 0
-        GuiTray.GuiTray.hide(self, *args, **args)
+        GuiTray.GuiTray.hide(self, *args, **kwargs)
 
 
     def updateStatusEffects(self, effects):

@@ -210,7 +210,7 @@ CATALOG_HOLIDAYS = {
 
 class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
     notify = DirectNotifyGlobal.directNotify.newCategory('MakeAPirate')
-    
+
     def __init__(self, avList, doneEvent, subId = 0, index = 0, isPaid = 0, isNPCEditor = False, piratesEditor = None):
         self.undoList = {
             'm': [
@@ -272,18 +272,18 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if self.wantPicButtons and not (self.wantNPCViewer):
             self.wantNPCViewer = True
             self.notify.warning('Warning! want-gen-pics-buttons needs want-npc-viewer. wantNPCViewer overridden and set to TRUE')
-        
+
         self.wantMarketingViewer = base.config.GetBool('want-marketing-viewer', 0)
         if isNPCEditor:
             self.wantNPCViewer = 1
-        
+
         self.loadJackDialogs()
         self.skipTutorial = base.config.GetBool('skip-tutorial', 0)
         self.chooseFemale = base.config.GetBool('choose-female', 0)
         self.noJailLight = base.config.GetBool('no-jail-light', 0)
         if hasattr(base, 'pe') and base.pe:
             self.noJailLight = True
-        
+
         if self.skipTutorial and isNPCEditor and self.avList[self.index] == None or self.avList[self.index] == OTPGlobals.AvatarSlotAvailable:
             self.isTutorial = 0
         else:
@@ -295,7 +295,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.isNPCEditor = isNPCEditor
         for key in PiratesGlobals.ScreenshotHotkeyList:
             self.accept(key, self.takeScreenShot)
-        
+
         self.accept('f12', self.toggleGUI)
         self.accept('exitPlayPirates', self.handleCancel)
         self.newPotAv = None
@@ -341,7 +341,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.avatarDummyNode.setScale(self.avList[self.index].getScale())
             self.avatarDummyNode.setHpr(rot[0], rot[1], rot[2])
             camera.wrtReparentTo(self.avatarDummyNode)
-        
+
         self.nameList = []
         self.shop = BODYSHOP
         self.shopsVisited = []
@@ -353,7 +353,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.wantJewelry = base.wantJewelry
         if self.wantNPCViewer:
             self.numShops = len(ShopNames)
-            
+
             def yieldThread(a):
                 pass
 
@@ -375,16 +375,16 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.superLowPirate = None
         self.guiConfirmDoneBox = None
 
-    
+
     def getPirate(self):
         return self.pirate
 
-    
+
     def enter(self):
         self.entered = 1
         if base.config.GetBool('want-alt-idles', 0):
             taskMgr.add(self.altIdleTask, 'avCreate-AltIdleTask')
-        
+
         taskMgr.add(self.zoomTask, 'avCreate-ZoomTask')
         self._waitForServerDlg = None
         self.bookModel.show()
@@ -395,7 +395,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.jail.flattenMedium()
             self.jail.reparentTo(render)
             self.jail.setLightOff()
-        
+
         if not self.noJailLight:
             self.pirate.setH(self.initH)
             self.pirate.setZ(-1.5)
@@ -445,24 +445,24 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             light.turnOn()
             self.pirate.setP(0)
             self.pirate.setZ(0)
-        
+
         self.setupJackDialogs()
         base.camLens.setMinFov(PiratesGlobals.MakeAPirateCameraFov)
         self.placePirate(True)
         if not self.isNPCEditor:
             self.bodyGui.handleShape(2)
-        
+
         self.pirate.setNameVisible(0)
         self.guiCancelButton.show()
         if self.isNPCEditor or self.wantNPCViewer:
             self.guiTopBar.show()
             self.guiCancelButton.hide()
-        
+
         self.guiBottomBar.show()
         self.request('BodyShop')
         if hasattr(base, 'musicMgr'):
             base.musicMgr.request(SoundGlobals.MUSIC_MAKE_A_PIRATE, volume = 0.40000000000000002)
-        
+
         self.accept('mouse1', self._startMouseReadTask)
         self.accept('mouse1-up', self._stopMouseReadTask)
         self.accept('mouse3', self._startMouseReadTask)
@@ -481,7 +481,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.offsetZoomHpr = camera.getHpr(render)
         base.transitions.fadeIn()
 
-    
+
     def exit(self):
         taskMgr.remove('avCreate-ZoomTask')
         taskMgr.remove('avCreate-AltIdleTask')
@@ -491,40 +491,40 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if self._waitForServerDlg:
             self._waitForServerDlg.destroy()
             self._waitForServerDlg = None
-        
+
         if self.confirmTempName:
             self.confirmTempName.destroy()
             self.confirmTempName = None
-        
+
         self.bookModel.hide()
         self.lowBookModel.hide()
         if self.isNPCEditor or self.wantNPCViewer:
             self.guiTopBar.hide()
-        
+
         self.guiBottomBar.hide()
         if not self.isNPCEditor:
             if self.doneStatus == 'created':
                 base.options.display.restrictToEmbedded(False)
-            
-        
+
+
         if self.skipTutorial:
             self.pirate.detachNode()
-        
+
         self.pirate.setNameVisible(1)
         if self.skipTutorial and not (self.isNPCEditor):
             if hasattr(self, 'jail'):
                 self.jail.hide()
-            
-        
+
+
         if self.entered and not (self.noJailLight):
             self.ambientLight.turnOff()
             self.spotLight1.turnOff()
             self.spotLight2.turnOff()
             self.spotLight3.turnOff()
-        
+
         if hasattr(base, 'musicMgr'):
             base.musicMgr.requestFadeOut(SoundGlobals.MUSIC_MAKE_A_PIRATE)
-        
+
         self.ignore('mouse1')
         self.ignore('mouse1-up')
         self.ignore('mouse3')
@@ -537,15 +537,15 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         UserFunnel.logSubmit(0, 'CREATE_PIRATE_EXITS')
         if not self.isNPCEditor:
             base.cr.centralLogger.writeClientEvent('CREATE_PIRATE_EXITS')
-        
+
         UserFunnel.logSubmit(1, 'CUTSCENE_ONE_START')
         UserFunnel.logSubmit(0, 'CUTSCENE_ONE_START')
         if not self.isNPCEditor:
             base.cr.centralLogger.writeClientEvent('CUTSCENE_ONE_START')
-        
+
         self.idleFSM = None
 
-    
+
     def loadJackDialogs(self):
         self.jsd_anytime_1 = loadSfx(SoundGlobals.JSD_ANYTIME_01)
         self.jsd_anytime_2 = loadSfx(SoundGlobals.JSD_ANYTIME_02)
@@ -574,7 +574,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.jsd_shoe_good = loadSfx(SoundGlobals.JSD_SHOE_01)
         self.lastDialog = None
 
-    
+
     def setupJackDialogs(self):
         self.JSD_ANYTIME = [
             [
@@ -664,9 +664,9 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                     self.jsd_shoe_barbossa,
                     self.jsd_shoe_good] } }
 
-    
+
     def setupCamera(self, character):
-        
+
         try:
             id = character.style.getBodyShape()
         except:
@@ -701,7 +701,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.lastRot = lastRot
         self.rotatePirate()
 
-    
+
     def placePirate(self, wantClothingChange):
         if self.pirate.style.gender == 'f':
             self.genderIdx = 1
@@ -710,7 +710,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.pirate.setHpr(self.initH, 0, 0)
         if hasattr(self, 'lastAnim') == False:
             self.lastAnim = 0
-        
+
         if self.isNPCEditor:
             self.pirate.reparentTo(self.avatarDummyNode)
         else:
@@ -720,7 +720,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if not self.isNPCEditor:
             self.setupCamera(self.pirate)
         else:
-            
+
             try:
                 id = self.pirate.style.getBodyShape()
             except:
@@ -744,11 +744,11 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             if self.wantIdleCentered:
                 self.pirate.enableBlend()
                 self.pirate.loop('idle_centered')
-            
-        
+
+
         self.assignPirateToGui(wantClothingChange)
 
-    
+
     def assignPirateToGui(self, wantClothingChange):
         self.genderGui.assignAvatar(self.pirate.model)
         self.bodyGui.assignAvatar(self.pirate.model)
@@ -759,29 +759,29 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if self.wantNPCViewer:
             self.tattooGui.assignAvatar(self.pirate.model)
             self.jewelryGui.assignAvatar(self.pirate.model)
-        
 
-    
+
+
     def takeScreenShot(self):
         self.notify.info('Beginning screenshot capture')
         base.screenshot()
         self.notify.info('Screenshot captured')
 
-    
+
     def assignSkeletonToGui(self):
         self.NPCGui.assignAvatar(self.skeleton.model)
 
-    
+
     def assignCastToGui(self):
         self.NPCGui.assignAvatar(self.cast)
 
-    
+
     def placeSkeleton(self, type):
         self.skeleton.reparentTo(render)
         self.skeleton.setHpr(self.initH, 0, 0)
         if hasattr(self, 'lastAnim') == False:
             self.lastAnim = 0
-        
+
         self.skeleton.loop(AnimList[self.lastAnim])
         self.pgsZoom['value'] = 0.0
         self.pgsRotate['value'] = 0.0
@@ -790,7 +790,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if not self.isNPCEditor:
             self.setupCamera(self.skeleton)
         else:
-            
+
             try:
                 id = self.pirate.style.getBodyShape()
             except:
@@ -811,28 +811,28 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.camZoomOutHpr = CamZoomOutPosHprs[self.genderIdx][offsetId][1]
         self.assignSkeletonToGui()
 
-    
+
     def placeCast(self, type):
         self.cast.reparentTo(render)
         self.cast.setHpr(self.initH, 0, 0)
         self.cast.find('**/actorGeom').setH(180)
         if hasattr(self, 'lastAnim') == False:
             self.lastAnim = 0
-        
+
         self.pgsZoom['value'] = 0.0
         self.pgsRotate['value'] = 0.0
         self.aPos = self.cast.getPos()
         self.cast.setPos(0, 0, 0)
         self.assignCastToGui()
 
-    
+
     def loadNPCButton(self):
         self.PirateButton = DirectButton(parent = self.guiTopBar, relief = DGG.SUNKEN, pos = (-0.84999999999999998, 0.0, 0.0), scale = 0.59999999999999998, command = self.handlePirate, frameSize = (-0.25, 0.25, -0.10000000000000001, 0.10000000000000001), borderWidth = (0.02, 0.02), text = PLocalizer.PirateButton, text_pos = (0, -0.050000000000000003), text_scale = 0.20000000000000001, text_align = TextNode.ACenter)
         self.NPCButton = DirectButton(parent = self.guiTopBar, relief = DGG.RAISED, pos = (-0.45000000000000001, 0.0, 0.0), scale = 0.59999999999999998, command = self.handleNPC, frameSize = (-0.25, 0.25, -0.10000000000000001, 0.10000000000000001), borderWidth = (0.02, 0.02), text = PLocalizer.NPCButton, text_pos = (0, -0.050000000000000003), text_scale = 0.20000000000000001, text_align = TextNode.ACenter)
         self.NavyButton = DirectButton(parent = self.guiTopBar, relief = DGG.RAISED, pos = (-0.050000000000000003, 0.0, 0.0), scale = 0.59999999999999998, command = self.handleNavy, frameSize = (-0.25, 0.25, -0.10000000000000001, 0.10000000000000001), borderWidth = (0.02, 0.02), text = PLocalizer.NavyButton, text_pos = (0, -0.050000000000000003), text_scale = 0.20000000000000001, text_align = TextNode.ACenter)
         self.CastButton = DirectButton(parent = self.guiTopBar, relief = DGG.RAISED, pos = (0.34999999999999998, 0.0, 0.0), scale = 0.59999999999999998, command = self.handleCast, frameSize = (-0.25, 0.25, -0.10000000000000001, 0.10000000000000001), borderWidth = (0.02, 0.02), text = PLocalizer.CastButton, text_pos = (0, -0.050000000000000003), text_scale = 0.20000000000000001, text_align = TextNode.ACenter)
 
-    
+
     def load(self):
         self.charGui = loader.loadModel('models/gui/char_gui')
         self.triangleGui = loader.loadModel('models/gui/triangle')
@@ -952,7 +952,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             for anim in AnimList:
                 animButtons.append(DirectButton(parent = self.guiAnimScrolledBox.getCanvas(), text = (anim, anim, anim, anim), text_align = TextNode.ALeft, text_pos = (0, -0.29999999999999999), pos = (-0.90000000000000002, 0, listTop - (AnimList.index(anim) + 1) * 0.13), frameSize = (-0.5, 16, -0.59999999999999998, 0.69999999999999996), scale = 0.10000000000000001, extraArgs = [
                     anim], command = self.handleSetAnim))
-            
+
             propDict = CustomAnims.getHandHeldPropsDict()
             propNames = propDict.keys()
             propNames.sort()
@@ -965,10 +965,10 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             for prop in propNames:
                 propButtons.append(DirectButton(parent = self.guiPropScrolledBox.getCanvas(), text = (prop, prop, prop, prop), text_align = TextNode.ALeft, text_pos = (0, -0.29999999999999999), pos = (-0.90000000000000002, 0, listTop - (propNames.index(prop) + 1) * 0.13), frameSize = (-0.5, 16, -0.59999999999999998, 0.69999999999999996), scale = 0.10000000000000001, extraArgs = [
                     prop], command = self.handleSetProp))
-            
+
             self.loadNPCButton()
             self.NPCGui = NPCGUI.NPCGUI(self)
-        
+
         self.pirate = DynamicHuman.DynamicHuman()
         if self.avList[self.index] and self.avList[self.index] != OTPGlobals.AvatarSlotAvailable:
             self.pirate.style = self.avList[self.index].style
@@ -989,7 +989,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if self.wantNPCViewer:
             self.tattooGui = TattooGUI.TattooGUI(self)
             self.jewelryGui = JewelryGUI.JewelryGUI(self)
-        
+
         self.headGui.restore()
         self.addPage(PLocalizer.MakeAPiratePageNames[0])
         self.addPage(PLocalizer.MakeAPiratePageNames[1])
@@ -1003,7 +1003,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if self.wantNPCViewer:
             self.addPage(PLocalizer.MakeAPiratePageNames[9])
             self.addPage(PLocalizer.MakeAPiratePageNames[10])
-        
+
         self.setPage(PLocalizer.MakeAPiratePageNames[0])
         self.setPage(PLocalizer.MakeAPiratePageNames[1])
         self.setPage(PLocalizer.MakeAPiratePageNames[2])
@@ -1025,13 +1025,13 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if self.wantNPCViewer:
             self.pageTabs[9].hide()
             self.pageTabs[10].hide()
-        
 
-    
+
+
     def randomMe(self):
         self.genderGui.randomPick()
 
-    
+
     def loadPirate(self):
         self.unloadPirate()
         self.pirate.setDNAString(self.pirate.style)
@@ -1045,12 +1045,12 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 self.pirate.mixingEnabled = False
                 self.pirate.enableBlend()
                 self.pirate.loop('idle_centered')
-            
+
             self.pirate.loop('idle')
             if self.wantIdleCentered:
                 self.pirate.setControlEffect('idle_centered', 0)
                 self.pirate.setControlEffect('idle', 1)
-            
+
         self.avatar = self.pirate.model
         self.pirate.useLOD(2000)
         if self.npcViewerLOD > -1:
@@ -1058,17 +1058,17 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 self.pirate.useLOD(1000)
             elif self.npcViewerLOD == 2:
                 self.pirate.useLOD(500)
-            
-        
+
+
         self.pirate.show()
 
-    
+
     def unloadPirate(self):
         if self.pirate and self.pirate.loaded:
             self.pirate.hide()
-        
 
-    
+
+
     def loadSkeleton(self, type):
         self.unloadSkeleton()
         self.skeletonType = type
@@ -1077,18 +1077,18 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.skeleton.generateSkeleton()
         if self.isNPCEditor or self.wantNPCViewer:
             self.skeleton.disableBlend()
-        
+
         self.avatar = self.skeleton.model
 
-    
+
     def unloadSkeleton(self):
         if self.skeleton:
             self.skeleton.hide()
             self.skeleton.delete()
             self.skeleton = None
-        
 
-    
+
+
     def loadCast(self, type):
         self.unloadCast()
         self.castType = type
@@ -1106,22 +1106,22 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.cast = JoshGibbs()
         elif type == 6:
             self.cast = JollyRoger()
-        
+
         self.cast.style = CastBodyTypes[type]
         if self.isNPCEditor or self.wantNPCViewer:
             self.cast.disableBlend()
-        
+
         self.avatar = self.cast
 
-    
+
     def unloadCast(self):
         if self.cast:
             self.cast.hide()
             self.cast.delete()
             self.cast = None
-        
 
-    
+
+
     def unload(self):
         self.charGui.removeNode()
         self.charGui = None
@@ -1132,7 +1132,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             camera.reparentTo(render)
             self.avatarDummyNode.removeNode()
             del self.avatarDummyNode
-        
+
         self.genderGui.unload()
         self.bodyGui.unload()
         self.headGui.unload()
@@ -1143,12 +1143,12 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if self.wantNPCViewer:
             self.tattooGui.unload()
             self.jewelryGui.unload()
-        
+
         self.pirate.stopBlink()
         if hasattr(self, 'jail'):
             self.jail.removeNode()
             del self.jail
-        
+
         if self.entered and not (self.noJailLight):
             self.ambientLight.unload()
             self.spotLight1.unload()
@@ -1158,7 +1158,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             del self.spotLight1
             del self.spotLight2
             del self.spotLight3
-        
+
         if self.isNPCEditor and self.wantNPCViewer or self.wantMarketingViewer:
             self.guiTopBar.destroy()
             del self.guiTopBar
@@ -1169,7 +1169,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.toggleFilterFrame.destroy()
             del self.toggleFilterFrame
             del self.guiResetButton
-        
+
         self.guiCancelButton.destroy()
         del self.guiCancelButton
         self.guiBottomBar.destroy()
@@ -1179,7 +1179,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         del self.guiNextButton
         if self.guiConfirmDoneBox:
             self.guiConfirmDoneBox.destroy()
-        
+
         del self.guiConfirmDoneBox
         self.bookModel.destroy()
         del self.bookModel
@@ -1192,68 +1192,68 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         del self.soundBack
         if hasattr(self, 'fsm'):
             del self.fsm
-        
+
         del self.avatar
         del self.newPotAv
         if self.isNPCEditor:
             self.pirate.delete()
-        
+
         del self.pirate
         self.ignoreAll()
 
-    
+
     def getDNA(self):
         return self.dnastring
 
-    
+
     def handleCancel(self):
         self.doneStatus = 'cancel'
         self.shopsVisited = []
         if self.isNPCEditor:
             self.piratesEditor.updateNPC('Cancel')
-        
+
         base.transitions.fadeOut(finishIval = EventInterval(self.doneEvent))
 
-    
+
     def handleDone(self):
         if self.guiConfirmDoneBox:
             self.guiConfirmDoneBox.destroy()
-        
+
         self.guiConfirmDoneBox = PDialog.PDialog(text = PLocalizer.MakeAPirateConfirm, style = OTPDialog.YesNo, command = self.handleConfirmDone)
 
-    
+
     def handleConfirmDone(self, done):
         self.guiConfirmDoneBox.destroy()
         self.guiConfirmDoneBox = None
         if done == DGG.DIALOG_CANCEL:
             return None
-        
+
         self.doneStatus = 'created'
         if hasattr(self, 'confirmInvalidName'):
             self.confirmInvalidName.destroy()
             del self.confirmInvalidName
-        
+
         self.nameGui._checkTypeANameAsPickAName()
-        if hasattr(base, 'pe') or base.pe or self.nameGui.cr is None:
+        if hasattr(base, 'pe'):
             self._handleNameOK()
         elif self.nameGui.hasCustomName():
             if self._waitForServerDlg:
                 self._waitForServerDlg.destroy()
                 self._waitForServerDlg = None
-            
+
             self._waitForServerDlg = PDialog.PDialog(text = PLocalizer.MakeAPirateWait, style = OTPDialog.NoButtons)
             self.nameGui.getTypeANameProblem(self._handleNameProblem)
         else:
             self._handleNameOK()
 
-    
+
     def _handleNameProblem(self, problemStr):
         if self._waitForServerDlg:
             self._waitForServerDlg.destroy()
             self._waitForServerDlg = None
-        
+
         if problemStr:
-            
+
             def confirmInvalidName(value):
                 self.confirmInvalidName.destroy()
                 del self.confirmInvalidName
@@ -1262,11 +1262,11 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         else:
             self._handleNameOK()
 
-    
+
     def exitWithoutSaving(self):
         self._handleNameOK(saveNPC = False)
 
-    
+
     def _handleNameOK(self, saveNPC = True):
         self.bookModel.stash()
         self.guiDoneButton.hide()
@@ -1279,7 +1279,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if self.wantNPCViewer:
             self.tattooGui.save()
             self.jewelryGui.save()
-        
+
         if self.skipTutorial:
             newPotAv = PotentialAvatar.PotentialAvatar(0, [
                 'dbp',
@@ -1287,7 +1287,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 '',
                 ''], self.pirate.style, self.index, 0)
             self.newPotAv = newPotAv
-        
+
         if self.isNPCEditor:
             if saveNPC:
                 self.editorAvatar.setDNAString(self.pirate.style)
@@ -1296,32 +1296,27 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 self.piratesEditor.updateNPC('Cancel')
             self.exit()
             self.unload()
-        
-        
-        def sendDone(value = 1):
-            if not self.isNPCEditor or self.wantNPCViewer:
-                messenger.send(self.doneEvent, [
-                    self.pirate.model.currentClothing])
-            
+
+        def populateAv(avId):
+            self.avId = avId
+            self.subId = PiratesGlobals.PiratesSubId
+            self.newPotAv = PotentialAvatar.PotentialAvatar(self.avId, self.nameGui.getNumericName(), self.pirate.style, self.index, True)
+            messenger.send(self.doneEvent, [])
             base.transitions.fadeIn(1.0)
 
-        
-        def populateAv(avId, subId):
-            self.avId = avId
-            self.acceptOnce('avatarPopulated', sendDone)
-            if self.nameGui.customName:
-                base.cr.sendWishName(avId, self.pirate.style.name)
-                base.cr.avatarManager.sendRequestPopulateAvatar(avId, self.pirate.style, 0, 0, 0, 0, 0)
-            else:
-                name = self.nameGui.getNumericName()
-                base.cr.avatarManager.sendRequestPopulateAvatar(avId, self.pirate.style, 1, name[0], name[1], name[2], name[3])
-
-        
         def createAv():
             self.acceptOnce('createdNewAvatar', populateAv)
-            base.cr.avatarManager.sendRequestCreateAvatar(self.subId)
+            '''
+            name = (0, 0, 0, 0)
+            defaultName = False
+            if self.nameGui.customName:
+                pass # TODO: Custom names
+            else:
+                name = self.nameGui.getNumericName()
+                defaultName = True
+            '''
+            base.cr.csm.sendCreateAvatar(self.pirate.style, self.index)
 
-        
         def acknowledgeTempName(value):
             self.confirmTempName.destroy()
             self.confirmTempName = None
@@ -1337,40 +1332,40 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         else:
             base.transitions.fadeOut(finishIval = Func(createAv))
 
-    
+
     def toggleSlide(self):
         self.slide = 1 - self.slide
 
-    
+
     def enterNameShop(self):
         self.pgsZoom['value'] = 0.0
         self.nameGui.enter()
         self.shop = NAMESHOP
         if NAMESHOP not in self.shopsVisited:
             self.shopsVisited.append(NAMESHOP)
-        
 
-    
+
+
     def exitNameShop(self):
         self.nameGui.exit()
 
-    
+
     def resetName(self):
         self.nameGui.reset()
 
-    
+
     def makeRandomName(self):
         self.nameGui.makeRandomName()
 
-    
+
     def resetGender(self, index):
         self.genderGui.reset(index)
 
-    
+
     def makeRandomGender(self):
         self.genderGui.randomPick()
 
-    
+
     def enterBodyShop(self):
         self.shop = BODYSHOP
         self.pgsZoom['value'] = 0.0
@@ -1380,27 +1375,27 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         base.disableMouse()
         if BODYSHOP not in self.shopsVisited:
             self.shopsVisited.append(BODYSHOP)
-        
 
-    
+
+
     def exitBodyShop(self):
         self.ignore('BodyShop-done')
         self.genderGui.exit()
         self.bodyGui.exit()
 
-    
+
     def handleBodyShopDone(self):
         pass
 
-    
+
     def resetBody(self):
         self.bodyGui.reset()
 
-    
+
     def makeRandomBody(self):
         self.bodyGui.weightedRandomPick()
 
-    
+
     def enterHeadShop(self):
         self.shop = HEADSHOP
         self.pgsZoom.node().setValue(1)
@@ -1409,26 +1404,26 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         base.disableMouse()
         if HEADSHOP not in self.shopsVisited:
             self.shopsVisited.append(HEADSHOP)
-        
 
-    
+
+
     def exitHeadShop(self):
         self.ignore('HeadShop-done')
         self.headGui.shape.exit()
 
-    
+
     def handleHeadShopDone(self):
         pass
 
-    
+
     def resetHead(self):
         self.headGui.shape.reset()
 
-    
+
     def makeRandomHead(self):
         self.headGui.shape.randomPick()
 
-    
+
     def enterMouthShop(self):
         self.shop = MOUTHSHOP
         self.pgsZoom.node().setValue(1)
@@ -1437,26 +1432,26 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         base.disableMouse()
         if MOUTHSHOP not in self.shopsVisited:
             self.shopsVisited.append(MOUTHSHOP)
-        
 
-    
+
+
     def exitMouthShop(self):
         self.ignore('MouthShop-done')
         self.headGui.mouth.exit()
 
-    
+
     def handleMouthShopDone(self):
         pass
 
-    
+
     def resetMouth(self):
         self.headGui.mouth.reset()
 
-    
+
     def makeRandomMouth(self):
         self.headGui.mouth.randomPick()
 
-    
+
     def enterEyesShop(self):
         self.shop = EYESSHOP
         self.pgsZoom.node().setValue(1)
@@ -1465,26 +1460,26 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         base.disableMouse()
         if EYESSHOP not in self.shopsVisited:
             self.shopsVisited.append(EYESSHOP)
-        
 
-    
+
+
     def exitEyesShop(self):
         self.ignore('EyesShop-done')
         self.headGui.eyes.exit()
 
-    
+
     def handleEyesShopDone(self):
         pass
 
-    
+
     def resetEyes(self):
         self.headGui.eyes.reset()
 
-    
+
     def makeRandomEyes(self):
         self.headGui.eyes.randomPick()
 
-    
+
     def enterNoseShop(self):
         self.shop = NOSESHOP
         self.pgsZoom.node().setValue(1)
@@ -1493,26 +1488,26 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         base.disableMouse()
         if NOSESHOP not in self.shopsVisited:
             self.shopsVisited.append(NOSESHOP)
-        
 
-    
+
+
     def exitNoseShop(self):
         self.ignore('NoseShop-done')
         self.headGui.nose.exit()
 
-    
+
     def handleNoseShopDone(self):
         pass
 
-    
+
     def resetNose(self):
         self.headGui.nose.reset()
 
-    
+
     def makeRandomNose(self):
         self.headGui.nose.weightedRandomPick()
 
-    
+
     def enterEarShop(self):
         self.shop = EARSHOP
         self.pgsZoom.node().setValue(1)
@@ -1521,26 +1516,26 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         base.disableMouse()
         if EARSHOP not in self.shopsVisited:
             self.shopsVisited.append(EARSHOP)
-        
 
-    
+
+
     def exitEarShop(self):
         self.ignore('EarShop-done')
         self.headGui.ear.exit()
 
-    
+
     def handleEarShopDone(self):
         pass
 
-    
+
     def resetEar(self):
         self.headGui.ear.reset()
 
-    
+
     def makeRandomEar(self):
         self.headGui.ear.randomPick()
 
-    
+
     def enterHairShop(self):
         self.shop = HAIRSHOP
         self.pgsZoom.node().setValue(0.90000000000000002)
@@ -1549,26 +1544,26 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         base.disableMouse()
         if HAIRSHOP not in self.shopsVisited:
             self.shopsVisited.append(HAIRSHOP)
-        
 
-    
+
+
     def exitHairShop(self):
         self.ignore('HairShop-done')
         self.hairGui.exit()
 
-    
+
     def handleHairShopDone(self):
         pass
 
-    
+
     def resetHair(self):
         self.hairGui.reset()
 
-    
+
     def makeRandomHair(self):
         self.hairGui.weightedRandomPick()
 
-    
+
     def enterClothesShop(self):
         self.shop = CLOTHESSHOP
         self.pgsZoom.node().setValue(0.0)
@@ -1577,26 +1572,26 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         base.disableMouse()
         if CLOTHESSHOP not in self.shopsVisited:
             self.shopsVisited.append(CLOTHESSHOP)
-        
 
-    
+
+
     def exitClothesShop(self):
         self.ignore('ClothesShop-done')
         self.clothesGui.exit()
 
-    
+
     def handleClothesShopDone(self):
         pass
 
-    
+
     def resetClothing(self):
         self.clothesGui.reset()
 
-    
+
     def makeRandomClothing(self):
         self.clothesGui.randomPick()
 
-    
+
     def enterTattooShop(self):
         self.shop = TATTOOSHOP
         self.pgsZoom.node().setValue(0.0)
@@ -1605,26 +1600,26 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         base.disableMouse()
         if TATTOOSHOP not in self.shopsVisited:
             self.shopsVisited.append(TATTOOSHOP)
-        
 
-    
+
+
     def exitTattooShop(self):
         self.ignore('TattooShop-done')
         self.tattooGui.exit()
 
-    
+
     def handleTattooShopDone(self):
         pass
 
-    
+
     def resetTattoo(self):
         self.tattooGui.reset()
 
-    
+
     def makeRandomTattoo(self):
         self.tattooGui.randomPick()
 
-    
+
     def enterJewelryShop(self):
         self.shop = JEWELRYSHOP
         self.pgsZoom.node().setValue(0.0)
@@ -1633,26 +1628,26 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         base.disableMouse()
         if JEWELRYSHOP not in self.shopsVisited:
             self.shopsVisited.append(JEWELRYSHOP)
-        
 
-    
+
+
     def exitJewelryShop(self):
         self.ignore('JewelryShop-done')
         self.jewelryGui.exit()
 
-    
+
     def handleJewelryShopDone(self):
         pass
 
-    
+
     def resetJewelry(self):
         self.jewelryGui.reset()
 
-    
+
     def makeRandomJewelry(self):
         self.jewelryGui.randomPick()
 
-    
+
     def handlePirate(self):
         self.avatarType = AVATAR_PIRATE
         self.unloadSkeleton()
@@ -1670,7 +1665,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.setPage(PLocalizer.MakeAPiratePageNames[0])
         self.NPCGui.exit()
 
-    
+
     def handleNPC(self):
         self.avatarType = AVATAR_SKELETON
         self.unloadPirate()
@@ -1684,7 +1679,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.hidePageTabs()
         self.NPCGui.enter()
 
-    
+
     def handleNavy(self):
         self.avatarType = AVATAR_NAVY
         self.unloadSkeleton()
@@ -1702,7 +1697,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.setPage(PLocalizer.MakeAPiratePageNames[0])
         self.NPCGui.exit()
 
-    
+
     def handleCast(self):
         self.avatarType = AVATAR_CAST
         self.unloadSkeleton()
@@ -1716,23 +1711,23 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.hidePageTabs()
         self.NPCGui.exit()
 
-    
+
     def handleNextAnim(self):
         self.lastAnim = (self.lastAnim + 1) % len(AnimList)
         self.pirate.loop(AnimList[self.lastAnim])
         if self.skeleton:
             self.skeleton.loop(AnimList[self.lastAnim])
-        
 
-    
+
+
     def handleLastAnim(self):
         self.lastAnim = (self.lastAnim + len(AnimList) - 1) % len(AnimList)
         self.pirate.loop(AnimList[self.lastAnim])
         if self.skeleton:
             self.skeleton.loop(AnimList[self.lastAnim])
-        
 
-    
+
+
     def toggleFilterControls(self):
         if self.toggleFilterFrame.isHidden():
             self.toggleFilterFrame.show()
@@ -1741,7 +1736,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.toggleFilterFrame.hide()
             self.filterControlsToggle['frameColor'] = (0.80000000000000004, 0.80000000000000004, 0.80000000000000004, 1)
 
-    
+
     def toggleAnimControls(self):
         if self.toggleAnimFrame.isHidden():
             self.toggleAnimFrame.show()
@@ -1750,7 +1745,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.toggleAnimFrame.hide()
             self.animControlsToggle['frameColor'] = (0.80000000000000004, 0.80000000000000004, 0.80000000000000004, 1)
 
-    
+
     def handleHiLOD(self):
         self.npcViewerLOD = 0
         if self.skeleton:
@@ -1761,9 +1756,9 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             if self.superLowPirate:
                 self.superLowPirate.removeNode()
                 self.superLowPirate = None
-            
 
-    
+
+
     def handleMedLOD(self):
         self.npcViewerLOD = 1
         if self.skeleton:
@@ -1774,9 +1769,9 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             if self.superLowPirate:
                 self.superLowPirate.removeNode()
                 self.superLowPirate = None
-            
 
-    
+
+
     def handleLowLOD(self):
         self.npcViewerLOD = 2
         if self.skeleton:
@@ -1787,9 +1782,9 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             if self.superLowPirate:
                 self.superLowPirate.removeNode()
                 self.superLowPirate = None
-            
 
-    
+
+
     def handleSuperLowLOD(self):
         self.npcViewerLOD = 3
         if self.skeleton:
@@ -1810,35 +1805,35 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.superLowPirate.flattenSuperLow()
             self.superLowPirate.getLODNode().forceSwitch(2)
 
-    
+
     def handleNext(self):
         idx = self.currPageIndex + 1
         if idx > self.numShops - 1:
             return None
-        
+
         if idx == self.numShops - 1:
             self.guiNextButton.hide()
             self.guiDoneButton.show()
-        
+
         if idx >= self.lowestPage:
             self.lowestPage = idx
             self.pageTabs[idx].show()
-        
+
         self.setPage(PLocalizer.MakeAPiratePageNames[idx])
 
-    
+
     def handleZoomSlider(self, pgs):
         pass
 
-    
+
     def restoreIdle(self, task):
         if self.pirate:
             self.pirate.loop('idle')
             self.idleFSM.request('default')
-        
+
         return Task.done
 
-    
+
     def handleAltIdle(self, task):
         if self.pirate:
             r = self.pirate.randGen.random() * 10
@@ -1855,10 +1850,10 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 anim = 'primp_idle'
             else:
                 anim = 'emote_flex'
-        
+
         self.pirate.play(anim)
         dur = self.pirate.getDuration(anim)
-        
+
         try:
             taskMgr.doMethodLater(dur - 0.10000000000000001, self.restoreIdle, 'avCreate-restoreIdle')
         except:
@@ -1866,53 +1861,53 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
 
         return Task.done
 
-    
+
     def altIdleTask(self, task):
         if self.pirate:
             if self.idleFSM.getCurrentState().getName() == 'default':
                 r = self.pirate.randGen.random()
                 taskMgr.doMethodLater(r * 10 + 20, self.handleAltIdle, 'avCreate-altIdle')
                 self.idleFSM.request('alt1')
-            
-        
+
+
         return Task.cont
 
-    
+
     def enterIdleFSMDefault(self):
         pass
 
-    
+
     def exitIdleFSMDefault(self):
         pass
 
-    
+
     def enterIdleFSMAlt1(self):
         pass
 
-    
+
     def exitIdleFSMAlt1(self):
         pass
 
-    
+
     def enterIdleFSMAlt2(self):
         pass
 
-    
+
     def exitIdleFSMAlt2(self):
         pass
 
-    
+
     def toggleZoomTask(self):
         if self.zoomTaskButton['relief'] == DGG.SUNKEN:
             self.zoomTaskButton['relief'] = DGG.RAISED
         else:
             self.zoomTaskButton['relief'] = DGG.SUNKEN
 
-    
+
     def zoomTask(self, task):
         if (self.isNPCEditor or self.wantNPCViewer) and self.zoomTaskButton['relief'] == DGG.RAISED:
             return Task.cont
-        
+
         value = self.pgsZoom.getValue()
         iPos = self.camInitPos
         iHpr = self.camInitHpr
@@ -1938,12 +1933,12 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                     else:
                         self.pirate.setControlEffect('idle_centered', 0)
                         self.pirate.setControlEffect('idle', 1)
-                
-            
+
+
         elif not (self.isNPCEditor) and not (self.wantNPCViewer) and self.wantIdleCentered:
             self.pirate.setControlEffect('idle_centered', 0)
             self.pirate.setControlEffect('idle', 1)
-        
+
         value = -value
         deltaPos = (self.camZoomOutPos - self.camInitPos) * value
         deltaHpr = (self.camZoomOutHpr - self.camInitHpr) * value
@@ -1959,7 +1954,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             camera.setHpr(nHpr)
         return Task.cont
 
-    
+
     def handleRotateSlider(self, pgs):
         value = pgs['value']
         if self.isNPCEditor:
@@ -1968,7 +1963,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.lastRot = value * 180 + self.initH
         self.rotatePirate()
 
-    
+
     def rotatePirate(self):
         if self.cast:
             hpr = self.cast.getHpr()
@@ -1976,27 +1971,27 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             hpr = self.skeleton.getHpr()
         elif self.pirate:
             hpr = self.pirate.getHpr()
-        
+
         if self.cast:
             self.cast.setHpr(self.lastRot, hpr[1], hpr[2])
         elif self.skeleton:
             self.skeleton.setHpr(self.lastRot, hpr[1], hpr[2])
         elif self.pirate:
             self.pirate.setHpr(self.lastRot, hpr[1], hpr[2])
-        
 
-    
+
+
     def _stopMouseReadTask(self):
         taskMgr.remove('MakeAPirate-MouseRead')
 
-    
+
     def _startMouseReadTask(self):
         self._stopMouseReadTask()
         mouseData = base.win.getPointer(0)
         self.lastMousePos = (mouseData.getX(), mouseData.getY())
         taskMgr.add(self._mouseReadTask, 'MakeAPirate-MouseRead')
 
-    
+
     def _mouseReadTask(self, task):
         if not base.mouseWatcherNode.hasMouse():
             pass
@@ -2014,37 +2009,37 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.pgsRotate['value'] = value
         return Task.cont
 
-    
+
     def _handleWheelUp(self):
         value = self.pgsZoom['value']
         value = min(1, max(-1, value + 0.10000000000000001))
         self.pgsZoom['value'] = value
 
-    
+
     def _handleWheelDown(self):
         value = self.pgsZoom['value']
         value = min(1, max(-1, value - 0.10000000000000001))
         self.pgsZoom['value'] = value
 
-    
+
     def handleSpin(self, value):
         if not hasattr(self, 'oldSpinValue'):
             self.oldSpinValue = 0
-        
+
         if value > self.oldSpinValue:
             if self.pirate.getCurrentAnim() != 'spin_right':
                 self.pirate.loop('spin_right')
-            
+
         elif value < self.oldSpinValue:
             if self.pirate.getCurrentAnim() != 'spin_left':
                 self.pirate.loop('spin_left')
-            
+
         elif self.pirate.getCurrentAnim() != 'idle':
             self.pirate.loop('idle')
-        
+
         self.oldSpinValue = value
 
-    
+
     def handleAnimSpeedSlider(self, pgs):
         value = pgs['value']
         if self.skeleton:
@@ -2053,7 +2048,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             avatar = self.pirate
         avatar.setPlayRate(rate = value, animName = AnimList[self.lastAnim])
 
-    
+
     def stopAnim(self):
         if self.skeleton:
             avatar = self.skeleton
@@ -2062,33 +2057,33 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         avatar.setPlayRate(rate = 0, animName = AnimList[self.lastAnim])
         self.pgsAnimSpeed['value'] = 0
 
-    
+
     def handleAnimPosSlider(self, pgs):
         pass
 
-    
+
     def handleAvHPosSlider(self, pgs):
         if self.aPos == None:
             return None
-        
+
         value = pgs['value'] + self.aPos.getX()
         self.pirate.setX(value)
         if self.skeleton:
             self.skeleton.setX(value)
-        
 
-    
+
+
     def handleAvVPosSlider(self, pgs):
         if self.aPos == None:
             return None
-        
+
         value = pgs['value'] + self.aPos.getZ()
         self.pirate.setZ(value)
         if self.skeleton:
             self.skeleton.setZ(value)
-        
 
-    
+
+
     def handleSetAnim(self, pgs, needToRefresh = True):
         self.lastAnim = AnimList.index(pgs)
         if self.skeleton:
@@ -2103,9 +2098,9 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         animFilename = self.pirate.getAnimFilename(AnimList[self.lastAnim])
         if self.currentAnimDisplay:
             self.currentAnimDisplay['text'] = animFilename[animFilename.rfind('/') + 1:]
-        
 
-    
+
+
     def handleSetProp(self, pgs):
         propDict = CustomAnims.getHandHeldPropsDict()
         propNames = propDict.keys()
@@ -2118,8 +2113,8 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if rightHandNode:
             for child in rightHandNode.getChildren():
                 child.removeNode()
-            
-        
+
+
         propModel = propDict.get(pgs)
         if propModel:
             prop = loader.loadModel(propModel, okMissing = True)
@@ -2127,13 +2122,13 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 blurs = prop.findAllMatches('**/motion_blur')
                 for blur in blurs:
                     blur.hide()
-                
+
                 prop.reparentTo(rightHandNode)
-            
-        
+
+
         self.refresh()
 
-    
+
     def handleRandom(self):
         if self.avatarType == AVATAR_PIRATE:
             if self.shop == BODYSHOP:
@@ -2154,7 +2149,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 self.makeRandomClothing()
             elif self.shop == NAMESHOP:
                 self.makeRandomName()
-            
+
         elif self.avatarType == AVATAR_SKELETON:
             self.NPCGui.randomPick()
         elif self.avatarType == AVATAR_NAVY:
@@ -2166,10 +2161,10 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 self.makeRandomHead()
             elif self.shop == HAIRSHOP:
                 self.makeRandomHair()
-            
-        
 
-    
+
+
+
     def handleReset(self):
         if self.avatarType == AVATAR_PIRATE:
             if self.shop == BODYSHOP:
@@ -2198,7 +2193,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 self.resetTattoo()
             elif self.shop == JEWELRYSHOP:
                 self.resetJewelry()
-            
+
         elif self.avatarType == AVATAR_SKELETON:
             self.NPCGui.reset()
         elif self.avatarType == AVATAR_NAVY:
@@ -2210,17 +2205,17 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 self.resetHead()
             elif self.shop == HAIRSHOP:
                 self.resetHair()
-            
-        
 
-    
+
+
+
     def addPage(self, pageName = 'Page'):
         self.addPageTab(pageName)
 
-    
+
     def addPageTab(self, pageName = 'Page'):
         tabIndex = len(self.pageTabs)
-        
+
         def goToPage():
             self.setPage(pageName)
 
@@ -2233,35 +2228,35 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.pageNames.append(pageName)
         self.pageTabs.append(pageTab)
 
-    
+
     def setPage(self, pageName):
         nextPageIndex = self.pageNames.index(pageName)
         if self.currPageIndex is not None:
             if self.currPageIndex == nextPageIndex:
                 return None
-            
+
             messenger.send(ShopNames[self.currPageIndex] + '-done')
-        
+
         self.pgsRotate.setValue(0)
         self.currPageIndex = self.pageNames.index(pageName)
         self.setPageTabIndex(self.currPageIndex)
         self.request(ShopNames[self.currPageIndex])
 
-    
+
     def setPageTabIndex(self, pageTabIndex):
         if self.currPageTabIndex is not None and pageTabIndex != self.currPageTabIndex:
             self.pageTabs[self.currPageTabIndex].clearColorScale()
-        
+
         self.currPageTabIndex = pageTabIndex
         self.pageTabs[self.currPageTabIndex].setColorScale(1, 1, 0.5, 1)
 
-    
+
     def showPageTabs(self):
         for i in range(0, len(self.pageTabs)):
             self.pageTabs[i].show()
-        
 
-    
+
+
     def hidePageTabs(self):
         if self.currPageTabIndex == BODYSHOP:
             self.exitBodyShop()
@@ -2285,12 +2280,12 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.exitTattoosShop()
         elif self.currPageTabIndex == JEWELRYSHOP:
             self.exitJewelryShop()
-        
+
         for i in range(0, len(self.pageTabs)):
             self.pageTabs[i].hide()
-        
 
-    
+
+
     def handleRandomAll(self):
         self.overwriteCurrentUndo()
         self.inRandomAll = True
@@ -2319,7 +2314,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             idx = 0
             if self.pirate.gender == 'f':
                 idx = 1
-            
+
             optionsLeft = len(self.JSD_ANYTIME[idx])
             if optionsLeft and random.choice([
                 0,
@@ -2328,13 +2323,13 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 3]) == 1:
                 if self.lastDialog:
                     self.lastDialog.stop()
-                
+
                 choice = random.choice(range(0, optionsLeft))
                 dialog = self.JSD_ANYTIME[idx][choice]
                 base.playSfx(dialog)
                 self.lastDialog = dialog
                 self.JSD_ANYTIME[idx].remove(dialog)
-            
+
         elif self.avatarType == AVATAR_SKELETON:
             self.NPCGui.randomPick()
         elif self.avatarType == AVATAR_NAVY:
@@ -2346,13 +2341,13 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
                 self.makeRandomHead()
             elif self.shop == HAIRSHOP:
                 self.makeRandomHair()
-            
-        
+
+
         self.inRandomAll = False
         self.appendUndo()
         self.undoLevel[self.pirate.style.gender] = len(self.undoList[self.pirate.style.gender]) - 1
 
-    
+
     def handleQuarterView(self, extraArgs):
         hpr = self.pirate.getHpr()
         if extraArgs != None:
@@ -2361,29 +2356,29 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             fudge = self.initH
             if self.isNPCEditor:
                 fudge = 0
-            
+
             if hCam < 0:
                 if hCam >= -180:
                     rotX = fudge + 45
-                
+
             elif hCam <= 180:
                 rotX = fudge - 45
-            
+
             self.pirate.setHpr(rotX, hpr[1], hpr[2])
         else:
             self.pirate.setHpr(self.lastRot, hpr[1], hpr[2])
 
-    
+
     def enableRandom(self):
         self.guiRandomButton['state'] = 'normal'
         self.guiRandomButton.setColorScale(Vec4(1, 1, 1, 1))
 
-    
+
     def disableRandom(self):
         self.guiRandomButton['state'] = 'disabled'
         self.guiRandomButton.setColorScale(Vec4(0.29999999999999999, 0.29999999999999999, 0.29999999999999999, 1))
 
-    
+
     def storeUndo(self):
         gender = self.pirate.style.gender
         self.bodyGui.save()
@@ -2398,15 +2393,15 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.undoList[gender].append(h)
         self.undoClothing[gender].append(copy.copy(self.pirate.model.currentClothing))
 
-    
+
     def undo(self):
         self.boundUndo()
 
-    
+
     def redo(self):
         self.boundRedo()
 
-    
+
     def overwriteCurrentUndo(self):
         gender = self.pirate.style.gender
         self.bodyGui.save()
@@ -2418,7 +2413,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.undoList[gender][self.undoLevel[gender]] = h
         self.undoClothing[gender][self.undoLevel[gender]] = copy.copy(self.pirate.model.currentClothing)
 
-    
+
     def appendUndo(self):
         gender = self.pirate.style.gender
         self.bodyGui.save()
@@ -2432,9 +2427,9 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.prevShuffleButton['state'] = DGG.NORMAL
         if self.undoLevel[gender] == len(self.undoList[gender]) - 1:
             self.nextShuffleButton['state'] = DGG.DISABLED
-        
 
-    
+
+
     def boundUndo(self):
         gender = self.pirate.style.gender
         listLen = len(self.undoList[gender])
@@ -2445,12 +2440,12 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.refresh()
         if self.undoLevel[gender] == 0:
             self.prevShuffleButton['state'] = DGG.DISABLED
-        
+
         if self.undoLevel[gender] < len(self.undoList[gender]) - 1:
             self.nextShuffleButton['state'] = DGG.NORMAL
-        
 
-    
+
+
     def boundRedo(self):
         gender = self.pirate.style.gender
         listLen = len(self.undoList[gender])
@@ -2462,15 +2457,15 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             self.pirate.model.currentClothing = self.undoClothing[gender][self.undoLevel[gender] + 1]
             self.undoLevel[gender] += 1
             self.refresh()
-        
+
         if self.undoLevel[gender] == len(self.undoList[gender]) - 1:
             self.nextShuffleButton['state'] = DGG.DISABLED
-        
+
         if self.undoLevel[gender] > 0:
             self.prevShuffleButton['state'] = DGG.NORMAL
-        
 
-    
+
+
     def refreshShuffleButtons(self):
         gender = self.pirate.style.gender
         listLen = len(self.undoList[gender])
@@ -2478,25 +2473,25 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.nextShuffleButton['state'] = DGG.DISABLED
         if self.undoLevel[gender] < listLen - 1:
             self.nextShuffleButton['state'] = DGG.NORMAL
-        
+
         if self.undoLevel[gender] > 0:
             self.prevShuffleButton['state'] = DGG.NORMAL
-        
 
-    
+
+
     def receivedRelease(self, pgs, extraStuff):
         if self.guiIdStates[pgs.guiId] != pgs['value']:
             self.guiIdStates[pgs.guiId] = pgs['value']
             if not self.compositeAction:
                 self.storeUndo()
-            
-        
 
-    
+
+
+
     def receivedAdjust(self, pgs):
         self.guiIdStates[pgs.guiId] = 1
 
-    
+
     def trackSliderElement(self, element):
         guiId = element.guiId
         thumbId = element.thumb.guiId
@@ -2506,16 +2501,16 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.accept('release-mouse1-%s' % thumbId, self.receivedRelease, extraArgs = [
             element])
 
-    
+
     def startCompositeAction(self):
         self.compositeAction = 1
 
-    
+
     def endCompositeAction(self):
         self.compositeAction = 0
         self.storeUndo()
 
-    
+
     def refresh(self, needToRefresh = True, wantClothingChange = False):
         currentClothing = self.pirate.model.currentClothing
         self.pirate.setDNA(self.pirate.style)
@@ -2531,57 +2526,57 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.headGui.restore()
         self.clothesGui.restore()
 
-    
+
     def playJackDialogOnClothes(self, clothesType):
         if self.inRandomAll:
             return None
-        
+
         choice = random.choice(range(12))
         if choice != 0:
             return None
-        
+
         optionsLeft = len(self.JSD_CLOTHING[self.pirate.gender][clothesType])
         if optionsLeft:
             if self.lastDialog:
                 if self.lastDialog.status() == AudioSound.PLAYING:
                     return None
-                
-            
+
+
             choice = random.choice(range(0, optionsLeft))
             dialog = self.JSD_CLOTHING[self.pirate.gender][clothesType][choice]
             base.playSfx(dialog)
             self.lastDialog = dialog
             self.JSD_CLOTHING[self.pirate.gender][clothesType].remove(dialog)
-        
 
-    
+
+
     def refreshAnim(self, needToRefresh = True):
         if needToRefresh:
             self.handleSetAnim(AnimList[self.lastAnim], needToRefresh = False)
         else:
             self.pirate.loop(AnimList[self.lastAnim])
 
-    
+
     def marketingOn(self):
         if self.entered and self.wantMarketingViewer:
             self.guiTopBar.show()
             self.PirateButton.hide()
             self.NPCButton.hide()
             self.NavyButton.hide()
-        
 
-    
+
+
     def marketingOff(self):
         if self.entered and self.wantMarketingViewer:
             self.guiTopBar.hide()
-        
 
-    
+
+
     def toggleGUI(self):
         render2d.toggleVis()
         self.pirate.findAllMatches('**/drop*').getPath(1).toggleVis()
 
-    
+
     def updateFilter(self, arg = None):
         if self.isNPCEditor or self.wantNPCViewer:
             avatarType = 'NPC'
@@ -2601,32 +2596,32 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         if arg == 'Loot':
             isFromLoot = not isFromLoot
             self.filterUsageLootButton['relief'] = abs(self.filterUsageLootButton['relief'] - 3) + 2
-        
+
         isFromShop = self.filterUsageShopButton['relief'] == DGG.SUNKEN
         if arg == 'Shop':
             isFromShop = not isFromShop
             self.filterUsageShopButton['relief'] = abs(self.filterUsageShopButton['relief'] - 3) + 2
-        
+
         isFromQuest = self.filterUsageQuestButton['relief'] == DGG.SUNKEN
         if arg == 'Quest':
             isFromQuest = not isFromQuest
             self.filterUsageQuestButton['relief'] = abs(self.filterUsageQuestButton['relief'] - 3) + 2
-        
+
         isFromPromo = self.filterUsagePromoButton['relief'] == DGG.SUNKEN
         if arg == 'Promo':
             isFromPromo = not isFromPromo
             self.filterUsagePromoButton['relief'] = abs(self.filterUsagePromoButton['relief'] - 3) + 2
-        
+
         isFromPVP = self.filterUsagePvpButton['relief'] == DGG.SUNKEN
         if arg == 'Pvp':
             isFromPVP = not isFromPVP
             self.filterUsagePvpButton['relief'] = abs(self.filterUsagePvpButton['relief'] - 3) + 2
-        
+
         isFromNPC = self.filterUsageNpcButton['relief'] == DGG.SUNKEN
         if arg == 'Npc':
             isFromNPC = not isFromNPC
             self.filterUsageNpcButton['relief'] = abs(self.filterUsageNpcButton['relief'] - 3) + 2
-        
+
         holidayFilterStr = self.filterHolidayMenu.get()
         if holidayFilterStr == 'All':
             holidayFilter = None
@@ -2635,7 +2630,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         self.clothesGui.avatar.setupSelectionChoices(avatarType, versionFilter, rarityFilter, isFromLoot, isFromShop, isFromQuest, isFromPromo, isFromPVP, isFromNPC, holidayFilter)
         self.clothesGui.checkCurrentClothing()
 
-    
+
     def printFilteredChoices(self):
         avatar = self.clothesGui.avatar
         versionFilterStr = self.filterVersionMenu.get()
@@ -2660,19 +2655,19 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
             for itemId in avatar.choices[clothesType].keys():
                 if itemId == 0:
                     continue
-                
+
                 modelId = avatar.choices[clothesType][itemId][0]
                 textureId = avatar.choices[clothesType][itemId][1]
                 textureName = avatar.getTextureName(clothesType, modelId, textureId)
                 if textureName is not None:
                     result += '%d %s %s %s\n' % (itemId, textureName[0], modelId, textureId)
                     continue
-            
-        
+
+
         fileName = '%s_%s_Lt%s_Sp%s_Qu%s_Pr%s_Pv%s_Np%s_%s.txt' % (versionFilterStr, rarityFilterStr, isFromLoot, isFromShop, isFromQuest, isFromPromo, isFromPVP, isFromNPC, holidayFilterStr)
         fileName = fileName.replace(' ', '_')
         f = None
-        
+
         try:
             f = open(fileName, 'w')
             f.write(result)
@@ -2680,7 +2675,7 @@ class MakeAPirate(DirectObject, StateData.StateData, FSM.FSM):
         except:
             if f:
                 f.close()
-            
+
 
         print 'Finished writing to a file'
 

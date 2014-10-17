@@ -147,61 +147,61 @@ class DistributedCreature(DistributedBattleNPC):
     def loop(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.loop(*args, **args)
+        return self.creature.loop(*args, **kw)
 
 
     def play(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.play(*args, **args)
+        return self.creature.play(*args, **kw)
 
 
     def pingpong(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.pingpong(*args, **args)
+        return self.creature.pingpong(*args, **kw)
 
 
     def pose(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.pose(*args, **args)
+        return self.creature.pose(*args, **kw)
 
 
     def stop(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.stop(*args, **args)
+        return self.creature.stop(*args, **kw)
 
 
     def setPlayRate(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.setPlayRate(*args, **args)
+        return self.creature.setPlayRate(*args, **kw)
 
 
     def getPlayRate(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.getPlayRate(*args, **args)
+        return self.creature.getPlayRate(*args, **kw)
 
 
     def getDuration(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.getDuration(*args, **args)
+        return self.creature.getDuration(*args, **kw)
 
 
     def actorInterval(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.actorInterval(*args, **args)
+        return self.creature.actorInterval(*args, **kw)
 
 
     def getAnimControl(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.getAnimControl(*args, **args)
+        return self.creature.getAnimControl(*args, **kw)
 
 
     def getOuchSfx(self):
@@ -213,7 +213,7 @@ class DistributedCreature(DistributedBattleNPC):
     def getSfx(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.getSfx(*args, **args)
+        return self.creature.getSfx(*args, **kw)
 
 
     def initializeNametag3d(self):
@@ -309,7 +309,7 @@ class DistributedCreature(DistributedBattleNPC):
     def getAnimInfo(self, *args, **kw):
         if self.creature:
             pass
-        return self.creature.getAnimInfo(*args, **args)
+        return self.creature.getAnimInfo(*args, **kw)
 
 
     def freezeShadow(self, *args, **kw):

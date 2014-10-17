@@ -1,16 +1,14 @@
 from otp.distributed.DistributedDistrictAI import DistributedDistrictAI
+from pirates.piratesbase import PiratesGlobals
 
 
 class PiratesDistrictAI(DistributedDistrictAI):
-    def __init__(self, air):
-        DistributedDistrictAI.__init__(self, air)
-
-        self.parentingRules = ('', '')
-        self.avatarCount = 0
-        self.newAvatarCount = 0
-        self.mainWorld = ''
-        self.shardType = 0
-        self.populationLimits = (10, 50)
+    parentingRules = ('', '')
+    avatarCount = 0
+    newAvatarCount = 0
+    mainWorld = 'AnvilIsland'
+    shardType = PiratesGlobals.SHARD_MAIN
+    populationLimits = (1, 50)
 
     def setParentingRules(self, rule1, rule2):
         self.parentingRules = (rule1, rule2)

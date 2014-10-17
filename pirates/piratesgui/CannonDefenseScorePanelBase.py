@@ -13,9 +13,9 @@ class RoundCompleteFlags:
 
 
 class CannonDefenseScorePanelBase(DirectFrame):
-    
+
     def __init__(self, panelNumber, numOfPanels, **kw):
-        DirectFrame.__init__(self, **None)
+        DirectFrame.__init__(self)
         self.hide()
         self.panelNumber = panelNumber
         self.numOfPanels = numOfPanels
@@ -28,32 +28,32 @@ class CannonDefenseScorePanelBase(DirectFrame):
         self.bodyfont = PiratesGlobals.getPirateFont()
         self.highlightPlayerColor = PiratesGuiGlobals.TextFG4
 
-    
+
     def _createPlayerNames(self, myParent, playerLbls, startX, startY, widthX):
         for x in range(0, 4):
             playerLbls.append(DirectLabel(parent = myParent, relief = None, state = DGG.DISABLED, text = PLocalizer.CannonDefense['SlotEmpty'], text_scale = PiratesGuiGlobals.TextScaleLarge * 1.25, text_align = TextNode.ACenter, text_fg = (0.75, 0.75, 0.75, 0.5), text_shadow = (0, 0, 0, 0.5), text_wordwrap = 7, text_pos = (0, 0, 0), text_font = self.headingfont, textMayChange = 1, pos = (startX + widthX * x, 0, startY)))
-        
 
-    
+
+
     def _createStatsLabels(self, myParent, descTxt, statsLabels, startX, startY, widthX):
         DirectLabel(parent = myParent, relief = None, state = DGG.DISABLED, text = descTxt, text_scale = PiratesGuiGlobals.TextScaleLarge * 1.5, text_align = TextNode.ALeft, text_fg = PiratesGuiGlobals.TextFG0, text_pos = (0, 0, 0), text_font = self.bodyfont, textMayChange = 1, pos = (0.22, 0, startY))
         for x in range(0, 4):
             statsLabels.append(DirectLabel(parent = myParent, relief = None, state = DGG.DISABLED, text = '', text_scale = PiratesGuiGlobals.TextScaleLarge * 1.5, text_align = TextNode.ACenter, text_fg = PiratesGuiGlobals.TextFG0, text_pos = (0, 0, 0), text_font = self.bodyfont, textMayChange = 1, pos = (startX + widthX * x, 0, startY)))
-        
 
-    
+
+
     def setNames(self, names):
         localPlayerIndex = -1
         for index in range(0, len(names)):
             if names[index] == localAvatar.name:
                 self.playerLbls[index]['text_fg'] = self.highlightPlayerColor
                 localPlayerIndex = index
-            
+
             self.playerLbls[index]['text'] = names[index]
-        
+
         return localPlayerIndex
 
-    
+
     def setSunkShips(self, sunkShipScores, playerIndex):
         for index in range(0, len(sunkShipScores)):
             self.shipsSunkTotalslbl[index]['text'] = str(sunkShipScores[index])
@@ -62,9 +62,9 @@ class CannonDefenseScorePanelBase(DirectFrame):
                 self.shipsSunkTotalslbl[index]['text_font'] = self.headingfont
                 self.shipsSunkTotalslbl[index]['text_shadow'] = PiratesGuiGlobals.TextShadow
                 continue
-        
 
-    
+
+
     def setDamageDealt(self, damageDealt, playerIndex):
         for index in range(0, len(damageDealt)):
             self.damageTotalslbl[index]['text'] = str(damageDealt[index])
@@ -73,9 +73,9 @@ class CannonDefenseScorePanelBase(DirectFrame):
                 self.damageTotalslbl[index]['text_font'] = self.headingfont
                 self.damageTotalslbl[index]['text_shadow'] = PiratesGuiGlobals.TextShadow
                 continue
-        
 
-    
+
+
     def setAccuracy(self, accuracy, playerIndex):
         for index in range(0, len(accuracy)):
             value = accuracy[index]
@@ -88,9 +88,9 @@ class CannonDefenseScorePanelBase(DirectFrame):
                 self.accuracyTotalslbl[index]['text_font'] = self.headingfont
                 self.accuracyTotalslbl[index]['text_shadow'] = PiratesGuiGlobals.TextShadow
                 continue
-        
 
-    
+
+
     def setShotsFired(self, shotsFired, playerIndex):
         for index in range(0, len(shotsFired)):
             self.shotsFiredTotalslbl[index]['text'] = str(shotsFired[index])
@@ -99,6 +99,6 @@ class CannonDefenseScorePanelBase(DirectFrame):
                 self.shotsFiredTotalslbl[index]['text_font'] = self.headingfont
                 self.shotsFiredTotalslbl[index]['text_shadow'] = PiratesGuiGlobals.TextShadow
                 continue
-        
+
 
 

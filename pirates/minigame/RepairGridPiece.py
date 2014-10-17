@@ -29,11 +29,11 @@ RIGHT = 3
 SPACING = 0.14999999999999999
 
 class RepairGridPiece(DirectButton, FSM.FSM):
-    
+
     def __init__(self, name, parent, allWoodSquaresGeom, selectedOutlineGeom, command, location, **kw):
         optiondefs = ()
         self.defineoptions(kw, optiondefs)
-        DirectButton.__init__(self, parent, **None)
+        DirectButton.__init__(self, parent)
         self.initialiseoptions(RepairGridPiece)
         FSM.FSM.__init__(self, 'RepairGridPiece_%sFSM' % name)
         self.name = name
@@ -58,24 +58,24 @@ class RepairGridPiece(DirectButton, FSM.FSM):
         self.grabPoint = None
         self.setType(GOAL_NONE)
 
-    
+
     def _initVars(self):
         self.pieceType = GOAL_NONE
         self.enabled = True
         self.isMouseDown = False
         self.isMouseInButton = False
 
-    
+
     def _initGUI(self):
         self.selectedOutlineGeom.reparentTo(self)
         self.selectedOutlineGeom.hide()
         self.selectedOutlineGeom.setBin('fixed', 38)
 
-    
+
     def _initIntervals(self):
         self.moveInterval = LerpPosInterval(self, duration = RepairGlobals.Bracing.moveTime, pos = self.getPos(), name = 'RepairGridPiece_%s.moveInterval' % self.name)
 
-    
+
     def destroy(self):
         taskMgr.remove(self.uniqueName('RepairGridPiece.updateTask'))
         taskMgr.remove(DGG.B1PRESS)
@@ -97,7 +97,7 @@ class RepairGridPiece(DirectButton, FSM.FSM):
         self.allWoodSquaresGeom.removeNode()
         del self.allWoodSquaresGeom
 
-    
+
     def setGeomState(self, state):
         if state == 'idle':
             self.idleGeom.show()
@@ -105,9 +105,9 @@ class RepairGridPiece(DirectButton, FSM.FSM):
         elif state == 'highlighted':
             self.highlightedGeom.show()
             self.idleGeom.hide()
-        
 
-    
+
+
     def onMouseEnter(self, event):
         self.isMouseInButton = True
         if self.isMouseDown:
@@ -115,12 +115,12 @@ class RepairGridPiece(DirectButton, FSM.FSM):
         else:
             self.setGeomState('highlighted')
 
-    
+
     def onMouseExit(self, event):
         self.isMouseInButton = False
         self.setGeomState('idle')
 
-    
+
     def onMouseDown(self, event):
         if self.isMouseInButton:
             self.selectedOutlineGeom.show()
@@ -131,15 +131,15 @@ class RepairGridPiece(DirectButton, FSM.FSM):
             screeny = base.mouseWatcherNode.getMouseY()
             self.grabPoint = aspect2d.getRelativePoint(render2d, (screenx, 0, screeny))
             taskMgr.add(self.updateTask, self.uniqueName('RepairGridPiece.updateTask'), extraArgs = [])
-        
 
-    
+
+
     def onMouseUp(self, event):
         if self.isMouseDown:
             self.isMouseDown = False
             if not self.haveMoved:
                 self.checkMovePiece(True)
-            
+
             self.grabPoint = None
             if self.isMouseInButton:
                 self.setGeomState('highlighted')
@@ -147,25 +147,25 @@ class RepairGridPiece(DirectButton, FSM.FSM):
                 self.setGeomState('idle')
             self.selectedOutlineGeom.hide()
             taskMgr.remove(self.uniqueName('RepairGridPiece.updateTask'))
-        
 
-    
+
+
     def onMoveButtonPressed(self, dir1, dir2):
         if not self.moveInterval.isPlaying():
             self.haveMoved = True
             args = self.location[:]
             args.append((dir1, dir2))
             return self.command(*args)
-        
 
-    
+
+
     def updateTask(self):
         if not (self.isMouseInButton) and not self.moveInterval.isPlaying():
             self.checkMovePiece()
-        
+
         return Task.cont
 
-    
+
     def checkMovePiece(self, isPush = False):
         directions = [
             (0, 1),
@@ -174,7 +174,7 @@ class RepairGridPiece(DirectButton, FSM.FSM):
             (1, 0)]
         if self.grabPoint is None:
             self.grabPoint = self.getPos(aspect2d)
-        
+
         screenx = base.mouseWatcherNode.getMouseX()
         screeny = base.mouseWatcherNode.getMouseY()
         cursorPos = aspect2d.getRelativePoint(render2d, (screenx, 0, screeny))
@@ -194,14 +194,14 @@ class RepairGridPiece(DirectButton, FSM.FSM):
             moveDirection = directions[2]
         elif absX > absZ and diff.getX() < 0.0 and absX > threshold:
             moveDirection = directions[3]
-        
+
         if moveDirection:
             if self.onMoveButtonPressed(*moveDirection) and self.grabPoint is not None:
                 self.grabPoint += VBase3(SPACING * moveDirection[0], 0.0, SPACING * moveDirection[1])
-            
-        
 
-    
+
+
+
     def setType(self, type):
         self.pieceType = type
         activeWoodSquareGeom = self.allWoodSquaresGeom.find('**/%s' % GOAL_TO_TEXTURE[type])
@@ -221,7 +221,7 @@ class RepairGridPiece(DirectButton, FSM.FSM):
             self.setGeomState('idle')
             self.unstash()
 
-    
+
     def setEnabled(self, enabled):
         self.onMouseUp(None)
         self.enabled = enabled
@@ -230,52 +230,52 @@ class RepairGridPiece(DirectButton, FSM.FSM):
         else:
             self['state'] = DGG.NORMAL
 
-    
+
     def isGoalPiece(self):
         if self.pieceType != GOAL_NONE:
             pass
         return self.pieceType != GOAL_EMPTY
 
-    
+
     def isEmptyPiece(self):
         return self.pieceType == GOAL_EMPTY
 
-    
+
     def setGridLocation(self, location, pos):
         self.location = location
         self.setPos(pos)
 
-    
+
     def enterIdle(self):
         self.stash()
         self.setEnabled(False)
 
-    
+
     def exitIdle(self):
         self.unstash()
 
-    
+
     def enterBlank(self):
         self.setType(GOAL_NONE)
 
-    
+
     def exitBlank(self):
         self.unstash()
 
-    
+
     def enterGoal(self, pieceType):
         self.setType(pieceType)
 
-    
+
     def exitGoal(self):
         self.unstash()
 
-    
+
     def enterEmpty(self):
         self.setEnabled(False)
         self.setType(GOAL_EMPTY)
 
-    
+
     def exitEmpty(self):
         self.unstash()
 

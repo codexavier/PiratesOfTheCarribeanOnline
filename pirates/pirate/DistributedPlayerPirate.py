@@ -111,9 +111,8 @@ class DistributedPlayerPirate(DistributedPirateBase, DistributedPlayer, Distribu
     confusedIcon = None
 
     def __init__(self, cr):
-
         try:
-            pass
+            self.DistributedPirate_initialized
         except:
             self.DistributedPirate_initialized = 1
             self.onWelcomeWorld = False
@@ -448,7 +447,7 @@ class DistributedPlayerPirate(DistributedPirateBase, DistributedPlayer, Distribu
     def delete(self):
 
         try:
-            pass
+            self.DistributedPlayerPirate_deleted
         except:
             self.DistributedPlayerPirate_deleted = 1
             DistributedPirateBase.delete(self)
@@ -1821,25 +1820,25 @@ class DistributedPlayerPirate(DistributedPirateBase, DistributedPlayer, Distribu
                 'strafe_right']:
                 args = ('walk', args[1])
 
-            self.creature.loop(*args, **args)
+            self.creature.loop(*args, **kwArgs)
         else:
-            Biped.Biped.loop(self, *args, **args)
+            Biped.Biped.loop(self, *args, **kwArgs)
 
 
     def play(self, *args, **kwArgs):
-        Biped.Biped.play(self, *args, **args)
+        Biped.Biped.play(self, *args, **kwArgs)
 
 
     def pingpong(self, *args, **kwArgs):
-        Biped.Biped.pingpong(self, *args, **args)
+        Biped.Biped.pingpong(self, *args, **kwArgs)
 
 
     def pose(self, *args, **kwArgs):
-        Biped.Biped.pose(self, *args, **args)
+        Biped.Biped.pose(self, *args, **kwArgs)
 
 
     def stop(self, *args, **kwArgs):
-        Biped.Biped.stop(self, *args, **args)
+        Biped.Biped.stop(self, *args, **kwArgs)
 
 
     def putAwayCurrentWeapon(self, blendInT = 0.10000000000000001, blendOutT = 0.10000000000000001):
@@ -2489,7 +2488,7 @@ class DistributedPlayerPirate(DistributedPirateBase, DistributedPlayer, Distribu
         if base.cr.newsManager and base.cr.newsManager.getHoliday(HolidayGlobals.APRILFOOLS) == 1:
             self.setJewelryZone5(10)
 
-        DistributedPirateBase.generateHuman(self, *args, **args)
+        DistributedPirateBase.generateHuman(self, *args, **kwargs)
         self.getGeomNode().setScale(self.scale)
         self.setHeight(self.height)
         self.maintainEffects()

@@ -37,7 +37,7 @@ PVP_ISLAND_LIST = [
     PVP_ISLAND_TWO]
 
 class XButton(GuiButton.GuiButton):
-    
+
     def __init__(self, crewHUD, avId, frame, image, image_scale, button):
         self.avId = avId
         self.crewHUD = crewHUD
@@ -49,38 +49,38 @@ class XButton(GuiButton.GuiButton):
         self.bind(DGG.ENTER, self.highlightOn)
         self.bind(DGG.EXIT, self.highlightOff)
 
-    
+
     def handlePress(self):
         if self.button.potentialMember:
             if base.cr.PirateBandManager:
                 base.cr.PirateBandManager.d_requestCancel(self.avId)
-            
+
             self.crewHUD.removePotentialCrew(self.avId)
         else:
             self.crewHUD.removeCrew(self.avId, 0)
 
-    
+
     def highlightOn(self, event):
         self.frame['image'] = self.topGui.find('**/generic_box_over')
 
-    
+
     def highlightOff(self, event):
         self.frame['image'] = self.topGui.find('**/generic_box')
 
 
 
 class HoverFrame(DirectFrame):
-    
+
     def __init__(self, parent = None, hoverText = '', hoverPos = (0, 0, 0), **kw):
         self.helpBox = None
         optiondefs = (('relief', None, None), ('pos', (0, 0, 0), None), ('image', None, None), ('image_scale', (0.23999999999999999, 0.22, 0.22), None), ('image_pos', (0, 0, 0), None), ('hoverText', hoverText, self.hoverTextUpdated), ('hoverPos', hoverPos, None))
         self.defineoptions(kw, optiondefs)
-        DirectFrame.__init__(self, parent = parent, **None)
+        DirectFrame.__init__(self, parent = parent)
         self.initialiseoptions(HoverFrame)
         self.bind(DGG.ENTER, self.showHelp)
         self.bind(DGG.EXIT, self.hideHelp)
 
-    
+
     def createHelpBox(self):
         helpLabel = DirectLabel(relief = None, state = DGG.DISABLED, text = self['hoverText'], text_align = TextNode.ACenter, text_scale = PiratesGuiGlobals.TextScaleMed, text_fg = PiratesGuiGlobals.TextFG1, text_wordwrap = 12, text_shadow = (0, 0, 0, 1), textMayChange = 0, sortOrder = 91)
         height = helpLabel.getHeight()
@@ -106,20 +106,20 @@ class HoverFrame(DirectFrame):
         self.helpBox.flattenLight()
         self.helpBox.setBin('gui-popup', 0)
 
-    
+
     def hoverTextUpdated(self):
         if self.helpBox and self.helpBox['text'] != self['hoverText']:
             self.helpBox.destroy()
             self.createHelpBox()
         elif self['hoverText']:
             self.createHelpBox()
-        
 
-    
+
+
     def showHelp(self, event):
         self.helpBox.show()
 
-    
+
     def hideHelp(self, event):
         self.helpBox.hide()
 
@@ -127,7 +127,7 @@ class HoverFrame(DirectFrame):
 
 class CrewHUD(SocialPage.SocialPage):
     notify = directNotify.newCategory('CrewHUD')
-    
+
     def __init__(self):
         SocialPage.SocialPage.__init__(self, 'Crew HUD')
         self.crew = { }
@@ -196,7 +196,7 @@ class CrewHUD(SocialPage.SocialPage):
         self.accept(BandConstance.BandMemberParlorChange, self.updateCrewMemberParlor)
         self.setHUDOff()
 
-    
+
     def destroy(self):
         self.ignoreAll()
         self.crew = None
@@ -205,38 +205,38 @@ class CrewHUD(SocialPage.SocialPage):
         if self.hudLabelSea:
             self.hudLabelSea.destroy()
             self.hudLabelSea = None
-        
+
         if self.hudLabel:
             self.hudLabel.destroy()
             self.hudLabel = None
-        
+
         if self.mainFrameSea:
             self.mainFrameSea.destroy()
             self.mainFrameSea = None
-        
+
         if self.mainFrame:
             self.mainFrame.destroy()
             self.mainFrame = None
-        
+
         if self.startCrewButton:
             self.startCrewButton.destroy()
             self.startCrewButton = None
-        
+
         if self.startCrewFrame:
             self.startCrewFrame.destroy()
             self.startCrewFrame = None
-        
+
         if self.startCrewButtonSea:
             self.startCrewButtonSea.destroy()
             self.startCrewButtonSea = None
-        
+
         if self.startCrewFrameSea:
             self.startCrewFrameSea.destroy()
             self.startCrewFrameSea = None
-        
+
         SocialPage.SocialPage.destroy(self)
 
-    
+
     def addCrew(self, member):
         avId = member.avatarId
         isManager = member.isManager
@@ -248,9 +248,9 @@ class CrewHUD(SocialPage.SocialPage):
             self.enableCrewIcon()
             for id in self.crew:
                 localAvatar.guiMgr.radarGui.refreshRadarObject(id)
-            
+
             return None
-        
+
         if avId not in self.crew or self.debugAvId:
             button = self.membersList.addMember(avId + self.debugCount, None, PirateMemberList.MODE_CREW_HUD, member)
             button['image'] = None
@@ -281,7 +281,7 @@ class CrewHUD(SocialPage.SocialPage):
             if not isManager:
                 leaderFrame.hide()
                 leaderFrameSea.hide()
-            
+
             xFrame.hide()
             xFrameSea.hide()
             clampFrame.setBin('gui-fixed', -10)
@@ -311,8 +311,8 @@ class CrewHUD(SocialPage.SocialPage):
                     self.updateCrewMemberParlor(member, inParlorGame, avId)
                 elif disconnect:
                     self.updateCrewMemberOnline(member, disconnect, avId)
-                
-            
+
+
             base.localAvatar.guiMgr.radarGui.refreshRadarObject(avId)
             base.localAvatar.guiMgr.crewPage.determineOptionsButtonsState()
             return 1
@@ -322,9 +322,9 @@ class CrewHUD(SocialPage.SocialPage):
             print 'In CrewHUD Debug mode, generating debug button %s' % self.debugCount
             self.debugCount += 1
             self.addCrew(member)
-        
 
-    
+
+
     def addPotentialCrew(self, avId, avName):
         if avId not in self.crew:
             button = self.membersList.addPotentialMember(avId, avName, PirateMemberList.MODE_CREW_HUD)
@@ -350,28 +350,28 @@ class CrewHUD(SocialPage.SocialPage):
                 reloadFrameSea]
             if avId != localAvatar.getDoId():
                 self.repackCrew()
-            
+
             return 1
         else:
             return 0
 
-    
+
     def removeCrew(self, avId, fromAbove = 0):
         if not fromAbove:
             if base.cr.PirateBandManager:
                 base.cr.PirateBandManager.d_requestRemove(avId)
-            
-        
+
+
         if self.crew:
             self.crew.pop(avId, None)
-        
+
         if self.membersList:
             self.membersList.removeMember(avId, None, PirateMemberList.MODE_CREW)
             self.membersList.removeMember(avId, None, PirateMemberList.MODE_CREW_HUD)
-        
+
         if self.membersListSea:
             self.membersListSea.removeMember(avId, None, PirateMemberList.MODE_CREW_HUD_SEA)
-        
+
         base.localAvatar.guiMgr.radarGui.refreshRadarObject(avId)
         base.localAvatar.guiMgr.crewPage.determineOptionsButtonsState()
         if avId != localAvatar.getDoId():
@@ -386,14 +386,14 @@ class CrewHUD(SocialPage.SocialPage):
                     if crewMembersIconId:
                         av.setCrewIconIndicator(0)
                         av.setCrewIconIndicator(2)
-                    
-            
+
+
         if not self.crew:
             self.startCrewButton['image'] = (self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash_over'), self.topGui.find('**/pir_t_gui_but_circle_slash'))
             self.startCrewButtonSea['image'] = (self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash_over'), self.topGui.find('**/pir_t_gui_but_circle_slash'))
-        
 
-    
+
+
     def removePotentialCrew(self, avId):
         self.crew.pop(avId, None)
         self.membersList.removeMember(avId, None, PirateMemberList.MODE_CREW)
@@ -401,9 +401,9 @@ class CrewHUD(SocialPage.SocialPage):
         self.membersListSea.removeMember(avId, None, PirateMemberList.MODE_CREW_HUD_SEA)
         if avId != localAvatar.getDoId():
             self.repackCrew()
-        
 
-    
+
+
     def repackCrew(self):
         if self.crew or self.startACrewState:
             if not self.initialStateSwitch:
@@ -411,15 +411,15 @@ class CrewHUD(SocialPage.SocialPage):
                     self.b_activateCrewLookout(self.notorietyMatchRange, self.sailingMatchRange, self.cannonMatchRange)
                 elif localAvatar.guiMgr.crewInviter and not localAvatar.guiMgr.crewInviter.isEmpty():
                     localAvatar.guiMgr.crewInviter.fsm.request('cancel')
-                
+
                 self.initialStateSwitch = True
-            
+
             self.setHUDOn()
         else:
             base.localAvatar.setCrewIcon(0)
             if base.cr.crewMatchManager:
                 base.cr.crewMatchManager.deleteCrewFromLookoutList()
-            
+
             self.initialStateSwitch = False
             self.setHUDOn()
         crewMembersIconId = 0
@@ -427,20 +427,20 @@ class CrewHUD(SocialPage.SocialPage):
             av = base.cr.doId2do.get(avId)
             if not av:
                 return None
-            
+
             av.refreshName()
             crewMembersIconId = av.getCrewIcon()
             if crewMembersIconId:
                 av.setCrewIconIndicator(0)
                 av.setCrewIconIndicator(1)
                 continue
-        
+
         if crewMembersIconId:
             localAvatar.setCrewIcon(0)
             localAvatar.setCrewIcon(1)
-        
 
-    
+
+
     def updateActionIcons(self, avId, action, siege, vitaeLevel):
         member = self.crew.get(avId)
         if member and member[0].hudOnline and not (member[0].inPvp) and not (member[0].inParlorGame) and not (member[0].potentialMember):
@@ -480,7 +480,7 @@ class CrewHUD(SocialPage.SocialPage):
                     12]:
                     skillFrame['text'] = PLocalizer.CrewHUDAFK
                     skillFrameSea['text'] = PLocalizer.CrewHUDAFK
-                
+
             else:
                 skillFrame['text'] = ''
                 skillFrameSea['text'] = ''
@@ -506,7 +506,7 @@ class CrewHUD(SocialPage.SocialPage):
                         skillFrame['image_scale'] = 0.29999999999999999
                     elif action == 13:
                         skillFrame['image_scale'] = 0.5
-                    
+
                 else:
                     skillFrame['image'] = self.weaponCard.find('**/%s' % newIcon)
                     skillFrame['image_scale'] = 0.059999999999999998
@@ -533,16 +533,16 @@ class CrewHUD(SocialPage.SocialPage):
                         skillFrameSea['image_scale'] = 0.25
                     elif action == 13:
                         skillFrameSea['image_scale'] = 0.40000000000000002
-                    
+
                 else:
                     skillFrameSea['image'] = self.weaponCard.find('**/%s' % newIcon)
                     skillFrameSea['image_scale'] = 0.050000000000000003
                 skillFrameSea['image_pos'] = (0, 0, 0.02)
             skillFrame.show()
             skillFrameSea.show()
-        
 
-    
+
+
     def updateCrewNearBy(self, crewNearBy):
         if crewNearBy > 0:
             self.hudLabel['text'] = PLocalizer.CrewHUDCrewNearBy % crewNearBy
@@ -551,7 +551,7 @@ class CrewHUD(SocialPage.SocialPage):
             self.hudLabel['text'] = PLocalizer.CrewHUDNoCrew
             self.hudLabelSea['text'] = PLocalizer.CrewHUDNoCrew
 
-    
+
     def showSiegeTeam(self, avId, siege, event):
         member = self.crew.get(avId)
         if member:
@@ -565,9 +565,9 @@ class CrewHUD(SocialPage.SocialPage):
                 siegeFrameSea['hoverText'] = PLocalizer.CrewHUDPrivFrench
             siegeFrame.helpBox.show()
             siegeFrameSea.helpBox.show()
-        
 
-    
+
+
     def hideSiegeTeam(self, avId, siege, event):
         member = self.crew.get(avId)
         if member:
@@ -575,13 +575,13 @@ class CrewHUD(SocialPage.SocialPage):
             siegeFrameSea = member[9]
             if siegeFrame.helpBox:
                 siegeFrame.helpBox.hide()
-            
+
             if siegeFrameSea.helpBox:
                 siegeFrameSea.helpBox.hide()
-            
-        
 
-    
+
+
+
     def toggleHUD(self):
         if self.hudOn:
             self.mainFrameSea.hide()
@@ -593,9 +593,9 @@ class CrewHUD(SocialPage.SocialPage):
             else:
                 self.mainFrame.show()
             self.hudOn = True
-        
 
-    
+
+
     def setHUDOff(self):
         self.hudOn = False
         self.mainFrame.hide()
@@ -605,7 +605,7 @@ class CrewHUD(SocialPage.SocialPage):
         self.startCrewButtonSea.hide()
         self.startCrewFrameSea.hide()
 
-    
+
     def setHUDOn(self):
         self.hudOn = True
         if not self.crew:
@@ -623,7 +623,7 @@ class CrewHUD(SocialPage.SocialPage):
                 self.startCrewFrame.hide()
                 self.startCrewButtonSea.hide()
                 self.startCrewFrameSea.hide()
-            
+
         else:
             self.startCrewButton.hide()
             self.startCrewFrame.hide()
@@ -645,7 +645,7 @@ class CrewHUD(SocialPage.SocialPage):
                     self.mainFrameSea.show()
                 else:
                     self.mainFrame.show()
-            
+
             if not self.canShowButtons():
                 self.leaveCrewButton.hide()
                 self.leaveCrewFrame.hide()
@@ -657,36 +657,36 @@ class CrewHUD(SocialPage.SocialPage):
                 self.leaveCrewButtonSea.show()
                 self.leaveCrewFrameSea.show()
 
-    
+
     def setTM(self, inTM):
         self.inTM = inTM
 
-    
+
     def debugFullCrewList(self):
         self.debugAvId = True
         print 'DEBUG: Activating crew HUD display debug mode'
 
-    
+
     def destroyFullCrewList(self):
         self.debugAvId = False
         print 'DEBUG: Deactivating crew HUD display debug mode'
 
-    
+
     def respondChatPanelMax(self):
         if self.hudOn and self.chatPanelOpen:
             if self.atSea or len(self.crew) > 2:
                 self.toggledByChat = True
                 self.setHUDOff()
-            
 
-    
+
+
     def respondChatPanelMin(self):
         if self.toggledByChat:
             self.toggledByChat = False
             self.setHUDOn()
-        
 
-    
+
+
     def adjustHUDToSea(self):
         if self.hudOn:
             if self.crew:
@@ -698,11 +698,11 @@ class CrewHUD(SocialPage.SocialPage):
                 if not (self.joinACrewStatus) and not (self.joinACrewStatusPVP) and self.canShowButtons():
                     self.startCrewButtonSea.show()
                     self.startCrewFrameSea.show()
-                
-        
+
+
         self.atSea = True
 
-    
+
     def adjustHUDToLand(self):
         if self.hudOn and self.canShowButtons():
             if self.crew:
@@ -714,17 +714,17 @@ class CrewHUD(SocialPage.SocialPage):
                 if not (self.joinACrewStatus) and not (self.joinACrewStatusPVP) and self.canShowButtons():
                     self.startCrewButton.show()
                     self.startCrewFrame.show()
-                
-        
+
+
         self.atSea = False
 
-    
+
     def chatPanelOpen(self):
         if self.hudOn:
             self.chatPanelOpen = True
-        
 
-    
+
+
     def chatPanelClose(self):
         if hasattr(base, 'localAvatar'):
             if base.localAvatar.guiMgr.crewHUDTurnedOff:
@@ -732,26 +732,26 @@ class CrewHUD(SocialPage.SocialPage):
             elif self.chatPanelOpen:
                 self.setHUDOn()
                 self.chatPanelOpen = False
-            
-        
 
-    
+
+
+
     def updateCrewMemberHp(self, member, hp, maxHp):
         hudButton = self.crew.get(member.avatarId)
         if hudButton:
             hudButton[0].updateHp(hp, maxHp)
             hudButton[3].updateHp(hp, maxHp)
-        
 
-    
+
+
     def updateCrewMemberName(self, member, name):
         hudButton = self.crew.get(member.avatarId)
         if hudButton:
             hudButton[0].updateName(name)
             hudButton[3].updateName(name)
-        
 
-    
+
+
     def updateIsManager(self, member, flag):
         if DistributedBandMember.DistributedBandMember.IsLocalAvatarHeadOfBand() and flag:
             if self.canShowButtons():
@@ -759,7 +759,7 @@ class CrewHUD(SocialPage.SocialPage):
                 self.lookoutFrame.show()
                 self.lookoutButtonSea.show()
                 self.lookoutFrameSea.show()
-            
+
             if self.recruitCrewMatesStatus:
                 self.lookoutButton['image'] = (self.topGui.find('**/pir_t_gui_but_circle'), self.topGui.find('**/pir_t_gui_but_circle'), self.topGui.find('**/pir_t_gui_but_circle_over'), self.topGui.find('**/pir_t_gui_but_circle'))
                 self.lookoutButtonSea['image'] = (self.topGui.find('**/pir_t_gui_but_circle'), self.topGui.find('**/pir_t_gui_but_circle'), self.topGui.find('**/pir_t_gui_but_circle_over'), self.topGui.find('**/pir_t_gui_but_circle'))
@@ -774,7 +774,7 @@ class CrewHUD(SocialPage.SocialPage):
                         hudButton[10].show()
                         hudButton[11].show()
                         continue
-            
+
         elif not flag or not self.canShowButtons():
             self.lookoutButton.hide()
             self.lookoutFrame.hide()
@@ -785,8 +785,8 @@ class CrewHUD(SocialPage.SocialPage):
                     hudButton[10].hide()
                     hudButton[11].hide()
                     continue
-            
-        
+
+
         base.localAvatar.guiMgr.crewPage.determineOptionsButtonsState()
         hudButton = self.crew.get(member.avatarId)
         if hudButton:
@@ -796,17 +796,17 @@ class CrewHUD(SocialPage.SocialPage):
             else:
                 hudButton[6].hide()
                 hudButton[7].hide()
-        
 
-    
+
+
     def toggleAvatarLookout(self):
         if self.joinACrewStatus:
             self.b_deactivateAvatarLookout()
         elif not self.joinACrewStatus:
             self.b_activateAvatarLookout()
-        
 
-    
+
+
     def b_activateAvatarLookout(self):
         base.cr.crewMatchManager.addAvatarToLookoutList(1)
         self.joinACrewStatus = 1
@@ -815,7 +815,7 @@ class CrewHUD(SocialPage.SocialPage):
         self.startCrewFrameSea.hide()
         self.startCrewButtonSea.hide()
 
-    
+
     def b_deactivateAvatarLookout(self):
         base.cr.crewMatchManager.deleteAvatarFromLookoutList()
         self.joinACrewStatus = 0
@@ -826,17 +826,17 @@ class CrewHUD(SocialPage.SocialPage):
             else:
                 self.startCrewFrameSea.show()
                 self.startCrewButtonSea.show()
-        
 
-    
+
+
     def toggleAvatarLookoutPVP(self):
         if self.joinACrewStatusPVP:
             self.b_deactivateAvatarLookoutPVP()
         elif not self.joinACrewStatusPVP:
             self.b_activateAvatarLookoutPVP()
-        
 
-    
+
+
     def b_activateAvatarLookoutPVP(self):
         base.cr.crewMatchManager.addAvatarToLookoutList(2)
         self.joinACrewStatusPVP = 1
@@ -845,7 +845,7 @@ class CrewHUD(SocialPage.SocialPage):
         self.startCrewFrameSea.hide()
         self.startCrewButtonSea.hide()
 
-    
+
     def b_deactivateAvatarLookoutPVP(self):
         base.cr.crewMatchManager.deleteAvatarFromLookoutList()
         self.joinACrewStatusPVP = 0
@@ -856,9 +856,9 @@ class CrewHUD(SocialPage.SocialPage):
             else:
                 self.startCrewFrameSea.show()
                 self.startCrewButtonSea.show()
-        
 
-    
+
+
     def toggleCrewLookout(self):
         if self.recruitCrewMatesStatus:
             self.b_deactivateCrewLookout()
@@ -870,15 +870,15 @@ class CrewHUD(SocialPage.SocialPage):
                 self.stackMessage(PLocalizer.CrewMatchEnabledForCrew)
             if DistributedBandMember.DistributedBandMember.IsLocalAvatarHeadOfBand() or self.startACrewState:
                 self.b_activateCrewLookout(self.notorietyMatchRange, self.sailingMatchRange, self.cannonMatchRange)
-            
-            self.setHUDOn()
-        
 
-    
+            self.setHUDOn()
+
+
+
     def toggleCrewOptions(self):
         CrewMatchInviter.CrewMatchInviter(localAvatar.getLevel(), self.advancedMatching)
 
-    
+
     def b_activateCrewLookout(self, range, sailValue = 0, cannonValue = 0):
         if (self.crew or self.startACrewState) and self.canShowButtons():
             base.cr.crewMatchManager.addCrewToLookoutList(range, sailValue, cannonValue)
@@ -887,9 +887,9 @@ class CrewHUD(SocialPage.SocialPage):
             self.startCrewButton['image'] = (self.topGui.find('**/pir_t_gui_but_circle'), self.topGui.find('**/pir_t_gui_but_circle'), self.topGui.find('**/pir_t_gui_but_circle_over'), self.topGui.find('**/pir_t_gui_but_circle'))
             self.startCrewButtonSea['image'] = (self.topGui.find('**/pir_t_gui_but_circle'), self.topGui.find('**/pir_t_gui_but_circle'), self.topGui.find('**/pir_t_gui_but_circle_over'), self.topGui.find('**/pir_t_gui_but_circle'))
             self.recruitCrewMatesStatus = 1
-        
 
-    
+
+
     def b_deactivateCrewLookout(self):
         base.cr.crewMatchManager.deleteCrewFromLookoutList()
         self.joinACrewStatus = 0
@@ -898,7 +898,7 @@ class CrewHUD(SocialPage.SocialPage):
         if not self.crew:
             if self.startACrewState:
                 base.cr.crewMatchManager.requestDeleteCrewOfOne()
-            
+
             if self.canShowButtons():
                 if self.atSea:
                     self.startCrewButtonSea.show()
@@ -906,15 +906,15 @@ class CrewHUD(SocialPage.SocialPage):
                 else:
                     self.startCrewButton.show()
                     self.startCrewFrame.show()
-            
-        
+
+
         self.startCrewButton['image'] = (self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash_over'), self.topGui.find('**/pir_t_gui_but_circle_slash'))
         self.startCrewButtonSea['image'] = (self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash_over'), self.topGui.find('**/pir_t_gui_but_circle_slash'))
         self.startACrewState = 0
         self.lookoutButton['image'] = (self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash_over'), self.topGui.find('**/pir_t_gui_but_circle_slash'))
         self.lookoutButtonSea['image'] = (self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash'), self.topGui.find('**/pir_t_gui_but_circle_slash_over'), self.topGui.find('**/pir_t_gui_but_circle_slash'))
 
-    
+
     def leaveCrew(self):
         for (avId, avButton) in self.crew.iteritems():
             av = base.cr.doId2do.get(avId)
@@ -924,19 +924,19 @@ class CrewHUD(SocialPage.SocialPage):
                 if crewMembersIconId:
                     av.setCrewIconIndicator(0)
                     av.setCrewIconIndicator(2)
-                
-        
+
+
         base.cr.crewMatchManager.deleteCrewFromLookoutList()
         if base.cr.PirateBandManager:
             base.cr.PirateBandManager.d_requestRemove(localAvatar.doId)
-        
+
         self.joinACrewStatus = 0
         self.joinACrewStatusPVP = 0
         self.recruitCrewMatesStatus = 0
         base.localAvatar.guiMgr.crewPage.determineOptionsButtonsState()
         self.setHUDOn()
 
-    
+
     def DoUpdateCrewData(self, member, remove):
         if remove:
             self.removeCrew(member.avatarId, 1)
@@ -944,15 +944,15 @@ class CrewHUD(SocialPage.SocialPage):
             self.removePotentialCrew(member.avatarId)
             self.addCrew(member)
 
-    
+
     def enableCrewIcon(self):
         if base.cr.PirateBandManager:
             base.cr.PirateBandManager.d_requestCrewIconUpdate(1)
-        
+
         base.localAvatar.setCrewIcon(0)
         base.localAvatar.setCrewIcon(1)
 
-    
+
     def toggleLookingForCrew(self):
         currentVal = localAvatar.getLookingForCrew()
         if currentVal == 1:
@@ -960,7 +960,7 @@ class CrewHUD(SocialPage.SocialPage):
         else:
             localAvatar.setLookingForCrew(1)
 
-    
+
     def toggleStartACrew(self):
         self.joinACrewStatus = 0
         if self.startACrewState == 1:
@@ -973,10 +973,10 @@ class CrewHUD(SocialPage.SocialPage):
             self.stackMessage(PLocalizer.CrewMatchStartCrewDeactivated)
             base.localAvatar.guiMgr.crewPage.determineOptionsButtonsState()
             return None
-        
+
         if not self.canShowButtons():
             return None
-        
+
         base.cr.crewMatchManager.requestCrewOfOne()
         self.startACrewState = 1
         self.toggleCrewLookout()
@@ -986,17 +986,17 @@ class CrewHUD(SocialPage.SocialPage):
                 self.stackMessage(PLocalizer.CrewMatchEnabledForCrewPVP)
             else:
                 self.stackMessage(PLocalizer.CrewMatchEnabledForCrew)
-        
 
-    
+
+
     def updateCrewMemberOnline(self, member, disconnect, avatarId):
         if localAvatar.getDoId() == avatarId:
             return None
-        
+
         hudButton = self.crew.get(avatarId)
         if not hudButton or hudButton[0].potentialMember:
             return None
-        
+
         if disconnect:
             if hudButton:
                 hudButton[0].updateHUDOnline(0)
@@ -1017,24 +1017,24 @@ class CrewHUD(SocialPage.SocialPage):
                 if DistributedBandMember.DistributedBandMember.IsLocalAvatarHeadOfBand():
                     hudButton[10].show()
                     hudButton[11].show()
-                
-            
+
+
         elif hudButton:
             hudButton[0].updateHUDOnline(1)
             hudButton[3].updateHUDOnline(1)
             hudButton[10].hide()
             hudButton[11].hide()
-        
 
-    
+
+
     def updateCrewMemberPVP(self, member, pvp, avatarId):
         if localAvatar.getDoId() == avatarId:
             return None
-        
+
         hudButton = self.crew.get(avatarId)
         if not hudButton or hudButton[0].potentialMember:
             return None
-        
+
         if pvp:
             if hudButton:
                 hudButton[0].updatePVP(1)
@@ -1055,22 +1055,22 @@ class CrewHUD(SocialPage.SocialPage):
                 if DistributedBandMember.DistributedBandMember.IsLocalAvatarHeadOfBand():
                     hudButton[10].show()
                     hudButton[11].show()
-                
-            
+
+
         elif hudButton:
             hudButton[0].updatePVP(0)
             hudButton[3].updatePVP(0)
-        
 
-    
+
+
     def updateCrewMemberParlor(self, member, parlor, avatarId):
         if localAvatar.getDoId() == avatarId:
             return None
-        
+
         hudButton = self.crew.get(avatarId)
         if not hudButton or hudButton[0].potentialMember:
             return None
-        
+
         if parlor:
             if hudButton:
                 hudButton[0].updateParlor(1)
@@ -1091,46 +1091,46 @@ class CrewHUD(SocialPage.SocialPage):
                 if DistributedBandMember.DistributedBandMember.IsLocalAvatarHeadOfBand():
                     hudButton[10].show()
                     hudButton[11].show()
-                
-            
+
+
         elif hudButton:
             hudButton[0].updateParlor(0)
             hudButton[3].updateParlor(0)
-        
 
-    
+
+
     def stackMessage(self, msg, name = None, avId = None):
         base.localAvatar.guiMgr.messageStack.addTextMessage(msg, seconds = 15, priority = 0, color = PiratesGuiGlobals.TextFG14, modelName = 'general_frame_f', icon = ('crew', ''), name = name, avId = avId)
 
-    
+
     def setAdvancedMatching(self, advancedMatching):
         self.advancedMatching = advancedMatching
 
-    
+
     def setNotorietyMatchRange(self, notorietyMatchRange):
         self.notorietyMatchRange = notorietyMatchRange
 
-    
+
     def getNotorietyMatchRange(self):
         return self.notorietyMatchRange
 
-    
+
     def setSailingMatchRange(self, sailingMatchRange):
         self.sailingMatchRange = sailingMatchRange
 
-    
+
     def getSailingMatchRange(self):
         return self.sailingMatchRange
 
-    
+
     def setCannonMatchRange(self, cannonMatchRange):
         self.cannonMatchRange = cannonMatchRange
 
-    
+
     def getCannonMatchRange(self):
         return self.cannonMatchRange
 
-    
+
     def canShowButtons(self):
         if not (self.inTM) and localAvatar.getGameState() != 'Fishing':
             pass

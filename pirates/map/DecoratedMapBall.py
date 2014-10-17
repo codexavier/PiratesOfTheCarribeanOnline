@@ -38,9 +38,9 @@ OceanAreaOffsets = {
 class DecoratedMapBall(MapBall):
     notify = directNotify.newCategory('DecoratedMapBall')
     defaultModelPath = 'models/islands/bilgewater_worldmap'
-    
+
     def __init__(self, name, worldMap, maxTilt, *args, **kwargs):
-        MapBall.__init__(self, name, worldMap, maxTilt, *args, **args)
+        MapBall.__init__(self, name, worldMap, maxTilt, *args, **kwargs)
         self.itemCounter = 0
         self.placedItems = { }
         self.placedIslands = { }
@@ -55,84 +55,84 @@ class DecoratedMapBall(MapBall):
         self.initGlobalStencil()
         self.accept(PiratesGlobals.SeaChestHotkey, self.toggleQuestDartHelpText)
 
-    
+
     def removeNode(self):
         for item in self.placedItems.keys():
             self.removeDecorItem(item)
-        
+
         del self.placedItems
         del self.dartList
         del self.billboardList
         del self.decorInfo
         MapBall.removeNode(self)
 
-    
+
     def enable(self):
         super(DecoratedMapBall, self).enable()
         self.startBillboardTask()
         self.rotateAvatarToCenter()
 
-    
+
     def disable(self):
         super(DecoratedMapBall, self).disable()
         self.stopBillboardTask()
         self.stopPickTask()
 
-    
+
     def getFramePoint(self, mapBallPt):
         return self._transCamSpaceToHomogenousFramePt(self.cam.getRelativePoint(self, Point3(0)))
 
-    
+
     def _mouseDown(self):
         self.startClickCheckTask()
 
-    
+
     def _mouseUp(self):
         self.stopClickCheckTask()
         super(DecoratedMapBall, self)._mouseUp()
 
-    
+
     def startClickCheckTask(self):
         taskMgr.add(self.clickCheckTask, self.getName() + '-clickCheck')
         self.dragging = False
 
-    
+
     def clickCheckTask(self, task):
         if base.mouseWatcherNode.hasMouse():
             if not hasattr(task, 'mousePt'):
                 task.mousePt = Point2(base.mouseWatcherNode.getMouse())
-            
+
             mousePt = base.mouseWatcherNode.getMouse()
             if mousePt != task.mousePt:
                 super(DecoratedMapBall, self)._mouseDown()
                 self.dragging = True
                 return task.done
-            
-        
+
+
         return task.cont
 
-    
+
     def stopClickCheckTask(self):
         self.dragging = False
         if taskMgr.remove(self.getName() + '-clickCheck'):
             item = self.pick()
             if not item:
                 return None
-            
+
             islandUid = item.getNetTag('islandUid')
             canTeleportTo = item.getNetTag('canTeleportTo') != 'False'
             if islandUid and canTeleportTo:
                 base.cr.teleportMgr.requestTeleportToIsland(islandUid)
-            
+
             dartName = item.getNetTag('dart')
             dart = self.placedItems.get(dartName)
             if dartName and dart:
                 dart.mouseLeft()
                 localAvatar.guiMgr.showQuestPanel()
-            
-        
 
-    
+
+
+
     def pick(self):
         self._mouseRayCollide(BitMask32.bit(17))
         numEntries = self.colHandlerQueue.getNumEntries()
@@ -141,9 +141,9 @@ class DecoratedMapBall(MapBall):
             entry = self.colHandlerQueue.getEntry(0)
             item = entry.getIntoNodePath()
             return item
-        
 
-    
+
+
     def startPickTask(self, *args):
         self.stopPickTask()
         task = taskMgr.add(self.pickTask, self.getName() + '-pickTask')
@@ -153,7 +153,7 @@ class DecoratedMapBall(MapBall):
     startPickTask = report(types = [
         'frameCount',
         'args'], dConfigParam = 'map')(startPickTask)
-    
+
     def pickTask(self, task):
         if base.mouseWatcherNode.hasMouse():
             item = self.pick()
@@ -170,67 +170,67 @@ class DecoratedMapBall(MapBall):
             if task.activeIsland and task.activeIsland != island:
                 self.leftIsland(task.activeIsland)
                 task.activeIsland = None
-            
+
             if not (task.activeIsland) and island:
                 self.overIsland(island)
                 task.activeIsland = island
-            
+
             if task.activeDart and task.activeDart != dart:
                 task.activeDart.mouseLeft()
                 task.activeDart = None
-            
+
             if not (task.activeDart) and dart:
                 p = Point2()
                 self.camLens.project(self.cam.getRelativePoint(dart, Point3(0, 0, 0)), p)
                 pos = aspect2d.getRelativePoint(self.worldMap, Point3(p[0], 0, p[1]))
                 dart.mouseOver(pos)
                 task.activeDart = dart
-            
-        
+
+
         return task.cont
 
-    
+
     def stopPickTask(self, *args):
         tasks = taskMgr.getTasksNamed(self.getName() + '-pickTask')
         if tasks:
             task = tasks[0]
             if task.activeIsland:
                 self.leftIsland(task.activeIsland)
-            
-        
+
+
         for task in tasks:
             taskMgr.remove(task)
-        
+
 
     stopPickTask = report(types = [
         'frameCount',
         'args'], dConfigParam = 'map')(stopPickTask)
-    
+
     def overIsland(self, island):
         p = Point2()
         self.camLens.project(self.cam.getRelativePoint(island, Point3(0, 0, 0)), p)
         pos = aspect2d.getRelativePoint(self.worldMap, Point3(p[0], 0, p[1]))
         island.mouseOver(pos)
 
-    
+
     def leftIsland(self, island):
         island.mouseLeft()
 
-    
+
     def initGlobalStencil(self):
         globalStencilAttrib = StencilAttrib.make(1, StencilAttrib.SCFAlways, StencilAttrib.SOKeep, StencilAttrib.SOKeep, StencilAttrib.SOReplace, 255, 0xFFFFFFFFL, 0xFFFFFFFFL)
 
-    
+
     def addAndPlaceItem(self, name, info):
         self.setItemInfo(name, info)
         item = self.createDecorItem(name)
         self.placeDecorItem(name, item)
 
-    
+
     def setItemInfo(self, name, info):
         self.decorInfo[name] = info
 
-    
+
     def createDecorItem(self, name):
         self.itemCounter += 1
         (decorType, args, options) = self.decorInfo[name]
@@ -242,15 +242,15 @@ class DecoratedMapBall(MapBall):
                 height = options.get('height', 0.0)
                 newPos = worldPos * (1.01 + height)
                 item.setPosition(self._worldNorth, newPos)
-            
-        
+
+
         rot = options.get('rot')
         if rot is not None:
             item.setRotation(self._worldNorth, rot)
-        
+
         return item
 
-    
+
     def updateDecorItem(self, name):
         (decorType, args, options) = self.decorInfo[name]
         item = self.placedItems.get(name)
@@ -262,15 +262,15 @@ class DecoratedMapBall(MapBall):
                     height = options.get('height', 0.0)
                     newPos = worldPos * (1.01 + height)
                     item.setPosition(self._worldNorth, newPos)
-                
-            
+
+
             rot = options.get('rot')
             if rot is not None:
                 item.setRotation(self._worldNorth, rot)
-            
-        
 
-    
+
+
+
     def placeDecorItem(self, name, item):
         newItem = self.placedItems.setdefault(name, item)
         if item is not newItem:
@@ -278,24 +278,24 @@ class DecoratedMapBall(MapBall):
         1
         if isinstance(newItem, DecorClasses[DecorTypes.Dart]):
             self.billboardList.append(newItem)
-        
+
         self.attachForRotation(newItem)
 
-    
+
     def getDecorItem(self, name):
         return self.placedItems.get(name)
 
-    
+
     def resetDecor(self):
         for name in self.placedItems.keys():
             self.removeDecorItem(name)
-        
+
         for name in self.decorInfo:
             item = self.createDecorItem(name)
             self.placeDecorItem(name, item)
-        
 
-    
+
+
     def removeDecorItem(self, name):
         item = self.placedItems.pop(name, None)
         if item:
@@ -303,44 +303,44 @@ class DecoratedMapBall(MapBall):
                 self.billboardList.remove(item)
                 if item.helpBox:
                     item.helpBox.destroy()
-                
+
                 if item.helpLabel:
                     item.helpLabel.destroy()
-                
-            
+
+
             item.destroy()
             item.removeNode()
-        
 
-    
+
+
     def setDecorScale(self, scale):
         self._setTiltLimit((math.pi / 3) * scale)
         self.resetDecor()
 
-    
+
     def startBillboardTask(self):
         taskName = self.getName() + '-billboardTask'
         taskMgr.remove(taskName)
         taskMgr.add(self.billboardTask, taskName)
 
-    
+
     def billboardTask(self, task):
         for nodepath in self.billboardList:
             nodepath.doBillboardPointEye(self.cam, 0.0)
-        
+
         return task.cont
 
-    
+
     def stopBillboardTask(self):
         taskMgr.remove(self.getName() + '-billboardTask')
 
-    
+
     def startDartTask(self):
         taskName = self.getName() + '-dartTask'
         taskMgr.remove(taskName)
         taskMgr.add(self.dartTask, taskName)
 
-    
+
     def dartTask(self, task):
         for dart in self.dartList:
             desiredPos = dart.getDefaultPos()
@@ -369,31 +369,31 @@ class DecoratedMapBall(MapBall):
             absFramePos = (abs(framePos[0]), abs(framePos[1]))
             markerFramePos = framePos / max(absFramePos)
             dart.edgeModeNode.setPos(markerFramePos[0], 0, markerFramePos[1])
-        
+
         return task.cont
 
-    
+
     def stopDartTask(self):
         taskMgr.remove(self.getName() + '-dartTask')
 
-    
+
     def updateTextZoom(self, zoom):
         for item in self.placedItems.values():
             if isinstance(item, DecorClasses[DecorTypes.TextIsland]) and isinstance(item, DecorClasses[DecorTypes.OceanAreaText]) or isinstance(item, DecorClasses[DecorTypes.Ship]):
                 item.updateZoom(zoom)
                 continue
-        
 
-    
+
+
     def updateTeleportIsland(self, teleportToken):
         inventory = localAvatar.getInventory()
         islandUid = InventoryType.getIslandUidFromTeleportToken(teleportToken)
         island = self.getIsland(islandUid)
         if island and teleportToken:
             island.setHasTeleportToken(localAvatar.hasIslandTeleportToken(islandUid))
-        
 
-    
+
+
     def setReturnIsland(self, islandUid):
         for item in self.placedItems.itervalues():
             if item.hasNetTag('islandUid'):
@@ -402,9 +402,9 @@ class DecoratedMapBall(MapBall):
                 else:
                     item.setAsReturnIsland(0)
             islandUid == item.getNetTag('islandUid')
-        
 
-    
+
+
     def setPortOfCall(self, islandUid):
         for item in self.placedItems.itervalues():
             if item.hasNetTag('islandUid'):
@@ -413,9 +413,9 @@ class DecoratedMapBall(MapBall):
                 else:
                     item.setAsPortOfCall(0)
             islandUid == item.getNetTag('islandUid')
-        
 
-    
+
+
     def setCurrentIsland(self, islandUid):
         for item in self.placedItems.itervalues():
             if item.hasNetTag('islandUid'):
@@ -424,17 +424,17 @@ class DecoratedMapBall(MapBall):
                 else:
                     item.setAsCurrentIsland(0)
             islandUid == item.getNetTag('islandUid')
-        
 
-    
+
+
     def getCurrentIsland(self):
         for item in self.placedItems.itervalues():
             if item.hasNetTag('islandUid') and item.isCurrentIsland():
                 return item
                 continue
-        
 
-    
+
+
     def getIsland(self, islandUid):
         island = None
         for item in self.placedItems.itervalues():
@@ -442,20 +442,20 @@ class DecoratedMapBall(MapBall):
                 if islandUid and islandUid == item.getNetTag('islandUid'):
                     island = item
                     break
-                
+
             islandUid == item.getNetTag('islandUid')
-        
+
         return island
 
-    
+
     def getCurrentShip(self):
         for item in self.placedItems.itervalues():
             if item.hasNetTag('shipName'):
                 return item
                 continue
-        
 
-    
+
+
     def rotateAvatarToCenter(self):
         island = self.getCurrentIsland()
         if island:
@@ -464,24 +464,24 @@ class DecoratedMapBall(MapBall):
             ship = self.getCurrentShip()
             if ship:
                 self.rotateSpherePtToCenter(ship.getPos())
-            
 
-    
+
+
     def addOceanArea(self, name, areaUid, pos1, pos2):
         worldPos = (pos1 + pos2) / 2.0
         if OceanAreaOffsets.get(name):
             worldPos.setY(worldPos.getY() + OceanAreaOffsets[name][1] * WorldGlobals.OCEAN_CELL_SIZE)
-        
+
         info = (DecorTypes.OceanAreaText, (name, areaUid), {
             'pos': worldPos,
             'rot': 0 })
         self.addAndPlaceItem(name, info)
 
-    
+
     def getShipId(self, shipDoId):
         return 'ship-%d' % shipDoId
 
-    
+
     def addShip(self, shipInfo, worldPos):
         name = self.getShipId(shipInfo[0])
         info = (DecorTypes.Ship, (shipInfo,), {
@@ -489,7 +489,7 @@ class DecoratedMapBall(MapBall):
             'rot': 0 })
         self.addAndPlaceItem(name, info)
 
-    
+
     def updateShip(self, shipDoId, worldPos, rotation):
         name = self.getShipId(shipDoId)
         shipInfo = self.decorInfo.get(name)
@@ -497,34 +497,34 @@ class DecoratedMapBall(MapBall):
             options = shipInfo[2]
             if worldPos is not None:
                 options['pos'] = worldPos
-            
+
             if rotation is not None:
                 options['rot'] = rotation
-            
-            self.updateDecorItem(name)
-        
 
-    
+            self.updateDecorItem(name)
+
+
+
     def removeShip(self, shipDoId):
         name = self.getShipId(shipDoId)
         ship = self.placedItems.pop(name, None)
         if ship:
             ship.removeNode()
             ship.remove()
-        
 
-    
+
+
     def getFleetId(self, fleetDoId):
         return 'fleet-%d' % fleetDoId
 
-    
+
     def addFleet(self, fleetObj, pos = (0, 0, 0)):
         name = self.getFleetId(fleetObj.getDoId())
         info = (DecorTypes.BillboardCard, (name, fleetObj.mapIconInfo[0], fleetObj.mapIconInfo[1], self.cam, 0.0, fleetObj.mapIconInfo[2]), {
             'pos': pos })
         self.addAndPlaceItem(name, info)
 
-    
+
     def updateFleet(self, fleetDoId, pos):
         name = self.getFleetId(fleetDoId)
         fleetInfo = self.decorInfo.get(name)
@@ -532,18 +532,18 @@ class DecoratedMapBall(MapBall):
             options = fleetInfo[2]
             options['pos'] = pos
             self.updateDecorItem(name)
-        
 
-    
+
+
     def removeFleet(self, fleetDoId):
         name = self.getFleetId(fleetDoId)
         fleet = self.placedItems.pop(name, None)
         if fleet:
             fleet.removeNode()
             fleet.remove()
-        
 
-    
+
+
     def addPath(self, pathInfo):
         startWaypointId = pathInfo[0]
         progressIds = pathInfo[1]
@@ -568,7 +568,7 @@ class DecoratedMapBall(MapBall):
                 lastWaypointId = waypointId
                 color = (128 / 255.0, 37 / 255.0, 21 / 255.0, 0.25)
                 isLoop = 1
-            
+
             waypointId = nextWaypointId
         looped = 0
         if lastWaypointId:
@@ -582,8 +582,8 @@ class DecoratedMapBall(MapBall):
                     'point': pos,
                     'color': color })
                 color = (128 / 255.0, 37 / 255.0, 21 / 255.0, 0.25)
-            
-        
+
+
         waypointIds = [
             startWaypointId]
         while waypointIds and not looped:
@@ -591,7 +591,7 @@ class DecoratedMapBall(MapBall):
             if waypointId in usedWayPoints:
                 looped = 1
                 color = (128 / 255.0, 37 / 255.0, 21 / 255.0, 0.0)
-            
+
             usedWayPoints.append(waypointId)
             pos = base.worldCreator.getWaypointPos(waypointId)
             if pos:
@@ -601,10 +601,10 @@ class DecoratedMapBall(MapBall):
                     'node': None,
                     'point': pos,
                     'color': color })
-            
+
             if waypointId in progressIds and not isLoop:
                 color = (color[0], color[1], color[2], color[3] * 0.125)
-            
+
             waypointIds = base.worldCreator.getWaypointLinks(waypointId)
         if looped:
             pos = base.worldCreator.getWaypointPos(startWaypointId)
@@ -616,14 +616,14 @@ class DecoratedMapBall(MapBall):
                     'node': None,
                     'point': pos,
                     'color': color })
-            
-        
+
+
         info = (DecorTypes.Spline, (name, verts), {
             'coordinateSpace': 'sphere' })
         self.addAndPlaceItem(name, info)
         item = self.placedItems.get(name)
 
-    
+
     def removePath(self, pathInfo):
         startWaypointId = pathInfo[0]
         name = 'Path-%s' % startWaypointId
@@ -631,9 +631,9 @@ class DecoratedMapBall(MapBall):
         if path:
             path.removeNode()
             path.remove()
-        
 
-    
+
+
     def addIsland(self, name, islandUid, modelPath, worldPos, rotation):
         scale = 25.0
         if not name:
@@ -651,30 +651,30 @@ class DecoratedMapBall(MapBall):
         self.placedIslands[islandUid] = self.placedItems[name]
         return name
 
-    
+
     def updateIsland(self, name, worldPos = None, rotation = None):
         islandInfo = self.decorInfo.get(name)
         if islandInfo:
             options = islandInfo[2]
             if worldPos is not None:
                 options['pos'] = worldPos
-            
+
             if rotation is not None:
                 options['rot'] = rotation
-            
-            self.updateDecorItem(name)
-        
 
-    
+            self.updateDecorItem(name)
+
+
+
     def removeIsland(self, name):
         island = self.placedItems.pop(name, None)
         if island:
             islandUid = island.getTag('islandUid')
             island.removeNode()
             island.remove()
-        
 
-    
+
+
     def addDart(self, id, worldPos, color = Vec4(0.20000000000000001, 1, 0.59999999999999998, 1.0)):
         name = 'dart-' + str(id)
         info = (DecorTypes.Dart, (name, self, self.mapPosToSpherePt(worldPos), color, 0.001), {
@@ -684,15 +684,15 @@ class DecoratedMapBall(MapBall):
         self.questDartName = name
         return name
 
-    
+
     def removeDart(self):
         if self.questDartName is not None:
             self.removeDecorItem(self.questDartName)
             self.questDartName = None
             self.questDartPlaced = False
-        
 
-    
+
+
     def updateDartText(self, name, questId):
         dart = self.placedItems.get(name)
         if dart and questId:
@@ -700,10 +700,10 @@ class DecoratedMapBall(MapBall):
             if qs:
                 title = qs.getStatusText()
                 dart.setHelpLabel(title)
-            
-        
 
-    
+
+
+
     def updateDart(self, id, worldPos = None):
         name = 'dart-' + str(id)
         dartInfo = self.decorInfo.get(name)
@@ -712,11 +712,11 @@ class DecoratedMapBall(MapBall):
             options = dartInfo[2]
             if worldPos is not None:
                 options['pos'] = worldPos
-            
-            self.updateDecorItem(name)
-        
 
-    
+            self.updateDecorItem(name)
+
+
+
     def setDecorInfo(self):
         if __dev__ and 0:
             self.decorInfo = {
@@ -758,11 +758,11 @@ class DecoratedMapBall(MapBall):
         else:
             self.decorInfo = { }
 
-    
+
     def toggleQuestDartHelpText(self, task = None):
         dart = self.placedItems.get(self.questDartName)
         if dart is not None:
             dart.toggleHelpText()
-        
+
 
 

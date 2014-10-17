@@ -12,7 +12,7 @@ from pirates.piratesgui.ShipSnapshot import ShipSnapshot
 from pirates.ship import ShipGlobals
 
 class ShipFrameBoard(ShipFrame):
-    
+
     def __init__(self, parent, **kw):
         gui = loader.loadModel('models/gui/toplevel_gui')
         image = (gui.find('**/generic_button'), gui.find('**/generic_button_down'), gui.find('**/generic_button_over'), gui.find('**/generic_button_disabled'))
@@ -24,10 +24,10 @@ class ShipFrameBoard(ShipFrame):
         self.button = None
         self.snapShot = None
         self.defineoptions(kw, optiondefs)
-        ShipFrame.__init__(self, parent, **None)
+        ShipFrame.__init__(self, parent)
         self.initialiseoptions(ShipFrameBoard)
 
-    
+
     def destroy(self):
         self.nameLabel = None
         self.classLabel = None
@@ -37,7 +37,7 @@ class ShipFrameBoard(ShipFrame):
         self.snapShot = None
         ShipFrame.destroy(self)
 
-    
+
     def createGui(self):
         ShipFrame.createGui(self)
         self.nameLabel = DirectLabel(parent = self, relief = None, state = DGG.DISABLED, text = PLocalizer.makeHeadingString(self['shipName'], 2), text_align = TextNode.ALeft, text_scale = 0.050000000000000003, text_pos = (0.059999999999999998, 0.014999999999999999), text_fg = PiratesGuiGlobals.TextFG1, text_shadow = PiratesGuiGlobals.TextShadow, textMayChange = 1, frameColor = PiratesGuiGlobals.ButtonColor1[3], frameSize = (self['frameSize'][0] + 0.040000000000000001, self['frameSize'][1] - 0.029999999999999999, -0.0, 0.050000000000000003), pos = (0, 0, self['frameSize'][3] - 0.089999999999999997))
@@ -58,7 +58,7 @@ class ShipFrameBoard(ShipFrame):
             False])
         self.noButton.hide()
 
-    
+
     def enableStats(self, shipName = '', shipClass = 0, mastInfo = [], hp = 0, sp = 0, cargo = 0, crew = 0, time = 0):
         pass
 

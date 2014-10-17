@@ -4,13 +4,13 @@ from pirates.piratesgui import ListFrame
 from pirates.piratesgui import PiratesGuiGlobals
 
 class SheetFrame(ListFrame.ListFrame):
-    
+
     def __init__(self, w, h, title, holder = None, hideAll = True, delayedReveal = None, **kw):
-        ListFrame.ListFrame.__init__(self, w, h, title, holder, hideAll, delayedReveal, frameColor = (1, 1, 1, 0.5), **None)
+        ListFrame.ListFrame.__init__(self, w, h, title, holder, hideAll, delayedReveal, frameColor = (1, 1, 1, 0.5))
         self.initialiseoptions(SheetFrame)
         self.rowColors = { }
 
-    
+
     def createListItem(self, currItem, revealTime = 0, itemType = None, columnWidths = [], color = None):
         newItem = self.createNewItem(currItem, itemType, columnWidths, color)
         self.items.insert(0, newItem)
@@ -18,25 +18,25 @@ class SheetFrame(ListFrame.ListFrame):
         y = self.getHeight() - 0.01
         for guiitem in self.items:
             y -= guiitem.getHeight()
-        
+
         print 'y = %s' % y
         for gui in self.items:
             if self.hideAll == False:
                 gui.descText.wrtReparentTo(gui)
-            
+
             gui.setZ(y)
             gui.setX(0.01)
             y += gui.getHeight()
             if self.hideAll == False:
                 gui.descText.wrtReparentTo(self.getParent().getParent())
                 continue
-        
+
         if hasattr(currItem, 'getChangeEvent'):
             self.accept(currItem.getChangeEvent(), self._handleItemChange)
-        
+
         return newItem
 
-    
+
     def _createIface(self):
         itemList = self.getItemList()
         numRows = len(itemList)
@@ -59,17 +59,17 @@ class SheetFrame(ListFrame.ListFrame):
                         column1Width,
                         columnWidth], color = customColor)
                     continue
-            
-        
 
-    
+
+
+
     def _destroyIface(self):
         for gui in self.items:
             gui.destroy()
-        
+
         self.items = []
 
-    
+
     def getItemHeight(self):
         return -1
 

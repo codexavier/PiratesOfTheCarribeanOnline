@@ -11,7 +11,7 @@ from pirates.piratesgui import PiratesTimer
 class ShipPanel(DirectFrame):
     Width = PiratesGuiGlobals.ShipPanelWidth
     Height = PiratesGuiGlobals.ShipPanelHeight
-    
+
     def __init__(self, shipPage, shipId, **kwargs):
         self.shipPage = shipPage
         self.setShipId(shipId)
@@ -21,7 +21,7 @@ class ShipPanel(DirectFrame):
         self.rBroadsideLimit = 0
         kwargs.setdefault('relief', None)
         kwargs.setdefault('frameSize', (0, self.Width, 0, self.Height))
-        DirectFrame.__init__(self, **None)
+        DirectFrame.__init__(self)
         self.initialiseoptions(ShipPanel)
         gui = loader.loadModel('models/gui/toplevel_gui')
         chestIcon = gui.find('**/icon_crate')
@@ -67,8 +67,8 @@ class ShipPanel(DirectFrame):
                 self.setShipMaxCannons(shipOV.cannonConfig)
                 self.setShipMaxLeftBroadside(shipOV.lBroadsideConfig)
                 self.setShipMaxRightBroadside(shipOV.rBroadsideConfig)
-            
-        
+
+
         self.accept('setName-%s' % self.shipId, self.setShipName)
         self.accept('setShipClass-%s' % self.shipId, self.setShipClass)
         self.accept('setShipHp-%s' % self.shipId, self.setShipHp)
@@ -83,53 +83,53 @@ class ShipPanel(DirectFrame):
             pass
         1
 
-    
+
     def destroy(self):
         self.ignoreAll()
         self.crewDots = []
         self.hullCards = []
         DirectFrame.destroy(self)
 
-    
+
     def setShipId(self, shipId):
         self.shipId = shipId
 
-    
+
     def getShipId(self):
         return self.shipId
 
-    
+
     def setShipName(self, name, team = None):
         self.nameLabel['text'] = PLocalizer.makeHeadingString(name, 2)
 
-    
+
     def setShipClass(self, shipClass):
         self.classLabel['text'] = PLocalizer.makeHeadingString(PLocalizer.ShipClassNames.get(shipClass), 1)
 
-    
+
     def setShipHp(self, hp, maxHp):
         self.hpMeter['text'] = '%d/%d' % (hp, maxHp)
         self.hpMeter['range'] = maxHp
         self.hpMeter['value'] = hp
 
-    
+
     def setShipSp(self, sp, maxSp):
         self.speedMeter['text'] = '%d/%d' % (sp, maxSp)
         self.speedMeter['range'] = maxSp
         self.speedMeter['value'] = sp
 
-    
+
     def setShipPlunderLimit(self, current, limit):
         self.plunderLimit['text'] = str(limit)
 
-    
+
     def setShipCrew(self, crewArray, maxCrewCount):
         if len(self.crewDots) != maxCrewCount:
             for dot in self.crewDots:
                 dot.destroy()
-            
+
             self.crewDots = []
-        
+
         if not self.crewDots:
             gui = loader.loadModel('models/gui/toplevel_gui')
             crewDotGeom = [
@@ -139,22 +139,22 @@ class ShipPanel(DirectFrame):
             for x in range(maxCrewCount):
                 crewDot = DirectButton(parent = self, relief = None, geom = (crewDotGeom[1], crewDotGeom[1], crewDotGeom[1], crewDotGeom[0]), pos = (0.54000000000000004 + 0.040000000000000001 * (x % columns), 0, 0.41799999999999998 - 0.040000000000000001 * (x / columns)), scale = 0.5)
                 self.crewDots.append(crewDot)
-            
-        
+
+
         crewCount = len(crewArray)
         for x in range(maxCrewCount):
             if crewCount > x:
                 self.crewDots[x]['state'] = DGG.NORMAL
                 continue
             self.crewDots[x]['state'] = DGG.DISABLED
-        
+
         self.crewLimit['text'] = '%d/%d' % (crewCount, maxCrewCount)
 
-    
+
     def setShipCargo(self, cargo, maxCargo):
         self.plunderLimit['text'] = str(maxCargo)
 
-    
+
     def setShipTimer(self, timeLeft):
         if timeLeft:
             self.timer.unstash()
@@ -164,16 +164,16 @@ class ShipPanel(DirectFrame):
             self.timer.stop()
             self.timer.stash()
 
-    
+
     def setShipMaxCannons(self, cannonConfig):
         self.cannonLimit['text'] = str(len(cannonConfig) - cannonConfig.count(0))
 
-    
+
     def setShipMaxLeftBroadside(self, broadsideConfig):
         self.lBroadsideLimit = len(broadsideConfig)
         self.broadsideLeftLimit['text'] = '%d' % (self.lBroadsideLimit - broadsideConfig.count(0))
 
-    
+
     def setShipMaxRightBroadside(self, broadsideConfig):
         self.rBroadsideLimit = len(broadsideConfig)
         self.broadsideRightLimit['text'] = '%d' % (self.rBroadsideLimit - broadsideConfig.count(0))

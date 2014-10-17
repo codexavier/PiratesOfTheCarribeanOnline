@@ -22,24 +22,24 @@ from pirates.inventory.InventoryGlobals import *
 from pirates.uberdog.TradableInventoryBase import InvItem
 
 class StoreTab(LeftTab):
-    
+
     def __init__(self, tabBar, name, **kw):
         optiondefs = (('modelName', 'general_frame_d', None), ('borderScale', 0.38, None), ('bgBuffer', 0.14999999999999999, None))
         self.defineoptions(kw, optiondefs)
-        LeftTab.__init__(self, tabBar, name, **None)
+        LeftTab.__init__(self, tabBar, name)
         self.initialiseoptions(StoreTab)
 
 
 
 class StoreTabBar(TabBar):
-    
+
     def refreshTabs(self):
         for (x, name) in enumerate(self.tabOrder):
             tab = self.tabs[name]
             tab.reparentTo(self.bParent)
             tab.setPos(-0.070000000000000007, 0, 1.1000000000000001 - 0.10000000000000001 * (x + self.offset))
             (tab.setScale(0.20000000000000001, 1, 0.20000000000000001),)
-        
+
         self.activeIndex = max(0, min(self.activeIndex, len(self.tabOrder) - 1))
         if len(self.tabOrder):
             name = self.tabOrder[self.activeIndex]
@@ -47,11 +47,11 @@ class StoreTabBar(TabBar):
             tab.reparentTo(self.fParent)
             tab.setX(-0.080000000000000002)
             tab.setScale(0.20000000000000001, 1, 0.22)
-        
 
-    
+
+
     def makeTab(self, name, **kw):
-        return StoreTab(self, name, **None)
+        return StoreTab(self, name)
 
 
 
@@ -64,24 +64,24 @@ class StoreGUI(DirectFrame):
     WeaponIcons = None
     SkillIcons = None
     FishingIcons = None
-    
+
     def __init__(self, inventory, name, **kw):
         optiondefs = (('relief', None, None), ('framSize', (0, self.width, 0, self.height), None), ('sortOrder', 20, None))
         self.defineoptions(kw, optiondefs)
-        DirectFrame.__init__(self, None, **None)
+        DirectFrame.__init__(self, None)
         self.initialiseoptions(StoreGUI)
         if not StoreGUI.CoinImage:
             StoreGUI.CoinImage = loader.loadModel('models/gui/toplevel_gui').find('**/treasure_w_coin*')
-        
+
         if not StoreGUI.WeaponIcons:
             StoreGUI.WeaponIcons = loader.loadModel('models/gui/gui_icons_weapon')
-        
+
         if not StoreGUI.SkillIcons:
             StoreGUI.SkillIcons = loader.loadModel('models/textureCards/skillIcons')
-        
+
         if not StoreGUI.FishingIcons:
             StoreGUI.FishingIcons = loader.loadModel('models/textureCards/fishing_icons')
-        
+
         self.backTabParent = self.attachNewNode('backTabs', sort = 0)
         self.panel = GuiPanel.GuiPanel(name, self.width, self.height, parent = self)
         self.panel.closeButton['command'] = self.closePanel
@@ -114,7 +114,7 @@ class StoreGUI(DirectFrame):
         base.localAvatar.guiMgr.setIgnoreEscapeHotKey(True)
         self.acceptOnce('escape', self.closePanel)
 
-    
+
     def closePanel(self):
         if hasattr(base, 'localAvatar') and base.localAvatar.guiMgr and base.localAvatar.guiMgr.mainMenu and not base.localAvatar.guiMgr.mainMenu.isHidden():
             base.localAvatar.guiMgr.toggleMainMenu()
@@ -122,14 +122,14 @@ class StoreGUI(DirectFrame):
             base.localAvatar.guiMgr.setIgnoreEscapeHotKey(False)
             messenger.send('exitStore')
             self.ignoreAll()
-        
 
-    
+
+
     def handleBuyItem(self, data, useCode):
         itemId = data[0]
         if not itemId:
             return None
-        
+
         itemType = EconomyGlobals.getItemType(itemId)
         if itemType <= ItemType.WAND or itemType == ItemType.POTION:
             data[1] = 1
@@ -138,7 +138,7 @@ class StoreGUI(DirectFrame):
         inventory = base.localAvatar.getInventory()
         if not inventory:
             return None
-        
+
         itemQuantity = self.purchaseInventory.getItemQuantity(itemId)
         currStock = inventory.getStackQuantity(itemId)
         currStockLimit = inventory.getStackLimit(itemId)
@@ -150,8 +150,8 @@ class StoreGUI(DirectFrame):
                 if not amt:
                     base.localAvatar.guiMgr.createWarning(PLocalizer.NoTrainingWarning % itemTypeName, PiratesGuiGlobals.TextFG6)
                     return None
-                
-            
+
+
             itemType = EconomyGlobals.getItemType(itemId)
             if itemType != ItemType.POTION:
                 minLvl = ItemGlobals.getWeaponRequirement(itemId)
@@ -162,7 +162,7 @@ class StoreGUI(DirectFrame):
             if minLvl > ReputationGlobals.getLevelFromTotalReputation(repId, repAmt)[0]:
                 base.localAvatar.guiMgr.createWarning(PLocalizer.LevelReqWarning % (minLvl, itemTypeName), PiratesGuiGlobals.TextFG6)
                 return None
-            
+
             if itemId in ItemGlobals.getAllWeaponIds():
                 locatables = []
                 for dataInfo in self.purchaseInventory.inventory:
@@ -173,7 +173,7 @@ class StoreGUI(DirectFrame):
                             dataId,
                             0]))
                         continue
-                
+
                 locatables.append(InvItem([
                     InventoryType.ItemTypeWeapon,
                     itemId,
@@ -184,7 +184,7 @@ class StoreGUI(DirectFrame):
                         base.localAvatar.guiMgr.createWarning(PLocalizer.InventoryFullWarning, PiratesGuiGlobals.TextFG6)
                         return None
                         continue
-                
+
             elif itemId in ItemGlobals.getAllConsumableIds():
                 itemQuantity = self.purchaseInventory.getItemQuantity(itemId)
                 currStock = inventory.getItemQuantity(InventoryType.ItemTypeConsumable, itemId)
@@ -192,7 +192,7 @@ class StoreGUI(DirectFrame):
                 if currStock + itemQuantity >= currStockLimit:
                     base.localAvatar.guiMgr.createWarning(PLocalizer.TradeItemFullWarning, PiratesGuiGlobals.TextFG6)
                     return None
-                
+
                 if currStock == 0:
                     locatables = []
                     dataIds = { }
@@ -204,7 +204,7 @@ class StoreGUI(DirectFrame):
                             else:
                                 dataIds[dataId] = 1
                         dataIds.has_key(dataId)
-                    
+
                     if dataIds.has_key(itemId):
                         dataIds[itemId] += 1
                     else:
@@ -215,15 +215,15 @@ class StoreGUI(DirectFrame):
                             dataId,
                             0,
                             dataIds[dataId]]))
-                    
+
                     locationIds = inventory.canAddLocatables(locatables)
                     for locationId in locationIds:
                         if locationId in (Locations.INVALID_LOCATION, Locations.NON_LOCATION):
                             base.localAvatar.guiMgr.createWarning(PLocalizer.InventoryFullWarning, PiratesGuiGlobals.TextFG6)
                             return None
                             continue
-                    
-                
+
+
             else:
                 itemQuantity = self.purchaseInventory.getItemQuantity(itemId)
                 currStock = inventory.getStackQuantity(itemId)
@@ -232,47 +232,47 @@ class StoreGUI(DirectFrame):
                 if currStock + itemQuantity >= currStockLimit:
                     base.localAvatar.guiMgr.createWarning(PLocalizer.TradeItemFullWarning, PiratesGuiGlobals.TextFG6)
                     return None
-                
+
             self.purchaseInventory.addPanel(data)
             self.purchaseInventory.inventory.append(data)
         elif useCode == PiratesGuiGlobals.InventoryRemove:
             self.purchaseInventory.removePanel(data)
-        
+
         panel = self.storeInventory.getPanel(data)
         if panel:
             self.checkPanel(panel, inventory, itemId)
-        
+
         self.updateBalance()
 
-    
+
     def handleCommitPurchase(self):
         if self.purchaseInventory == []:
             base.localAvatar.guiMgr.createWarning(PLocalizer.EmptyPurchaseWarning, PiratesGuiGlobals.TextFG6)
             return None
-        
+
         inventory = base.localAvatar.getInventory()
         if inventory:
             if inventory.getGoldInPocket() < self.balance:
                 base.localAvatar.guiMgr.createWarning(PLocalizer.NotEnoughMoneyWarning, PiratesGuiGlobals.TextFG6)
                 return None
-            
+
             if self.balance < 0 and inventory.getGoldInPocket() + self.balance > GOLD_CAP:
                 base.localAvatar.guiMgr.createWarning(PLocalizer.CannotHoldGoldWarning, PiratesGuiGlobals.TextFG6)
                 return None
-            
-        
+
+
         StoreGUI.notify.debug('Make Purchase - Buying: %s' % self.purchaseInventory.inventory)
         messenger.send('makeSale', [
             self.purchaseInventory.inventory,
             []])
 
-    
+
     def updateBalance(self, extraArgs = None):
         self.myGold['text'] = str(localAvatar.getMoney())
         self.balance = 0
         for item in self.purchaseInventory.panels:
             self.balance += max(item.price, 0)
-        
+
         if self.balance > 0:
             self.balanceTitle['text'] = PLocalizer.Total
             self.balanceValue['text'] = str(abs(self.balance))
@@ -285,7 +285,7 @@ class StoreGUI(DirectFrame):
         if self.balance > localAvatar.getMoney() or self.purchaseInventory.inventory == []:
             if self.balance > localAvatar.getMoney():
                 self.balanceValue['text_fg'] = PiratesGuiGlobals.TextFG6
-            
+
             self.commitButton['state'] = DGG.DISABLED
         else:
             self.balanceValue['text_fg'] = PiratesGuiGlobals.TextFG2
@@ -296,36 +296,36 @@ class StoreGUI(DirectFrame):
                 self.commitButton['frameColor'] = PiratesGuiGlobals.ButtonColor3
             else:
                 self.commitButton['frameColor'] = PiratesGuiGlobals.ButtonColor4
-        
 
-    
+
+
     def checkPanel(self, panel, inventory, itemId):
         purchaseQty = self.purchaseInventory.getItemQuantity(itemId)
         panel.checkPlayerInventory(itemId, purchaseQty)
 
-    
+
     def initTabs(self):
         self.tabBar = StoreTabBar(parent = self, backParent = self.backTabParent, frontParent = self.frontTabParent, offset = 0)
         self.pageNames = []
         self.createTabs()
         if len(self.pageNames) > 0:
             self.setPage(self.pageNames[0])
-        
 
-    
+
+
     def createTabs(self):
         for item in self.inventory:
             if item == InventoryType.ShipRepairKit:
                 if not base.config.GetBool('want-privateering', 1):
                     continue
-                
-            
+
+
             if not self.isPageAdded(getItemGroup(item)):
                 self.addTab(getItemGroup(item), item)
                 continue
-        
 
-    
+
+
     def addTab(self, itemGroup, item):
         newTab = self.tabBar.addTab(itemGroup, command = self.setPage, extraArgs = [
             itemGroup])
@@ -361,11 +361,11 @@ class StoreGUI(DirectFrame):
         newTab.nameTag = DirectLabel(parent = newTab, relief = None, state = DGG.DISABLED, image = icon, image_scale = 0.40000000000000002, image_pos = (0, 0, 0.040000000000000001), pos = (0.059999999999999998, 0, -0.035000000000000003))
         self.pageNames.append(itemGroup)
 
-    
+
     def isPageAdded(self, pageName):
         return self.pageNames.count(pageName) > 0
 
-    
+
     def setPage(self, pageName):
         self.tabBar.unstash()
         self.storeInventory.filterByItemGroup(pageName)

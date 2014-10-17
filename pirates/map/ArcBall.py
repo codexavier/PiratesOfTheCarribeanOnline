@@ -35,7 +35,7 @@ def nLerp(a, b, t):
 class ArcBall(NodePath, DirectObject):
 
     def __init__(self, name, radius = 1, scrollFactor = 1, camera = base.cam, frame = Vec4(-1, 1, -1, 1), keepUpright = 0, mouseDownEvent = 'mouse1', mouseUpEvent = 'mouse1-up', *args, **kwargs):
-        NodePath.__init__(self, name, *args, **args)
+        NodePath.__init__(self, name, *args, **kwargs)
         DirectObject.__init__(self)
         self._rNode = self.attachNewNode('rotateNode')
         self._setRadius(radius, False)
@@ -173,19 +173,19 @@ class ArcBall(NodePath, DirectObject):
 
 
     def getInternalHpr(self, *args, **kwargs):
-        return self._rNode.getHpr(*args, **args)
+        return self._rNode.getHpr(*args, **kwargs)
 
 
     def setInternalHpr(self, *args, **kwargs):
-        self._rNode.setHpr(*args, **args)
+        self._rNode.setHpr(*args, **kwargs)
 
 
     def getInternalQuat(self, *args, **kwargs):
-        return self._rNode.getQuat(*args, **args)
+        return self._rNode.getQuat(*args, **kwargs)
 
 
     def setInternalQuat(self, *args, **kwargs):
-        self._rNode.setQuat(*args, **args)
+        self._rNode.setQuat(*args, **kwargs)
 
 
     def _mouseDown(self, *args):

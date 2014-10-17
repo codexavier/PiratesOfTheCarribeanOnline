@@ -108,19 +108,19 @@ buffTable = {
 class BuffIcon(DirectFrame):
     Background = None
     Card = None
-    
+
     def __init__(self, parent, effectId, duration, attackerId, **kw):
         optiondefs = (('relief', None, None),)
         self.defineoptions(kw, optiondefs)
-        DirectFrame.__init__(self, parent, **None)
+        DirectFrame.__init__(self, parent)
         self.initialiseoptions(BuffIcon)
         if not self.Background:
             self.Background = loader.loadModel('models/gui/lookout_gui').find('**/lookout_submit')
             self.Background.setScale(0.33000000000000002)
-        
+
         if not self.Card:
             self.Card = loader.loadModel('models/textureCards/buff_icons')
-        
+
         self.myIcon = None
         self.detailFrame = None
         self.dial = None
@@ -135,7 +135,7 @@ class BuffIcon(DirectFrame):
         self.setLightOff()
         self.setBin('gui-fixed', 0)
 
-    
+
     def makeIcons(self):
         self.Background.copyTo(self)
         self.dial = DialMeter(parent = self, meterColor = Vec4(0.29999999999999999, 0.0, 0.80000000000000004, 1), baseColor = Vec4(0, 0, 0, 1), scale = 0.17000000000000001, sortOrder = 0)
@@ -148,11 +148,11 @@ class BuffIcon(DirectFrame):
         self.myIcon.bind(DGG.EXIT, self.hideDetails)
         self.updateIconInfo()
 
-    
+
     def makeDetails(self):
         if self.detailFrame:
             return None
-        
+
         normalScale = 0.97307200000000005
         parent = self.getParent()
         if parent:
@@ -161,8 +161,8 @@ class BuffIcon(DirectFrame):
                 if not parent:
                     break
                     continue
-            
-        
+
+
         if parent:
             parentScale = parent.getScale()[0]
         else:
@@ -180,19 +180,19 @@ class BuffIcon(DirectFrame):
         self.detailFrame.setBin('gui-popup', 0)
         self.detailFrame.hide()
 
-    
+
     def showDetails(self, event):
         self.makeDetails()
         self.detailFrame.show()
         self.updateIconInfo()
 
-    
+
     def hideDetails(self, event):
         if self.detailFrame:
             self.detailFrame.hide()
-        
 
-    
+
+
     def updateIconInfo(self):
         if self.lastTimestamp == None:
             timeOffset = 0.0
@@ -210,9 +210,9 @@ class BuffIcon(DirectFrame):
             else:
                 text = buffTable[WeaponGlobals.C_UNKNOWN_EFFECT][1] + durationStr
             self.detailBox['text'] = text
-        
 
-    
+
+
     def destroy(self):
         DirectFrame.destroy(self)
 

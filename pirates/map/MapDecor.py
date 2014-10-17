@@ -16,11 +16,11 @@ from pirates.ship.ShipMeter import ShipMeter
 class Item(NodePath):
 
     def __init__(self, name, *args, **kwargs):
-        NodePath.__init__(self, name, *args, **args)
+        NodePath.__init__(self, name, *args, **kwargs)
 
 
     def setPosition(self, worldNorth, *args, **kwargs):
-        self.setPos(*args, **args)
+        self.setPos(*args, **kwargs)
 
 
     def setRotation(self, worldNorth, rotation):
@@ -35,7 +35,7 @@ class Item(NodePath):
 class Billboard(Item):
 
     def __init__(self, name, nodePath = NodePath(), *args, **kwargs):
-        Item.__init__(self, name, *args, **args)
+        Item.__init__(self, name, *args, **kwargs)
         self._initBillboard(nodePath)
         self.setBin('fixed', 100)
         self.setDepthTest(0)
@@ -54,7 +54,7 @@ class Billboard(Item):
 class Spline(Item):
 
     def __init__(self, name, verts, *args, **kwargs):
-        Item.__init__(self, name, *args, **args)
+        Item.__init__(self, name, *args, **kwargs)
         self.name = name
         self.verts = verts
         self._initRope()
@@ -80,7 +80,7 @@ class Spline(Item):
 class Model(Item):
 
     def __init__(self, name, modelName, scale = 1.0, modelPath = None, *args, **kwargs):
-        Item.__init__(self, name, *args, **args)
+        Item.__init__(self, name, *args, **kwargs)
         self._initModel(modelName, scale, modelPath)
 
 
@@ -102,7 +102,7 @@ class Model(Item):
 
 
     def setPosition(self, worldNorth, *args, **kwargs):
-        Item.setPosition(self, worldNorth, *args, **args)
+        Item.setPosition(self, worldNorth, *args, **kwargs)
         self.headsUp(worldNorth, Vec3(self.getPos()))
 
 
@@ -116,7 +116,7 @@ class Model(Item):
 class PickableModel(Model):
 
     def __init__(self, name, modelName, scale = 1.0, collisionIndex = 17, modelPath = None, *args, **kwargs):
-        Model.__init__(self, name, modelName, scale, modelPath, *args, **args)
+        Model.__init__(self, name, modelName, scale, modelPath, *args, **kwargs)
         bm = BitMask32.bit(collisionIndex)
         cGeom = self.geom.find('**/+CollisionNode;+s')
         if cGeom and not cGeom.isEmpty():
@@ -148,7 +148,7 @@ class Ship(Item):
 
     def __init__(self, shipInfo, *args, **kwargs):
         name = shipInfo[1]
-        Item.__init__(self, name, *args, **args)
+        Item.__init__(self, name, *args, **kwargs)
         self.setTag('shipName', name)
         self.shipModel = ShipMeter(shipInfo[0], shipInfo[2], shipInfo[3])
         self.shipModel.reparentTo(self)
@@ -191,7 +191,7 @@ class Ship(Item):
 class Island(PickableModel):
 
     def __init__(self, name, islandUid, modelName, isTeleportIsland, scale = 1.0, collisionIndex = 17, stencilId = 0, *args, **kwargs):
-        PickableModel.__init__(self, name, modelName, scale / 160.0, collisionIndex, *args, **args)
+        PickableModel.__init__(self, name, modelName, scale / 160.0, collisionIndex, *args, **kwargs)
         self.setTag('islandUid', islandUid)
         if isTeleportIsland or base.config.GetBool('teleport-all'):
             self.setTag('isTeleportIsland', 'True')
@@ -268,7 +268,7 @@ class Island(PickableModel):
 class Text(Billboard):
 
     def __init__(self, name, nodePath, offset, text, stencilId, scale = 0.025000000000000001, *args, **kwargs):
-        Billboard.__init__(self, name, nodePath, *args, **args)
+        Billboard.__init__(self, name, nodePath, *args, **kwargs)
         self.setBin('fixed', 110)
         self.scale = scale
         self.textNode = OnscreenText(text = text, fg = Vec4(0, 0, 0, 1), scale = scale, shadow = Vec4(0, 0, 0, 0), mayChange = True, font = PiratesGlobals.getPirateFont())
@@ -291,7 +291,7 @@ class Text(Billboard):
 class TextIsland(Island):
 
     def __init__(self, name, islandUid, modelName, isTeleportIsland, nodePath = NodePath(), offset = 0.0, scale = 1.0, collisionIndex = 17, stencilId = 0, *args, **kwargs):
-        Island.__init__(self, name, islandUid, modelName, isTeleportIsland, scale, collisionIndex, stencilId, *args, **args)
+        Island.__init__(self, name, islandUid, modelName, isTeleportIsland, scale, collisionIndex, stencilId, *args, **kwargs)
         pencil = self.geom.find('**/pencil*')
         if not pencil.isEmpty():
             pass
@@ -549,7 +549,7 @@ class OceanAreaText(Text):
 class Swirl(Model):
 
     def __init__(self, name, scale = 1.0, speed = 1, *args, **kwargs):
-        Model.__init__(self, name, 'models/worldmap/world_map_swirl', scale / 80.0, *args, **args)
+        Model.__init__(self, name, 'models/worldmap/world_map_swirl', scale / 80.0, *args, **kwargs)
         self.swirl = self.attachNewNode('swirl')
         self.geom.reparentTo(self.swirl)
         self.swirlLoop = self.swirl.hprInterval(duration = 10.0 / speed, startHpr = Vec3(0, 0, 0), hpr = Vec3(360, 0, 0))
@@ -562,7 +562,7 @@ class Dart(PickableModel):
     def __init__(self, name, parent, defaultPos, color = Vec4(1), offset = 0.0, *args, **kwargs):
         self.startScale = 0.074999999999999997
         self.highlightScale = 0.10000000000000001
-        PickableModel.__init__(self, name, modelName = 'icon_objective_grey', scale = self.startScale, collisionIndex = 17, modelPath = 'models/gui/compass_main', *args, **args)
+        PickableModel.__init__(self, name, modelName = 'icon_objective_grey', scale = self.startScale, collisionIndex = 17, modelPath = 'models/gui/compass_main', *args, **kwargs)
         self.defaultPos = defaultPos
         self.edgeMode = False
         self.helpBox = None
@@ -652,18 +652,18 @@ class Dart(PickableModel):
 
 
     def setColorScale(self, *args, **kwargs):
-        self.edgeModeNode.setColorScale(*args, **args)
-        self.normalModeNode.setColorScale(*args, **args)
+        self.edgeModeNode.setColorScale(*args, **kwargs)
+        self.normalModeNode.setColorScale(*args, **kwargs)
 
 
     def setScale(self, *args, **kwargs):
-        self.normalModeNode.setScale(*args, **args)
+        self.normalModeNode.setScale(*args, **kwargs)
 
 
     def setPosition(self, worldPos, *args, **kwargs):
-        NodePath.setPos(self, *args, **args)
+        NodePath.setPos(self, *args, **kwargs)
         if self.edgeMode:
-            self.edgeModeNode.setPos(*args, **args)
+            self.edgeModeNode.setPos(*args, **kwargs)
 
 
 

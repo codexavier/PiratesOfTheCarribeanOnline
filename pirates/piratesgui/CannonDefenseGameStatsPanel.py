@@ -11,9 +11,9 @@ from pirates.piratesbase import PLocalizer
 import math
 
 class CannonDefenseGameStatsPanel(CannonDefenseScorePanelBase):
-    
+
     def __init__(self, roundComplete, panelNumber, numOfPanels, **kw):
-        CannonDefenseScorePanelBase.__init__(self, panelNumber, numOfPanels, **None)
+        CannonDefenseScorePanelBase.__init__(self, panelNumber, numOfPanels)
         self.prevButton = None
         self.nextButton = None
         self.timePlayedTotalslbl = []
@@ -21,7 +21,7 @@ class CannonDefenseGameStatsPanel(CannonDefenseScorePanelBase):
         self.roundComplete = roundComplete
         self._createPanel()
 
-    
+
     def _createPanel(self):
         startX = 0.77000000000000002
         widthX = 0.39000000000000001
@@ -35,12 +35,12 @@ class CannonDefenseGameStatsPanel(CannonDefenseScorePanelBase):
         self._createStatsLabels(self, PLocalizer.CannonDefense['GoldEarned'], self.goldEarnedTotalslbl, startX, 0.32000000000000001, widthX)
         self._createFooter(self)
 
-    
+
     def _createHeader(self, myParent):
         headingTxtScale = PiratesGuiGlobals.TextScaleLarge * 3
         DirectLabel(parent = myParent, relief = None, state = DGG.DISABLED, text = PLocalizer.CannonDefense['Report'], text_scale = headingTxtScale, text_align = TextNode.ACenter, text_fg = PiratesGuiGlobals.TextFG1, text_shadow = PiratesGuiGlobals.TextShadow, text_pos = (0, 0, 0), text_font = self.headingfont, textMayChange = 0, pos = (1.2, 0, 1.3700000000000001))
 
-    
+
     def _createFooter(self, myParent):
         doWhatNextTxt = None
         txtScale = PiratesGuiGlobals.TextScaleLarge * 1.5
@@ -52,7 +52,7 @@ class CannonDefenseGameStatsPanel(CannonDefenseScorePanelBase):
             doWhatNextTxt = PLocalizer.CannonDefense['Continue']
         self.nextButton = GuiButton(parent = self, pos = (2.1000000000000001, 0, -0.050000000000000003), text = doWhatNextTxt)
 
-    
+
     def setTimePlayed(self, times, playerIndex):
         for index in range(0, len(times)):
             seconds = times[index]
@@ -67,9 +67,9 @@ class CannonDefenseGameStatsPanel(CannonDefenseScorePanelBase):
                 self.timePlayedTotalslbl[index]['text_font'] = self.headingfont
                 self.timePlayedTotalslbl[index]['text_shadow'] = PiratesGuiGlobals.TextShadow
                 continue
-        
 
-    
+
+
     def setGoldEarned(self, goldEarned, playerIndex):
         for index in range(0, len(goldEarned)):
             self.goldEarnedTotalslbl[index]['text'] = str(goldEarned[index])
@@ -78,6 +78,6 @@ class CannonDefenseGameStatsPanel(CannonDefenseScorePanelBase):
                 self.goldEarnedTotalslbl[index]['text_font'] = self.headingfont
                 self.goldEarnedTotalslbl[index]['text_shadow'] = PiratesGuiGlobals.TextShadow
                 continue
-        
+
 
 

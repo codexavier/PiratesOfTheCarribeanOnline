@@ -6,17 +6,17 @@ from pandac.PandaModules import *
 class ChangeDialMeter(DirectFrame):
     MeterFull = None
     MeterHalf = None
-    
+
     def __init__(self, parent, **kw):
         optiondefs = (('state', DGG.DISABLED, None), ('relief', None, None), ('meterColor', VBase4(0, 0, 0, 1), None), ('meterColor2', VBase4(1, 1, 1, 1), None), ('baseColor', VBase4(1, 1, 1, 1), None), ('wantCover', True, None))
         self.defineoptions(kw, optiondefs)
-        DirectFrame.__init__(self, parent = NodePath(), **None)
+        DirectFrame.__init__(self, parent = NodePath())
         self.initialiseoptions(ChangeDialMeter)
         if self.MeterFull == None:
             card = loader.loadModel('models/textureCards/dialmeter')
             self.MeterFull = card.find('**/dialmeter_full')
             self.MeterHalf = card.find('**/dialmeter_half')
-        
+
         self.meterFace = self.MeterFull.copyTo(self)
         self.meterFace.setTransparency(1)
         self.meterFace.setScale(1.1499999999999999)
@@ -43,18 +43,18 @@ class ChangeDialMeter(DirectFrame):
             cover.setTransparency(1)
             cover.setScale(0.87)
             cover.flattenStrong()
-        
+
         if not parent:
             pass
         self.reparentTo(aspect2d)
 
-    
+
     def update(self, val, val2, max):
         progress = 0
         if max > 0:
             progress = float(val) / max
             progress2 = float(val2) / max
-        
+
         self.meterFaceHalf1.clearColorScale()
         self.meterFaceHalf2.clearColorScale()
         self.meterFaceHalf3.clearColorScale()

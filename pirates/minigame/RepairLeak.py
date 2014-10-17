@@ -16,7 +16,7 @@ import random
 _activePosition = 0.5
 
 class RepairLeak(DirectButton, FSM.FSM):
-    
+
     def __init__(self, name, parent, leakscale, **kw):
         self.name = name
         pitchingGui = loader.loadModel('models/gui/pir_m_gui_srp_pitching_main')
@@ -27,7 +27,7 @@ class RepairLeak(DirectButton, FSM.FSM):
             self.holeFilled = pitchingGui.find('**/pitch2')
         optiondefs = (('relief', None, None), ('geom', (self.hole, self.hole, self.hole, self.holeFilled), None), ('rolloverSound', None, None), ('clickSound', None, None))
         self.defineoptions(kw, optiondefs)
-        DirectButton.__init__(self, parent = parent, **None)
+        DirectButton.__init__(self, parent = parent)
         self.initialiseoptions(RepairLeak)
         FSM.FSM.__init__(self, 'leak_%sFSM' % self.name)
         self.onCleanup = None
@@ -39,12 +39,12 @@ class RepairLeak(DirectButton, FSM.FSM):
         self.fadeSequence = None
         self.request('Idle')
 
-    
+
     def _initVars(self):
         self.timeActive = 0.0
         self.pulseScale = 0.59999999999999998
 
-    
+
     def _initVisuals(self):
         textureCard = loader.loadModel('models/minigames/pir_m_gam_srp_water')
         self.waterStream = textureCard.find('**/waterPlane')
@@ -112,32 +112,32 @@ class RepairLeak(DirectButton, FSM.FSM):
         trans = TransformState.makePos((0, 0.47999999999999998, 0))
         self.waterStream2.setTexTransform(self.textureStage6, trans)
 
-    
+
     def repositionTo(self, newX, newZ):
         self.setPos(newX, 0.0, newZ)
         self.waterStream.setPos(self.getX(), 0.0, -0.5 * self.leakScale + self.getZ())
         self.waterStream2.setPos(self.getX(), 0.0, -0.59999999999999998 * self.leakScale + self.getZ())
 
-    
+
     def _initIntervals(self):
         pass
 
-    
+
     def destroy(self):
         if self.fadeSequence is not None:
             self.fadeSequence.clearToInitial()
-        
+
         self['extraArgs'] = None
         taskMgr.remove('RepairLeak_%s.update' % self.name)
         if self.onCleanup is not None:
             self.onCleanup(self)
-        
+
         self.cleanup()
         self.waterStream.removeNode()
         self.waterStream2.removeNode()
         DirectButton.destroy(self)
 
-    
+
     def update(self, task):
         dt = globalClock.getDt()
         self.timeActive += dt
@@ -149,10 +149,10 @@ class RepairLeak(DirectButton, FSM.FSM):
             self.textureYOffsetAlpha += self.textureYDeltaAlpha * dt
             if self.textureYOffsetAlpha > _activePosition:
                 self.textureYOffsetAlpha = _activePosition
-            
+
             trans2 = TransformState.makePos((0, self.textureYOffsetAlpha, 0))
             self.waterStream.setTexTransform(self.textureStage3, trans2)
-        
+
         if self.getCurrentOrNextState() == 'Patched':
             if self.textureYOffsetAlpha < _activePosition:
                 self.textureYOffsetAlpha = 0.75 - self.textureYOffsetAlpha / 2.0
@@ -162,8 +162,8 @@ class RepairLeak(DirectButton, FSM.FSM):
                 self.textureYOffsetAlpha += self.textureYDeltaAlpha * dt
                 trans2 = TransformState.makePos((0, self.textureYOffsetAlpha, 0))
                 self.waterStream.setTexTransform(self.textureStage3, trans2)
-            
-        
+
+
         self.textureYOffset2 += self.textureYDelta2 * dt
         trans = TransformState.makePos((0, self.textureYOffset2, 0))
         self.waterStream2.setTexTransform(self.textureStage2, trans)
@@ -171,23 +171,23 @@ class RepairLeak(DirectButton, FSM.FSM):
             self.textureYOffsetAlpha2 += self.textureYDeltaAlpha2 * dt
             if self.textureYOffsetAlpha2 > _activePosition:
                 self.textureYOffsetAlpha2 = _activePosition
-            
+
             trans2 = TransformState.makePos((0, self.textureYOffsetAlpha2, 0))
             self.waterStream2.setTexTransform(self.textureStage5, trans2)
-        
+
         if self.getCurrentOrNextState() == 'Patched':
             if self.textureYOffsetAlpha2 < _activePosition:
                 self.textureYOffsetAlpha2 = 0.75 - self.textureYOffsetAlpha2 / 2.0
                 trans2 = TransformState.makePos((0, self.textureYOffsetAlpha2, 0))
                 self.waterStream2.setTexTransform(self.textureStage5, trans2)
-            
+
             if self.textureYOffsetAlpha2 < 1.0:
                 self.textureYOffsetAlpha2 += self.textureYDeltaAlpha2 * dt
                 trans2 = TransformState.makePos((0, self.textureYOffsetAlpha2, 0))
                 self.waterStream2.setTexTransform(self.textureStage5, trans2)
             else:
                 done = True
-        
+
         if done:
             self.waterStream.stash()
             self.waterStream2.stash()
@@ -197,34 +197,34 @@ class RepairLeak(DirectButton, FSM.FSM):
         else:
             return Task.cont
 
-    
+
     def setCommandButtons(self):
         self.guiItem.addClickButton(MouseButton.one())
         self.bind(DGG.B1PRESS, self.commandFunc)
 
-    
+
     def enterIdle(self):
         self.stash()
         self.waterStream.stash()
         self.waterStream2.stash()
         self['state'] = DGG.DISABLED
 
-    
+
     def exitIdle(self):
         pass
 
-    
+
     def enterPatched(self):
         self['state'] = DGG.DISABLED
         self.setScale(0.84999999999999998)
 
-    
+
     def exitPatched(self):
         self.stash()
         self.waterStream.stash()
         self.waterStream2.stash()
 
-    
+
     def enterActive(self):
         taskMgr.add(self.update, 'RepairLeak_%s.update' % self.name)
         self.unstash()
@@ -232,7 +232,7 @@ class RepairLeak(DirectButton, FSM.FSM):
         self.waterStream2.unstash()
         self['state'] = DGG.NORMAL
 
-    
+
     def exitActive(self):
         self['state'] = DGG.DISABLED
 

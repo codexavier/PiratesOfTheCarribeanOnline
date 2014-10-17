@@ -14,14 +14,14 @@ class DialogButton(GuiButton.GuiButton):
     NO = 2
     LEFT = 3
     RIGHT = 4
-    
+
     def __init__(self, parent, buttonStyle = BLANK, **kw):
         if not DialogButton.yesGeom:
             gui = loader.loadModel('models/gui/toplevel_gui')
             DialogButton.yesGeom = gui.find('**/generic_check')
             DialogButton.noGeom = gui.find('**/generic_x')
             DialogButton.arrowGeom = gui.find('**/generic_arrow')
-        
+
         optiondefs = (('buttonStyle', buttonStyle, None), ('text_fg', PiratesGuiGlobals.TextFG1, None), ('text_shadow', PiratesGuiGlobals.TextShadow, None))
         if buttonStyle == DialogButton.BLANK:
             optiondefs += (('geom', None, None), ('text_scale', PiratesGuiGlobals.TextScaleLarge, None), ('text_pos', (0.0, -0.012), None))
@@ -34,7 +34,7 @@ class DialogButton(GuiButton.GuiButton):
         else:
             optiondefs += (('geom', self.arrowGeom, None), ('geom_scale', (-0.5, 0.5, 0.5), None), ('geom_pos', (0.059999999999999998, 0, 0), None), ('geom0_color', PiratesGuiGlobals.TextFG1, None), ('geom1_color', PiratesGuiGlobals.TextFG1, None), ('geom2_color', PiratesGuiGlobals.TextFG1, None), ('geom3_color', PiratesGuiGlobals.TextFG1, None), ('text', 'Next', None), ('text_scale', PiratesGuiGlobals.TextScaleLarge, None), ('text_pos', (-0.040000000000000001, -0.012), None))
         self.defineoptions(kw, optiondefs)
-        GuiButton.GuiButton.__init__(self, parent = parent, **None)
+        GuiButton.GuiButton.__init__(self, parent = parent)
         self.initialiseoptions(DialogButton)
 
 

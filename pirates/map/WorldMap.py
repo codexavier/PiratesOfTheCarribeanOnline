@@ -23,7 +23,7 @@ class WorldMap(DirectFrame):
         shot.setTexture(b.getTexture(), 1)
         optiondefs = (('relief', None, None), ('geom', shot, None))
         self.defineoptions(kwargs, optiondefs)
-        DirectFrame.__init__(self, parent, **None)
+        DirectFrame.__init__(self, parent)
         self.initialiseoptions(WorldMap)
         self.setTransparency(1)
         self.radius = 1.0
@@ -120,12 +120,12 @@ class WorldMap(DirectFrame):
 
 
     def setScale(self, *args, **kwargs):
-        DirectFrame.setScale(self, *args, **args)
+        DirectFrame.setScale(self, *args, **kwargs)
         self.resetArcBall()
 
 
     def setPos(self, *args, **kwargs):
-        DirectFrame.setPos(self, *args, **args)
+        DirectFrame.setPos(self, *args, **kwargs)
         self.resetArcBall()
 
 

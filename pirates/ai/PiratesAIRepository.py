@@ -25,7 +25,7 @@ class PiratesAIRepository(PiratesInternalRepository):
         self.distributedDistrict = PiratesDistrictAI(self)
         self.distributedDistrict.setName(self.districtName)
         self.distributedDistrict.generateWithRequiredAndId(
-            self.districtId, self.getGameDoId(), OTP_ZONE_ID_DISTRICTS)
+            self.districtId, OTP_DO_ID_PIRATES, OTP_ZONE_ID_DISTRICTS)
         self.notify.info('Claiming ownership of channel ID: %d...' % self.districtId)
         self.claimOwnership(self.districtId)
 
