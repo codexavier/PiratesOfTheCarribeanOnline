@@ -1,14 +1,14 @@
 @echo off
 cd ../..
 
-rem Read the contents of PPYTHON_PATH into %PPYTHON_PATH%:
-set /P PPYTHON_PATH=<PPYTHON_PATH
+rem Read the contents of PYTHON_PATH into %PYTHON_PATH%:
+set /P PYTHON_PATH=<PYTHON_PATH
 
-echo ===============================
+echo ==============================
 echo Starting Pirates Online AI server...
-echo ppython: %PPYTHON_PATH%
-echo ===============================
+echo Python: %PYTHON_PATH%
+echo ==============================
 
 :main
-%PPYTHON_PATH% -m pirates.ai.ServiceStart
+%PYTHON_PATH% -m pirates.ai.ServiceStart
 goto main
