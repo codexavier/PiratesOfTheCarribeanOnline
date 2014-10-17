@@ -176,7 +176,7 @@ CRConnecting = 'Connecting...'
 CRNoConnectTryAgain = 'Could not connect to %s:%s. Try again?'
 CRNoConnectProxyNoPort = 'Could not connect to %s:%s.\n\nYou are communicating to the internet via a proxy, but your proxy does not permit connections on port %s.\n\nYou must open up this port, or disable your proxy, in order to play.  If your proxy has been provided by your ISP, you must contact your ISP to request them to open up this port.'
 CRMissingGameRootObject = 'Missing some root game objects.  (May be a failed network connection).\n\nTry again?'
-CRNoDistrictsTryAgain = 'No Districts have been found. This most likely means the Default shard is down. Would you like to try again?'
+CRNoDistrictsTryAgain = 'No Districts are available. Try again?''
 CRRejectRemoveAvatar = 'The avatar was not able to be deleted, try again another time.'
 CRLostConnection = 'Your internet connection to the servers has been unexpectedly broken.'
 CRBootedReasons = {1: 'An unexpected problem has occurred.  Your connection has been lost, but you should be able to connect again and go right back into the game.',
@@ -189,8 +189,8 @@ CRBootedReasons = {1: 'An unexpected problem has occurred.  Your connection has 
  127: 'A problem has occurred with your Toon.  Please contact Member Services via phone or email and reference Error Code 127.  Thank you.',
  151: 'You have been logged out by an administrator working on the servers.',
  152: "There has been a reported violation of our Terms of Use connected to '%(name)s'. For more details, please review the message sent to the e-mail address associated with '%(name)s'.",
- 153: 'The district you were playing on has been reset.  Everyone who was playing on that district has been disconnected.  If there was only one district you must wait for a developer to notice the crashed District..',
- 154: 'The game is temporarily closing for maintenance.  Everyone has been logged out.',
+ 153: 'The district you were playing on has been reset.  Everyone who was playing on that district has been disconnected.  However, you should be able to connect again and go right back into the game.',
+ 154: 'Pirates Online is temporarily closing for a scheduled maintenance.\nFor more information, please visit the Pirates Online website.',
  155: 'You were kicked by a Moderator. Behave next time!',
  288: 'Sorry, you have used up all of your available minutes this month.',
  349: 'Sorry, you have used up all of your available minutes this month.'}
