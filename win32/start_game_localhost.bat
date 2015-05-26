@@ -1,6 +1,7 @@
 @echo off
 cd ..
 
+title POTCO Launcher
 rem Read the contents of the PYTHON_PATH file into %PYTHON_PATH%:
 set /P PYTHON_PATH=<PYTHON_PATH
 
